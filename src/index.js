@@ -1,11 +1,21 @@
 // define express server
 const express = require("express");
-const app = express();
+
+// import middleware
+const middlewareLogRequest = require("./middlewares/logs");
 
 // import routes
-const usersRoutes = require("./routes/users");
+const authRoutes = require("./routes/auth");
+const rolePermissionRoutes = require("./routes/role-permission");
 
-app.use("/users", usersRoutes);
+// running express server
+const app = express();
+
+// middleware request
+app.use(middlewareLogRequest);
+
+app.use("/auth", authRoutes);
+app.use("/role-permission", rolePermissionRoutes);
 
 // runnning at port 4000 on localhost
 app.listen(4000, () => {
