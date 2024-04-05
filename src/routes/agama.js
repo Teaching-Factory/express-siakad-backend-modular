@@ -6,10 +6,10 @@ const router = express.Router();
 const AgamaController = require("../controllers/agama");
 
 // all routes
-router.get("/get-agamas", AgamaController.getAllAgamas);
-router.get("/get-agama/:id", AgamaController.getAgamaById);
-router.post("/create-agama", AgamaController.createAgama);
-router.put("/update-agama/:id", AgamaController.updateAgamaById);
-router.delete("/delete-agama/:id", AgamaController.deleteAgamaById);
+router.get("/", AgamaController.getAllAgamas);
+router.get("/:id/get", AgamaController.getAgamaById);
+router.post("/create", AgamaController.createAgama);
+router.put("/:id/update", AgamaController.updateAgamaById);
+router.delete("/:id/delete", AgamaController.deleteAgamaById);
 
 module.exports = router;

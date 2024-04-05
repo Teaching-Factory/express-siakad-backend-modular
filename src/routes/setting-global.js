@@ -6,7 +6,7 @@ const router = express.Router();
 const SettingGlobalController = require("../controllers/setting-global");
 
 // all routes
-router.get("/get-access", SettingGlobalController.getAllSettingGlobals);
-router.put("/update-access", SettingGlobalController.updateSettingGlobal);
+router.get("/get", SettingGlobalController.getAllSettingGlobals);
+router.put("/update", SettingGlobalController.updateSettingGlobal);
 
 module.exports = router;

@@ -6,10 +6,10 @@ const router = express.Router();
 const FakultasController = require("../controllers/fakultas");
 
 // all routes
-router.get("/get-fakultas", FakultasController.getAllFakultas);
-router.get("/get-fakultas/:id", FakultasController.getFakultasById);
-router.post("/create-fakultas", FakultasController.createFakultas);
-router.put("/update-fakultas/:id", FakultasController.updateFakultasById);
-router.delete("/delete-fakultas/:id", FakultasController.deleteFakultasById);
+router.get("/", FakultasController.getAllFakultas);
+router.get("/:id/get", FakultasController.getFakultasById);
+router.post("/create", FakultasController.createFakultas);
+router.put("/:id/update", FakultasController.updateFakultasById);
+router.delete("/:id/delete", FakultasController.deleteFakultasById);
 
 module.exports = router;

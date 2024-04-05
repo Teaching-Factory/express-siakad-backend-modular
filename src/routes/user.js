@@ -6,14 +6,14 @@ const router = express.Router();
 const UserController = require("../controllers/user");
 
 // all routes
-router.get("/get-users", UserController.getAllUsers);
-router.get("/get-user/:id", UserController.getUserById);
-router.post("/create-user", UserController.createUser);
-router.put("/update-user/:id", UserController.updateUserById);
-router.delete("/delete-user/:id", UserController.deleteUserById);
+router.get("/", UserController.getAllUsers);
+router.get("/:id/get", UserController.getUserById);
+router.post("/create", UserController.createUser);
+router.put("/:id/update", UserController.updateUserById);
+router.delete("/:id/delete", UserController.deleteUserById);
 
 // import user by
-router.post("/import-user-by-mahasiswa", UserController.importUserByMahasiswa);
-router.post("/import-user-by-dosen", UserController.importUserByDosen);
+router.post("/mahasiswa/import", UserController.importUserByMahasiswa);
+router.post("/dosen/import", UserController.importUserByDosen);
 
 module.exports = router;

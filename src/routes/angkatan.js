@@ -6,10 +6,10 @@ const router = express.Router();
 const AngkatanController = require("../controllers/angkatan");
 
 // all routes
-router.get("/get-angkatans", AngkatanController.getAllAngkatans);
-router.get("/get-angkatan/:id", AngkatanController.getAngkatanById);
-router.post("/create-angkatan", AngkatanController.createAngkatan);
-router.put("/update-angkatan/:id", AngkatanController.updateAngkatanById);
-router.delete("/delete-angkatan/:id", AngkatanController.deleteAngkatanById);
+router.get("/", AngkatanController.getAllAngkatans);
+router.get("/:id/get", AngkatanController.getAngkatanById);
+router.post("/create", AngkatanController.createAngkatan);
+router.put("/:id/update", AngkatanController.updateAngkatanById);
+router.delete("/:id/delete", AngkatanController.deleteAngkatanById);
 
 module.exports = router;

@@ -6,10 +6,10 @@ const router = express.Router();
 const WilayahController = require("../controllers/wilayah");
 
 // all routes
-router.get("/get-wilayahs", WilayahController.getAllWilayahs);
-router.get("/get-wilayah/:id", WilayahController.getWilayahById);
-router.post("/create-wilayah", WilayahController.createWilayah);
-router.put("/update-wilayah/:id", WilayahController.updateWilayahById);
-router.delete("/delete-wilayah/:id", WilayahController.deleteWilayahById);
+router.get("/", WilayahController.getAllWilayahs);
+router.get("/:id/get", WilayahController.getWilayahById);
+router.post("/create", WilayahController.createWilayah);
+router.put("/:id/update", WilayahController.updateWilayahById);
+router.delete("/:id/delete", WilayahController.deleteWilayahById);
 
 module.exports = router;

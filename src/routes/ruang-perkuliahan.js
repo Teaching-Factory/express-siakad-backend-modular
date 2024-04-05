@@ -6,10 +6,10 @@ const router = express.Router();
 const RuangPerkuliahanController = require("../controllers/ruang-perkuliahan");
 
 // all routes
-router.get("/get-ruang-perkuliahans", RuangPerkuliahanController.getAllRuangPerkuliahans);
-router.get("/get-ruang-perkuliahan/:id", RuangPerkuliahanController.getRuangPerkuliahanById);
-router.post("/create-ruang-perkuliahan", RuangPerkuliahanController.createRuangPerkuliahan);
-router.put("/update-ruang-perkuliahan/:id", RuangPerkuliahanController.updateRuangPerkuliahanById);
-router.delete("/delete-ruang-perkuliahan/:id", RuangPerkuliahanController.deleteRuangPerkuliahanById);
+router.get("/", RuangPerkuliahanController.getAllRuangPerkuliahans);
+router.get("/:id/get", RuangPerkuliahanController.getRuangPerkuliahanById);
+router.post("/create", RuangPerkuliahanController.createRuangPerkuliahan);
+router.put("/:id/update", RuangPerkuliahanController.updateRuangPerkuliahanById);
+router.delete("/:id/delete", RuangPerkuliahanController.deleteRuangPerkuliahanById);
 
 module.exports = router;

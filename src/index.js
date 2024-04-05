@@ -20,6 +20,7 @@ const ruangPerkuliahanRoutes = require("./routes/ruang-perkuliahan");
 const settingGlobalRoutes = require("./routes/setting-global");
 const settingWSRoutes = require("./routes/setting-ws");
 const identitasPTRoutes = require("./routes/identitas-pt");
+const kelasDanJadwalRoutes = require("./routes/kelas-dan-jadwal");
 
 // running express server
 const app = express();
@@ -42,6 +43,7 @@ app.use("/ruang-perkuliahan", ruangPerkuliahanRoutes);
 app.use("/setting/global", settingGlobalRoutes);
 app.use("/setting/ws", settingWSRoutes);
 app.use("/setting/identitas-pt", identitasPTRoutes);
+app.use("/kelas-dan-jadwal", kelasDanJadwalRoutes);
 
 // runnning at port 4000 on localhost
 app.listen(4000, () => {

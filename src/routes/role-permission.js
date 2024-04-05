@@ -9,15 +9,15 @@ const RolePermissionController = require("../controllers/role-permission");
 // role
 router.get("/roles", RolePermissionController.getAllRoles);
 router.post("/create-role", RolePermissionController.createRole);
-router.get("/get-role/:id", RolePermissionController.getRoleById);
-router.put("/update-role/:id", RolePermissionController.updateRoleById);
-router.delete("/delete-role/:id", RolePermissionController.deleteRoleById);
+router.get("/:id/get-role", RolePermissionController.getRoleById);
+router.put("/:id/update-role", RolePermissionController.updateRoleById);
+router.delete("/:id/delete-role", RolePermissionController.deleteRoleById);
 
 // permission
 router.get("/permissions", RolePermissionController.getAllPermissions);
 router.post("/create-permission", RolePermissionController.createPermission);
-router.get("/get-permission/:id", RolePermissionController.getPermissionById);
-router.put("/update-permission/:id", RolePermissionController.updatePermissionById);
-router.delete("/delete-permission/:id", RolePermissionController.deletePermissionById);
+router.get("/:id/get-permission", RolePermissionController.getPermissionById);
+router.put("/:id/update-permission", RolePermissionController.updatePermissionById);
+router.delete("/:id/delete-permission", RolePermissionController.deletePermissionById);
 
 module.exports = router;

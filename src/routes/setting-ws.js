@@ -6,8 +6,8 @@ const router = express.Router();
 const SettingWSController = require("../controllers/setting-ws");
 
 // all routes
-router.post("/create-web-service", SettingWSController.createWebService);
-router.get("/get-web-service", SettingWSController.getWebService);
-router.put("/update-web-service", SettingWSController.updateWebService);
+router.post("/create", SettingWSController.createWebService);
+router.get("/get", SettingWSController.getWebService);
+router.put("/update", SettingWSController.updateWebService);
 
 module.exports = router;
