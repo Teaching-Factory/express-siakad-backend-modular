@@ -40,10 +40,17 @@ const deleteMahasiswaById = (req, res) => {
   });
 };
 
+const importMahasiswa = (req, res) => {
+  res.json({
+    message: "Berhasil mengakses import mahasiswa",
+  });
+};
+
 module.exports = {
   getAllMahasiswas,
   getMahasiswaById,
   createMahasiswa,
   updateMahasiswaById,
   deleteMahasiswaById,
+  importMahasiswa,
 };

@@ -25,6 +25,16 @@ const dosenRoutes = require("./routes/dosen");
 const dosenWaliRoutes = require("./routes/dosen-wali");
 const mahasiswaRoutes = require("./routes/mahasiswa");
 const sistemKuliahRoutes = require("./routes/sistem-kuliah");
+const sistemKuliahMahasiswaRoutes = require("./routes/sistem-kuliah-mahasiswa");
+const statusMahasiswaRoutes = require("./routes/status-mahasiswa");
+const krsValidasiRoutes = require("./routes/krs-validasi");
+const krsMahasiswaRoutes = require("./routes/krs-mahasiswa");
+const matkulKrsRoutes = require("./routes/matkul-krs");
+const unsurPenilaianRoutes = require("./routes/unsur-penilaian");
+const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
+const kurikulumRoutes = require("./routes/kurikulum");
+const mataKuliahRoutes = require("./routes/mata-kuliah");
+const aktivitasMahasiswaRoutes = require("./routes/aktivitas-mahasiswa");
 
 // running express server
 const app = express();
@@ -52,6 +62,16 @@ app.use("/dosen", dosenRoutes);
 app.use("/dosen-wali", dosenWaliRoutes);
 app.use("/mahasiswa", mahasiswaRoutes);
 app.use("/sistem-kuliah", sistemKuliahRoutes);
+app.use("/sistem-kuliah-mahasiswa", sistemKuliahMahasiswaRoutes);
+app.use("/status-mahasiswa", statusMahasiswaRoutes);
+app.use("/krs/validasi", krsValidasiRoutes);
+app.use("/krs/mahasiswa", krsMahasiswaRoutes);
+app.use("/krs/matkul-krs", matkulKrsRoutes);
+app.use("/unsur-penilaian", unsurPenilaianRoutes);
+app.use("/bobot-penilaian", bobotPenilaianRoutes);
+app.use("/kurikulum", kurikulumRoutes);
+app.use("/mata-kuliah", mataKuliahRoutes);
+app.use("/aktivitas-mahasiswa", aktivitasMahasiswaRoutes);
 
 // runnning at port 4000 on localhost
 app.listen(4000, () => {
