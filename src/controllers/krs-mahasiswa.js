@@ -40,10 +40,17 @@ const deleteKrsMahasiswaById = (req, res) => {
   });
 };
 
+const getAllMahasiswaBelumKrs = (req, res) => {
+  res.json({
+    message: "Berhasil mengakses get all mahasiswa belum krs",
+  });
+};
+
 module.exports = {
   getAllKrsMahasiswas,
   getKrsMahasiswaById,
   createKrsMahasiswa,
   updateKrsMahasiswaById,
   deleteKrsMahasiswaById,
+  getAllMahasiswaBelumKrs,
 };

@@ -6,6 +6,6 @@ const router = express.Router();
 const KrsValidasiController = require("../controllers/krs-validasi");
 
 // all routes
-router.put("/:id/accept", KrsValidasiController.validasiKrsAccept);
+router.put("/:id/validasi", KrsValidasiController.validasiKrsAccept);
 
 module.exports = router;

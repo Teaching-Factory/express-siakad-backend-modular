@@ -39,6 +39,9 @@ const tagihanMahasiswaRoutes = require("./routes/tagihan-mahasiswa");
 const pembayaranMahasiswaRoutes = require("./routes/pembayaran-mahasiswa");
 const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
 const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
+const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
+const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
+const transkripNilaiRoutes = require("./routes/transkrip-nilai");
 
 // running express server
 const app = express();
@@ -80,6 +83,9 @@ app.use("/tagihan-mahasiswa", tagihanMahasiswaRoutes);
 app.use("/pembayaran-mahasiswa", pembayaranMahasiswaRoutes);
 app.use("/pertemuan-perkuliahan", pertemuanPerkuliahanRoutes);
 app.use("/presensi-perkuliahan", presensiPerkuliahanRoutes);
+app.use("/nilai-perkuliahan", nilaiPerkuliahanRoutes);
+app.use("/khs-mahasiswa", khsMahasiswaRoutes);
+app.use("/transkrip-nilai", transkripNilaiRoutes);
 
 // runnning at port 4000 on localhost
 app.listen(4000, () => {

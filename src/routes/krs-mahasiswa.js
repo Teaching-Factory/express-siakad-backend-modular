@@ -11,5 +11,6 @@ router.get("/:id/get", KrsMahasiswaController.getKrsMahasiswaById);
 router.post("/create", KrsMahasiswaController.createKrsMahasiswa);
 router.put("/:id/update", KrsMahasiswaController.updateKrsMahasiswaById);
 router.delete("/:id/delete", KrsMahasiswaController.deleteKrsMahasiswaById);
+router.get("/belum-krs", KrsMahasiswaController.getAllMahasiswaBelumKrs);
 
 module.exports = router;
