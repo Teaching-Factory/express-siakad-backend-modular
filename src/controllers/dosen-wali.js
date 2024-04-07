@@ -40,10 +40,21 @@ const deleteDosenWaliById = (req, res) => {
   });
 };
 
+const daftarMahasiswaWali = (req, res) => {
+  // Dapatkan ID dari parameter permintaan
+  const dosenWaliId = req.params.id;
+
+  res.json({
+    message: "Berhasil mengakses daftar mahasiswa wali by id",
+    dosenWaliId: dosenWaliId,
+  });
+};
+
 module.exports = {
   getAllDosenWalis,
   getDosenWaliById,
   createDosenWali,
   updateDosenWaliById,
   deleteDosenWaliById,
+  daftarMahasiswaWali,
 };

@@ -35,6 +35,10 @@ const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
 const kurikulumRoutes = require("./routes/kurikulum");
 const mataKuliahRoutes = require("./routes/mata-kuliah");
 const aktivitasMahasiswaRoutes = require("./routes/aktivitas-mahasiswa");
+const tagihanMahasiswaRoutes = require("./routes/tagihan-mahasiswa");
+const pembayaranMahasiswaRoutes = require("./routes/pembayaran-mahasiswa");
+const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
+const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
 
 // running express server
 const app = express();
@@ -72,6 +76,10 @@ app.use("/bobot-penilaian", bobotPenilaianRoutes);
 app.use("/kurikulum", kurikulumRoutes);
 app.use("/mata-kuliah", mataKuliahRoutes);
 app.use("/aktivitas-mahasiswa", aktivitasMahasiswaRoutes);
+app.use("/tagihan-mahasiswa", tagihanMahasiswaRoutes);
+app.use("/pembayaran-mahasiswa", pembayaranMahasiswaRoutes);
+app.use("/pertemuan-perkuliahan", pertemuanPerkuliahanRoutes);
+app.use("/presensi-perkuliahan", presensiPerkuliahanRoutes);
 
 // runnning at port 4000 on localhost
 app.listen(4000, () => {

@@ -6,7 +6,7 @@ const router = express.Router();
 const AktivitasMahasiswaController = require("../controllers/aktivitas-mahasiswa");
 
 // all routes
-router.get("/", AktivitasMahasiswaController.getAktivitasMahasiswaById);
+router.get("/", AktivitasMahasiswaController.getAllAktivitasMahasiswas);
 router.get("/:id/get", AktivitasMahasiswaController.getAktivitasMahasiswaById);
 router.post("/create", AktivitasMahasiswaController.createAktivitasMahasiswa);
 router.put("/:id/update", AktivitasMahasiswaController.updateAktivitasMahasiswaById);

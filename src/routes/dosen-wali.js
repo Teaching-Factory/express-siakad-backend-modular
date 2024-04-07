@@ -11,5 +11,6 @@ router.get("/:id/get", DosenWaliController.getDosenWaliById);
 router.post("/create", DosenWaliController.createDosenWali);
 router.put("/:id/update", DosenWaliController.updateDosenWaliById);
 router.delete("/:id/delete", DosenWaliController.deleteDosenWaliById);
+router.get("/:id/daftar-mahasiswa-wali", DosenWaliController.daftarMahasiswaWali);
 
 module.exports = router;
