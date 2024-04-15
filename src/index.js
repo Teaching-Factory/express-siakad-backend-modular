@@ -1,5 +1,6 @@
 // define express server
 const express = require("express");
+const mysql = require("mysql2");
 
 // import middleware
 const middlewareLogRequest = require("./middlewares/logs");
@@ -49,6 +50,16 @@ const app = express();
 // middleware request
 app.use(middlewareLogRequest);
 
+// middleware request json from client
+app.use(express.json());
+
+// Create the connection pool. The pool-specific settings are the defaults
+const pool = mysql.createPool({
+  host: "localhost",
+  user: "root",
+  database: "express_siakad",
+});
+
 app.use("/auth", authRoutes);
 app.use("/role-permission", rolePermissionRoutes);
 app.use("/periode", periodeRoutes);
@@ -86,6 +97,19 @@ app.use("/presensi-perkuliahan", presensiPerkuliahanRoutes);
 app.use("/nilai-perkuliahan", nilaiPerkuliahanRoutes);
 app.use("/khs-mahasiswa", khsMahasiswaRoutes);
 app.use("/transkrip-nilai", transkripNilaiRoutes);
+
+app.use("/", (req, res, next) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error connecting to database:", err);
+      res.status(500).json({ error: "Error connecting to database" });
+    } else {
+      console.log("Database connected!");
+      connection.release(); // Kembalikan koneksi ke pool
+      next(); // Lanjutkan ke middleware atau rute berikutnya
+    }
+  });
+});
 
 // runnning at port 4000 on localhost
 app.listen(4000, () => {

@@ -1,7 +1,13 @@
 // role
 const getAllRoles = (req, res) => {
+  const roles = {
+    id: "1",
+    nama: "Admin Prodi",
+  };
+
   res.json({
     message: "Berhasil mengakses get all roles",
+    data: roles,
   });
 };
 
@@ -17,8 +23,11 @@ const getRoleById = (req, res) => {
 };
 
 const createRole = (req, res) => {
+  console.log(req.body);
+
   res.json({
     message: "Berhasil mengakses create role",
+    data: req.body,
   });
 };
 
@@ -26,9 +35,13 @@ const updateRoleById = (req, res) => {
   // Dapatkan ID dari parameter permintaan
   const roleId = req.params.id;
 
+  const { id } = req.params;
+  console.log("id_role: ", id);
+
   res.json({
     message: "Berhasil mengakses update role by id",
     roleId: roleId,
+    data: req.body,
   });
 };
 
@@ -36,9 +49,13 @@ const deleteRoleById = (req, res) => {
   // Dapatkan ID dari parameter permintaan
   const roleId = req.params.id;
 
+  const { id } = req.params;
+  console.log("id_role: ", id);
+
   res.json({
     message: "Berhasil mengakses delete role by id",
     roleId: roleId,
+    data: { id: 1, nama_role: "Admin Prodi" },
   });
 };
 
