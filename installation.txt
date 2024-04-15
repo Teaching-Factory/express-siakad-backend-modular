@@ -13,5 +13,8 @@ nvm use 16.14
 # install mysql2
 yarn add mysql2
 
+# install .env
+yarn add dotenv 
+
 # running app
 yarn start

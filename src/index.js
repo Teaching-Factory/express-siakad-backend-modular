@@ -1,9 +1,9 @@
+// configuration env
+require("dotenv").config();
+const PORT = process.env.PORT || 5000;
+
 // define express server
 const express = require("express");
-const mysql = require("mysql2");
-
-// import middleware
-const middlewareLogRequest = require("./middlewares/logs");
 
 // import routes
 const authRoutes = require("./routes/auth");
@@ -44,21 +44,32 @@ const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
 const transkripNilaiRoutes = require("./routes/transkrip-nilai");
 
+// import middleware
+const middlewareLogRequest = require("./middlewares/logs");
+const middlewareDatabaseConnection = require("./middlewares/database");
+
 // running express server
 const app = express();
 
 // middleware request
 app.use(middlewareLogRequest);
 
+// Check database connection middleware
+app.use((req, res, next) => {
+  middlewareDatabaseConnection.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error connecting to database:", err);
+      res.status(500).json({ error: "Error connecting to database" });
+    } else {
+      console.log("Database connected!");
+      connection.release(); // Kembalikan koneksi ke pool
+      next(); // Lanjutkan ke middleware atau rute berikutnya
+    }
+  });
+});
+
 // middleware request json from client
 app.use(express.json());
-
-// Create the connection pool. The pool-specific settings are the defaults
-const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  database: "express_siakad",
-});
 
 app.use("/auth", authRoutes);
 app.use("/role-permission", rolePermissionRoutes);
@@ -98,20 +109,7 @@ app.use("/nilai-perkuliahan", nilaiPerkuliahanRoutes);
 app.use("/khs-mahasiswa", khsMahasiswaRoutes);
 app.use("/transkrip-nilai", transkripNilaiRoutes);
 
-app.use("/", (req, res, next) => {
-  pool.getConnection((err, connection) => {
-    if (err) {
-      console.error("Error connecting to database:", err);
-      res.status(500).json({ error: "Error connecting to database" });
-    } else {
-      console.log("Database connected!");
-      connection.release(); // Kembalikan koneksi ke pool
-      next(); // Lanjutkan ke middleware atau rute berikutnya
-    }
-  });
-});
-
 // runnning at port 4000 on localhost
-app.listen(4000, () => {
-  console.log("Server berhasil running di port 4000");
+app.listen(PORT, () => {
+  console.log(`Server berhasil running di port ${PORT}`);
 });
