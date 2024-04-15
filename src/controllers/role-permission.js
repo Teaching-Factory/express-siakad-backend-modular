@@ -2,7 +2,7 @@
 const getAllRoles = (req, res) => {
   const roles = {
     id: "1",
-    nama: "Admin Prodi",
+    nama_role: "Admin Prodi",
   };
 
   res.json({

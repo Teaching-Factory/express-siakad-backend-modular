@@ -1,0 +1,25 @@
+# inisialisasi
+yarn init
+yarn add express nodemon
+
+# uprgade nvm 16.14
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" (optional)
+nvm install 16.14
+nvm use 16.14
+
+# install mysql2
+yarn add mysql2
+
+# install .env
+yarn add dotenv 
+
+# install sequelize 
+yarn add sequelize 
+npx sequelize-cli init
+
+# running app
+yarn start
+

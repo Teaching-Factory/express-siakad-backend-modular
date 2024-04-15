@@ -54,19 +54,15 @@ const app = express();
 // middleware request
 app.use(middlewareLogRequest);
 
-// Check database connection middleware
-app.use((req, res, next) => {
-  middlewareDatabaseConnection.getConnection((err, connection) => {
-    if (err) {
-      console.error("Error connecting to database:", err);
-      res.status(500).json({ error: "Error connecting to database" });
-    } else {
-      console.log("Database connected!");
-      connection.release(); // Kembalikan koneksi ke pool
-      next(); // Lanjutkan ke middleware atau rute berikutnya
-    }
+// Uji koneksi ke database saat aplikasi dimulai
+middlewareDatabaseConnection
+  .authenticate()
+  .then(() => {
+    console.log("Database connection has been established successfully.");
+  })
+  .catch((err) => {
+    console.error("Unable to connect to the database:", err);
   });
-});
 
 // middleware request json from client
 app.use(express.json());
