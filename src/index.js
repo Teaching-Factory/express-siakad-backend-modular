@@ -47,6 +47,7 @@ const transkripNilaiRoutes = require("./routes/transkrip-nilai");
 // import middleware
 const middlewareLogRequest = require("./middlewares/logs");
 const middlewareDatabaseConnection = require("./middlewares/database");
+const errHandler = require("./middlewares/error-handler");
 
 // running express server
 const app = express();
@@ -104,6 +105,8 @@ app.use("/presensi-perkuliahan", presensiPerkuliahanRoutes);
 app.use("/nilai-perkuliahan", nilaiPerkuliahanRoutes);
 app.use("/khs-mahasiswa", khsMahasiswaRoutes);
 app.use("/transkrip-nilai", transkripNilaiRoutes);
+
+app.use(errHandler);
 
 // runnning at port 4000 on localhost
 app.listen(PORT, () => {

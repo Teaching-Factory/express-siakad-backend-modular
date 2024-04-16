@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Role extends Model {
     /**
@@ -13,11 +11,27 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Role.init({
-    nama_role: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Role',
-  });
+  Role.init(
+    {
+      nama_role: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+          notEmpty: { args: true, msg: "nama_role is required" },
+          notNull: { args: true, msg: "nama_role is required" },
+          len: { args: [1, 50], msg: "nama_role must be between 1 and 50 characters" },
+          isString(value) {
+            if (typeof value !== "string") {
+              throw new Error("nama_role must be a string");
+            }
+          },
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "Role",
+    }
+  );
   return Role;
 };

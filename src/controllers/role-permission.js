@@ -1,105 +1,243 @@
+// Import model Role tanpa kurung kurawal
+const { Role } = require("../../models");
+const { Permission } = require("../../models");
+
 // role
-const getAllRoles = (req, res) => {
-  const roles = {
-    id: "1",
-    nama_role: "Admin Prodi",
-  };
+const getAllRoles = async (req, res, next) => {
+  try {
+    // Ambil semua data roles dari database
+    const roles = await Role.findAll();
 
-  res.json({
-    message: "Berhasil mengakses get all roles",
-    data: roles,
-  });
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Role Success",
+      data: roles,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getRoleById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const roleId = req.params.id;
+const getRoleById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const roleId = req.params.id;
 
-  // Kirim respons JSON dengan pesan berhasil dan ID
-  res.json({
-    message: "Berhasil mengakses role berdasarkan ID",
-    roleId: roleId,
-  });
+    // Cari data role berdasarkan ID di database
+    const role = await Role.findByPk(roleId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!role) {
+      return res.status(404).json({
+        message: `<===== Role With ID ${roleId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Role By ID ${roleId} Success:`,
+      data: role,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const createRole = (req, res) => {
-  console.log(req.body);
+const createRole = async (req, res, next) => {
+  try {
+    const { nama_role } = req.body;
+    // Gunakan metode create untuk membuat data role baru
+    const newRole = await Role.create({ nama_role });
 
-  res.json({
-    message: "Berhasil mengakses create role",
-    data: req.body,
-  });
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: "<===== CREATE Role Success",
+      data: newRole,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const updateRoleById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const roleId = req.params.id;
+const updateRoleById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const roleId = req.params.id;
 
-  const { id } = req.params;
-  console.log("id_role: ", id);
+    // Dapatkan data yang akan diupdate dari body permintaan
+    const { nama_role } = req.body;
 
-  res.json({
-    message: "Berhasil mengakses update role by id",
-    roleId: roleId,
-    data: req.body,
-  });
+    // Cari data role berdasarkan ID di database
+    let role = await Role.findByPk(roleId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!role) {
+      return res.status(404).json({
+        message: `<===== Role With ID ${roleId} Not Found:`,
+      });
+    }
+
+    // Update data role
+    role.nama_role = nama_role;
+
+    // Simpan perubahan ke dalam database
+    await role.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== UPDATE Role With ID ${roleId} Success:`,
+      data: role,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const deleteRoleById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const roleId = req.params.id;
+const deleteRoleById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const roleId = req.params.id;
 
-  const { id } = req.params;
-  console.log("id_role: ", id);
+    // Cari data role berdasarkan ID di database
+    let role = await Role.findByPk(roleId);
 
-  res.json({
-    message: "Berhasil mengakses delete role by id",
-    roleId: roleId,
-    data: { id: 1, nama_role: "Admin Prodi" },
-  });
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!role) {
+      return res.status(404).json({
+        message: `<===== Role With ID ${roleId} Not Found:`,
+      });
+    }
+
+    // Hapus data role dari database
+    await role.destroy();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== DELETE Role With ID ${roleId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // permission
-const getAllPermissions = (req, res) => {
-  res.json({
-    message: "Berhasil mengakses get all permissions",
-  });
+const getAllPermissions = async (req, res, next) => {
+  try {
+    // Ambil semua data permissions dari database
+    const permissions = await Permission.findAll();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Permission Success",
+      data: permissions,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getPermissionById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const permissionId = req.params.id;
+const getPermissionById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const permisssionId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses get permission by id",
-    permissionId: permissionId,
-  });
+    // Cari data permission berdasarkan ID di database
+    const permission = await Permission.findByPk(permisssionId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!permission) {
+      return res.status(404).json({
+        message: `<===== Permission With ID ${permisssionId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Permission By ID ${permisssionId} Success:`,
+      data: permission,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const createPermission = (req, res) => {
-  res.json({
-    message: "Berhasil mengakses create permission",
-  });
+const createPermission = async (req, res, next) => {
+  try {
+    const { nama_permission } = req.body;
+
+    // Gunakan metode create untuk membuat data permission baru
+    const newPermission = await Permission.create({ nama_permission });
+
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: "<===== CREATE Permission Success",
+      data: newPermission,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const updatePermissionById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const permissionId = req.params.id;
+const updatePermissionById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const permissionId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses update permission by id",
-    permissionId: permissionId,
-  });
+    // Dapatkan data yang akan diupdate dari body permintaan
+    const { nama_permission } = req.body;
+
+    // Cari data permission berdasarkan ID di database
+    let permission = await Permission.findByPk(permissionId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!permission) {
+      return res.status(404).json({
+        message: `<===== Permission With ID ${permissionId} Not Found:`,
+      });
+    }
+
+    // Update data permission
+    permission.nama_permission = nama_permission;
+
+    // Simpan perubahan ke dalam database
+    await permission.validate();
+    await permission.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== UPDATE Permission With ID ${permissionId} Success:`,
+      data: permission,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const deletePermissionById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const permissionId = req.params.id;
+const deletePermissionById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const permissionId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses delete permission by id",
-    permissionId: permissionId,
-  });
+    // Cari data permission berdasarkan ID di database
+    let permission = await Permission.findByPk(permissionId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!permission) {
+      return res.status(404).json({
+        message: `<===== Permission With ID ${permissionId} Not Found:`,
+      });
+    }
+
+    // Hapus data permission dari database
+    await permission.destroy();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== DELETE Permission With ID ${permissionId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
