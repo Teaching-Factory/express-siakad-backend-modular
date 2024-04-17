@@ -20,4 +20,7 @@ router.get("/:id/get-permission", RolePermissionController.getPermissionById);
 router.put("/:id/update-permission", RolePermissionController.updatePermissionById);
 router.delete("/:id/delete-permission", RolePermissionController.deletePermissionById);
 
+// role permissions
+router.post("/:id_role/manage", RolePermissionController.manageRolePermission);
+
 module.exports = router;

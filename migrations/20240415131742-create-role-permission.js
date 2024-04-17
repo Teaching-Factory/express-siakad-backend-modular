@@ -13,7 +13,9 @@ module.exports = {
         type: Sequelize.INTEGER(20),
         allowNull: false,
         references: {
-          model: "roles",
+          model: {
+            tableName: "roles",
+          },
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -23,7 +25,9 @@ module.exports = {
         type: Sequelize.INTEGER(20),
         allowNull: false,
         references: {
-          model: "permissions",
+          tableName: {
+            tableName: "permissions",
+          },
           key: "id",
         },
         onUpdate: "CASCADE",

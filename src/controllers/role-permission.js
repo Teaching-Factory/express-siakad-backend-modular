@@ -1,6 +1,7 @@
 // Import model Role tanpa kurung kurawal
 const { Role } = require("../../models");
 const { Permission } = require("../../models");
+const { RolePermission } = require("../../models");
 
 // role
 const getAllRoles = async (req, res, next) => {
@@ -240,6 +241,40 @@ const deletePermissionById = async (req, res, next) => {
   }
 };
 
+const manageRolePermission = async (req, res, next) => {
+  try {
+    const { id_role } = req.params; // Ambil id_role dari parameter URL
+    const permissions = req.body.permissions; // Ambil permissions dari body request
+
+    // Pastikan role dengan id_role sudah ada
+    const role = await Role.findByPk(id_role);
+    if (!role) {
+      return res.status(404).json({ message: `Role with ID ${id_role} Not Found` });
+    }
+
+    // Hapus semua entri RolePermission yang terkait dengan role tersebut
+    await RolePermission.destroy({
+      where: { id_role },
+    });
+
+    // Tambahkan permissions ke dalam data RolePermission
+    for (const permission of permissions) {
+      await RolePermission.create({
+        id_role: role.id, // Gunakan ID Role yang diberikan
+        id_permission: permission.id,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: `<===== Manage Role Permission Success:`,
+      data: { role_id: id_role, permissions },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRoles,
   createRole,
@@ -251,4 +286,5 @@ module.exports = {
   getPermissionById,
   updatePermissionById,
   deletePermissionById,
+  manageRolePermission,
 };
