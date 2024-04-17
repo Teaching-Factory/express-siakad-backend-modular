@@ -20,6 +20,10 @@ yarn add dotenv
 yarn add sequelize 
 npx sequelize-cli init
 
+# migration models
+npx sequelize-cli db:migrate
+npx sequelize-cli db:migrate:undo (optional)
+
 # running app
 yarn start
 

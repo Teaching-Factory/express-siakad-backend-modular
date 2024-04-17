@@ -1,33 +1,32 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class RolePermission extends Model {
+  class Wilayah extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      RolePermission.belongsTo(models.Role, { foreignKey: "id_role" });
-      RolePermission.belongsTo(models.Permission, { foreignKey: "id_permission" });
+      Wilayah.belongsTo(models.Negara, { foreignKey: "id_negara" });
     }
   }
-  RolePermission.init(
+  Wilayah.init(
     {
-      id_role: {
-        type: DataTypes.INTEGER(20),
+      id_negara: {
+        type: DataTypes.CHAR(2),
         allowNull: false,
       },
-      id_permission: {
-        type: DataTypes.INTEGER(20),
+      nama_wilayah: {
+        type: DataTypes.STRING(60),
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "RolePermission",
-      tableName: "role_permissions",
+      modelName: "Wilayah",
+      tableName: "wilayahs",
     }
   );
-  return RolePermission;
+  return Wilayah;
 };

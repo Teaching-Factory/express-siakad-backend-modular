@@ -241,6 +241,38 @@ const deletePermissionById = async (req, res, next) => {
   }
 };
 
+const listPermissionsFromRole = async (req, res, next) => {
+  try {
+    // Ambil id_role dari parameter URL
+    const { id_role } = req.params;
+
+    // Temukan role dengan id_role yang diberikan
+    const role = await Role.findByPk(id_role, {
+      include: { model: RolePermission, as: "RolePermissions" },
+    });
+
+    // Periksa apakah role ditemukan
+    if (!role) {
+      return res.status(404).json({ message: `Role with ID ${id_role} Not Found` });
+    }
+
+    // Ekstrak semua permission dari role
+    const permissions = role.RolePermissions.map((permission) => ({
+      id: permission.id,
+      id_role: permission.id_role,
+      id_permission: permission.id_permission,
+    }));
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Permissions from Role Success",
+      data: permissions,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const manageRolePermission = async (req, res, next) => {
   try {
     const { id_role } = req.params; // Ambil id_role dari parameter URL
@@ -287,4 +319,5 @@ module.exports = {
   updatePermissionById,
   deletePermissionById,
   manageRolePermission,
+  listPermissionsFromRole,
 };
