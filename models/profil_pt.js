@@ -82,7 +82,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       tanggal_sk_pendirian: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       id_status_milik: {
@@ -102,7 +102,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       tanggal_izin_operasional: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       id_perguruan_tinggi: {

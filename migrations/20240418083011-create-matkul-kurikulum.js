@@ -18,7 +18,7 @@ module.exports = {
         allowNull: false,
       },
       tgl_create: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       id_kurikulum: {

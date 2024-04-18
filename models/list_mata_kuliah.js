@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   ListMataKuliah.init(
     {
       tgl_create: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATE, // datetime
         allowNull: false,
       },
       jenis_mk: {
@@ -85,11 +85,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       tanggal_mulai_efektif: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       tanggal_selesai_efektif: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       id_prodi: {

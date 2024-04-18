@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       tanggal_sk_cpns: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       no_sk_pengangkatan: {
@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       mulai_sk_pengangkatan: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       id_sumber_gaji: {
@@ -116,7 +116,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       tanggal_mulai_cpns: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       id_dosen: {

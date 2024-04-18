@@ -49,6 +49,11 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "MatkulKurikulum",
       tableName: "matkul_kurikulums",
+      hooks: {
+        beforeCreate: (instance, options) => {
+          instance.tgl_create = sequelize.literal("CURRENT_DATE");
+        },
+      },
     }
   );
   return MatkulKurikulum;

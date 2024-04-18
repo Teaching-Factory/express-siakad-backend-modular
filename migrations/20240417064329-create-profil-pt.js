@@ -77,7 +77,7 @@ module.exports = {
         allowNull: true,
       },
       tanggal_sk_pendirian: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       id_status_milik: {
@@ -97,7 +97,7 @@ module.exports = {
         allowNull: true,
       },
       tanggal_izin_operasional: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       id_perguruan_tinggi: {

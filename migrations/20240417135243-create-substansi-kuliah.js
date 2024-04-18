@@ -10,11 +10,11 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       tgl_create: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       last_update: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       id_substansi: {

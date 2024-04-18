@@ -26,7 +26,7 @@ module.exports = {
         allowNull: false,
       },
       tanggal_lahir: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       id_agama: {

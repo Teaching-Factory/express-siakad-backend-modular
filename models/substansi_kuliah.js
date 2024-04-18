@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
   SubstansiKuliah.init(
     {
       tgl_create: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       last_update: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       id_substansi: {

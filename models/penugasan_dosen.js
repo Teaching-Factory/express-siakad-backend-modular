@@ -1,4 +1,4 @@
-"use strict";
+("use strict");
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PenugasanDosen extends Model {
@@ -25,19 +25,19 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       tanggal_surat_tugas: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       mulai_surat_tugas: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       tanggal_create: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       tanggal_ptk_keluar: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       id_dosen: {
@@ -61,6 +61,11 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "PenugasanDosen",
       tableName: "penugasan_dosens",
+      hooks: {
+        beforeCreate: (instance, options) => {
+          instance.tanggal_create = sequelize.literal("CURRENT_DATE");
+        },
+      },
     }
   );
   return PenugasanDosen;

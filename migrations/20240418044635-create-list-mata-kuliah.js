@@ -78,11 +78,11 @@ module.exports = {
         allowNull: false,
       },
       tanggal_mulai_efektif: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       tanggal_selesai_efektif: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       id_prodi: {

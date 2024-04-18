@@ -18,19 +18,19 @@ module.exports = {
         allowNull: false,
       },
       tanggal_surat_tugas: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       mulai_surat_tugas: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       tanggal_create: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
       },
       tanggal_ptk_keluar: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: true,
       },
       id_dosen: {
