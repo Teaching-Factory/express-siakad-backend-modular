@@ -5,9 +5,8 @@ module.exports = {
     await queryInterface.createTable("substansi_kuliahs", {
       id_subtansi_kuliah: {
         allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING(32),
+        defaultValue: Sequelize.UUIDV4,
       },
       tgl_create: {
         type: Sequelize.DATEONLY,
@@ -18,7 +17,7 @@ module.exports = {
         allowNull: true,
       },
       id_substansi: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {

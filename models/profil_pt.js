@@ -106,7 +106,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_perguruan_tinggi: {
-        type: DataTypes.UUID,
+        type: DataTypes.STRING(32),
         allowNull: true,
       },
       id_wilayah: {

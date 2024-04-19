@@ -2,72 +2,36 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("penugasan_dosens", {
-      id_registrasi_dosen: {
+    await queryInterface.createTable("kelas_kuliahs", {
+      id_kelas_kuliah: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING(32),
         defaultValue: Sequelize.UUIDV4,
       },
-      jk: {
-        type: Sequelize.CHAR(1),
+      nama_kelas_kuliah: {
+        type: Sequelize.STRING(5),
         allowNull: false,
       },
-      nama_surat_tugas: {
-        type: Sequelize.STRING(80),
-        allowNull: false,
-      },
-      tanggal_surat_tugas: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
-      },
-      mulai_surat_tugas: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
-      },
-      tanggal_create: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
-      },
-      tanggal_ptk_keluar: {
-        type: Sequelize.DATEONLY,
+      sks: {
+        type: Sequelize.DECIMAL(5, 0),
         allowNull: true,
       },
-      id_dosen: {
-        type: Sequelize.STRING(32),
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "dosens",
-          },
-          key: "id_dosen",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+      jumlah_mahasiswa: {
+        type: Sequelize.INTEGER(10),
+        allowNull: true,
       },
-      id_tahun_ajaran: {
-        type: Sequelize.INTEGER(4),
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "tahun_ajarans",
-          },
-          key: "id_tahun_ajaran",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+      apa_untuk_pditt: {
+        type: Sequelize.DECIMAL(1, 0),
+        allowNull: true,
       },
-      id_perguruan_tinggi: {
-        type: Sequelize.STRING(32),
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "perguruan_tinggis",
-          },
-          key: "id_perguruan_tinggi",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+      lingkup: {
+        type: Sequelize.DECIMAL(1, 0),
+        allowNull: true,
+      },
+      mode: {
+        type: Sequelize.CHAR(1),
+        allowNull: true,
       },
       id_prodi: {
         type: Sequelize.STRING(32),
@@ -77,6 +41,42 @@ module.exports = {
             tableName: "prodis",
           },
           key: "id_prodi",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_semester: {
+        type: Sequelize.CHAR(5),
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "semesters",
+          },
+          key: "id_semester",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_matkul: {
+        type: Sequelize.STRING(32),
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "list_mata_kuliahs",
+          },
+          key: "id_matkul",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_dosen: {
+        type: Sequelize.STRING(32),
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "dosens",
+          },
+          key: "id_dosen",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -92,6 +92,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("penugasan_dosens");
+    await queryInterface.dropTable("kelas_kuliahs");
   },
 };

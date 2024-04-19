@@ -17,7 +17,7 @@ module.exports = {
         allowNull: false,
       },
       id_prodi: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {

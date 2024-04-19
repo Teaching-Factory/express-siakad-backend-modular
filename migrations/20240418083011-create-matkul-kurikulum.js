@@ -22,7 +22,7 @@ module.exports = {
         allowNull: false,
       },
       id_kurikulum: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
@@ -34,7 +34,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_matkul: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
@@ -46,7 +46,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_prodi: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {

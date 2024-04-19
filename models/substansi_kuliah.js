@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_substansi: {
-        type: DataTypes.UUID,
+        type: DataTypes.STRING(32),
         allowNull: false,
       },
     },

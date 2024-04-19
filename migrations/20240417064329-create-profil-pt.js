@@ -101,7 +101,7 @@ module.exports = {
         allowNull: true,
       },
       id_perguruan_tinggi: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         allowNull: true,
         references: {
           model: {

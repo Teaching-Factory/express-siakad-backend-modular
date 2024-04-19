@@ -6,7 +6,7 @@ module.exports = {
       id_matkul: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         defaultValue: Sequelize.UUIDV4,
       },
       tgl_create: {
@@ -86,7 +86,7 @@ module.exports = {
         allowNull: true,
       },
       id_prodi: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {

@@ -6,7 +6,7 @@ module.exports = {
       id_prodi: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.UUID,
+        type: Sequelize.STRING(32),
         defaultValue: Sequelize.UUIDV4,
       },
       kode_program_studi: {

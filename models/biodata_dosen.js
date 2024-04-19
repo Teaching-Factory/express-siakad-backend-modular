@@ -120,7 +120,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_dosen: {
-        type: DataTypes.UUID,
+        type: DataTypes.STRING(32),
         allowNull: false,
       },
       id_lembaga_pengangkatan: {
