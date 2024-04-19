@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       PenugasanDosen.belongsTo(models.TahunAjaran, { foreignKey: "id_tahun_ajaran" });
       PenugasanDosen.belongsTo(models.PerguruanTinggi, { foreignKey: "id_perguruan_tinggi" });
       PenugasanDosen.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
+      PenugasanDosen.hasMany(models.PerhitunganSKS, { foreignKey: "id_registrasi_dosen" });
     }
   }
   PenugasanDosen.init(

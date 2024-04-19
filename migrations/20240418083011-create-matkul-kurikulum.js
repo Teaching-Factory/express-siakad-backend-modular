@@ -38,33 +38,9 @@ module.exports = {
         allowNull: false,
         references: {
           model: {
-            tableName: "list_mata_kuliahs",
+            tableName: "mata_kuliahs",
           },
           key: "id_matkul",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_prodi: {
-        type: Sequelize.STRING(32),
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "prodis",
-          },
-          key: "id_prodi",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_semester: {
-        type: Sequelize.CHAR(5),
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "semesters",
-          },
-          key: "id_semester",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

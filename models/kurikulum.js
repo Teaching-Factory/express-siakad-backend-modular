@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Kurikulum.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
       Kurikulum.belongsTo(models.Semester, { foreignKey: "id_semester" });
-      Kurikulum.belongsTo(models.MatkulKurikulum, { foreignKey: "id_semester" });
+      Kurikulum.hasMany(models.DetailKurikulum, { foreignKey: "id_kurikulum" });
+      Kurikulum.hasMany(models.MatkulKurikulum, { foreignKey: "id_kurikulum" });
     }
   }
   Kurikulum.init(

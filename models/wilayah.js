@@ -9,17 +9,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Wilayah.belongsTo(models.Negara, { foreignKey: "id_negara" });
+      Wilayah.hasMany(models.ProfilPT, { foreignKey: "id_wilayah" });
       Wilayah.hasMany(models.BiodataDosen, { foreignKey: "id_wilayah" });
     }
   }
   Wilayah.init(
     {
-      id_negara: {
-        type: DataTypes.CHAR(2),
-        allowNull: false,
-      },
       nama_wilayah: {
         type: DataTypes.STRING(60),
+        allowNull: false,
+      },
+      id_negara: {
+        type: DataTypes.CHAR(2),
         allowNull: false,
       },
     },

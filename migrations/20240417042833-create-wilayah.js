@@ -8,6 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.CHAR(8),
       },
+      nama_wilayah: {
+        type: Sequelize.STRING(60),
+        allowNull: false,
+      },
       id_negara: {
         type: Sequelize.CHAR(2),
         allowNull: false,
@@ -19,10 +23,6 @@ module.exports = {
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
-      },
-      nama_wilayah: {
-        type: Sequelize.STRING(60),
-        allowNull: false,
       },
       createdAt: {
         allowNull: false,

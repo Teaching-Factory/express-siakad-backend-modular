@@ -10,8 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Semester.belongsTo(models.TahunAjaran, { foreignKey: "id_tahun_ajaran" });
       Semester.hasMany(models.Kurikulum, { foreignKey: "id_semester" });
-      Semester.hasMany(models.DetailKurikulum, { foreignKey: "id_semester" });
-      Semester.hasMany(models.MatkulKurikulum, { foreignKey: "id_semester" });
+      Semester.hasMany(models.KelasKuliah, { foreignKey: "id_semester" });
     }
   }
   Semester.init(

@@ -9,8 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       BiodataDosen.belongsTo(models.Dosen, { foreignKey: "id_dosen" });
-      BiodataDosen.belongsTo(models.Agama, { foreignKey: "id_agama" });
-      BiodataDosen.belongsTo(models.StatusKeaktifanPegawai, { foreignKey: "id_status_aktif" });
       BiodataDosen.belongsTo(models.LembagaPengangkatan, { foreignKey: "id_lembaga_pengangkatan" });
       BiodataDosen.belongsTo(models.PangkatGolongan, { foreignKey: "id_pangkat_golongan" });
       BiodataDosen.belongsTo(models.Wilayah, { foreignKey: "id_wilayah" });

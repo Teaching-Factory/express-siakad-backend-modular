@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("list_mata_kuliahs", {
+    await queryInterface.createTable("mata_kuliahs", {
       id_matkul: {
         allowNull: false,
         primaryKey: true,
@@ -108,6 +108,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("list_mata_kuliahs");
+    await queryInterface.dropTable("mata_kuliahs");
   },
 };

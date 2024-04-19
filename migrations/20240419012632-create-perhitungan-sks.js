@@ -2,41 +2,53 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("mata_kuliahs", {
-      id_mata_kuliah: {
+    await queryInterface.createTable("perhitungan_sks", {
+      id_perhitungan_sks: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER(10),
       },
-      id_jenis_mata_kuliah: {
-        type: Sequelize.CHAR(1),
+      rencana_minggu_pertemuan: {
+        type: Sequelize.DECIMAL(2, 0),
         allowNull: false,
       },
-      id_kelompok_mata_kuliah: {
-        type: Sequelize.CHAR(1),
+      perhitungan_sks: {
+        type: Sequelize.DECIMAL(5, 2),
         allowNull: false,
       },
-      id_matkul: {
+      id_kelas_kuliah: {
         type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
-            tableName: "list_mata_kuliahs",
+            tableName: "kelas_kuliahs",
           },
-          key: "id_matkul",
+          key: "id_kelas_kuliah",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_prodi: {
+      id_registrasi_dosen: {
         type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
-            tableName: "prodis",
+            tableName: "penugasan_dosens",
           },
-          key: "id_prodi",
+          key: "id_registrasi_dosen",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_substansi: {
+        type: Sequelize.STRING(32),
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "substansis",
+          },
+          key: "id_substansi",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -52,6 +64,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("mata_kuliahs");
+    await queryInterface.dropTable("perhitungan_sks");
   },
 };

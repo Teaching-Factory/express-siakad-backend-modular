@@ -62,7 +62,7 @@ module.exports = {
         allowNull: false,
         references: {
           model: {
-            tableName: "list_mata_kuliahs",
+            tableName: "mata_kuliahs",
           },
           key: "id_matkul",
         },

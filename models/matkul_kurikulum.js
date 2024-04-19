@@ -9,9 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       MatkulKurikulum.belongsTo(models.Kurikulum, { foreignKey: "id_kurikulum" });
-      MatkulKurikulum.belongsTo(models.ListMataKuliah, { foreignKey: "id_matkul" });
-      MatkulKurikulum.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
-      MatkulKurikulum.belongsTo(models.Semester, { foreignKey: "id_semester" });
+      MatkulKurikulum.belongsTo(models.MataKuliah, { foreignKey: "id_matkul" });
     }
   }
   MatkulKurikulum.init(
@@ -34,14 +32,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_matkul: {
         type: DataTypes.STRING(32),
-        allowNull: false,
-      },
-      id_prodi: {
-        type: DataTypes.STRING(32),
-        allowNull: false,
-      },
-      id_semester: {
-        type: DataTypes.CHAR(5),
         allowNull: false,
       },
     },
