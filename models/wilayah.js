@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       Wilayah.belongsTo(models.Negara, { foreignKey: "id_negara" });
       Wilayah.hasMany(models.ProfilPT, { foreignKey: "id_wilayah" });
       Wilayah.hasMany(models.BiodataDosen, { foreignKey: "id_wilayah" });
+      Wilayah.hasMany(models.BiodataMahasiswa, { foreignKey: "id_wilayah" });
     }
   }
   Wilayah.init(
