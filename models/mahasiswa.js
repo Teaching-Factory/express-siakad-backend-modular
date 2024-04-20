@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       Mahasiswa.belongsTo(models.Agama, { foreignKey: "id_agama" });
       Mahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
       Mahasiswa.hasMany(models.BiodataMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.DetailNilaiPerkuliahanKelas, { foreignKey: "id_registrasi_mahasiswa" });
     }
   }
   Mahasiswa.init(
