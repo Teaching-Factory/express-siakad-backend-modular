@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       Mahasiswa.hasMany(models.BiodataMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.DetailNilaiPerkuliahanKelas, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.RiwayatNilaiMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.PesertaKelasKuliah, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.PerkuliahanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.DetailPerkuliahanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.KRSMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.AktivitasKuliahMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
     }
   }
   Mahasiswa.init(

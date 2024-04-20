@@ -2,46 +2,61 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("matkul_kurikulums", {
-      id_matkul_kurikulum: {
+    await queryInterface.createTable("riwayat_nilai_mahasiswas", {
+      id_riwayat_nilai_mahasiswa: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER(10),
       },
-      semester: {
-        type: Sequelize.DECIMAL(2, 0),
+      nilai_angka: {
+        type: Sequelize.DECIMAL(4, 1),
+        allowNull: true,
+      },
+      nilai_huruf: {
+        type: Sequelize.CHAR(3),
         allowNull: false,
       },
-      apakah_wajib: {
-        type: Sequelize.DECIMAL(1, 0),
+      nilai_indeks: {
+        type: Sequelize.DECIMAL(4, 2),
         allowNull: false,
       },
-      tgl_create: {
-        type: Sequelize.DATEONLY,
+      angkatan: {
+        type: Sequelize.CHAR(4),
         allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_DATE"),
       },
-      id_kurikulum: {
+      id_registrasi_mahasiswa: {
         type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
-            tableName: "kurikulums",
+            tableName: "mahasiswas",
           },
-          key: "id_kurikulum",
+          key: "id_registrasi_mahasiswa",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_matkul: {
+      id_periode: {
+        type: Sequelize.CHAR(5),
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "periodes",
+          },
+          key: "id_periode",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_kelas: {
         type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
-            tableName: "mata_kuliahs",
+            tableName: "kelas_kuliahs",
           },
-          key: "id_matkul",
+          key: "id_kelas_kuliah",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -57,6 +72,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("matkul_kurikulums");
+    await queryInterface.dropTable("riwayat_nilai_mahasiswas");
   },
 };

@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       ListMataKuliah.hasMany(models.MataKuliah, { foreignKey: "id_matkul" });
       ListMataKuliah.hasMany(models.MatkulKurikulum, { foreignKey: "id_matkul" });
       ListMataKuliah.hasMany(models.KelasKuliah, { foreignKey: "id_matkul" });
+      ListMataKuliah.hasMany(models.KRSMahasiswa, { foreignKey: "id_matkul" });
+      ListMataKuliah.hasMany(models.MatkulKRS, { foreignKey: "id_matkul" });
     }
   }
   ListMataKuliah.init(
@@ -19,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       tgl_create: {
         type: DataTypes.DATE, // datetime
         allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
       jenis_mk: {
         type: DataTypes.CHAR(1),
@@ -103,7 +106,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "mata_kuliahs",
       hooks: {
         beforeCreate: (instance, options) => {
-          instance.tgl_create = new Date();
+          instance.tgl_create = new Date().toISOString().slice(0, 19).replace("T", " ");
         },
       },
     }

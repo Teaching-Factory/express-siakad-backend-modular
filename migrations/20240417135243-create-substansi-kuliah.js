@@ -11,10 +11,12 @@ module.exports = {
       tgl_create: {
         type: Sequelize.DATEONLY,
         allowNull: true,
+        defaultValue: Sequelize.literal("CURRENT_DATE"),
       },
       last_update: {
         type: Sequelize.DATEONLY,
         allowNull: true,
+        defaultValue: Sequelize.literal("CURRENT_DATE"),
       },
       id_substansi: {
         type: Sequelize.STRING(32),

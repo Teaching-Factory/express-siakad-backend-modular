@@ -12,6 +12,7 @@ module.exports = {
       tgl_create: {
         type: Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       jenis_mk: {
         type: Sequelize.CHAR(1),

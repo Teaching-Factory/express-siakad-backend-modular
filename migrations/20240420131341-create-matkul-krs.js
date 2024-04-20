@@ -2,34 +2,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("matkul_kurikulums", {
-      id_matkul_kurikulum: {
+    await queryInterface.createTable("matkul_krs", {
+      id_matkul_krs: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER(10),
       },
-      semester: {
-        type: Sequelize.DECIMAL(2, 0),
-        allowNull: false,
-      },
-      apakah_wajib: {
-        type: Sequelize.DECIMAL(1, 0),
-        allowNull: false,
-      },
-      tgl_create: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_DATE"),
-      },
-      id_kurikulum: {
+      id_krs: {
         type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
-            tableName: "kurikulums",
+            tableName: "krs_mahasiswas",
           },
-          key: "id_kurikulum",
+          key: "id_krs",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -57,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("matkul_kurikulums");
+    await queryInterface.dropTable("matkul_krs");
   },
 };

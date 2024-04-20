@@ -16,10 +16,12 @@ module.exports = (sequelize, DataTypes) => {
       tgl_create: {
         type: DataTypes.DATEONLY,
         allowNull: true,
+        defaultValue: DataTypes.NOW,
       },
       last_update: {
         type: DataTypes.DATEONLY,
         allowNull: true,
+        defaultValue: DataTypes.NOW,
       },
       id_substansi: {
         type: DataTypes.STRING(32),
@@ -32,10 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "substansi_kuliahs",
       hooks: {
         beforeCreate: (instance, options) => {
-          instance.tgl_create = new Date();
+          instance.tgl_create = new Date().toISOString().split("T")[0];
         },
         beforeUpdate: (instance, options) => {
-          instance.last_update = new Date();
+          instance.last_update = new Date().toISOString().split("T")[0];
         },
       },
     }

@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       Semester.hasMany(models.Kurikulum, { foreignKey: "id_semester" });
       Semester.hasMany(models.KelasKuliah, { foreignKey: "id_semester" });
       Semester.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_periode_masuk" });
+      Semester.hasMany(models.PerkuliahanMahasiswa, { foreignKey: "id_semester" });
+      Semester.hasMany(models.DetailPerkuliahanMahasiswa, { foreignKey: "id_semester" });
+      Semester.hasMany(models.PeriodePerkuliahan, { foreignKey: "id_semester" });
+      Semester.hasMany(models.DetailPeriodePerkuliahan, { foreignKey: "id_semester" });
+      Semester.hasMany(models.AktivitasKuliahMahasiswa, { foreignKey: "id_semester" });
     }
   }
   Semester.init(

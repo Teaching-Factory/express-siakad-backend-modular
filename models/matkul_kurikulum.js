@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       tgl_create: {
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
       id_kurikulum: {
         type: DataTypes.STRING(32),
@@ -41,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "matkul_kurikulums",
       hooks: {
         beforeCreate: (instance, options) => {
-          instance.tgl_create = sequelize.literal("CURRENT_DATE");
+          instance.tgl_create = new Date().toISOString().split("T")[0];
         },
       },
     }

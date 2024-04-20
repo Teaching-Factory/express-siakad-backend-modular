@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Periode.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
       Periode.hasMany(models.Mahasiswa, { foreignKey: "id_periode" });
+      Periode.hasMany(models.RiwayatNilaiMahasiswa, { foreignKey: "id_periode" });
+      Periode.hasMany(models.KRSMahasiswa, { foreignKey: "id_periode" });
     }
   }
   Periode.init(

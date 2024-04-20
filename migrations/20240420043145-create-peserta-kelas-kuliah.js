@@ -2,46 +2,37 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("matkul_kurikulums", {
-      id_matkul_kurikulum: {
+    await queryInterface.createTable("peserta_kelas_kuliahs", {
+      id_peserta_kuliah: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER(10),
       },
-      semester: {
-        type: Sequelize.DECIMAL(2, 0),
+      angkatan: {
+        type: Sequelize.CHAR(4),
         allowNull: false,
       },
-      apakah_wajib: {
-        type: Sequelize.DECIMAL(1, 0),
-        allowNull: false,
-      },
-      tgl_create: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_DATE"),
-      },
-      id_kurikulum: {
+      id_kelas_kuliah: {
         type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
-            tableName: "kurikulums",
+            tableName: "kelas_kuliahs",
           },
-          key: "id_kurikulum",
+          key: "id_kelas_kuliah",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_matkul: {
+      id_registrasi_mahasiswa: {
         type: Sequelize.STRING(32),
         allowNull: false,
         references: {
           model: {
-            tableName: "mata_kuliahs",
+            tableName: "mahasiswas",
           },
-          key: "id_matkul",
+          key: "id_registrasi_mahasiswa",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -57,6 +48,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("matkul_kurikulums");
+    await queryInterface.dropTable("peserta_kelas_kuliahs");
   },
 };
