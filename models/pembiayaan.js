@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   Pembiayaan.init(
     {
       nama_pembiayaan: {
-        type: DataTypes.TRING(50),
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
     },
