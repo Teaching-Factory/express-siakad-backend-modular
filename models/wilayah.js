@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Wilayah.hasMany(models.ProfilPT, { foreignKey: "id_wilayah" });
       Wilayah.hasMany(models.BiodataDosen, { foreignKey: "id_wilayah" });
       Wilayah.hasMany(models.BiodataMahasiswa, { foreignKey: "id_wilayah" });
+      Wilayah.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_wilayah" });
     }
   }
   Wilayah.init(

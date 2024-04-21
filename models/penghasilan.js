@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       Penghasilan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_penghasilan_ayah" });
       Penghasilan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_penghasilan_ibu" });
       Penghasilan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_penghasilan_wali" });
+      Penghasilan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_penghasilan_ayah" });
+      Penghasilan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_penghasilan_ibu" });
+      Penghasilan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_penghasilan_wali" });
     }
   }
   Penghasilan.init(
