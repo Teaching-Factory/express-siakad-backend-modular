@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // relasi tabel parent
       Semester.belongsTo(models.TahunAjaran, { foreignKey: "id_tahun_ajaran" });
+
+      // relasi tabel child
       Semester.hasMany(models.Kurikulum, { foreignKey: "id_semester" });
       Semester.hasMany(models.KelasKuliah, { foreignKey: "id_semester" });
       Semester.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_periode_masuk" });
@@ -19,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       Semester.hasMany(models.AktivitasKuliahMahasiswa, { foreignKey: "id_semester" });
       Semester.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_periode_masuk" });
       Semester.hasMany(models.AktivitasMahasiswa, { foreignKey: "id_semester" });
+      Semester.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_semester" });
     }
   }
   Semester.init(

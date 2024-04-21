@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class RiwayatNilaiMahasiswa extends Model {
+  class RekapKHSMahasiswa extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,16 +9,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi tabel parent
-      RiwayatNilaiMahasiswa.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
-      RiwayatNilaiMahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
-      RiwayatNilaiMahasiswa.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas" });
+      RekapKHSMahasiswa.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      RekapKHSMahasiswa.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
+      RekapKHSMahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
+      RekapKHSMahasiswa.belongsTo(models.MataKuliah, { foreignKey: "id_matkul" });
     }
   }
-  RiwayatNilaiMahasiswa.init(
+  RekapKHSMahasiswa.init(
     {
+      angkatan: {
+        type: DataTypes.CHAR(4),
+        allowNull: false,
+      },
+      nama_periode: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+      },
       nilai_angka: {
         type: DataTypes.DECIMAL(4, 1),
-        allowNull: true,
+        allowNull: false,
       },
       nilai_huruf: {
         type: DataTypes.CHAR(3),
@@ -28,11 +37,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(4, 2),
         allowNull: false,
       },
-      angkatan: {
-        type: DataTypes.CHAR(4),
+      sks_x_indeks: {
+        type: DataTypes.INTEGER(10),
         allowNull: false,
       },
       id_registrasi_mahasiswa: {
+        type: DataTypes.STRING(32),
+        allowNull: false,
+      },
+      id_prodi: {
         type: DataTypes.STRING(32),
         allowNull: false,
       },
@@ -40,16 +53,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.CHAR(5),
         allowNull: false,
       },
-      id_kelas: {
+      id_matkul: {
         type: DataTypes.STRING(32),
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "RiwayatNilaiMahasiswa",
-      tableName: "riwayat_nilai_mahasiswas",
+      modelName: "RekapKHSMahasiswa",
+      tableName: "rekap_khs_mahasiswas",
     }
   );
-  return RiwayatNilaiMahasiswa;
+  return RekapKHSMahasiswa;
 };

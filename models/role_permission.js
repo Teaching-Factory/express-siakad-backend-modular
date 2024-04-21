@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // relasi tabel parent
       RolePermission.belongsTo(models.Role, { foreignKey: "id_role" });
       RolePermission.belongsTo(models.Permission, { foreignKey: "id_permission" });
     }

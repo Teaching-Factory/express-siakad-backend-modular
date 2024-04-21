@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // relasi tabel parent
       TranskripMahasiswa.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       TranskripMahasiswa.belongsTo(models.MataKuliah, { foreignKey: "id_matkul" });
       TranskripMahasiswa.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas_kuliah" });

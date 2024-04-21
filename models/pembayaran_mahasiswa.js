@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class PesertaKelasKuliah extends Model {
+  class PembayaranMahasiswa extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,30 +9,29 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi tabel parent
-      PesertaKelasKuliah.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas_kuliah" });
-      PesertaKelasKuliah.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      PembayaranMahasiswa.belongsTo(models.TagihanMahasiswa, { foreignKey: "id_tagihan_mahasiswa" });
     }
   }
-  PesertaKelasKuliah.init(
+  PembayaranMahasiswa.init(
     {
-      angkatan: {
-        type: DataTypes.CHAR(4),
+      upload_bukti_tf: {
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
-      id_kelas_kuliah: {
-        type: DataTypes.STRING(32),
+      status_pembayaran: {
+        type: DataTypes.ENUM("Menunggu Konfirmasi", "Dikonfirmasi", "Ditolak", "Mengirim Ulang"),
         allowNull: false,
       },
-      id_registrasi_mahasiswa: {
+      id_tagihan_mahasiswa: {
         type: DataTypes.STRING(32),
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "PesertaKelasKuliah",
-      tableName: "peserta_kelas_kuliahs",
+      modelName: "PembayaranMahasiswa",
+      tableName: "pembayaran_mahasiswas",
     }
   );
-  return PesertaKelasKuliah;
+  return PembayaranMahasiswa;
 };

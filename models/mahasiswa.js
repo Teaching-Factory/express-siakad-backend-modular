@@ -8,9 +8,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // relasi tabel parent
       Mahasiswa.belongsTo(models.PerguruanTinggi, { foreignKey: "id_perguruan_tinggi" });
       Mahasiswa.belongsTo(models.Agama, { foreignKey: "id_agama" });
       Mahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
+
+      // relasi tabel child
       Mahasiswa.hasMany(models.BiodataMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.DetailNilaiPerkuliahanKelas, { foreignKey: "id_registrasi_mahasiswa" });
@@ -23,6 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       Mahasiswa.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.AnggotaAktivitasMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.TranskripMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.RekapKHSMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.TagihanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
     }
   }
   Mahasiswa.init(

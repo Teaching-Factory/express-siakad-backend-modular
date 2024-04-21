@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // relasi tabel child
       TahunAjaran.hasMany(models.Semester, { foreignKey: "id_tahun_ajaran" });
       TahunAjaran.hasMany(models.PenugasanDosen, { foreignKey: "id_tahun_ajaran" });
     }

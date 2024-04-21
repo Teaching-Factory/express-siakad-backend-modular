@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // relasi tabel parent
       Prodi.belongsTo(models.JenjangPendidikan, { foreignKey: "id_jenjang_pendidikan" });
+
+      // relasi tabel child
       Prodi.hasMany(models.Periode, { foreignKey: "id_prodi" });
       Prodi.hasMany(models.Substansi, { foreignKey: "id_prodi" });
       Prodi.hasMany(models.MataKuliah, { foreignKey: "id_prodi" });
@@ -26,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       Prodi.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_prodi" });
       Prodi.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_prodi_asal" });
       Prodi.hasMany(models.AktivitasMahasiswa, { foreignKey: "id_prodi" });
+      Prodi.hasMany(models.RekapJumlahMahasiswa, { foreignKey: "id_prodi" });
+      Prodi.hasMany(models.RekapKHSMahasiswa, { foreignKey: "id_prodi" });
+      Prodi.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_prodi" });
+      Prodi.hasMany(models.BobotPenilaian, { foreignKey: "id_prodi" });
     }
   }
   Prodi.init(
