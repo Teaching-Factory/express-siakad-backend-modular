@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   Wilayah.init(
     {
+      id_wilayah: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.CHAR(8),
+      },
       nama_wilayah: {
         type: DataTypes.STRING(60),
         allowNull: false,

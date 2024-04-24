@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Agama.init(
     {
+      id_agama: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.SMALLINT(5),
+      },
       nama_agama: {
         type: DataTypes.STRING(50),
         allowNull: false,

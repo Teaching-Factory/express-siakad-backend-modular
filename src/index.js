@@ -43,6 +43,7 @@ const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
 const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
 const transkripNilaiRoutes = require("./routes/transkrip-nilai");
+const apiFeederRoutes = require("./routes/api-feeder");
 
 // import middleware
 const middlewareLogRequest = require("./middlewares/logs");
@@ -105,6 +106,7 @@ app.use("/presensi-perkuliahan", presensiPerkuliahanRoutes);
 app.use("/nilai-perkuliahan", nilaiPerkuliahanRoutes);
 app.use("/khs-mahasiswa", khsMahasiswaRoutes);
 app.use("/transkrip-nilai", transkripNilaiRoutes);
+app.use("/api-feeder", apiFeederRoutes);
 
 app.use(errHandler);
 

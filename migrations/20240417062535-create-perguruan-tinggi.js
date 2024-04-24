@@ -19,7 +19,7 @@ module.exports = {
       },
       nama_singkat: {
         type: Sequelize.STRING(20),
-        allowNull: false,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,

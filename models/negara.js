@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   Negara.init(
     {
+      id_negara: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.CHAR(2),
+      },
       nama_negara: {
         type: DataTypes.STRING(50),
         allowNull: false,

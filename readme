@@ -24,6 +24,9 @@ npx sequelize-cli init
 npx sequelize-cli db:migrate
 npx sequelize-cli db:migrate:undo (optional)
 
+# install axios 
+npm install axios
+
 # running app
 yarn start
 

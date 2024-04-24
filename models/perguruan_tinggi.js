@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   PerguruanTinggi.init(
     {
+      id_perguruan_tinggi: {
+        type: DataTypes.STRING(32),
+        allowNull: false,
+        primaryKey: true, 
+        defaultValue: DataTypes.UUIDV4,
+      },
       kode_perguruan_tinggi: {
         type: DataTypes.STRING(8),
         allowNull: false,
@@ -28,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       nama_singkat: {
         type: DataTypes.STRING(20),
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
