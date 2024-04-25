@@ -48,7 +48,7 @@ module.exports = {
           model: {
             tableName: "jenis_pendaftarans",
           },
-          key: "id_jenis_pendaftaran",
+          key: "id_jenis_daftar",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

@@ -3,7 +3,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("jenis_pendaftarans", {
-      id_jenis_pendaftaran: {
+      id_jenis_daftar: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.DECIMAL(2, 0),

@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   StatusKeaktifanPegawai.init(
     {
+      id_status_aktif: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(2),
+      },
       nama_status_aktif: {
         type: DataTypes.STRING(50),
         allowNull: false,

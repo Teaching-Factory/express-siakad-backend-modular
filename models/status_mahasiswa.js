@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   StatusMahasiswa.init(
     {
+      id_status_mahasiswa: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.CHAR(1),
+      },
       nama_status_mahasiswa: {
         type: DataTypes.STRING(50),
         allowNull: false,

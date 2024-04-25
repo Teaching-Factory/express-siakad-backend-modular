@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   JenisSMS.init(
     {
+      id_jenis_sms: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.DECIMAL(2, 0),
+      },
       nama_jenis_sms: {
         type: DataTypes.STRING(50),
         allowNull: false,
