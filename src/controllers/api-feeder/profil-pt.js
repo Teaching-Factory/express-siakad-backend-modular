@@ -10,7 +10,7 @@ const getProfilPT = async (req, res, next) => {
     const requestBody = {
       act: "GetProfilPT",
       token: `${token}`,
-      //   filter: "where",
+      filter: "id_perguruan_tinggi='0f893db4-cb60-488d-9629-405c729096ae'",
     };
 
     // Menggunakan token untuk mengambil data
@@ -21,44 +21,33 @@ const getProfilPT = async (req, res, next) => {
 
     // Loop untuk menambahkan data ke dalam database
     for (const profilPerguruanTinggi of dataProfilPT) {
-      // Periksa apakah data sudah ada di tabel
-      const existingProfilPT = await ProfilPT.findOne({
-        where: {
-          id_profil_pt: profilPerguruanTinggi.id_profil_pt,
-        },
+      await ProfilPT.create({
+        telepon: profilPerguruanTinggi.telepon,
+        faximile: profilPerguruanTinggi.faximile,
+        email: profilPerguruanTinggi.email,
+        website: profilPerguruanTinggi.website,
+        jalan: profilPerguruanTinggi.jalan,
+        dusun: profilPerguruanTinggi.dusun,
+        rt_rw: profilPerguruanTinggi.rt_rw,
+        kelurahan: profilPerguruanTinggi.kelurahan,
+        kode_pos: profilPerguruanTinggi.kode_pos,
+        lintang_bujur: profilPerguruanTinggi.lintang_bujur,
+        bank: profilPerguruanTinggi.bank,
+        unit_cabang: profilPerguruanTinggi.unit_cabang,
+        nomor_rekening: profilPerguruanTinggi.nomor_rekening,
+        mbs: profilPerguruanTinggi.mbs,
+        luas_tanah_milik: profilPerguruanTinggi.luas_tanah_milik,
+        luas_tanah_bukan_milik: profilPerguruanTinggi.luas_tanah_bukan_milik,
+        sk_pendirian: profilPerguruanTinggi.sk_pendirian,
+        tanggal_sk_pendirian: profilPerguruanTinggi.tanggal_sk_pendirian,
+        id_status_milik: profilPerguruanTinggi.id_status_milik,
+        nama_status_milik: profilPerguruanTinggi.nama_status_milik,
+        status_perguruan_tinggi: profilPerguruanTinggi.status_perguruan_tinggi,
+        sk_izin_operasional: profilPerguruanTinggi.sk_izin_operasional,
+        tanggal_izin_operasional: profilPerguruanTinggi.tanggal_izin_operasional,
+        id_perguruan_tinggi: profilPerguruanTinggi.id_perguruan_tinggi,
+        id_wilayah: profilPerguruanTinggi.id_wilayah,
       });
-
-      if (!existingProfilPT) {
-        // Data belum ada, buat entri baru di database
-        await ProfilPT.create({
-          id_profil_pt: profilPerguruanTinggi.id_profil_pt,
-          telepon: profilPerguruanTinggi.telepon,
-          faximile: profilPerguruanTinggi.faximile,
-          email: profilPerguruanTinggi.email,
-          website: profilPerguruanTinggi.website,
-          jalan: profilPerguruanTinggi.jalan,
-          dusun: profilPerguruanTinggi.dusun,
-          rt_rw: profilPerguruanTinggi.rt_rw,
-          kelurahan: profilPerguruanTinggi.kelurahan,
-          kode_pos: profilPerguruanTinggi.kode_pos,
-          lintang_bujur: profilPerguruanTinggi.lintang_bujur,
-          bank: profilPerguruanTinggi.bank,
-          unit_cabang: profilPerguruanTinggi.unit_cabang,
-          nomor_rekening: profilPerguruanTinggi.nomor_rekening,
-          mbs: profilPerguruanTinggi.mbs,
-          luas_tanah_milik: profilPerguruanTinggi.luas_tanah_milik,
-          luas_tanah_bukan_milik: profilPerguruanTinggi.luas_tanah_bukan_milik,
-          sk_pendirian: profilPerguruanTinggi.sk_pendirian,
-          tanggal_sk_pendirian: profilPerguruanTinggi.tanggal_sk_pendirian,
-          id_status_milik: profilPerguruanTinggi.id_status_milik,
-          nama_status_milik: profilPerguruanTinggi.nama_status_milik,
-          status_perguruan_tinggi: profilPerguruanTinggi.status_perguruan_tinggi,
-          sk_izin_operasional: profilPerguruanTinggi.sk_izin_operasional,
-          tanggal_izin_operasional: profilPerguruanTinggi.tanggal_izin_operasional,
-          id_perguruan_tinggi: profilPerguruanTinggi.id_perguruan_tinggi,
-          id_wilayah: profilPerguruanTinggi.id_wilayah,
-        });
-      }
     }
 
     // Kirim data sebagai respons

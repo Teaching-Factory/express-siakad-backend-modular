@@ -23,6 +23,7 @@ npx sequelize-cli init
 # migration models
 npx sequelize-cli db:migrate
 npx sequelize-cli db:migrate:undo (optional)
+npx sequelize-cli db:migrate:undo:all (optional)
 
 # install axios 
 npm install axios

@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   ProfilPT.init(
     {
+      id_profil_pt: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+        autoIncrement: true,
+      },
       telepon: {
         type: DataTypes.STRING(20),
         allowNull: true,

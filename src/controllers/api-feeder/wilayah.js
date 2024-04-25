@@ -10,6 +10,7 @@ const getWilayah = async (req, res, next) => {
     const requestBody = {
       act: "GetWilayah",
       token: `${token}`,
+      filter: `id_negara='ID'`,
     };
 
     // Menggunakan token untuk mengambil data

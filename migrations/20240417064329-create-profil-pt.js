@@ -7,6 +7,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.INTEGER(10),
+        autoIncrement: true,
       },
       telepon: {
         type: Sequelize.STRING(20),

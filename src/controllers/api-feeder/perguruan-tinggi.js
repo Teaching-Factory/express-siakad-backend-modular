@@ -10,6 +10,7 @@ const getAllPerguruanTinggi = async (req, res, next) => {
     const requestBody = {
       act: "GetAllPT",
       token: `${token}`,
+      filter: `nama_singkat='UBI'`,
     };
 
     // Menggunakan token untuk mengambil data
