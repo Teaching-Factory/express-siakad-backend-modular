@@ -16,11 +16,11 @@ module.exports = {
       },
       jenis_mk: {
         type: Sequelize.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       kel_mk: {
         type: Sequelize.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       kode_mata_kuliah: {
         type: Sequelize.STRING(20),
@@ -36,23 +36,23 @@ module.exports = {
       },
       id_jenis_mata_kuliah: {
         type: Sequelize.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       id_kelompok_mata_kuliah: {
         type: Sequelize.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       sks_tatap_muka: {
         type: Sequelize.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_praktek_lapangan: {
         type: Sequelize.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_simulasi: {
         type: Sequelize.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       metode_kuliah: {
         type: Sequelize.STRING(50),
@@ -60,23 +60,23 @@ module.exports = {
       },
       ada_sap: {
         type: Sequelize.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_silabus: {
         type: Sequelize.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_bahan_ajar: {
         type: Sequelize.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_acara_praktek: {
         type: Sequelize.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_diktat: {
         type: Sequelize.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       tanggal_mulai_efektif: {
         type: Sequelize.DATEONLY,

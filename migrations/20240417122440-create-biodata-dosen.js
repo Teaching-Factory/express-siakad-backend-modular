@@ -38,7 +38,7 @@ module.exports = {
         allowNull: true,
       },
       tanggal_sk_cpns: {
-        type: Sequelize.STRING(24),
+        type: Sequelize.DATE,
         allowNull: true,
       },
       no_sk_pengangkatan: {
@@ -46,7 +46,7 @@ module.exports = {
         allowNull: true,
       },
       mulai_sk_pengangkatan: {
-        type: Sequelize.STRING(24),
+        type: Sequelize.DATE,
         allowNull: true,
       },
       id_sumber_gaji: {
@@ -106,7 +106,7 @@ module.exports = {
         allowNull: true,
       },
       tanggal_mulai_cpns: {
-        type: Sequelize.STRING(24),
+        type: Sequelize.DATE,
         allowNull: true,
       },
       id_dosen: {

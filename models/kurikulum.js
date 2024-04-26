@@ -47,11 +47,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       jumlah_sks_mata_kuliah_wajib: {
         type: DataTypes.DECIMAL(3, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_sks_mata_kuliah_pilihan: {
         type: DataTypes.DECIMAL(3, 0),
-        allowNull: false,
+        allowNull: true,
       },
       id_prodi: {
         type: DataTypes.STRING(32),

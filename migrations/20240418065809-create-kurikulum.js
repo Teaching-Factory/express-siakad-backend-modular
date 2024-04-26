@@ -31,11 +31,11 @@ module.exports = {
       },
       jumlah_sks_mata_kuliah_wajib: {
         type: Sequelize.DECIMAL(3, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_sks_mata_kuliah_pilihan: {
         type: Sequelize.DECIMAL(3, 0),
-        allowNull: false,
+        allowNull: true,
       },
       id_prodi: {
         type: Sequelize.STRING(32),

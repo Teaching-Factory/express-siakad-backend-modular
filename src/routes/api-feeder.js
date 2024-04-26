@@ -28,6 +28,12 @@ const ProdiController = require("../controllers/api-feeder/prodi");
 const JenisSubstansiController = require("../controllers/api-feeder/jenis-substansi");
 const SubstansiController = require("../controllers/api-feeder/substansi");
 const SubstansiKuliahController = require("../controllers/api-feeder/substansi-kuliah");
+const MataKuliahController = require("../controllers/api-feeder/mata-kuliah");
+const TahunAjaranController = require("../controllers/api-feeder/tahun-ajaran");
+const FakultasController = require("../controllers/api-feeder/fakultas");
+const SemesterController = require("../controllers/api-feeder/semester");
+const KurikulumController = require("../controllers/api-feeder/kurikulum");
+const DetailKurikulumController = require("../controllers/api-feeder/detail-kurikulum");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -55,5 +61,11 @@ router.get("/get-prodi", ProdiController.getProdi);
 router.get("/get-jenis-substansi", JenisSubstansiController.getJenisSubstansi);
 router.get("/get-substansi", SubstansiController.getSubstansi);
 router.get("/get-substansi-kuliah", SubstansiKuliahController.getSubstansiKuliah);
+router.get("/get-mata-kuliah", MataKuliahController.getMataKuliah);
+router.get("/get-tahun-ajaran", TahunAjaranController.getTahunAjaran);
+router.get("/get-fakultas", FakultasController.getFakultas);
+router.get("/get-semester", SemesterController.getSemester);
+router.get("/get-kurikulum", KurikulumController.getKurikulum);
+router.get("/get-detail-kurikulum", DetailKurikulumController.getDetailKurikulum);
 
 module.exports = router;

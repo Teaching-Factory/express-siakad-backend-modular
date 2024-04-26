@@ -38,11 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       jenis_mk: {
         type: DataTypes.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       kel_mk: {
         type: DataTypes.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       kode_mata_kuliah: {
         type: DataTypes.STRING(20),
@@ -58,23 +58,23 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_jenis_mata_kuliah: {
         type: DataTypes.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       id_kelompok_mata_kuliah: {
         type: DataTypes.CHAR(1),
-        allowNull: false,
+        allowNull: true,
       },
       sks_tatap_muka: {
         type: DataTypes.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_praktek_lapangan: {
         type: DataTypes.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_simulasi: {
         type: DataTypes.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       metode_kuliah: {
         type: DataTypes.STRING(50),
@@ -82,23 +82,23 @@ module.exports = (sequelize, DataTypes) => {
       },
       ada_sap: {
         type: DataTypes.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_silabus: {
         type: DataTypes.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_bahan_ajar: {
         type: DataTypes.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_acara_praktek: {
         type: DataTypes.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       ada_diktat: {
         type: DataTypes.DECIMAL(1, 0),
-        allowNull: false,
+        allowNull: true,
       },
       tanggal_mulai_efektif: {
         type: DataTypes.DATEONLY,
