@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   BiodataDosen.init(
     {
+      id_detail_biodata_dosen: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       tempat_lahir: {
         type: DataTypes.STRING(32),
         allowNull: false,
@@ -47,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       tanggal_sk_cpns: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING(24),
         allowNull: true,
       },
       no_sk_pengangkatan: {
@@ -55,8 +61,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       mulai_sk_pengangkatan: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
+        type: DataTypes.STRING(24),
+        allowNull: true,
       },
       id_sumber_gaji: {
         type: DataTypes.INTEGER(10),
@@ -68,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       jalan: {
         type: DataTypes.STRING(80),
-        allowNull: false,
+        allowNull: true,
       },
       dusun: {
         type: DataTypes.STRING(60),
@@ -92,15 +98,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       telepon: {
         type: DataTypes.STRING(20),
-        allowNull: false,
+        allowNull: true,
       },
       handphone: {
         type: DataTypes.STRING(20),
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: DataTypes.STRING(60),
-        allowNull: false,
+        allowNull: true,
       },
       status_pernikahan: {
         type: DataTypes.DECIMAL(1, 0),
@@ -115,7 +121,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       tanggal_mulai_cpns: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING(24),
         allowNull: true,
       },
       id_dosen: {

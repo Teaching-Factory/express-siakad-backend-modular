@@ -19,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Substansi.init(
     {
+      id_substansi: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       nama_substansi: {
         type: DataTypes.STRING(100),
         allowNull: false,

@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   JenisSubstansi.init(
     {
+      id_jenis_substansi: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.CHAR(5),
+      },
       nama_jenis_substansi: {
         type: DataTypes.STRING(50),
         allowNull: false,

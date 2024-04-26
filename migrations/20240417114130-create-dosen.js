@@ -19,7 +19,7 @@ module.exports = {
       },
       nip: {
         type: Sequelize.STRING(18),
-        allowNull: false,
+        allowNull: true,
       },
       jenis_kelamin: {
         type: Sequelize.CHAR(1),

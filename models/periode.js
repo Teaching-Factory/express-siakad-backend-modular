@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   Periode.init(
     {
+      id_periode: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.CHAR(5),
+      },
       periode_pelaporan: {
         type: DataTypes.CHAR(5),
         allowNull: false,

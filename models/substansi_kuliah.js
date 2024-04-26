@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   SubstansiKuliah.init(
     {
+      id_subtansi_kuliah: {
+        allowNull: false,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       tgl_create: {
         type: DataTypes.DATEONLY,
         allowNull: true,

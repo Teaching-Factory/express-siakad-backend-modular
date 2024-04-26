@@ -21,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   JenjangPendidikan.init(
     {
+      id_jenjang_didik: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.DECIMAL(2, 0),
+      },
       nama_jenjang_didik: {
         type: DataTypes.STRING(50),
         allowNull: false,

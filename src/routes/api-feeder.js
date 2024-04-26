@@ -20,6 +20,8 @@ const LembagaPengangkatanController = require("../controllers/api-feeder/lembaga
 const StatusKeaktifanPegawaiController = require("../controllers/api-feeder/status-keaktifan-pegawai");
 const PangkatGolonganController = require("../controllers/api-feeder/pangkat-golongan");
 const PekerjaanController = require("../controllers/api-feeder/pekerjaan");
+const DosenController = require("../controllers/api-feeder/dosen");
+const BiodataDosenController = require("../controllers/api-feeder/biodata-dosen");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -39,5 +41,7 @@ router.get("/get-lembaga-pengangkatan", LembagaPengangkatanController.getLembaga
 router.get("/get-status-keaktifan-pegawai", StatusKeaktifanPegawaiController.getStatusKeaktifanPegawai);
 router.get("/get-pangkat-golongan", PangkatGolonganController.getPangkatGolongan);
 router.get("/get-pekerjaan", PekerjaanController.getPekerjaan);
+router.get("/get-dosen", DosenController.getDosen);
+router.get("/get-biodata-dosen", BiodataDosenController.getBiodataDosen);
 
 module.exports = router;

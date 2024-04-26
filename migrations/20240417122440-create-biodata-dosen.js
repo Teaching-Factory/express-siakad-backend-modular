@@ -38,7 +38,7 @@ module.exports = {
         allowNull: true,
       },
       tanggal_sk_cpns: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.STRING(24),
         allowNull: true,
       },
       no_sk_pengangkatan: {
@@ -46,8 +46,8 @@ module.exports = {
         allowNull: true,
       },
       mulai_sk_pengangkatan: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
+        type: Sequelize.STRING(24),
+        allowNull: true,
       },
       id_sumber_gaji: {
         type: Sequelize.INTEGER(10),
@@ -59,7 +59,7 @@ module.exports = {
       },
       jalan: {
         type: Sequelize.STRING(80),
-        allowNull: false,
+        allowNull: true,
       },
       dusun: {
         type: Sequelize.STRING(60),
@@ -83,15 +83,15 @@ module.exports = {
       },
       telepon: {
         type: Sequelize.STRING(20),
-        allowNull: false,
+        allowNull: true,
       },
       handphone: {
         type: Sequelize.STRING(20),
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: Sequelize.STRING(60),
-        allowNull: false,
+        allowNull: true,
       },
       status_pernikahan: {
         type: Sequelize.DECIMAL(1, 0),
@@ -106,7 +106,7 @@ module.exports = {
         allowNull: true,
       },
       tanggal_mulai_cpns: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.STRING(24),
         allowNull: true,
       },
       id_dosen: {

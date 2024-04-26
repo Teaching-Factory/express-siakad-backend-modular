@@ -37,6 +37,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Prodi.init(
     {
+      id_prodi: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       kode_program_studi: {
         type: DataTypes.STRING(10),
         allowNull: false,

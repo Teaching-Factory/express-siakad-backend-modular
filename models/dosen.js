@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Dosen.init(
     {
+      id_dosen: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       nama_dosen: {
         type: DataTypes.STRING(200),
         allowNull: false,
@@ -30,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       nip: {
         type: DataTypes.STRING(18),
-        allowNull: false,
+        allowNull: true,
       },
       jenis_kelamin: {
         type: DataTypes.CHAR(1),
