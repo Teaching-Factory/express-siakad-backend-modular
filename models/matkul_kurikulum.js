@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   MatkulKurikulum.init(
     {
+      id_matkul_kurikulum: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       semester: {
         type: DataTypes.DECIMAL(2, 0),
         allowNull: false,

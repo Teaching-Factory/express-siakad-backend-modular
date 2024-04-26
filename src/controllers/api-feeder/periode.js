@@ -1,48 +1,48 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { Wilayah } = require("../../../models");
+const { Periode } = require("../../../models");
 
-const getWilayah = async (req, res, next) => {
+const getPeriode = async (req, res, next) => {
   try {
     // Mendapatkan token
     const token = await getToken();
 
     const requestBody = {
-      act: "GetWilayah",
+      act: "GetPeriode",
       token: `${token}`,
-      filter: `id_negara='ID'`,
     };
 
     // Menggunakan token untuk mengambil data
     const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
 
     // Tanggapan dari API
-    const dataWilayah = response.data.data;
+    const dataPeriode = response.data.data;
 
     // Loop untuk menambahkan data ke dalam database
-    for (const data_wilayah of dataWilayah) {
+    for (const data_periode of dataPeriode) {
       // Periksa apakah data sudah ada di tabel
-      const existingWilayah = await Wilayah.findOne({
+      const existingPeriode = await Periode.findOne({
         where: {
-          id_wilayah: data_wilayah.id_wilayah,
+          id_periode: data_periode.id_periode,
         },
       });
 
-      if (!existingWilayah) {
+      if (!existingPeriode) {
         // Data belum ada, buat entri baru di database
-        await Wilayah.create({
-          id_wilayah: data_wilayah.id_wilayah,
-          nama_wilayah: data_wilayah.nama_wilayah,
-          id_negara: data_wilayah.id_negara,
+        await Periode.create({
+          id_periode: data_periode.id_periode, // belum fix
+          periode_pelaporan: data_periode.periode_pelaporan,
+          tipe_periode: data_periode.tipe_periode,
+          id_prodi: data_periode.id_prodi,
         });
       }
     }
 
     // Kirim data sebagai respons
     res.status(200).json({
-      message: "Create Wilayah Success",
-      totalData: dataWilayah.length,
-      dataWilayah: dataWilayah,
+      message: "Create Periode Success",
+      totalData: dataPeriode.length,
+      dataPeriode: dataPeriode,
     });
   } catch (error) {
     next(error);
@@ -50,5 +50,5 @@ const getWilayah = async (req, res, next) => {
 };
 
 module.exports = {
-  getWilayah,
+  getPeriode,
 };

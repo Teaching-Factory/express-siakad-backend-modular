@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   TahunAjaran.init(
     {
+      id_tahun_ajaran: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(4),
+      },
       nama_tahun_ajaran: {
         type: DataTypes.STRING(50),
         allowNull: false,

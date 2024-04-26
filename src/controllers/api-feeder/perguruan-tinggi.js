@@ -20,21 +20,21 @@ const getAllPerguruanTinggi = async (req, res, next) => {
     const dataPerguruanTinggi = response.data.data;
 
     // Loop untuk menambahkan data ke dalam database
-    for (const perguruanTinggi of dataPerguruanTinggi) {
+    for (const perguruan_tinggi of dataPerguruanTinggi) {
       // Periksa apakah data sudah ada di tabel
       const existingPerguruanTinggi = await PerguruanTinggi.findOne({
         where: {
-          id_perguruan_tinggi: perguruanTinggi.id_perguruan_tinggi,
+          id_perguruan_tinggi: perguruan_tinggi.id_perguruan_tinggi,
         },
       });
 
       if (!existingPerguruanTinggi) {
         // Data belum ada, buat entri baru di database
         await PerguruanTinggi.create({
-          id_perguruan_tinggi: perguruanTinggi.id_perguruan_tinggi,
-          kode_perguruan_tinggi: perguruanTinggi.kode_perguruan_tinggi,
-          nama_perguruan_tinggi: perguruanTinggi.nama_perguruan_tinggi,
-          nama_singkat: perguruanTinggi.nama_singkat,
+          id_perguruan_tinggi: perguruan_tinggi.id_perguruan_tinggi,
+          kode_perguruan_tinggi: perguruan_tinggi.kode_perguruan_tinggi,
+          nama_perguruan_tinggi: perguruan_tinggi.nama_perguruan_tinggi,
+          nama_singkat: perguruan_tinggi.nama_singkat,
         });
       }
     }

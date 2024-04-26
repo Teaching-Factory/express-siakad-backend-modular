@@ -19,19 +19,19 @@ const getPenghasilan = async (req, res, next) => {
     const dataPenghasilan = response.data.data;
 
     // Loop untuk menambahkan data ke dalam database
-    for (const penghasilan of dataPenghasilan) {
+    for (const data_penghasilan of dataPenghasilan) {
       // Periksa apakah data sudah ada di tabel
       const existingPenghasilan = await Penghasilan.findOne({
         where: {
-          id_penghasilan: penghasilan.id_penghasilan,
+          id_penghasilan: data_penghasilan.id_penghasilan,
         },
       });
 
       if (!existingPenghasilan) {
         // Data belum ada, buat entri baru di database
         await Penghasilan.create({
-          id_penghasilan: penghasilan.id_penghasilan,
-          nama_penghasilan: penghasilan.nama_penghasilan,
+          id_penghasilan: data_penghasilan.id_penghasilan,
+          nama_penghasilan: data_penghasilan.nama_penghasilan,
         });
       }
     }

@@ -22,6 +22,12 @@ const PangkatGolonganController = require("../controllers/api-feeder/pangkat-gol
 const PekerjaanController = require("../controllers/api-feeder/pekerjaan");
 const DosenController = require("../controllers/api-feeder/dosen");
 const BiodataDosenController = require("../controllers/api-feeder/biodata-dosen");
+const JenjangPendidikanController = require("../controllers/api-feeder/jenjang-pendidikan");
+const ProdiController = require("../controllers/api-feeder/prodi");
+// const PeriodeController = require("../controllers/api-feeder/periode");
+const JenisSubstansiController = require("../controllers/api-feeder/jenis-substansi");
+const SubstansiController = require("../controllers/api-feeder/substansi");
+const SubstansiKuliahController = require("../controllers/api-feeder/substansi-kuliah");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -43,5 +49,11 @@ router.get("/get-pangkat-golongan", PangkatGolonganController.getPangkatGolongan
 router.get("/get-pekerjaan", PekerjaanController.getPekerjaan);
 router.get("/get-dosen", DosenController.getDosen);
 router.get("/get-biodata-dosen", BiodataDosenController.getBiodataDosen);
+router.get("/get-jenjang-pendidikan", JenjangPendidikanController.getJenjangPendidikan);
+router.get("/get-prodi", ProdiController.getProdi);
+// router.get("/get-periode", PeriodeController.getPeriode);
+router.get("/get-jenis-substansi", JenisSubstansiController.getJenisSubstansi);
+router.get("/get-substansi", SubstansiController.getSubstansi);
+router.get("/get-substansi-kuliah", SubstansiKuliahController.getSubstansiKuliah);
 
 module.exports = router;

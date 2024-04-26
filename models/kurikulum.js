@@ -19,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Kurikulum.init(
     {
+      id_kurikulum: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       nama_kurikulum: {
         type: DataTypes.STRING(50),
         allowNull: false,

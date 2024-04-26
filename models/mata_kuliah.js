@@ -25,6 +25,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   ListMataKuliah.init(
     {
+      id_matkul: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       tgl_create: {
         type: DataTypes.DATE, // datetime
         allowNull: false,

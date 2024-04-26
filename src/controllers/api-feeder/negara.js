@@ -20,19 +20,19 @@ const getNegara = async (req, res, next) => {
     const dataNegara = response.data.data;
 
     // Loop untuk menambahkan data ke dalam database
-    for (const negara of dataNegara) {
+    for (const data_negara of dataNegara) {
       // Periksa apakah data sudah ada di tabel
       const existingNegara = await Negara.findOne({
         where: {
-          id_negara: negara.id_negara,
+          id_negara: data_negara.id_negara,
         },
       });
 
       if (!existingNegara) {
         // Data belum ada, buat entri baru di database
         await Negara.create({
-          id_negara: negara.id_negara,
-          nama_negara: negara.nama_negara,
+          id_negara: data_negara.id_negara,
+          nama_negara: data_negara.nama_negara,
         });
       }
     }

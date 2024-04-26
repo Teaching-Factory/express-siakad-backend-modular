@@ -19,19 +19,19 @@ const getAgama = async (req, res, next) => {
     const dataAgama = response.data.data;
 
     // Loop untuk menambahkan data ke dalam database
-    for (const agama of dataAgama) {
+    for (const data_agama of dataAgama) {
       // Periksa apakah data sudah ada di tabel
       const existingAgama = await Agama.findOne({
         where: {
-          id_agama: agama.id_agama,
+          id_agama: data_agama.id_agama,
         },
       });
 
       if (!existingAgama) {
         // Data belum ada, buat entri baru di database
         await Agama.create({
-          id_agama: agama.id_agama,
-          nama_agama: agama.nama_agama,
+          id_agama: data_agama.id_agama,
+          nama_agama: data_agama.nama_agama,
         });
       }
     }

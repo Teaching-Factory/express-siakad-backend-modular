@@ -19,28 +19,28 @@ const getDosen = async (req, res, next) => {
     const dataDosen = response.data.data;
 
     // Loop untuk menambahkan data ke dalam database
-    for (const dosens of dataDosen) {
+    for (const data_dosen of dataDosen) {
       // Periksa apakah data sudah ada di tabel
       const existingDosen = await Dosen.findOne({
         where: {
-          id_dosen: dosens.id_dosen,
+          id_dosen: data_dosen.id_dosen,
         },
       });
 
       if (!existingDosen) {
         // Data belum ada, buat entri baru di database
-        const dateParts = dosens.tanggal_lahir.split("-"); // Membagi tanggal menjadi bagian-bagian
+        const dateParts = data_dosen.tanggal_lahir.split("-"); // Membagi tanggal menjadi bagian-bagian
         const tanggal_lahir = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; // Format tanggal
 
         await Dosen.create({
-          id_dosen: dosens.id_dosen,
-          nama_dosen: dosens.nama_dosen,
-          nidn: dosens.nidn,
-          nip: dosens.nip,
-          jenis_kelamin: dosens.jenis_kelamin,
+          id_dosen: data_dosen.id_dosen,
+          nama_dosen: data_dosen.nama_dosen,
+          nidn: data_dosen.nidn,
+          nip: data_dosen.nip,
+          jenis_kelamin: data_dosen.jenis_kelamin,
           tanggal_lahir: tanggal_lahir,
-          id_agama: dosens.id_agama,
-          id_status_aktif: dosens.id_status_aktif,
+          id_agama: data_dosen.id_agama,
+          id_status_aktif: data_dosen.id_status_aktif,
         });
       }
     }

@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   PerhitunganSKS.init(
     {
+      id_perhitungan_sks: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       rencana_minggu_pertemuan: {
         type: DataTypes.DECIMAL(2, 0),
         allowNull: false,

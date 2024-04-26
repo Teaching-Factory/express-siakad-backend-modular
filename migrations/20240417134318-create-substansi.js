@@ -19,7 +19,7 @@ module.exports = {
       },
       sks_tatap_muka: {
         type: Sequelize.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_praktek: {
         type: Sequelize.DECIMAL(5, 2),

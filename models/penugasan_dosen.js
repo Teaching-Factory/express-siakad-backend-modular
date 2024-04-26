@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   PenugasanDosen.init(
     {
+      id_registrasi_dosen: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       jk: {
         type: DataTypes.CHAR(1),
         allowNull: false,

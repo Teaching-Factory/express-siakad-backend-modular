@@ -27,6 +27,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   Semester.init(
     {
+      id_semester: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.CHAR(5),
+      },
       nama_semester: {
         type: DataTypes.STRING(50),
         allowNull: false,

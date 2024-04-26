@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id_subtansi_kuliah: {
         allowNull: false,
+        primaryKey: true,
         type: DataTypes.STRING(32),
         defaultValue: DataTypes.UUIDV4,
       },

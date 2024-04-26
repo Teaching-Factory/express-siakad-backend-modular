@@ -5,6 +5,7 @@ module.exports = {
     await queryInterface.createTable("substansi_kuliahs", {
       id_subtansi_kuliah: {
         allowNull: false,
+        primaryKey: true,
         type: Sequelize.STRING(32),
         defaultValue: Sequelize.UUIDV4,
       },

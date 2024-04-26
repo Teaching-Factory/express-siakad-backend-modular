@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       sks_tatap_muka: {
         type: DataTypes.DECIMAL(5, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_praktek: {
         type: DataTypes.DECIMAL(5, 2),

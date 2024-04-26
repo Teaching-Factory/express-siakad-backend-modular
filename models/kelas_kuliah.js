@@ -26,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   KelasKuliah.init(
     {
+      id_kelas_kuliah: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(32),
+        defaultValue: DataTypes.UUIDV4,
+      },
       nama_kelas_kuliah: {
         type: DataTypes.STRING(5),
         allowNull: false,
