@@ -34,7 +34,11 @@ const FakultasController = require("../controllers/api-feeder/fakultas");
 const SemesterController = require("../controllers/api-feeder/semester");
 const KurikulumController = require("../controllers/api-feeder/kurikulum");
 const DetailKurikulumController = require("../controllers/api-feeder/detail-kurikulum");
-const PenugasanDosenController = require("../controllers/api-feeder/penugasan-dosen");
+// const PenugasanDosenController = require("../controllers/api-feeder/penugasan-dosen");
+const MatkulKurikulumController = require("../controllers/api-feeder/matkul-kurikulum");
+const KelasKuliahController = require("../controllers/api-feeder/kelas-kuliah");
+const DetailKelasKuliahController = require("../controllers/api-feeder/detail-kelas-kuliah");
+// const PerhitunganSKSController = require("../controllers/api-feeder/perhitungan-sks");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -68,6 +72,10 @@ router.get("/get-fakultas", FakultasController.getFakultas);
 router.get("/get-semester", SemesterController.getSemester);
 router.get("/get-kurikulum", KurikulumController.getKurikulum);
 router.get("/get-detail-kurikulum", DetailKurikulumController.getDetailKurikulum);
-router.get("/get-penugasan-dosen", PenugasanDosenController.getPenugasanDosen);
+// router.get("/get-penugasan-dosen", PenugasanDosenController.getPenugasanDosen);
+router.get("/get-matkul-kurikulum", MatkulKurikulumController.getMatkulKurikulum);
+router.get("/get-kelas-kuliah", KelasKuliahController.getKelasKuliah);
+router.get("/get-detail-kelas-kuliah", DetailKelasKuliahController.getDetailKelasKuliah);
+// router.get("/get-perhitungan-sks", PerhitunganSKSController.getPerhitunganSKS);
 
 module.exports = router;

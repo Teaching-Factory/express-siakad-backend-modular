@@ -26,7 +26,7 @@ module.exports = {
         allowNull: true,
       },
       tanggal_tutup_daftar: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.DATE,
         allowNull: true,
       },
       prodi_penyelenggara: {
@@ -34,7 +34,7 @@ module.exports = {
         allowNull: true,
       },
       perguruan_tinggi_penyelenggara: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.STRING(100),
         allowNull: true,
       },
       id_kelas_kuliah: {

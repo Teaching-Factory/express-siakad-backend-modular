@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       tanggal_tutup_daftar: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       prodi_penyelenggara: {
@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       perguruan_tinggi_penyelenggara: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING(100),
         allowNull: true,
       },
       id_kelas_kuliah: {
