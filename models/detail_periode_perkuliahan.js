@@ -23,23 +23,23 @@ module.exports = (sequelize, DataTypes) => {
       },
       jumlah_target_mahasiswa_baru: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_pendaftar_ikut_seleksi: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_pendaftar_lulus_seleksi: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_daftar_ulang: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_mengundurkan_diri: {
         type: DataTypes.DECIMAL(5, 0),
-        allowNull: false,
+        allowNull: true,
       },
       tanggal_awal_perkuliahan: {
         type: DataTypes.DATEONLY,
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       jumlah_minggu_pertemuan: {
         type: DataTypes.DECIMAL(2, 0),
-        allowNull: false,
+        allowNull: true,
       },
       id_prodi: {
         type: DataTypes.STRING(36),

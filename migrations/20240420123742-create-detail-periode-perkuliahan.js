@@ -11,23 +11,23 @@ module.exports = {
       },
       jumlah_target_mahasiswa_baru: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_pendaftar_ikut_seleksi: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_pendaftar_lulus_seleksi: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_daftar_ulang: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jumlah_mengundurkan_diri: {
         type: Sequelize.DECIMAL(5, 0),
-        allowNull: false,
+        allowNull: true,
       },
       tanggal_awal_perkuliahan: {
         type: Sequelize.DATEONLY,
@@ -39,7 +39,7 @@ module.exports = {
       },
       jumlah_minggu_pertemuan: {
         type: Sequelize.DECIMAL(2, 0),
-        allowNull: false,
+        allowNull: true,
       },
       id_prodi: {
         type: Sequelize.STRING(36),

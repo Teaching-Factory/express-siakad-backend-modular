@@ -11,7 +11,7 @@ module.exports = {
       },
       jumlah_target_mahasiswa_baru: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       tanggal_awal_perkuliahan: {
         type: Sequelize.DATEONLY,
@@ -23,23 +23,23 @@ module.exports = {
       },
       calon_ikut_seleksi: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       calon_lulus_seleksi: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       daftar_sbg_mhs: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       pst_undur_diri: {
         type: Sequelize.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jml_mgu_kul: {
         type: Sequelize.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
       metode_kul: {
         type: Sequelize.STRING(50),

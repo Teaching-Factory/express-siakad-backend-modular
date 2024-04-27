@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       jumlah_target_mahasiswa_baru: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       tanggal_awal_perkuliahan: {
         type: DataTypes.DATEONLY,
@@ -35,23 +35,23 @@ module.exports = (sequelize, DataTypes) => {
       },
       calon_ikut_seleksi: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       calon_lulus_seleksi: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       daftar_sbg_mhs: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       pst_undur_diri: {
         type: DataTypes.DECIMAL(6, 0),
-        allowNull: false,
+        allowNull: true,
       },
       jml_mgu_kul: {
         type: DataTypes.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
       metode_kul: {
         type: DataTypes.STRING(50),

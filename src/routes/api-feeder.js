@@ -39,6 +39,14 @@ const MatkulKurikulumController = require("../controllers/api-feeder/matkul-kuri
 const KelasKuliahController = require("../controllers/api-feeder/kelas-kuliah");
 const DetailKelasKuliahController = require("../controllers/api-feeder/detail-kelas-kuliah");
 // const PerhitunganSKSController = require("../controllers/api-feeder/perhitungan-sks");
+const JenisKeluarController = require("../controllers/api-feeder/jenis-keluar");
+const PembiayaanController = require("../controllers/api-feeder/pembiayaan");
+const BidangMinatController = require("../controllers/api-feeder/bidang-minat");
+const SkalaNilaiProdiController = require("../controllers/api-feeder/skala-nilai-prodi");
+const PeriodePerkuliahanController = require("../controllers/api-feeder/periode-perkuliahan");
+const DetailPeriodePerkuliahanController = require("../controllers/api-feeder/detail-periode-perkuliahan");
+const JenisAktivitasMahasiswaController = require("../controllers/api-feeder/jenis-aktivitas-mahasiswa");
+const AktivitasMahasiswaController = require("../controllers/api-feeder/aktivitas-mahasiswa");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -77,5 +85,13 @@ router.get("/get-matkul-kurikulum", MatkulKurikulumController.getMatkulKurikulum
 router.get("/get-kelas-kuliah", KelasKuliahController.getKelasKuliah);
 router.get("/get-detail-kelas-kuliah", DetailKelasKuliahController.getDetailKelasKuliah);
 // router.get("/get-perhitungan-sks", PerhitunganSKSController.getPerhitunganSKS);
+router.get("/get-jenis-keluar", JenisKeluarController.getJenisKeluar);
+router.get("/get-pembiayaan", PembiayaanController.getPembiayaan);
+router.get("/get-bidang-minat", BidangMinatController.getBidangMinat);
+router.get("/get-skala-nilai-prodi", SkalaNilaiProdiController.getSkalaNilaiProdi);
+router.get("/get-periode-perkuliahan", PeriodePerkuliahanController.getPeriodePerkuliahan);
+router.get("/get-detail-periode-perkuliahan", DetailPeriodePerkuliahanController.getDetailPeriodePerkuliahan);
+router.get("/get-jenis-aktivitas-mahasiswa", JenisAktivitasMahasiswaController.getJenisAktivitasMahasiswa);
+router.get("/get-aktivitas-mahasiswa", AktivitasMahasiswaController.getAktivitasMahasiswa);
 
 module.exports = router;
