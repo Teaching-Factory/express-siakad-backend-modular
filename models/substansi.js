@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       id_substansi: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         defaultValue: DataTypes.UUIDV4,
       },
       nama_substansi: {
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_jenis_substansi: {

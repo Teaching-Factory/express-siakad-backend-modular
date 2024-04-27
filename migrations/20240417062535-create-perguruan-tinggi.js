@@ -6,7 +6,7 @@ module.exports = {
       id_perguruan_tinggi: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       kode_perguruan_tinggi: {

@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       id_kelas_kuliah: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         defaultValue: DataTypes.UUIDV4,
       },
       nama_kelas_kuliah: {
@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_semester: {
@@ -65,11 +65,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       id_matkul: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_dosen: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
     },

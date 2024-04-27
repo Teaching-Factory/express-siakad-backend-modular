@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER(10),
       },
       id_krs: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -22,7 +22,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_matkul: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

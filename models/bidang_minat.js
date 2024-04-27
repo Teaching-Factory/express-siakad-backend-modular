@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   BidangMinat.init(
     {
+      id_bidang_minat: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(36),
+        defaultValue: DataTypes.UUIDV4,
+      },
       nm_bidang_minat: {
         type: DataTypes.STRING(100),
         allowNull: true,
@@ -34,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
     },

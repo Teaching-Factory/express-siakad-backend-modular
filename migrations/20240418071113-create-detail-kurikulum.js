@@ -18,7 +18,7 @@ module.exports = {
         allowNull: true,
       },
       id_kurikulum: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

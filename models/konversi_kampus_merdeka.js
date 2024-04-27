@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   KonversiKampusMerdeka.init(
     {
+      id_konversi_aktivitas: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(36),
+        defaultValue: DataTypes.UUIDV4,
+      },
       nilai_angka: {
         type: DataTypes.INTEGER(10),
         allowNull: true,
@@ -31,11 +37,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_matkul: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_anggota: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
     },

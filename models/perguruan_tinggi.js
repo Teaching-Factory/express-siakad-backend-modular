@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
   PerguruanTinggi.init(
     {
       id_perguruan_tinggi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
-        primaryKey: true, 
+        primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
       },
       kode_perguruan_tinggi: {

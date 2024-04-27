@@ -23,14 +23,14 @@ module.exports = (sequelize, DataTypes) => {
       id_registrasi_dosen: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         defaultValue: DataTypes.UUIDV4,
       },
       jk: {
         type: DataTypes.CHAR(1),
         allowNull: false,
       },
-      nama_surat_tugas: {
+      nomor_surat_tugas: {
         type: DataTypes.STRING(80),
         allowNull: false,
       },
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_dosen: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_tahun_ajaran: {
@@ -59,11 +59,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       id_perguruan_tinggi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
     },

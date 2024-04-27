@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   JenisAktivitasMahasiswa.init(
     {
+      id_jenis_aktivitas_mahasiswa: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(2),
+      },
       nama_jenis_aktivitas_mahasiswa: {
         type: DataTypes.STRING(50),
         allowNull: true,

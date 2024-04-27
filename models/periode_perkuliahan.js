@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   PeriodePerkuliahan.init(
     {
+      id_periode_perkuliahan: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       jumlah_target_mahasiswa_baru: {
         type: DataTypes.DECIMAL(6, 0),
         allowNull: false,
@@ -66,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.NOW,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_semester: {

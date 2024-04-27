@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       id_subtansi_kuliah: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         defaultValue: DataTypes.UUIDV4,
       },
       tgl_create: {
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.NOW,
       },
       id_substansi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
     },

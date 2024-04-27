@@ -6,7 +6,7 @@ module.exports = {
       id_konversi_aktivitas: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       nilai_angka: {
@@ -22,7 +22,7 @@ module.exports = {
         allowNull: true,
       },
       id_matkul: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -34,7 +34,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_anggota: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {

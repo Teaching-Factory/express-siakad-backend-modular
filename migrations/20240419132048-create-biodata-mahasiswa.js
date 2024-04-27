@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER(10),
       },
       tempat_lahir: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
       },
       nik: {
@@ -105,7 +105,7 @@ module.exports = {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

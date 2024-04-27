@@ -6,7 +6,7 @@ module.exports = {
       id_bobot_nilai: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       tgl_create: {
@@ -39,7 +39,7 @@ module.exports = {
         allowNull: false,
       },
       id_prodi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

@@ -6,7 +6,7 @@ module.exports = {
       id_riwayat_pend_mhs: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       tanggal_daftar: {
@@ -30,7 +30,7 @@ module.exports = {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -90,7 +90,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_prodi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -114,7 +114,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_bidang_minat: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -126,7 +126,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_perguruan_tinggi_asal: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -138,7 +138,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_prodi_asal: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {

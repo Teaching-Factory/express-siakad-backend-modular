@@ -23,7 +23,7 @@ module.exports = {
         defaultValue: Sequelize.literal("CURRENT_DATE"),
       },
       id_kurikulum: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -35,7 +35,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_matkul: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

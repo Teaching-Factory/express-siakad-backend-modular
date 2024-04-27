@@ -6,7 +6,7 @@ module.exports = {
       id_bidang_minat: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       nm_bidang_minat: {
@@ -26,7 +26,7 @@ module.exports = {
         allowNull: true,
       },
       id_prodi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {

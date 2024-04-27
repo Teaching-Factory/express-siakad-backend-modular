@@ -34,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   DataLengkapMahasiswaProdi.init(
     {
+      id_data_lengkap_mahasiswa_prodi: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       nama_status_mahasiswa: {
         type: DataTypes.STRING(40),
         allowNull: true,
@@ -51,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_periode_masuk: {
@@ -59,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_agama: {
@@ -127,11 +133,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_perguruan_tinggi_asal: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_prodi_asal: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
     },

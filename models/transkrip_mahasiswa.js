@@ -17,28 +17,34 @@ module.exports = (sequelize, DataTypes) => {
   }
   TranskripMahasiswa.init(
     {
+      id_transkrip_mahasiswa: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       smt_diambil: {
         type: DataTypes.INTEGER(2),
         allowNull: true,
       },
       id_nilai_transfer: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_matkul: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_kelas_kuliah: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_konversi_aktivitas: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
     },

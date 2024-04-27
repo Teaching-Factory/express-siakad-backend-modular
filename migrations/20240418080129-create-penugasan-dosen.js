@@ -6,14 +6,14 @@ module.exports = {
       id_registrasi_dosen: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       jk: {
         type: Sequelize.CHAR(1),
         allowNull: false,
       },
-      nama_surat_tugas: {
+      nomor_surat_tugas: {
         type: Sequelize.STRING(80),
         allowNull: false,
       },
@@ -34,7 +34,7 @@ module.exports = {
         allowNull: true,
       },
       id_dosen: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -58,7 +58,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_perguruan_tinggi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -70,7 +70,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_prodi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

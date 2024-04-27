@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       id_kelas_kuliah: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -26,7 +26,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_registrasi_mahasiswa: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

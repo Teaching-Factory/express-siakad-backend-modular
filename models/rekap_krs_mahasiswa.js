@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   RekapKRSMahasiswa.init(
     {
+      id_rekap_krs_mahasiswa: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       nama_periode: {
         type: DataTypes.STRING(50),
         allowNull: false,
@@ -27,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_periode: {
@@ -35,11 +41,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_matkul: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_semester: {

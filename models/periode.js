@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
     },

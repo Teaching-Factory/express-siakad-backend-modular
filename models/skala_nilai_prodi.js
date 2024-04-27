@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   SkalaNilaiProdi.init(
     {
+      id_bobot_nilai: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(36),
+        defaultValue: DataTypes.UUIDV4,
+      },
       tgl_create: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -44,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
     },

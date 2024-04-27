@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   RiwayatPendidikanMahasiswa.init(
     {
+      id_riwayat_pend_mhs: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.STRING(36),
+        defaultValue: DataTypes.UUIDV4,
+      },
       tanggal_daftar: {
         type: DataTypes.DATEONLY,
         allowNull: false,
@@ -44,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_jenis_daftar: {
@@ -64,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_pembiayaan: {
@@ -72,15 +78,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_bidang_minat: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_perguruan_tinggi_asal: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_prodi_asal: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
     },

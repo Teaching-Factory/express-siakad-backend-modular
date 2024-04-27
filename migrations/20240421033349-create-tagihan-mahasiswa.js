@@ -6,7 +6,7 @@ module.exports = {
       id_tagihan_mahasiswa: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       jumlah_tagihan: {
@@ -42,7 +42,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_registrasi_mahasiswa: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

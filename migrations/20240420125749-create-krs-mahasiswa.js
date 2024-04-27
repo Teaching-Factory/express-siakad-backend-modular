@@ -6,7 +6,7 @@ module.exports = {
       id_krs: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       angkatan: {
@@ -14,7 +14,7 @@ module.exports = {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -38,7 +38,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_prodi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -50,7 +50,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_matkul: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -62,7 +62,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_kelas: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {

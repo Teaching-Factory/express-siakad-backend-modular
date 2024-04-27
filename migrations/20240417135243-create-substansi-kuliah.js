@@ -6,7 +6,7 @@ module.exports = {
       id_subtansi_kuliah: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       tgl_create: {
@@ -20,7 +20,7 @@ module.exports = {
         defaultValue: Sequelize.literal("CURRENT_DATE"),
       },
       id_substansi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

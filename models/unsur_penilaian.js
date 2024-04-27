@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   UnsurPenilaian.init(
     {
+      id_unsur_penilaian: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       id_unsur: {
         type: DataTypes.STRING(10),
         allowNull: false,

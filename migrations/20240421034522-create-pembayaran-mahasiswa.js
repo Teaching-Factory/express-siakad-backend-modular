@@ -6,7 +6,7 @@ module.exports = {
       id_pembayaran_mahasiswa: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       upload_bukti_tf: {
@@ -18,7 +18,7 @@ module.exports = {
         allowNull: false,
       },
       id_tagihan_mahasiswa: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_kurikulum: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
     },

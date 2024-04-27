@@ -18,7 +18,7 @@ module.exports = {
         allowNull: false,
       },
       id_kelas_kuliah: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -30,7 +30,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_registrasi_dosen: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
@@ -42,7 +42,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_substansi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {

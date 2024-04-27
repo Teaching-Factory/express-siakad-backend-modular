@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   AktivitasKuliahMahasiswa.init(
     {
+      id_aktivitas_kuliah_mahasiswa: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       angkatan: {
         type: DataTypes.CHAR(4),
         allowNull: true,
@@ -42,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_semester: {
@@ -50,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
       id_status_mahasiswa: {

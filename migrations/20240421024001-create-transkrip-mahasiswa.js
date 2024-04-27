@@ -14,11 +14,11 @@ module.exports = {
         allowNull: true,
       },
       id_nilai_transfer: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -30,7 +30,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_matkul: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -42,7 +42,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_kelas_kuliah: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
@@ -54,7 +54,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_konversi_aktivitas: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {

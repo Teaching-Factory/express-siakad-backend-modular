@@ -6,7 +6,7 @@ module.exports = {
       id_kurikulum: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       nama_kurikulum: {
@@ -38,7 +38,7 @@ module.exports = {
         allowNull: true,
       },
       id_prodi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

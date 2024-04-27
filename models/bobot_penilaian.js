@@ -15,12 +15,18 @@ module.exports = (sequelize, DataTypes) => {
   }
   BobotPenilaian.init(
     {
+      id_bobot_penilaian: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       bobot_penilaian: {
         type: DataTypes.INTEGER(4),
         allowNull: false,
       },
       id_prodi: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_unsur_penilaian: {

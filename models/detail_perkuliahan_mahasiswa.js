@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   DetailPerkuliahanMahasiswa.init(
     {
+      id_detail_perkuliahan_mahasiswa: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       angkatan: {
         type: DataTypes.CHAR(4),
         allowNull: true,
@@ -37,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_semester: {

@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Pembiayaan.init(
     {
+      id_pembiayaan: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       nama_pembiayaan: {
         type: DataTypes.STRING(50),
         allowNull: false,

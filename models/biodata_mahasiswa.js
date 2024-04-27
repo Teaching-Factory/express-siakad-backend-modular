@@ -29,6 +29,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   BiodataMahasiswa.init(
     {
+      id_mahasiswa: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       tempat_lahir: {
         type: DataTypes.STRING(32),
         allowNull: false,
@@ -126,7 +132,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
       id_wilayah: {

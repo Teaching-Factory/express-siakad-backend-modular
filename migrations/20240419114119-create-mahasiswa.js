@@ -6,7 +6,7 @@ module.exports = {
       id_registrasi_mahasiswa: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       nama_mahasiswa: {
@@ -46,11 +46,11 @@ module.exports = {
         allowNull: true,
       },
       id_sms: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
       },
       id_perguruan_tinggi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {

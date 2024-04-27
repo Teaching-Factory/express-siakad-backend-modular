@@ -110,7 +110,7 @@ module.exports = {
         allowNull: true,
       },
       id_dosen: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

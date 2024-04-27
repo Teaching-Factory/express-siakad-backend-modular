@@ -6,7 +6,7 @@ module.exports = {
       id_aktivitas: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4,
       },
       jenis_anggota: {
@@ -54,7 +54,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_prodi: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
