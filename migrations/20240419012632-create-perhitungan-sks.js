@@ -19,7 +19,7 @@ module.exports = {
       },
       id_kelas_kuliah: {
         type: Sequelize.STRING(36),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "kelas_kuliahs",
@@ -31,7 +31,7 @@ module.exports = {
       },
       id_registrasi_dosen: {
         type: Sequelize.STRING(36),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "penugasan_dosens",

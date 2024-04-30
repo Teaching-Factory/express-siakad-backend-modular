@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const { Sequelize } = require(".");
 module.exports = (sequelize, DataTypes) => {
   class RekapJumlahMahasiswa extends Model {
     /**
@@ -42,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_periode: {
-        type: DataTypes.CHAR(5),
+        type: DataTypes.INTEGER(10),
         allowNull: true,
       },
       id_prodi: {

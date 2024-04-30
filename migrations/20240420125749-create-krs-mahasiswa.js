@@ -26,7 +26,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_periode: {
-        type: Sequelize.CHAR(5),
+        type: Sequelize.INTEGER(10),
         allowNull: true,
         references: {
           model: {

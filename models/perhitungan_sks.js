@@ -32,11 +32,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_kelas_kuliah: {
         type: DataTypes.STRING(36),
-        allowNull: false,
+        allowNull: true,
       },
       id_registrasi_dosen: {
         type: DataTypes.STRING(36),
-        allowNull: false,
+        allowNull: true,
       },
       id_substansi: {
         type: DataTypes.STRING(36),

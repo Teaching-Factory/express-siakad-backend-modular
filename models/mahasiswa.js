@@ -88,7 +88,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       id_periode: {
-        type: DataTypes.CHAR(5),
+        type: DataTypes.INTEGER(10),
         allowNull: true,
       },
     },

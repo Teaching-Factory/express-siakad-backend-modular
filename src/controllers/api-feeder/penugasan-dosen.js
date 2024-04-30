@@ -27,14 +27,27 @@ const getPenugasanDosen = async (req, res, next) => {
         },
       });
 
+      let tanggal_surat_tugas, mulai_surat_tugas;
+
+      //   melakukan pengecekan data tanggal
+      if (penugasan_dosen.tanggal_surat_tugas != null) {
+        const date_start = penugasan_dosen.tanggal_surat_tugas.split("-");
+        tanggal_surat_tugas = `${date_start[2]}-${date_start[1]}-${date_start[0]}`;
+      }
+
+      if (penugasan_dosen.mulai_surat_tugas != null) {
+        const date_end = penugasan_dosen.mulai_surat_tugas.split("-");
+        mulai_surat_tugas = `${date_end[2]}-${date_end[1]}-${date_end[0]}`;
+      }
+
       if (!existingPenugasanDosen) {
         // Data belum ada, buat entri baru di database
         await PenugasanDosen.create({
           id_registrasi_dosen: penugasan_dosen.id_registrasi_dosen,
           jk: penugasan_dosen.jk,
           nomor_surat_tugas: penugasan_dosen.nomor_surat_tugas,
-          tanggal_surat_tugas: penugasan_dosen.tanggal_surat_tugas,
-          mulai_surat_tugas: penugasan_dosen.mulai_surat_tugas,
+          tanggal_surat_tugas: tanggal_surat_tugas,
+          mulai_surat_tugas: mulai_surat_tugas,
           tanggal_create: penugasan_dosen.tgl_create,
           tanggal_ptk_keluar: penugasan_dosen.tgl_ptk_keluar,
           id_dosen: penugasan_dosen.id_dosen,

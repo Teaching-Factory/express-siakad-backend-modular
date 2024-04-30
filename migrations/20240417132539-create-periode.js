@@ -5,8 +5,9 @@ module.exports = {
     await queryInterface.createTable("periodes", {
       id_periode: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.CHAR(5),
+        type: Sequelize.INTEGER(10),
       },
       periode_pelaporan: {
         type: Sequelize.CHAR(5),
@@ -18,7 +19,7 @@ module.exports = {
       },
       id_prodi: {
         type: Sequelize.STRING(36),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "prodis",
