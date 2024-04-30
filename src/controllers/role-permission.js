@@ -12,6 +12,7 @@ const getAllRoles = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Role Success",
+      jumlahData: roles.length,
       data: roles,
     });
   } catch (error) {
@@ -130,6 +131,7 @@ const getAllPermissions = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Permission Success",
+      jumlahData: permissions.length,
       data: permissions,
     });
   } catch (error) {

@@ -6,11 +6,15 @@ const PORT = process.env.PORT || 5000;
 const express = require("express");
 
 // import routes
+const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
 const rolePermissionRoutes = require("./routes/role-permission");
-const periodeRoutes = require("./routes/periode");
-const userRoutes = require("./routes/user");
 const agamaRoutes = require("./routes/agama");
+const negaraRoutes = require("./routes/negara");
+const perguruanTinggiRoutes = require("./routes/perguruan_tinggi");
+const profilPTRoutes = require("./routes/profil-pt");
+
+const periodeRoutes = require("./routes/periode");
 const wilayahRoutes = require("./routes/wilayah");
 const angkatanRoutes = require("./routes/angkatan");
 const fakultasRoutes = require("./routes/fakultas");
@@ -69,12 +73,16 @@ middlewareDatabaseConnection
 // middleware request json from client
 app.use(express.json());
 
+app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/role-permission", rolePermissionRoutes);
-app.use("/periode", periodeRoutes);
-app.use("/user", userRoutes);
 app.use("/agama", agamaRoutes);
+app.use("/negara", negaraRoutes);
 app.use("/wilayah", wilayahRoutes);
+app.use("/perguruan-tinggi", perguruanTinggiRoutes);
+app.use("/profil-pt", profilPTRoutes);
+
+app.use("/periode", periodeRoutes);
 app.use("/angkatan", angkatanRoutes);
 app.use("/fakultas", fakultasRoutes);
 app.use("/prodi", prodiRoutes);
