@@ -49,6 +49,18 @@ module.exports = {
         type: Sequelize.STRING(36),
         allowNull: false,
       },
+      id_mahasiswa: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "biodata_mahasiswas",
+          },
+          key: "id_mahasiswa",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       id_perguruan_tinggi: {
         type: Sequelize.STRING(36),
         allowNull: true,

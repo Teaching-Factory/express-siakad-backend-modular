@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi tabel parent
+      Mahasiswa.belongsTo(models.BiodataMahasiswa, { foreignKey: "id_mahasiswa" });
       Mahasiswa.belongsTo(models.PerguruanTinggi, { foreignKey: "id_perguruan_tinggi" });
       Mahasiswa.belongsTo(models.Agama, { foreignKey: "id_agama" });
       Mahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
 
       // relasi tabel child
-      Mahasiswa.hasMany(models.BiodataMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.DetailNilaiPerkuliahanKelas, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.RiwayatNilaiMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
@@ -76,6 +76,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       id_sms: {
+        type: DataTypes.STRING(36),
+        allowNull: false,
+      },
+      id_mahasiswa: {
         type: DataTypes.STRING(36),
         allowNull: false,
       },

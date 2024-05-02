@@ -34,7 +34,7 @@ module.exports = {
         allowNull: false,
         references: {
           model: {
-            tableName: "biodata_mahasiswas",
+            tableName: "mahasiswas",
           },
           key: "id_registrasi_mahasiswa",
         },

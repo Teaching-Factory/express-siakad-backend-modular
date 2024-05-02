@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi tabel parent
-      BiodataMahasiswa.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       BiodataMahasiswa.belongsTo(models.Wilayah, { foreignKey: "id_wilayah" });
       BiodataMahasiswa.belongsTo(models.JenisTinggal, { foreignKey: "id_jenis_tinggal" });
       BiodataMahasiswa.belongsTo(models.AlatTransportasi, { foreignKey: "id_alat_transportasi" });
@@ -25,15 +24,18 @@ module.exports = (sequelize, DataTypes) => {
       BiodataMahasiswa.belongsTo(models.KebutuhanKhusus, { foreignKey: "id_kebutuhan_khusus_mahasiswa" });
       BiodataMahasiswa.belongsTo(models.KebutuhanKhusus, { foreignKey: "id_kebutuhan_khusus_ayah" });
       BiodataMahasiswa.belongsTo(models.KebutuhanKhusus, { foreignKey: "id_kebutuhan_khusus_ibu" });
+
+      // relasi tabel child
+      BiodataMahasiswa.hasMany(models.Mahasiswa, { foreignKey: "id_mahasiswa" });
     }
   }
   BiodataMahasiswa.init(
     {
       id_mahasiswa: {
+        type: DataTypes.STRING(36),
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER(10),
+        defaultValue: DataTypes.UUIDV4,
       },
       tempat_lahir: {
         type: DataTypes.STRING(32),
@@ -41,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       nik: {
         type: DataTypes.CHAR(16),
-        allowNull: false,
+        allowNull: true,
       },
       nisn: {
         type: DataTypes.CHAR(10),
@@ -131,13 +133,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATEONLY,
         allowNull: true,
       },
-      id_registrasi_mahasiswa: {
-        type: DataTypes.STRING(36),
-        allowNull: false,
-      },
       id_wilayah: {
         type: DataTypes.CHAR(8),
-        allowNull: false,
+        allowNull: true,
       },
       id_jenis_tinggal: {
         type: DataTypes.DECIMAL(2, 0),
@@ -193,7 +191,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_kebutuhan_khusus_ibu: {
         type: DataTypes.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

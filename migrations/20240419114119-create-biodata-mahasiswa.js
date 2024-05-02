@@ -5,9 +5,9 @@ module.exports = {
     await queryInterface.createTable("biodata_mahasiswas", {
       id_mahasiswa: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.STRING(36),
+        defaultValue: Sequelize.UUIDV4,
       },
       tempat_lahir: {
         type: Sequelize.STRING(36),
@@ -15,7 +15,7 @@ module.exports = {
       },
       nik: {
         type: Sequelize.CHAR(16),
-        allowNull: false,
+        allowNull: true,
       },
       nisn: {
         type: Sequelize.CHAR(10),
@@ -104,21 +104,9 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: true,
       },
-      id_registrasi_mahasiswa: {
-        type: Sequelize.STRING(36),
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "mahasiswas",
-          },
-          key: "id_registrasi_mahasiswa",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
       id_wilayah: {
         type: Sequelize.CHAR(8),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "wilayahs",
@@ -288,7 +276,7 @@ module.exports = {
       },
       id_kebutuhan_khusus_ibu: {
         type: Sequelize.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
         defaultValue: 0,
         references: {
           model: {

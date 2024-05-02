@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       // relasi tabel child
       JenjangPendidikan.hasMany(models.Prodi, { foreignKey: "id_jenjang_pendidikan" });
       JenjangPendidikan.hasMany(models.Fakultas, { foreignKey: "id_jenjang_pendidikan" });
-      JenjangPendidikan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_jenjang_pendidikan_ayah" });
-      JenjangPendidikan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_jenjang_pendidikan_ibu" });
-      JenjangPendidikan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_jenjang_pendidikan_wali" });
-      JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_jenjang_pendidikan_ayah" });
-      JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_jenjang_pendidikan_ibu" });
-      JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_jenjang_pendidikan_wali" });
+      JenjangPendidikan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_pendidikan_ayah" });
+      JenjangPendidikan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_pendidikan_ibu" });
+      JenjangPendidikan.hasMany(models.BiodataMahasiswa, { foreignKey: "id_pendidikan_wali" });
+      JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pendidikan_ayah" });
+      JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pendidikan_ibu" });
+      JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pendidikan_wali" });
     }
   }
   JenjangPendidikan.init(
