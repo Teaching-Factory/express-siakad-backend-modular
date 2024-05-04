@@ -55,6 +55,8 @@ const RiwayatNilaiMahasiswaController = require("../controllers/api-feeder/riway
 const PesertaKelasKuliahController = require("../controllers/api-feeder/peserta-kelas-kuliah");
 const PerkuliahanMahasiswaController = require("../controllers/api-feeder/perkuliahan-mahasiswa");
 const DetailPerkuliahanMahasiswaController = require("../controllers/api-feeder/detail-perkuliahan-mahasiswa");
+const KRSMahasiswaController = require("../controllers/api-feeder/krs-mahasiswa");
+const AktivitasKuliahMahasiswaController = require("../controllers/api-feeder/aktivitas-kuliah-mahasiswa");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -109,5 +111,7 @@ router.get("/get-riwayat-nilai-mahasiswa", RiwayatNilaiMahasiswaController.getRi
 router.get("/get-peserta-kelas-kuliah", PesertaKelasKuliahController.getPesertaKelasKuliah);
 router.get("/get-perkuliahan-mahasiswa", PerkuliahanMahasiswaController.getPerkuliahanMahasiswa);
 router.get("/get-detail-perkuliahan-mahasiswa", DetailPerkuliahanMahasiswaController.getDetailPerkuliahanMahasiswa);
+router.get("/get-krs-mahasiswa", KRSMahasiswaController.getKRSMahasiswa);
+router.get("/get-aktivitas-kuliah-mahasiswa", AktivitasKuliahMahasiswaController.getAktivitasKuliahMahasiswa);
 
 module.exports = router;
