@@ -15,11 +15,11 @@ module.exports = {
       },
       nilai_huruf: {
         type: Sequelize.CHAR(3),
-        allowNull: false,
+        allowNull: true,
       },
       nilai_indeks: {
         type: Sequelize.DECIMAL(4, 2),
-        allowNull: false,
+        allowNull: true,
       },
       angkatan: {
         type: Sequelize.CHAR(4),

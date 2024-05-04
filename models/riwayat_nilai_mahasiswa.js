@@ -28,11 +28,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       nilai_huruf: {
         type: DataTypes.CHAR(3),
-        allowNull: false,
+        allowNull: true,
       },
       nilai_indeks: {
         type: DataTypes.DECIMAL(4, 2),
-        allowNull: false,
+        allowNull: true,
       },
       angkatan: {
         type: DataTypes.CHAR(4),

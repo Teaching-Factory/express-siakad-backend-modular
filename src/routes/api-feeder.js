@@ -50,6 +50,11 @@ const AktivitasMahasiswaController = require("../controllers/api-feeder/aktivita
 const BiodataMahasiswaController = require("../controllers/api-feeder/biodata-mahasiswa");
 const MahasiswaController = require("../controllers/api-feeder/mahasiswa");
 const RiwayatPendidikanMahasiswaController = require("../controllers/api-feeder/riwayat-pendidikan-mahasiswa");
+const DetailNilaiPerkuliahanKelasController = require("../controllers/api-feeder/detail-nilai-perkuliahan-kelas");
+const RiwayatNilaiMahasiswaController = require("../controllers/api-feeder/riwayat-nilai-mahasiswa");
+const PesertaKelasKuliahController = require("../controllers/api-feeder/peserta-kelas-kuliah");
+const PerkuliahanMahasiswaController = require("../controllers/api-feeder/perkuliahan-mahasiswa");
+const DetailPerkuliahanMahasiswaController = require("../controllers/api-feeder/detail-perkuliahan-mahasiswa");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -99,5 +104,10 @@ router.get("/get-aktivitas-mahasiswa", AktivitasMahasiswaController.getAktivitas
 router.get("/get-biodata-mahasiswa", BiodataMahasiswaController.getBiodataMahasiswa);
 router.get("/get-mahasiswa", MahasiswaController.getMahasiswa);
 router.get("/get-riwayat-pendidikan-mahasiswa", RiwayatPendidikanMahasiswaController.getRiwayatPendidikanMahasiswa);
+router.get("/get-detail-nilai-perkuliahan-kelas", DetailNilaiPerkuliahanKelasController.getDetailNilaiPerkuliahanKelas);
+router.get("/get-riwayat-nilai-mahasiswa", RiwayatNilaiMahasiswaController.getRiwayatNilaiMahasiswa);
+router.get("/get-peserta-kelas-kuliah", PesertaKelasKuliahController.getPesertaKelasKuliah);
+router.get("/get-perkuliahan-mahasiswa", PerkuliahanMahasiswaController.getPerkuliahanMahasiswa);
+router.get("/get-detail-perkuliahan-mahasiswa", DetailPerkuliahanMahasiswaController.getDetailPerkuliahanMahasiswa);
 
 module.exports = router;

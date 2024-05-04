@@ -23,11 +23,11 @@ module.exports = {
       },
       nilai_indeks: {
         type: Sequelize.DECIMAL(4, 0),
-        allowNull: false,
+        allowNull: true,
       },
       nilai_huruf: {
         type: Sequelize.CHAR(3),
-        allowNull: false,
+        allowNull: true,
       },
       id_kelas_kuliah: {
         type: Sequelize.STRING(36),
