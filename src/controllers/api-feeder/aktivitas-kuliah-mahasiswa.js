@@ -10,7 +10,7 @@ const getAktivitasKuliahMahasiswa = async (req, res, next) => {
     const requestBody = {
       act: "GetAktivitasKuliahMahasiswa",
       token: `${token}`,
-      filter: `angkatan = '2023'`,
+      filter: "angkatan = '2023'",
       order: "id_registrasi_mahasiswa",
     };
 
@@ -28,7 +28,7 @@ const getAktivitasKuliahMahasiswa = async (req, res, next) => {
         ipk: aktivitas_kuliah_mahasiswa.ipk,
         sks_semester: aktivitas_kuliah_mahasiswa.sks_semester,
         sks_total: aktivitas_kuliah_mahasiswa.sks_total,
-        sks_biaya_kuliah_smt: aktivitas_kuliah_mahasiswa.sks_biaya_kuliah_smt,
+        biaya_kuliah_smt: aktivitas_kuliah_mahasiswa.biaya_kuliah_smt,
         id_registrasi_mahasiswa: aktivitas_kuliah_mahasiswa.id_registrasi_mahasiswa,
         id_semester: aktivitas_kuliah_mahasiswa.id_semester,
         id_prodi: aktivitas_kuliah_mahasiswa.id_prodi,
