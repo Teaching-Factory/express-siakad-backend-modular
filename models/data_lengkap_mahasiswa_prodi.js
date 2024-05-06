@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_prodi: {
         type: DataTypes.STRING(36),
-        allowNull: false,
+        allowNull: true,
       },
       id_periode_masuk: {
         type: DataTypes.CHAR(5),

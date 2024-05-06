@@ -63,6 +63,7 @@ const TranskripMahasiswaController = require("../controllers/api-feeder/transkri
 const RekapJumlahMahasiswaController = require("../controllers/api-feeder/rekap-jumlah-mahasiswa");
 const RekapKHSMahasiswaController = require("../controllers/api-feeder/rekap-khs-mahasiswa");
 const RekapKRSMahasiswaController = require("../controllers/api-feeder/rekap-krs-mahasiswa");
+const DataLengkapMahasiswaProdiController = require("../controllers/api-feeder/data-lengkap-mahasiswa-prodi");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -125,5 +126,6 @@ router.get("/get-transkrip-mahasiswa", TranskripMahasiswaController.getTranskrip
 router.get("/get-rekap-jumlah-mahasiswa", RekapJumlahMahasiswaController.getRekapJumlahMahasiswa);
 router.get("/get-rekap-khs-mahasiswa", RekapKHSMahasiswaController.getRekapKHSMahasiswa);
 router.get("/get-rekap-krs-mahasiswa", RekapKRSMahasiswaController.getRekapKRSMahasiswa);
+router.get("/get-data-lengkap-mahasiswa-prodi", DataLengkapMahasiswaProdiController.getDataLengkapMahasiswaProdi);
 
 module.exports = router;

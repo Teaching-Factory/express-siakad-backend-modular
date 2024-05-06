@@ -27,7 +27,7 @@ module.exports = {
       },
       id_prodi: {
         type: Sequelize.STRING(36),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "prodis",
