@@ -33,19 +33,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       nilai_angka: {
         type: DataTypes.DECIMAL(4, 1),
-        allowNull: false,
+        allowNull: true,
       },
       nilai_huruf: {
         type: DataTypes.CHAR(3),
-        allowNull: false,
+        allowNull: true,
       },
       nilai_indeks: {
         type: DataTypes.DECIMAL(4, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_x_indeks: {
         type: DataTypes.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
       id_registrasi_mahasiswa: {
         type: DataTypes.STRING(36),

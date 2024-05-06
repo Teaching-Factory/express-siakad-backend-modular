@@ -57,6 +57,12 @@ const PerkuliahanMahasiswaController = require("../controllers/api-feeder/perkul
 const DetailPerkuliahanMahasiswaController = require("../controllers/api-feeder/detail-perkuliahan-mahasiswa");
 const KRSMahasiswaController = require("../controllers/api-feeder/krs-mahasiswa");
 const AktivitasKuliahMahasiswaController = require("../controllers/api-feeder/aktivitas-kuliah-mahasiswa");
+const AnggotaAktivitasMahasiswaController = require("../controllers/api-feeder/anggota-aktivitas-mahasiswa");
+const KonversiKampusMerdekaController = require("../controllers/api-feeder/konversi-kampus-merdeka");
+const TranskripMahasiswaController = require("../controllers/api-feeder/transkrip-mahasiswa");
+const RekapJumlahMahasiswaController = require("../controllers/api-feeder/rekap-jumlah-mahasiswa");
+const RekapKHSMahasiswaController = require("../controllers/api-feeder/rekap-khs-mahasiswa");
+const RekapKRSMahasiswaController = require("../controllers/api-feeder/rekap-krs-mahasiswa");
 
 // all routes
 router.get("/get-agama", AgamaController.getAgama);
@@ -113,5 +119,11 @@ router.get("/get-perkuliahan-mahasiswa", PerkuliahanMahasiswaController.getPerku
 router.get("/get-detail-perkuliahan-mahasiswa", DetailPerkuliahanMahasiswaController.getDetailPerkuliahanMahasiswa);
 router.get("/get-krs-mahasiswa", KRSMahasiswaController.getKRSMahasiswa);
 router.get("/get-aktivitas-kuliah-mahasiswa", AktivitasKuliahMahasiswaController.getAktivitasKuliahMahasiswa);
+router.get("/get-anggota-aktivitas-mahasiswa", AnggotaAktivitasMahasiswaController.getAnggotaAktivitasMahasiswa);
+router.get("/get-konversi-kampus-merdeka", KonversiKampusMerdekaController.getKonversiKampusMerdeka);
+router.get("/get-transkrip-mahasiswa", TranskripMahasiswaController.getTranskripMahasiswa);
+router.get("/get-rekap-jumlah-mahasiswa", RekapJumlahMahasiswaController.getRekapJumlahMahasiswa);
+router.get("/get-rekap-khs-mahasiswa", RekapKHSMahasiswaController.getRekapKHSMahasiswa);
+router.get("/get-rekap-krs-mahasiswa", RekapKRSMahasiswaController.getRekapKRSMahasiswa);
 
 module.exports = router;

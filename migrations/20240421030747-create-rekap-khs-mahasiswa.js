@@ -19,19 +19,19 @@ module.exports = {
       },
       nilai_angka: {
         type: Sequelize.DECIMAL(4, 1),
-        allowNull: false,
+        allowNull: true,
       },
       nilai_huruf: {
         type: Sequelize.CHAR(3),
-        allowNull: false,
+        allowNull: true,
       },
       nilai_indeks: {
         type: Sequelize.DECIMAL(4, 2),
-        allowNull: false,
+        allowNull: true,
       },
       sks_x_indeks: {
         type: Sequelize.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
       id_registrasi_mahasiswa: {
         type: Sequelize.STRING(36),
