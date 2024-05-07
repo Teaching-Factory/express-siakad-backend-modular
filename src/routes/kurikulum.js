@@ -6,10 +6,10 @@ const router = express.Router();
 const KurikulumController = require("../controllers/kurikulum");
 
 // all routes
-router.get("/", KurikulumController.getAllKurikulums);
+router.get("/", KurikulumController.getAllKurikulum);
 router.get("/:id/get", KurikulumController.getKurikulumById);
-router.post("/create", KurikulumController.createKurikulum);
-router.put("/:id/update", KurikulumController.updateKurikulumById);
-router.delete("/:id/delete", KurikulumController.deleteKurikulumById);
+// router.post("/create", KurikulumController.createKurikulum);
+// router.put("/:id/update", KurikulumController.updateKurikulumById);
+// router.delete("/:id/delete", KurikulumController.deleteKurikulumById);
 
 module.exports = router;

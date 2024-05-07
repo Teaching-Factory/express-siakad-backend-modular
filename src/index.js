@@ -37,6 +37,14 @@ const substansiKuliahRoutes = require("./routes/substansi-kuliah");
 const mataKuliahRoutes = require("./routes/mata-kuliah");
 const tahunAjaranRoutes = require("./routes/tahun-ajaran");
 const fakultasRoutes = require("./routes/fakultas");
+const semesterRoutes = require("./routes/semester");
+const kurikulumRoutes = require("./routes/kurikulum");
+const detailKurikulumRoutes = require("./routes/detail-kurikulum");
+const penugasanDosenRoutes = require("./routes/penugasan-dosen");
+const matkulKurikulumRoutes = require("./routes/matkul-kurikulum");
+const kelasKuliahRoutes = require("./routes/kelas-kuliah");
+const detailKelasKuliahRoutes = require("./routes/detail-kelas-kuliah");
+const perhitunganSKSRoutes = require("./routes/perhitungan-sks");
 
 // route api local not done yet
 const wilayahRoutes = require("./routes/wilayah");
@@ -57,7 +65,6 @@ const krsMahasiswaRoutes = require("./routes/krs-mahasiswa");
 const matkulKrsRoutes = require("./routes/matkul-krs");
 const unsurPenilaianRoutes = require("./routes/unsur-penilaian");
 const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
-const kurikulumRoutes = require("./routes/kurikulum");
 const aktivitasMahasiswaRoutes = require("./routes/aktivitas-mahasiswa");
 const tagihanMahasiswaRoutes = require("./routes/tagihan-mahasiswa");
 const pembayaranMahasiswaRoutes = require("./routes/pembayaran-mahasiswa");
@@ -124,6 +131,14 @@ app.use("/substansi-kuliah", substansiKuliahRoutes);
 app.use("/mata-kuliah", mataKuliahRoutes);
 app.use("/tahun-ajaran", tahunAjaranRoutes);
 app.use("/fakultas", fakultasRoutes);
+app.use("/semester", semesterRoutes);
+app.use("/kurikulum", kurikulumRoutes);
+app.use("/detail-kurikulum", detailKurikulumRoutes);
+app.use("/penugasan-dosen", penugasanDosenRoutes);
+app.use("/matkul-kurikulum", matkulKurikulumRoutes);
+app.use("/kelas-kuliah", kelasKuliahRoutes);
+app.use("/detail-kelas-kuliah", detailKelasKuliahRoutes);
+app.use("/perhitungan-sks", perhitunganSKSRoutes);
 
 // route api local not done yet
 app.use("/angkatan", angkatanRoutes);
@@ -143,7 +158,6 @@ app.use("/krs/mahasiswa", krsMahasiswaRoutes);
 app.use("/krs/matkul-krs", matkulKrsRoutes);
 app.use("/unsur-penilaian", unsurPenilaianRoutes);
 app.use("/bobot-penilaian", bobotPenilaianRoutes);
-app.use("/kurikulum", kurikulumRoutes);
 app.use("/aktivitas-mahasiswa", aktivitasMahasiswaRoutes);
 app.use("/tagihan-mahasiswa", tagihanMahasiswaRoutes);
 app.use("/pembayaran-mahasiswa", pembayaranMahasiswaRoutes);
