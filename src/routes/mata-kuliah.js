@@ -6,10 +6,10 @@ const router = express.Router();
 const MataKuliahController = require("../controllers/mata-kuliah");
 
 // all routes
-router.get("/", MataKuliahController.getAllMataKuliahs);
+router.get("/", MataKuliahController.getAllMataKuliah);
 router.get("/:id/get", MataKuliahController.getMataKuliahById);
-router.post("/create", MataKuliahController.createMataKuliah);
-router.put("/:id/update", MataKuliahController.updateMataKuliahById);
-router.delete("/:id/delete", MataKuliahController.deleteMataKuliahById);
+// router.post("/create", MataKuliahController.createMataKuliah);
+// router.put("/:id/update", MataKuliahController.updateMataKuliahById);
+// router.delete("/:id/delete", MataKuliahController.deleteMataKuliahById);
 
 module.exports = router;

@@ -6,10 +6,10 @@ const router = express.Router();
 const DosenController = require("../controllers/dosen");
 
 // all routes
-router.get("/", DosenController.getAllDosens);
+router.get("/", DosenController.getAllDosen);
 router.get("/:id/get", DosenController.getDosenById);
-router.post("/create", DosenController.createDosen);
-router.put("/:id/update", DosenController.updateDosenById);
-router.delete("/:id/delete", DosenController.deleteDosenById);
+// router.post("/create", DosenController.createDosen);
+// router.put("/:id/update", DosenController.updateDosenById);
+// router.delete("/:id/delete", DosenController.deleteDosenById);
 
 module.exports = router;

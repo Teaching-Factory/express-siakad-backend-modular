@@ -6,10 +6,10 @@ const router = express.Router();
 const PeriodeController = require("../controllers/periode");
 
 // all routes
-router.get("/", PeriodeController.getAllPeriodes);
+router.get("/", PeriodeController.getAllPeriode);
 router.get("/:id/get", PeriodeController.getPeriodeById);
-router.post("/create", PeriodeController.createPeriode);
-router.put("/:id/update", PeriodeController.updatePeriodeById);
-router.delete("/:id/delete", PeriodeController.deletePeriodeById);
+// router.post("/create", PeriodeController.createPeriode);
+// router.put("/:id/update", PeriodeController.updatePeriodeById);
+// router.delete("/:id/delete", PeriodeController.deletePeriodeById);
 
 module.exports = router;

@@ -1,49 +1,76 @@
-const getAllProdis = (req, res) => {
-  res.json({
-    message: "Berhasil mengakses get all prodis",
-  });
+const { Prodi } = require("../../models");
+
+const getAllProdi = async (req, res) => {
+  try {
+    // Ambil semua data prodi dari database
+    const prodi = await Prodi.findAll();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Prodi Success",
+      jumlahData: prodi.length,
+      data: prodi,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getProdiById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const prodiId = req.params.id;
+const getProdiById = async (req, res) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const ProdiId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses get prodi by id",
-    prodiId: prodiId,
-  });
+    // Cari data prodi berdasarkan ID di database
+    const prodi = await Prodi.findByPk(ProdiId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!prodi) {
+      return res.status(404).json({
+        message: `<===== Prodi With ID ${ProdiId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Prodi By ID ${ProdiId} Success:`,
+      data: prodi,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const createProdi = (req, res) => {
-  res.json({
-    message: "Berhasil mengakses create prodi",
-  });
-};
+// const createProdi = (req, res) => {
+//   res.json({
+//     message: "Berhasil mengakses create prodi",
+//   });
+// };
 
-const updateProdiById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const prodiId = req.params.id;
+// const updateProdiById = (req, res) => {
+//   // Dapatkan ID dari parameter permintaan
+//   const prodiId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses update prodi by id",
-    prodiId: prodiId,
-  });
-};
+//   res.json({
+//     message: "Berhasil mengakses update prodi by id",
+//     prodiId: prodiId,
+//   });
+// };
 
-const deleteProdiById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const prodiId = req.params.id;
+// const deleteProdiById = (req, res) => {
+//   // Dapatkan ID dari parameter permintaan
+//   const prodiId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses delete prodi by id",
-    prodiId: prodiId,
-  });
-};
+//   res.json({
+//     message: "Berhasil mengakses delete prodi by id",
+//     prodiId: prodiId,
+//   });
+// };
 
 module.exports = {
-  getAllProdis,
+  getAllProdi,
   getProdiById,
-  createProdi,
-  updateProdiById,
-  deleteProdiById,
+  // createProdi,
+  // updateProdiById,
+  // deleteProdiById,
 };
