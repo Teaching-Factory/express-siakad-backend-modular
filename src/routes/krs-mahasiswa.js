@@ -6,11 +6,11 @@ const router = express.Router();
 const KrsMahasiswaController = require("../controllers/krs-mahasiswa");
 
 // all routes
-router.get("/", KrsMahasiswaController.getAllKrsMahasiswas);
-router.get("/:id/get", KrsMahasiswaController.getKrsMahasiswaById);
-router.post("/create", KrsMahasiswaController.createKrsMahasiswa);
-router.put("/:id/update", KrsMahasiswaController.updateKrsMahasiswaById);
-router.delete("/:id/delete", KrsMahasiswaController.deleteKrsMahasiswaById);
-router.get("/belum-krs", KrsMahasiswaController.getAllMahasiswaBelumKrs);
+router.get("/", KrsMahasiswaController.getAllKRSMahasiswa);
+router.get("/:id/get", KrsMahasiswaController.getKRSMahasiswaById);
+// router.post("/create", KrsMahasiswaController.createKrsMahasiswa);
+// router.put("/:id/update", KrsMahasiswaController.updateKrsMahasiswaById);
+// router.delete("/:id/delete", KrsMahasiswaController.deleteKrsMahasiswaById);
+// router.get("/belum-krs", KrsMahasiswaController.getAllMahasiswaBelumKrs);
 
 module.exports = router;

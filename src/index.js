@@ -52,6 +52,14 @@ const pembiayaanRoutes = require("./routes/pembiayaan");
 const bidangMinatRoutes = require("./routes/bidang-minat");
 const riwayatPendidikanMahasiswaRoutes = require("./routes/riwayat-pendidikan-mahasiswa");
 const detailNilaiPerkuliahanKelasRoutes = require("./routes/detail-nilai-perkuliahan-kelas");
+const skalaNilaiProdiRoutes = require("./routes/skala-nilai-prodi");
+const riwayatNilaiMahasiswaRoutes = require("./routes/riwayat-nilai-mahasiswa");
+const pesertaKelasKuliahRoutes = require("./routes/peserta-kelas-kuliah");
+const perkuliahanMahasiswaRoutes = require("./routes/perkuliahan-mahasiswa");
+const detailPerkuliahanMahasiswaRoutes = require("./routes/detail-perkuliahan-mahasiswa");
+const periodePerkuliahanRoutes = require("./routes/periode-perkuliahan");
+const detailPeriodePerkuliahanRoutes = require("./routes/detail-periode-perkuliahan");
+const krsMahasiswaRoutes = require("./routes/krs-mahasiswa");
 
 // route api local not done yet
 const wilayahRoutes = require("./routes/wilayah");
@@ -67,7 +75,6 @@ const dosenWaliRoutes = require("./routes/dosen-wali");
 const sistemKuliahRoutes = require("./routes/sistem-kuliah");
 const sistemKuliahMahasiswaRoutes = require("./routes/sistem-kuliah-mahasiswa");
 const krsValidasiRoutes = require("./routes/krs-validasi");
-const krsMahasiswaRoutes = require("./routes/krs-mahasiswa");
 const matkulKrsRoutes = require("./routes/matkul-krs");
 const unsurPenilaianRoutes = require("./routes/unsur-penilaian");
 const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
@@ -151,7 +158,15 @@ app.use("/jenis-keluar", jenisKeluarRoutes);
 app.use("/pembiayaan", pembiayaanRoutes);
 app.use("/bidang-minat", bidangMinatRoutes);
 app.use("/riwayat-pendidikan-mahasiswa", riwayatPendidikanMahasiswaRoutes);
-app.use("/detail-nilai-perkuliahan-kelas", detailKelasKuliahRoutes);
+app.use("/detail-nilai-perkuliahan-kelas", detailNilaiPerkuliahanKelasRoutes);
+app.use("/skala-nilai-prodi", skalaNilaiProdiRoutes);
+app.use("/riwayat-nilai-mahasiswa", riwayatNilaiMahasiswaRoutes);
+app.use("/peserta-kelas-kuliah", pesertaKelasKuliahRoutes);
+app.use("/perkuliahan-mahasiswa", perkuliahanMahasiswaRoutes);
+app.use("/detail-perkuliahan-mahasiswa", detailPerkuliahanMahasiswaRoutes);
+app.use("/periode-perkuliahan", periodePerkuliahanRoutes);
+app.use("/detail-periode-perkuliahan", detailPeriodePerkuliahanRoutes);
+app.use("/krs-mahasiswa", krsMahasiswaRoutes);
 
 // route api local not done yet
 app.use("/angkatan", angkatanRoutes);
@@ -166,7 +181,6 @@ app.use("/dosen-wali", dosenWaliRoutes);
 app.use("/sistem-kuliah", sistemKuliahRoutes);
 app.use("/sistem-kuliah-mahasiswa", sistemKuliahMahasiswaRoutes);
 app.use("/krs/validasi", krsValidasiRoutes);
-app.use("/krs/mahasiswa", krsMahasiswaRoutes);
 app.use("/krs/matkul-krs", matkulKrsRoutes);
 app.use("/unsur-penilaian", unsurPenilaianRoutes);
 app.use("/bobot-penilaian", bobotPenilaianRoutes);
