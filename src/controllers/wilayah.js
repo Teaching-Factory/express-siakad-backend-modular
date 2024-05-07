@@ -41,36 +41,36 @@ const getWilayahById = async (req, res) => {
   }
 };
 
-const createWilayah = (req, res) => {
-  res.json({
-    message: "Berhasil mengakses create wilayah",
-  });
-};
+// const createWilayah = (req, res) => {
+//   res.json({
+//     message: "Berhasil mengakses create wilayah",
+//   });
+// };
 
-const updateWilayahById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const wilayahId = req.params.id;
+// const updateWilayahById = (req, res) => {
+//   // Dapatkan ID dari parameter permintaan
+//   const wilayahId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses update wilayah by id",
-    wilayahId: wilayahId,
-  });
-};
+//   res.json({
+//     message: "Berhasil mengakses update wilayah by id",
+//     wilayahId: wilayahId,
+//   });
+// };
 
-const deleteWilayahById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const wilayahId = req.params.id;
+// const deleteWilayahById = (req, res) => {
+//   // Dapatkan ID dari parameter permintaan
+//   const wilayahId = req.params.id;
 
-  res.json({
-    message: "Berhasil mengakses delete wilayah by id",
-    wilayahId: wilayahId,
-  });
-};
+//   res.json({
+//     message: "Berhasil mengakses delete wilayah by id",
+//     wilayahId: wilayahId,
+//   });
+// };
 
 module.exports = {
   getAllWilayahs,
   getWilayahById,
-  createWilayah,
-  updateWilayahById,
-  deleteWilayahById,
+  // createWilayah,
+  // updateWilayahById,
+  // deleteWilayahById,
 };

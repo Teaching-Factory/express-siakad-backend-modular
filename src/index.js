@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 5000;
 const express = require("express");
 
 // import routes
+// route api local done
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
 const rolePermissionRoutes = require("./routes/role-permission");
@@ -13,7 +14,20 @@ const agamaRoutes = require("./routes/agama");
 const negaraRoutes = require("./routes/negara");
 const perguruanTinggiRoutes = require("./routes/perguruan_tinggi");
 const profilPTRoutes = require("./routes/profil-pt");
+const jalurMasukRoutes = require("./routes/jalur-masuk");
+const jenisPendaftaranRoutes = require("./routes/jenis-pendaftaran");
+const jenisTinggalRoutes = require("./routes/jenis-tinggal");
+const alatTransportasiRoutes = require("./routes/alat-transportasi");
+const statusMahasiswaRoutes = require("./routes/status-mahasiswa");
+const kebutuhanKhususRoutes = require("./routes/kebutuhan-khusus");
+const penghasilanRoutes = require("./routes/penghasilan");
+const jenisSMSRoutes = require("./routes/jenis-sms");
+const lembagaPengangkatanRoutes = require("./routes/lembaga-pengangkatan");
+const statusKeaktifanPegawaiRoutes = require("./routes/status-keaktifan-pegawai");
+const pangkatGolonganRoutes = require("./routes/pangkat-golongan");
+const pekerjaanRoutes = require("./routes/pekerjaan");
 
+// route api local not done yet
 const periodeRoutes = require("./routes/periode");
 const wilayahRoutes = require("./routes/wilayah");
 const angkatanRoutes = require("./routes/angkatan");
@@ -31,7 +45,6 @@ const dosenWaliRoutes = require("./routes/dosen-wali");
 const mahasiswaRoutes = require("./routes/mahasiswa");
 const sistemKuliahRoutes = require("./routes/sistem-kuliah");
 const sistemKuliahMahasiswaRoutes = require("./routes/sistem-kuliah-mahasiswa");
-const statusMahasiswaRoutes = require("./routes/status-mahasiswa");
 const krsValidasiRoutes = require("./routes/krs-validasi");
 const krsMahasiswaRoutes = require("./routes/krs-mahasiswa");
 const matkulKrsRoutes = require("./routes/matkul-krs");
@@ -73,6 +86,7 @@ middlewareDatabaseConnection
 // middleware request json from client
 app.use(express.json());
 
+// route api local done
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/role-permission", rolePermissionRoutes);
@@ -81,7 +95,20 @@ app.use("/negara", negaraRoutes);
 app.use("/wilayah", wilayahRoutes);
 app.use("/perguruan-tinggi", perguruanTinggiRoutes);
 app.use("/profil-pt", profilPTRoutes);
+app.use("/jalur-masuk", jalurMasukRoutes);
+app.use("/jenis-pendaftaran", jenisPendaftaranRoutes);
+app.use("/jenis-tinggal", jenisTinggalRoutes);
+app.use("/alat-transportasi", alatTransportasiRoutes);
+app.use("/status-mahasiswa", statusMahasiswaRoutes);
+app.use("/kebutuhan-khusus", kebutuhanKhususRoutes);
+app.use("/penghasilan", penghasilanRoutes);
+app.use("/jenis-sms", jenisSMSRoutes);
+app.use("/lembaga-pengangkatan", lembagaPengangkatanRoutes);
+app.use("/status-keaktifan-pegawai", statusKeaktifanPegawaiRoutes);
+app.use("/pangkat-golongan", pangkatGolonganRoutes);
+app.use("/pekerjaan", pekerjaanRoutes);
 
+// route api local not done yet
 app.use("/periode", periodeRoutes);
 app.use("/angkatan", angkatanRoutes);
 app.use("/fakultas", fakultasRoutes);
@@ -98,7 +125,6 @@ app.use("/dosen-wali", dosenWaliRoutes);
 app.use("/mahasiswa", mahasiswaRoutes);
 app.use("/sistem-kuliah", sistemKuliahRoutes);
 app.use("/sistem-kuliah-mahasiswa", sistemKuliahMahasiswaRoutes);
-app.use("/status-mahasiswa", statusMahasiswaRoutes);
 app.use("/krs/validasi", krsValidasiRoutes);
 app.use("/krs/mahasiswa", krsMahasiswaRoutes);
 app.use("/krs/matkul-krs", matkulKrsRoutes);
