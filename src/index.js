@@ -60,6 +60,16 @@ const detailPerkuliahanMahasiswaRoutes = require("./routes/detail-perkuliahan-ma
 const periodePerkuliahanRoutes = require("./routes/periode-perkuliahan");
 const detailPeriodePerkuliahanRoutes = require("./routes/detail-periode-perkuliahan");
 const krsMahasiswaRoutes = require("./routes/krs-mahasiswa");
+const aktivitasKuliahMahasiswaRoutes = require("./routes/aktivitas-kuliah-mahasiswa");
+const jenisAktivitasMahasiswaRoutes = require("./routes/jenis-aktivitas-mahasiswa");
+const dataLengkapMahasiswaProdiRoutes = require("./routes/data-lengkap-mahasiswa-prodi");
+const aktivitasMahasiswaRoutes = require("./routes/aktivitas-mahasiswa");
+const anggotaAktivitasMahasiswaRoutes = require("./routes/anggota-aktivitas-mahasiswa");
+const konversiKampusMerdekaRoutes = require("./routes/konversi-kampus-merdeka");
+const transkripMahasiswaRoutes = require("./routes/transkrip-mahasiswa");
+const rekapJumlahMahasiswaRoutes = require("./routes/rekap-jumlah-mahasiswa");
+const rekapKHSMahasiswaRoutes = require("./routes/rekap-khs-mahasiswa");
+const rekapKRSMahasiswaRoutes = require("./routes/rekap-krs-mahasiswa");
 
 // route api local not done yet
 const wilayahRoutes = require("./routes/wilayah");
@@ -78,7 +88,6 @@ const krsValidasiRoutes = require("./routes/krs-validasi");
 const matkulKrsRoutes = require("./routes/matkul-krs");
 const unsurPenilaianRoutes = require("./routes/unsur-penilaian");
 const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
-const aktivitasMahasiswaRoutes = require("./routes/aktivitas-mahasiswa");
 const tagihanMahasiswaRoutes = require("./routes/tagihan-mahasiswa");
 const pembayaranMahasiswaRoutes = require("./routes/pembayaran-mahasiswa");
 const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
@@ -167,6 +176,16 @@ app.use("/detail-perkuliahan-mahasiswa", detailPerkuliahanMahasiswaRoutes);
 app.use("/periode-perkuliahan", periodePerkuliahanRoutes);
 app.use("/detail-periode-perkuliahan", detailPeriodePerkuliahanRoutes);
 app.use("/krs-mahasiswa", krsMahasiswaRoutes);
+app.use("/aktivitas-kuliah-mahasiswa", aktivitasKuliahMahasiswaRoutes);
+app.use("/jenis-aktivitas-mahasiswa", jenisAktivitasMahasiswaRoutes);
+app.use("/data-lengkap-mahasiswa-prodi", dataLengkapMahasiswaProdiRoutes);
+app.use("/aktivitas-mahasiswa", aktivitasMahasiswaRoutes);
+app.use("/anggota-aktivitas-mahasiswa", anggotaAktivitasMahasiswaRoutes);
+app.use("/konversi-kampus-merdeka", konversiKampusMerdekaRoutes);
+app.use("/transkrip-mahasiswa", transkripMahasiswaRoutes);
+app.use("/rekap-jumlah-mahasiswa", rekapJumlahMahasiswaRoutes);
+app.use("/rekap-khs-mahasiswa", rekapKHSMahasiswaRoutes);
+app.use("/rekap-krs-mahasiswa", rekapKRSMahasiswaRoutes);
 
 // route api local not done yet
 app.use("/angkatan", angkatanRoutes);
@@ -184,7 +203,6 @@ app.use("/krs/validasi", krsValidasiRoutes);
 app.use("/krs/matkul-krs", matkulKrsRoutes);
 app.use("/unsur-penilaian", unsurPenilaianRoutes);
 app.use("/bobot-penilaian", bobotPenilaianRoutes);
-app.use("/aktivitas-mahasiswa", aktivitasMahasiswaRoutes);
 app.use("/tagihan-mahasiswa", tagihanMahasiswaRoutes);
 app.use("/pembayaran-mahasiswa", pembayaranMahasiswaRoutes);
 app.use("/pertemuan-perkuliahan", pertemuanPerkuliahanRoutes);
