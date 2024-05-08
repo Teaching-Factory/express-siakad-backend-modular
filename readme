@@ -23,6 +23,9 @@ npx sequelize-cli init
 # install axios 
 npm install axios
 
+## install bcrypt
+npm install bcrypt
+
 # migration models
 npx sequelize-cli db:migrate
 npx sequelize-cli db:migrate:undo (optional)
