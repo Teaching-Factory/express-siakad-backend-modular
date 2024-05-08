@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       password: {
-        type: DataTypes.STRING(8),
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       hints: {

@@ -108,11 +108,12 @@ const generateUserByMahasiswa = async (req, res, next) => {
       }
 
       const { nama_mahasiswa, nim, tanggal_lahir } = data_mahasiswa;
-      // Enkripsi tanggal_lahir untuk digunakan sebagai password
-      const hashedPassword = await bcrypt.hash(tanggal_lahir, 10);
 
       // Konversi tanggal_lahir ke format yang diinginkan
       const tanggal_lahir_format = convertTanggal(tanggal_lahir);
+
+      // Enkripsi tanggal_lahir untuk digunakan sebagai password
+      const hashedPassword = await bcrypt.hash(tanggal_lahir_format, 10);
 
       // Simpan data pengguna ke dalam database
       const newUser = await User.create({
@@ -159,11 +160,12 @@ const generateUserByDosen = async (req, res, next) => {
       }
 
       const { nama_dosen, nidn, tanggal_lahir } = data_dosen;
-      // Enkripsi tanggal_lahir untuk digunakan sebagai password
-      const hashedPassword = await bcrypt.hash(tanggal_lahir, 10);
 
       // Konversi tanggal_lahir ke format yang diinginkan
       const tanggal_lahir_format = convertTanggal(tanggal_lahir);
+
+      // Enkripsi tanggal_lahir untuk digunakan sebagai password
+      const hashedPassword = await bcrypt.hash(tanggal_lahir_format, 10);
 
       // Simpan data pengguna ke dalam database
       const newUser = await User.create({
