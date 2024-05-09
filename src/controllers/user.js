@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const { Mahasiswa } = require("../../models");
-const { User } = require("../../models");
-const { Dosen } = require("../../models");
+const { User, Dosen, Role, UserRole } = require("../../models");
 
 const getAllUser = async (req, res) => {
   try {
@@ -46,10 +45,12 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res, next) => {
   try {
-    const { nama, username, password, hints, email, status } = req.body;
+    const { nama, username, password, hints, email, status, id_role } = req.body;
 
     // Hash password sebelum disimpan ke database
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const role = await Role.findByPk(id_role);
 
     // Buat user baru
     const newUser = await User.create({
@@ -61,9 +62,15 @@ const createUser = async (req, res, next) => {
       status: status,
     });
 
+    const newUserRole = await UserRole.create({
+      id_role: role.id,
+      id_user: newUser.id,
+    });
+
     res.status(201).json({
       message: "<===== GENERATE User Success",
       user: newUser,
+      role: newUserRole,
     });
   } catch (error) {
     next(error);
@@ -112,6 +119,9 @@ const generateUserByMahasiswa = async (req, res, next) => {
     const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
 
     const users = []; // Simpan data pengguna yang berhasil dibuat di sini
+    const role = await Role.findOne({
+      where: { nama_role: "mahasiswa" },
+    });
 
     for (const mahasiswa of mahasiswas) {
       const { id_registrasi_mahasiswa } = mahasiswa;
@@ -145,6 +155,11 @@ const generateUserByMahasiswa = async (req, res, next) => {
         status: true,
       });
 
+      await UserRole.create({
+        id_role: role.id,
+        id_user: newUser.id,
+      });
+
       users.push(newUser);
     }
 
@@ -164,6 +179,9 @@ const generateUserByDosen = async (req, res, next) => {
     const { dosens } = req.body; // Ambil data dosens dari request body
 
     const users = []; // Simpan data pengguna yang berhasil dibuat di sini
+    const role = await Role.findOne({
+      where: { nama_role: "dosen" },
+    });
 
     for (const dosen of dosens) {
       const { id_dosen } = dosen;
@@ -195,6 +213,11 @@ const generateUserByDosen = async (req, res, next) => {
         hints: tanggal_lahir_format,
         email: null,
         status: true,
+      });
+
+      await UserRole.create({
+        id_role: role.id,
+        id_user: newUser.id,
       });
 
       users.push(newUser);

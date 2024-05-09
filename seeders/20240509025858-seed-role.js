@@ -10,6 +10,18 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id: 2,
+        nama_role: "dosen",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 1,
+        nama_role: "mahasiswa",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 

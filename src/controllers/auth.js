@@ -1,10 +1,36 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { User } = require("../../models");
+const { User, UserRole, Role } = require("../../models");
 
 // Fungsi untuk membuat token JWT
-function generateToken(user) {
-  return jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
+async function generateToken(user) {
+  try {
+    // Dapatkan peran pengguna dari tabel UserRole
+    const userRoles = await UserRole.findAll({
+      where: { id_user: user.id },
+      include: [{ model: Role }],
+    });
+
+    // Ambil nama peran dari setiap objek userRole
+    const dataRoles = userRoles.map((userRole) => userRole.Role.nama_role);
+
+    // Cek apakah pengguna memiliki peran
+    if (dataRoles.length === 0) {
+      throw new Error("Pengguna tidak memiliki peran");
+    }
+
+    return jwt.sign(
+      {
+        id: user.id,
+        username: user.username,
+        data_roles: dataRoles,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    throw error;
+  }
 }
 
 const doLogin = async (req, res) => {
@@ -27,7 +53,8 @@ const doLogin = async (req, res) => {
     }
 
     // Jika username dan password cocok, buat token JWT
-    const token = generateToken(user);
+    const token = await generateToken(user);
+    console.log(token);
 
     // Kirim token sebagai respons
     res.json({ message: "Login berhasil", token });

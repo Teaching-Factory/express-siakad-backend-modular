@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   Permission.init(
     {
       nama_permission: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(255),
         allowNull: false,
         validate: {
           notEmpty: { args: true, msg: "nama_permission is required" },

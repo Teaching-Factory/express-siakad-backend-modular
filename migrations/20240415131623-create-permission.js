@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER(20),
       },
       nama_permission: {
-        type: Sequelize.STRING(50),
+        type: Sequelize.STRING(255),
         allowNull: false,
       },
       createdAt: {

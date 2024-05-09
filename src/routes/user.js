@@ -1,6 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
+const checkAuthorization = require("../middlewares/check-token");
 
 // import controller
 const UserController = require("../controllers/user");
