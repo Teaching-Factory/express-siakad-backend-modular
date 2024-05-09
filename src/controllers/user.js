@@ -44,11 +44,31 @@ const getUserById = async (req, res) => {
   }
 };
 
-// const createUser = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create user",
-//   });
-// };
+const createUser = async (req, res, next) => {
+  try {
+    const { nama, username, password, hints, email, status } = req.body;
+
+    // Hash password sebelum disimpan ke database
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Buat user baru
+    const newUser = await User.create({
+      nama: nama,
+      username: username,
+      password: hashedPassword,
+      hints: hints,
+      email: email,
+      status: status,
+    });
+
+    res.status(201).json({
+      message: "<===== GENERATE User Success",
+      user: newUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // const updateUserById = (req, res) => {
 //   // Dapatkan ID dari parameter permintaan
@@ -203,7 +223,7 @@ const convertTanggal = (tanggal_lahir) => {
 module.exports = {
   getAllUser,
   getUserById,
-  // createUser,
+  createUser,
   // updateUserById,
   deleteUserById,
   generateUserByMahasiswa,

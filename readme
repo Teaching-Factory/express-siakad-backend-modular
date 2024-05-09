@@ -23,8 +23,14 @@ npx sequelize-cli init
 # install axios 
 npm install axios
 
-## install bcrypt
+# install bcrypt
 npm install bcrypt
+
+# install json web token (jwt)
+npm install jsonweb jsonwebtoken 
+
+# membuat migrasi
+npx sequelize-cli model:generate --name Agama --attributes id_agama:smallint,nama_agama:string (creating)
 
 # migration models
 npx sequelize-cli db:migrate
