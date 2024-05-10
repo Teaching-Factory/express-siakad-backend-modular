@@ -1,6 +1,6 @@
 "use strict";
 
-// belum fiks
+// belum fiks (tidak dipakai)
 const fs = require("fs");
 const path = require("path");
 const { Permission } = require("../models");

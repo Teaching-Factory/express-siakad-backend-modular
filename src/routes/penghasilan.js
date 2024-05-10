@@ -2,11 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 
-// import controller
+// import controller dan middleware
 const PenghasilanController = require("../controllers/penghasilan");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", PenghasilanController.getAllPenghasilan);
-router.get("/:id/get", PenghasilanController.getPenghasilanById);
+router.get("/", checkRole(["admin"]), PenghasilanController.getAllPenghasilan);
+router.get("/:id/get", checkRole(["admin"]), PenghasilanController.getPenghasilanById);
 
 module.exports = router;

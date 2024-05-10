@@ -1,10 +1,10 @@
 const express = require("express");
 
 const router = express.Router();
-const checkRole = require("../middlewares/check-role");
 
-// import controller
+// import controller dan middleware
 const UserController = require("../controllers/user");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin"]), UserController.getAllUser);
