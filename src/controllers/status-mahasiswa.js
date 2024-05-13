@@ -41,12 +41,6 @@ const getStatusMahasiswaById = async (req, res) => {
   }
 };
 
-// const createStatusMahasiswa = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create status mahasiswa",
-//   });
-// };
-
 // const updateStatusMahasiswa = (req, res) => {
 //   // Dapatkan ID dari parameter permintaan
 //   const statusMahasiswaId = req.params.id;
@@ -70,7 +64,6 @@ const getStatusMahasiswaById = async (req, res) => {
 module.exports = {
   getAllStatusMahasiswa,
   getStatusMahasiswaById,
-  // createStatusMahasiswa,
   // updateStatusMahasiswa,
   // updateAllStatusNonAktif,
 };

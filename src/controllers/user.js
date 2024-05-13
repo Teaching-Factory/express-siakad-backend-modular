@@ -77,15 +77,48 @@ const createUser = async (req, res, next) => {
   }
 };
 
-// const updateUserById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const userId = req.params.id;
+const updateUserById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const userId = req.params.id;
 
-//   res.json({
-//     message: "Berhasil mengakses update user by id",
-//     userId: userId,
-//   });
-// };
+    // Ambil data untuk update dari body permintaan
+    const { nama, username, password, hints, email, status, id_role } = req.body;
+
+    // Temukan user yang akan diperbarui berdasarkan ID
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    // Update data user
+    user.nama = nama || user.nama;
+    user.username = username || user.username;
+    user.password = password ? await bcrypt.hash(password, 10) : user.password;
+    user.hints = hints || user.hints;
+    user.email = email || user.email;
+    user.status = status || user.status;
+
+    await user.save();
+
+    // Perbarui juga role user jika id_role berbeda
+    if (id_role && id_role !== user.id_role) {
+      const role = await Role.findByPk(id_role);
+      if (!role) {
+        return res.status(404).json({ message: "Role tidak ditemukan" });
+      }
+      await user.update({ id_role: role.id });
+    }
+
+    res.json({
+      message: "UPDATE User Success",
+      dataUser: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const deleteUserById = async (req, res, next) => {
   try {
@@ -247,7 +280,7 @@ module.exports = {
   getAllUser,
   getUserById,
   createUser,
-  // updateUserById,
+  updateUserById,
   deleteUserById,
   generateUserByMahasiswa,
   generateUserByDosen,

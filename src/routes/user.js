@@ -10,7 +10,7 @@ const checkRole = require("../middlewares/check-role");
 router.get("/", checkRole(["admin"]), UserController.getAllUser);
 router.get("/:id/get", checkRole(["admin"]), UserController.getUserById);
 router.post("/create", checkRole(["admin"]), UserController.createUser);
-// router.put("/:id/update", checkRole(["admin"]),UserController.updateUserById);
+router.put("/:id/update", checkRole(["admin"]),UserController.updateUserById);
 router.delete("/:id/delete", checkRole(["admin"]), UserController.deleteUserById);
 
 // generate user by

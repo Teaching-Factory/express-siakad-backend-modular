@@ -9,7 +9,6 @@ const express = require("express");
 // route api local done
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
-const rolePermissionRoutes = require("./routes/role-permission");
 const agamaRoutes = require("./routes/agama");
 const negaraRoutes = require("./routes/negara");
 const perguruanTinggiRoutes = require("./routes/perguruan_tinggi");
@@ -125,7 +124,6 @@ app.use(express.json());
 // route api local done
 app.use("/user", checkToken, userRoutes);
 app.use("/auth", authRoutes);
-app.use("/role-permission", checkToken, rolePermissionRoutes);
 app.use("/agama", checkToken, agamaRoutes);
 app.use("/negara", checkToken, negaraRoutes);
 app.use("/wilayah", checkToken, wilayahRoutes);

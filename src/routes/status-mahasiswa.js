@@ -9,8 +9,7 @@ const checkRole = require("../middlewares/check-role");
 // all routes
 router.get("/", checkRole(["admin"]), StatusMahasiswaController.getAllStatusMahasiswa);
 router.get("/:id/get", checkRole(["admin"]), StatusMahasiswaController.getStatusMahasiswaById);
-// router.post("/create", StatusMahasiswaController.createStatusMahasiswa);
-// router.put("/:id/update", StatusMahasiswaController.updateStatusMahasiswa);
-// router.put("/:id_prodi/non-aktif", StatusMahasiswaController.updateAllStatusNonAktif);
+// router.put("/:id/update", StatusMahasiswaController.updateStatusMahasiswa); // set status mahasiswa
+// router.put("/:id_prodi/non-aktif", StatusMahasiswaController.updateAllStatusNonAktif); // set seluruh status mahasiswa non-aktif
 
 module.exports = router;
