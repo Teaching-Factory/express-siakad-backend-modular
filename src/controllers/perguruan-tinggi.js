@@ -41,7 +41,39 @@ const getPerguruanTinggiById = async (req, res) => {
   }
 };
 
+const updatePerguruanTinggiById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const perguruanTinggiId = req.params.id;
+
+    // Ambil data untuk update dari body permintaan
+    const { kode_perguruan_tinggi, nama_perguruan_tinggi, nama_singkat } = req.body;
+
+    // Temukan perguruan_tinggi yang akan diperbarui berdasarkan ID
+    const perguruan_tinggi = await PerguruanTinggi.findByPk(perguruanTinggiId);
+
+    if (!perguruan_tinggi) {
+      return res.status(404).json({ message: "Perguruan Tinggi tidak ditemukan" });
+    }
+
+    // Update data perguruan_tinggi
+    perguruan_tinggi.kode_perguruan_tinggi = kode_perguruan_tinggi || perguruan_tinggi.kode_perguruan_tinggi;
+    perguruan_tinggi.nama_perguruan_tinggi = nama_perguruan_tinggi || perguruan_tinggi.nama_perguruan_tinggi;
+    perguruan_tinggi.nama_singkat = nama_singkat || perguruan_tinggi.nama_singkat;
+
+    await perguruan_tinggi.save();
+
+    res.json({
+      message: "UPDATE Perguruan Tinggi Success",
+      dataPerguruanTinggi: perguruan_tinggi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPerguruanTinggi,
   getPerguruanTinggiById,
+  updatePerguruanTinggiById,
 };

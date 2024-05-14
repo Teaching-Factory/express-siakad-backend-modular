@@ -9,5 +9,6 @@ const checkRole = require("../middlewares/check-role");
 // all routes
 router.get("/", checkRole(["admin"]), PerguruanTinggiController.getAllPerguruanTinggi);
 router.get("/:id/get", checkRole(["admin"]), PerguruanTinggiController.getPerguruanTinggiById);
+router.put("/:id/update", checkRole(["admin"]), PerguruanTinggiController.updatePerguruanTinggiById);
 
 module.exports = router;
