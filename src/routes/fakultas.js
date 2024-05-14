@@ -2,14 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 
-// import controller
+// import controller dan middleware
 const FakultasController = require("../controllers/fakultas");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", FakultasController.getAllFakultas);
-router.get("/:id/get", FakultasController.getFakultasById);
-// router.post("/create", FakultasController.createFakultas);
-// router.put("/:id/update", FakultasController.updateFakultasById);
-// router.delete("/:id/delete", FakultasController.deleteFakultasById);
+router.get("/", checkRole(["admin", "admin-prodi"]), FakultasController.getAllFakultas);
+router.get("/:id/get", checkRole(["admin", "admin-prodi"]), FakultasController.getFakultasById);
 
 module.exports = router;

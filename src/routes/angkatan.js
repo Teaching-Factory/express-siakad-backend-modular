@@ -2,14 +2,15 @@ const express = require("express");
 
 const router = express.Router();
 
-// import controller
+// import controller dan middleware
 const AngkatanController = require("../controllers/angkatan");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", AngkatanController.getAllAngkatans);
-router.get("/:id/get", AngkatanController.getAngkatanById);
-router.post("/create", AngkatanController.createAngkatan);
-router.put("/:id/update", AngkatanController.updateAngkatanById);
-router.delete("/:id/delete", AngkatanController.deleteAngkatanById);
+router.get("/", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen"]), AngkatanController.getAllAngkatan);
+router.get("/:id/get", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen"]), AngkatanController.getAngkatanById);
+router.post("/create", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen"]), AngkatanController.createAngkatan);
+router.put("/:id/update", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen"]), AngkatanController.updateAngkatanById);
+router.delete("/:id/delete", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen"]), AngkatanController.deleteAngkatanById);
 
 module.exports = router;

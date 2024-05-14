@@ -41,36 +41,7 @@ const getDosenById = async (req, res) => {
   }
 };
 
-// const createDosen = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create dosen",
-//   });
-// };
-
-// const updateDosenById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const dosenId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses update dosen by id",
-//     dosenId: dosenId,
-//   });
-// };
-
-// const deleteDosenById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const dosenId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses delete dosen by id",
-//     dosenId: dosenId,
-//   });
-// };
-
 module.exports = {
   getAllDosen,
   getDosenById,
-  // createDosen,
-  // updateDosenById,
-  // deleteDosenById,
 };

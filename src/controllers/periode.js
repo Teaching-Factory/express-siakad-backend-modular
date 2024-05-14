@@ -41,36 +41,7 @@ const getPeriodeById = async (req, res) => {
   }
 };
 
-// const createPeriode = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create periode",
-//   });
-// };
-
-// const updatePeriodeById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const periodeId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses update periode by id",
-//     periodeId: periodeId,
-//   });
-// };
-
-// const deletePeriodeById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const periodeId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses delete periode by id",
-//     periodeId: periodeId,
-//   });
-// };
-
 module.exports = {
   getAllPeriode,
   getPeriodeById,
-  // createPeriode,
-  // updatePeriodeById,
-  // deletePeriodeById,
 };
