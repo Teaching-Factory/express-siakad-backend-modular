@@ -1,4 +1,4 @@
-const { PembayaranMahasiswa } = require("../../models");
+const { PembayaranMahasiswa, TagihanMahasiswa } = require("../../models");
 const fs = require("fs"); // untuk menghapus file
 
 const getAllPembayaranMahasiswaByTagihanId = async (req, res) => {
@@ -138,10 +138,51 @@ const deletePembayaranMahasiswaById = async (req, res, next) => {
   }
 };
 
+const getPembayaranMahasiswaByMahasiswaId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const idRegistrasiMahasiswa = req.params.id_registrasi_mahasiswa;
+
+    // Cari data tagihan_mahasiswa berdasarkan id_registrasi_mahasiswa di database
+    const tagihanMahasiswa = await TagihanMahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: idRegistrasiMahasiswa,
+      },
+    });
+
+    // Ambil ID tagihan mahasiswa dari hasil query tagihanMahasiswa
+    const idTagihanMahasiswa = tagihanMahasiswa.map((tagihan) => tagihan.id_tagihan_mahasiswa);
+
+    // Cari data pembayaran_mahasiswa berdasarkan id_tagihan_mahasiswa di database
+    const pembayaranMahasiswa = await PembayaranMahasiswa.findAll({
+      where: {
+        id_tagihan_mahasiswa: idTagihanMahasiswa,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!pembayaranMahasiswa || pembayaranMahasiswa.length === 0) {
+      return res.status(404).json({
+        message: `<===== Pembayaran Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Pembayaran Mahasiswa By ID ${idRegistrasiMahasiswa} Success:`,
+      jumlahData: pembayaranMahasiswa.length,
+      data: pembayaranMahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPembayaranMahasiswaByTagihanId,
   getPembayaranMahasiswaById,
   createPembayaranMahasiswaByTagihanId,
   updatePembayaranMahasiswaById,
   deletePembayaranMahasiswaById,
+  getPembayaranMahasiswaByMahasiswaId,
 };

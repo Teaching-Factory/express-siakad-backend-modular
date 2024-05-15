@@ -1,4 +1,4 @@
-const { TagihanMahasiswa } = require("../../models");
+const { TagihanMahasiswa, TahunAjaran } = require("../../models");
 
 const getAllTagihanMahasiswa = async (req, res) => {
   try {
@@ -120,10 +120,41 @@ const deleteTagihanMahasiswaById = async (req, res, next) => {
   }
 };
 
+const getTagihanMahasiswaByMahasiswaId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const idRegistrasiMahasiswa = req.params.id_registrasi_mahasiswa;
+
+    // Cari data tagihan_mahasiswa berdasarkan id_registrasi_mahasiswa di database
+    const tagihanMahasiswaId = await TagihanMahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: idRegistrasiMahasiswa,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!tagihanMahasiswaId || tagihanMahasiswaId.length === 0) {
+      return res.status(404).json({
+        message: `<===== Tagihan Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Tagihan Mahasiswa By ID ${idRegistrasiMahasiswa} Success:`,
+      jumlahData: tagihanMahasiswaId.length,
+      data: tagihanMahasiswaId,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllTagihanMahasiswa,
   getTagihanMahasiswaById,
   createTagihanMahasiswa,
   updateTagihanMahasiswaById,
   deleteTagihanMahasiswaById,
+  getTagihanMahasiswaByMahasiswaId,
 };

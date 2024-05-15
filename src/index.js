@@ -78,6 +78,7 @@ const sistemKuliahRoutes = require("./routes/sistem-kuliah");
 const sistemKuliahMahasiswaRoutes = require("./routes/sistem-kuliah-mahasiswa");
 const tagihanMahasiswaRoutes = require("./routes/tagihan-mahasiswa");
 const pembayaranMahasiswaRoutes = require("./routes/pembayaran-mahasiswa");
+const unsurPenilaianRoutes = require("./routes/unsur-penilaian");
 
 // route api local not done yet
 const ruangPerkuliahanRoutes = require("./routes/ruang-perkuliahan");
@@ -88,7 +89,6 @@ const kelasDanJadwalRoutes = require("./routes/kelas-dan-jadwal");
 const dosenWaliRoutes = require("./routes/dosen-wali");
 const krsValidasiRoutes = require("./routes/krs-validasi");
 const matkulKrsRoutes = require("./routes/matkul-krs");
-const unsurPenilaianRoutes = require("./routes/unsur-penilaian");
 const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
 const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
 const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
@@ -195,6 +195,7 @@ app.use("/sistem-kuliah", checkToken, sistemKuliahRoutes);
 app.use("/sistem-kuliah-mahasiswa", checkToken, sistemKuliahMahasiswaRoutes);
 app.use("/tagihan-mahasiswa", checkToken, tagihanMahasiswaRoutes);
 app.use("/pembayaran-mahasiswa", checkToken, pembayaranMahasiswaRoutes);
+app.use("/unsur-penilaian", checkToken, unsurPenilaianRoutes);
 
 // route api local not done yet
 app.use("/ruang-perkuliahan", ruangPerkuliahanRoutes);
@@ -205,7 +206,6 @@ app.use("/kelas-dan-jadwal", kelasDanJadwalRoutes);
 app.use("/dosen-wali", dosenWaliRoutes);
 app.use("/krs/validasi", krsValidasiRoutes);
 app.use("/krs/matkul-krs", matkulKrsRoutes);
-app.use("/unsur-penilaian", unsurPenilaianRoutes);
 app.use("/bobot-penilaian", bobotPenilaianRoutes);
 app.use("/pertemuan-perkuliahan", pertemuanPerkuliahanRoutes);
 app.use("/presensi-perkuliahan", presensiPerkuliahanRoutes);

@@ -9,6 +9,7 @@ const checkRole = require("../middlewares/check-role");
 // all routes
 router.get("/", checkRole(["admin", "admin-keuangan"]), TagihanMahasiswaController.getAllTagihanMahasiswa);
 router.get("/:id/get", checkRole(["admin", "admin-keuangan"]), TagihanMahasiswaController.getTagihanMahasiswaById);
+router.get("/mahasiswa/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin-keuangan"]), TagihanMahasiswaController.getTagihanMahasiswaByMahasiswaId);
 router.post("/create", checkRole(["admin", "admin-keuangan"]), TagihanMahasiswaController.createTagihanMahasiswa);
 router.put("/:id/update", checkRole(["admin", "admin-keuangan"]), TagihanMahasiswaController.updateTagihanMahasiswaById);
 router.delete("/:id/delete", checkRole(["admin", "admin-keuangan"]), TagihanMahasiswaController.deleteTagihanMahasiswaById);
