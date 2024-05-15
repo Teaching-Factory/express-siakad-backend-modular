@@ -93,6 +93,11 @@ Install Paket :
   npm install jsonweb jsonwebtoken 
 
 ```
+- Instal Plugin Multer untuk upload file : 
+```bash
+  npm install multer
+
+```
 - Jalankan Aplikasi : 
 ```bash
   yarn start
