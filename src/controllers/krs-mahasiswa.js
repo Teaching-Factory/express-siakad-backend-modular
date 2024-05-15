@@ -1,4 +1,4 @@
-const { KRSMahasiswa } = require("../../models");
+const { KRSMahasiswa, TahunAjaran } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res) => {
   try {
@@ -41,6 +41,51 @@ const getKRSMahasiswaById = async (req, res) => {
   }
 };
 
+const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
+  try {
+    // Mengambil data tahun ajaran yang kolom a_periode bernilai = 1
+    const tahunAjaran = await TahunAjaran.findOne({
+      where: {
+        a_periode: 1,
+      },
+    });
+
+    // Jika data tahun ajaran tidak ditemukan, kirim respons 404
+    if (!tahunAjaran) {
+      return res.status(404).json({
+        message: "Tahun Ajaran with a_periode 1 not found",
+      });
+    }
+
+    // Dapatkan ID dari parameter permintaan
+    const idRegistrasiMahasiswa = req.params.id_registrasi_mahasiswa;
+
+    // Cari data krs_mahasiswa berdasarkan id_registrasi_mahasiswa dan id_tahun_ajaran di database
+    const krsMahasiswa = await KRSMahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: idRegistrasiMahasiswa,
+        angkatan: tahunAjaran.id_tahun_ajaran,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!krsMahasiswa || krsMahasiswa.length === 0) {
+      return res.status(404).json({
+        message: `<===== KRS Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET KRS Mahasiswa By ID ${idRegistrasiMahasiswa} Success:`,
+      jumlahData: krsMahasiswa.length,
+      data: krsMahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // const createKrsMahasiswa = (req, res) => {
 //   res.json({
 //     message: "Berhasil mengakses create krs mahasiswa",
@@ -76,6 +121,7 @@ const getKRSMahasiswaById = async (req, res) => {
 module.exports = {
   getAllKRSMahasiswa,
   getKRSMahasiswaById,
+  getKRSMahasiswaByMahasiswaId,
   // createKrsMahasiswa,
   // updateKrsMahasiswaById,
   // deleteKrsMahasiswaById,

@@ -41,7 +41,38 @@ const getAktivitasKuliahMahasiswaById = async (req, res) => {
   }
 };
 
+const getAktivitasKuliahMahasiswaByMahasiswaId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const mahasiswaId = req.params.id_registrasi_mahasiswa;
+
+    // Cari data aktivitas_kuliah_mahasiswa berdasarkan ID di database
+    const aktivitasKuliahMahasiswa = await AktivitasKuliahMahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: mahasiswaId,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!aktivitasKuliahMahasiswa || aktivitasKuliahMahasiswa.length === 0) {
+      return res.status(404).json({
+        message: `<===== Aktivitas Kuliah Mahasiswa With ID ${mahasiswaId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Aktivitas Kuliah Mahasiswa By ID ${mahasiswaId} Success:`,
+      jumlahData: aktivitasKuliahMahasiswa.length,
+      data: aktivitasKuliahMahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllAktivitasKuliahMahasiswa,
   getAktivitasKuliahMahasiswaById,
+  getAktivitasKuliahMahasiswaByMahasiswaId,
 };
