@@ -1,4 +1,4 @@
-const { Mahasiswa } = require("../../models");
+const { Mahasiswa, Periode, Prodi } = require("../../models");
 
 const getAllMahasiswa = async (req, res) => {
   try {
@@ -41,43 +41,47 @@ const getMahasiswaById = async (req, res) => {
   }
 };
 
-// const createMahasiswa = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create mahasiswa",
-//   });
-// };
+const getMahasiswaByProdiId = async (req, res, next) => {
+  try {
+    // Dapatkan ID prodi dari parameter permintaan
+    const prodiId = req.params.id_prodi;
 
-// const updateMahasiswaById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const mahasiswaId = req.params.id;
+    // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
+    const periodeIds = await Periode.findAll({
+      where: { id_prodi: prodiId },
+      attributes: ["id_periode"], // Ambil hanya kolom id_prodi
+    });
 
-//   res.json({
-//     message: "Berhasil mengakses update mahasiswa by id",
-//     mahasiswaId: mahasiswaId,
-//   });
-// };
+    // Ekstrak id periode dari hasil pencarian
+    const periodeIdList = periodeIds.map((periode) => periode.id_periode);
 
-// const deleteMahasiswaById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const mahasiswaId = req.params.id;
+    // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        id_periode: periodeIdList,
+      },
+    });
 
-//   res.json({
-//     message: "Berhasil mengakses delete mahasiswa by id",
-//     mahasiswaId: mahasiswaId,
-//   });
-// };
+    // Jika data mahasiswa tidak ditemukan, kirim respons 404
+    if (!mahasiswas || mahasiswas.length === 0) {
+      return res.status(404).json({
+        message: `<===== Mahasiswa With Prodi ID ${prodiId} Not Found:`,
+      });
+    }
 
-// const importMahasiswa = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses import mahasiswa",
-//   });
-// };
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Mahasiswa By Prodi ID ${prodiId} Success:`,
+      jumlahData: mahasiswas.length,
+      data: mahasiswas,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllMahasiswa,
   getMahasiswaById,
-  // createMahasiswa,
-  // updateMahasiswaById,
-  // deleteMahasiswaById,
-  // importMahasiswa,
+  getMahasiswaByProdiId,
 };

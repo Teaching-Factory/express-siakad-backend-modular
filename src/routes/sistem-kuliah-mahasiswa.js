@@ -4,9 +4,10 @@ const router = express.Router();
 
 // import controller
 const SistemKuliahMahasiswaController = require("../controllers/sistem-kuliah-mahasiswa");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.post("/create", SistemKuliahMahasiswaController.createSistemKuliahMahasiswa);
-router.delete("/:id/delete", SistemKuliahMahasiswaController.deleteSistemKuliahMahasiswaById);
+router.post("/create", checkRole(["admin", "admin-prodi"]), SistemKuliahMahasiswaController.createSistemKuliahMahasiswa);
+router.delete("/:id/delete", checkRole(["admin", "admin-prodi"]), SistemKuliahMahasiswaController.deleteSistemKuliahMahasiswaById);
 
 module.exports = router;
