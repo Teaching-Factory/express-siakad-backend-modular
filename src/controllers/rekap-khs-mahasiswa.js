@@ -41,7 +41,38 @@ const getRekapKHSMahasiswaById = async (req, res) => {
   }
 };
 
+const getRekapKHSMahasiswaByMahasiswaId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const idRegistrasiMahasiswa = req.params.id_registrasi_mahasiswa;
+
+    // Cari data rekap_khs_mahasiswa berdasarkan id_registrasi_mahasiswa di database
+    const rekapKhsMahasiswaId = await RekapKHSMahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: idRegistrasiMahasiswa,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!rekapKhsMahasiswaId || rekapKhsMahasiswaId.length === 0) {
+      return res.status(404).json({
+        message: `<===== Rekap KHS Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Rekap KHS Mahasiswa By ID ${idRegistrasiMahasiswa} Success:`,
+      jumlahData: rekapKhsMahasiswaId.length,
+      data: rekapKhsMahasiswaId,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRekapKHSMahasiswa,
   getRekapKHSMahasiswaById,
+  getRekapKHSMahasiswaByMahasiswaId,
 };

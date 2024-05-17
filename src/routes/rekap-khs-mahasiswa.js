@@ -9,5 +9,6 @@ const checkRole = require("../middlewares/check-role");
 // all routes
 router.get("/", checkRole(["admin", "admin-prodi"]), RekapKHSMahasiswaController.getAllRekapKHSMahasiswa);
 router.get("/:id/get", checkRole(["admin", "admin-prodi"]), RekapKHSMahasiswaController.getRekapKHSMahasiswaById);
+router.get("/mahasiswa/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin-prodi"]), RekapKHSMahasiswaController.getRekapKHSMahasiswaByMahasiswaId);
 
 module.exports = router;

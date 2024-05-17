@@ -1,20 +1,120 @@
-const createSistemKuliahMahasiswa = (req, res) => {
-  res.json({
-    message: "Berhasil mengakses create sistem kuliah mahasiswa",
-  });
+const { Op } = require("sequelize");
+
+const { SistemKuliah } = require("../../models");
+const { SistemKuliahMahasiswa } = require("../../models");
+const { Mahasiswa } = require("../../models");
+
+const createSistemKuliahMahasiswaBySistemKuliahId = async (req, res, next) => {
+  try {
+    const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
+
+    const sistem_kuliah_mahasiswa = []; // Simpan data sistem_kuliah_mahasiswa yang berhasil dibuat di sini
+    const sistem_kuliah_id = req.params.id_sistem_kuliah;
+
+    // Cari data sistem_kuliah berdasarkan ID di database
+    const sistem_kuliah = await SistemKuliah.findByPk(sistem_kuliah_id);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!sistem_kuliah) {
+      return res.status(404).json({
+        message: `<===== Sistem Kuliah With ID ${sistem_kuliah_id} Not Found:`,
+      });
+    }
+
+    for (const mahasiswa of mahasiswas) {
+      const { id_registrasi_mahasiswa } = mahasiswa;
+
+      // Simpan data pengguna ke dalam database
+      const newSistemKuliahMahasiswa = await SistemKuliahMahasiswa.create({
+        id_sistem_kuliah: sistem_kuliah_id,
+        id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+      });
+
+      sistem_kuliah_mahasiswa.push(newSistemKuliahMahasiswa);
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GENERATE Sistem Kuliah Mahasiswa ${sistem_kuliah.nama_sk} Success`,
+      jumlahData: sistem_kuliah_mahasiswa.length,
+      data: sistem_kuliah_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const deleteSistemKuliahMahasiswaById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const sistemKuliahMahasiswaId = req.params.id;
+const getMahasiswaNotHaveSistemKuliah = async (req, res, next) => {
+  try {
+    // Ambil semua id_registrasi_mahasiswa dari tabel SistemKuliahMahasiswa
+    const idRegistrasiMahasiswaInSistemKuliah = await SistemKuliahMahasiswa.findAll({
+      attributes: ["id_registrasi_mahasiswa"],
+    });
 
-  res.json({
-    message: "Berhasil mengakses delete sistem kuliah mahasiswa by id",
-    sistemKuliahMahasiswaId: sistemKuliahMahasiswaId,
-  });
+    // Ubah hasil query menjadi array berisi id_registrasi_mahasiswa
+    const idArray = idRegistrasiMahasiswaInSistemKuliah.map((item) => item.id_registrasi_mahasiswa);
+
+    // Cari data mahasiswa yang id_registrasi_mahasiswa tidak ada di array idArray
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: {
+          [Op.notIn]: idArray,
+        },
+      },
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Mahasiswa Not Have Sistem Kuliah Success:`,
+      jumlahData: mahasiswas.length,
+      data: mahasiswas,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createSistemKuliahMahasiswa = async (req, res, next) => {
+  try {
+    const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
+
+    const sistem_kuliah_mahasiswa = []; // Simpan data sistem_kuliah_mahasiswa yang berhasil dibuat di sini
+
+    for (const mahasiswa of mahasiswas) {
+      const { id_registrasi_mahasiswa, id_sistem_kuliah } = mahasiswa;
+
+      // Cari data sistem_kuliah berdasarkan ID di database
+      const sistem_kuliah = await SistemKuliah.findByPk(id_sistem_kuliah);
+
+      // Jika data tidak ditemukan, kirim respons 404
+      if (!sistem_kuliah) {
+        return res.status(404).json({
+          message: `<===== Sistem Kuliah With ID ${id_sistem_kuliah} Not Found:`,
+        });
+      }
+
+      // Simpan data pengguna ke dalam database
+      const newSistemKuliahMahasiswa = await SistemKuliahMahasiswa.create({
+        id_sistem_kuliah,
+        id_registrasi_mahasiswa,
+      });
+
+      sistem_kuliah_mahasiswa.push(newSistemKuliahMahasiswa);
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GENERATE Sistem Kuliah Mahasiswa Success`,
+      jumlahData: sistem_kuliah_mahasiswa.length,
+      data: sistem_kuliah_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
+  createSistemKuliahMahasiswaBySistemKuliahId,
+  getMahasiswaNotHaveSistemKuliah,
   createSistemKuliahMahasiswa,
-  deleteSistemKuliahMahasiswaById,
 };
