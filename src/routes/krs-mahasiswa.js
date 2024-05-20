@@ -20,7 +20,14 @@ router.delete("/:id/delete", checkRole(["admin", "admin-prodi"]), KrsMahasiswaCo
 router.put("/validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.ValidasiKRSMahasiswa);
 router.put("/:id_registrasi_mahasiswa/batalkan-validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.BatalkanValidasiKRSMahasiswa);
 
-// router.post("/create", KrsMahasiswaController.createKrsMahasiswa);
-// router.get("/belum-krs", KrsMahasiswaController.getAllMahasiswaBelumKrs);
+// filter krs
+router.get("/get-mahasiswa-krs-tervalidasi", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetAllMahasiswaKRSTervalidasi);
+router.get("/get-mahasiswa-krs-belum-tervalidasi", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetAllMahasiswaKRSBelumTervalidasi);
+
+// mahasiswa belum krs
+router.get("/mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaBelumKRS);
+
+// tambah krs
+router.post("/:id_registrasi_mahasiswa/create", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.createKRSMahasiswa);
 
 module.exports = router;

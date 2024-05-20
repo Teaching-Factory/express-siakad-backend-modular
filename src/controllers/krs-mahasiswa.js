@@ -1,4 +1,5 @@
-const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Sequelize } = require("../../models");
+const { where } = require("sequelize");
+const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res) => {
   try {
@@ -324,17 +325,298 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
   }
 };
 
-// const createKrsMahasiswa = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create krs mahasiswa",
-//   });
-// };
+const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
+  try {
+    // Ambil tahun ajaran yang sesuai dengan kondisi
+    const tahunAjaran = await TahunAjaran.findOne({
+      where: {
+        a_periode: 1,
+      },
+    });
 
-// const getAllMahasiswaBelumKrs = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses get all mahasiswa belum krs",
-//   });
-// };
+    // Ekstrak tahun awal dari nama_tahun_ajaran
+    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
+
+    // Ambil semua periode yang sesuai dengan tahun awal
+    const periodes = await Periode.findAll({
+      where: {
+        periode_pelaporan: {
+          [Sequelize.Op.like]: `${tahunAwal}%`,
+        },
+      },
+    });
+
+    // Ambil semua id_periode dari hasil query periode
+    const idPeriodes = periodes.map((periode) => periode.id_periode);
+
+    // Ambil semua data KRS mahasiswa berdasarkan id_periode yang didapatkan
+    const allKrsMahasiswas = await KRSMahasiswa.findAll({
+      where: {
+        id_periode: {
+          [Sequelize.Op.in]: idPeriodes,
+        },
+      },
+    });
+
+    // Group data KRS by id_registrasi_mahasiswa
+    const krsByMahasiswa = allKrsMahasiswas.reduce((acc, krs) => {
+      if (!acc[krs.id_registrasi_mahasiswa]) {
+        acc[krs.id_registrasi_mahasiswa] = [];
+      }
+      acc[krs.id_registrasi_mahasiswa].push(krs);
+      return acc;
+    }, {});
+
+    // Filter hanya mahasiswa yang seluruh KRS-nya validasi_krs adalah true
+    const mahasiswaIdsWithAllKRSTrue = Object.keys(krsByMahasiswa).filter((id) => {
+      return krsByMahasiswa[id].every((krs) => krs.validasi_krs === true);
+    });
+
+    // Ambil data mahasiswa berdasarkan ID yang difilter
+    const mahasiswaData = await Mahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: {
+          [Sequelize.Op.in]: mahasiswaIdsWithAllKRSTrue,
+        },
+      },
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Mahasiswa with All KRS Not Validated Success =====>",
+      jumlahData: mahasiswaData.length,
+      data: mahasiswaData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
+  try {
+    // Ambil tahun ajaran yang sesuai dengan kondisi
+    const tahunAjaran = await TahunAjaran.findOne({
+      where: {
+        a_periode: 1,
+      },
+    });
+
+    // Ekstrak tahun awal dari nama_tahun_ajaran
+    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
+
+    // Ambil semua periode yang sesuai dengan tahun awal
+    const periodes = await Periode.findAll({
+      where: {
+        periode_pelaporan: {
+          [Sequelize.Op.like]: `${tahunAwal}%`,
+        },
+      },
+    });
+
+    // Ambil semua id_periode dari hasil query periode
+    const idPeriodes = periodes.map((periode) => periode.id_periode);
+
+    // Ambil semua data KRS mahasiswa berdasarkan id_periode yang didapatkan
+    const allKrsMahasiswas = await KRSMahasiswa.findAll({
+      where: {
+        id_periode: {
+          [Sequelize.Op.in]: idPeriodes,
+        },
+      },
+    });
+
+    // Group data KRS by id_registrasi_mahasiswa
+    const krsByMahasiswa = allKrsMahasiswas.reduce((acc, krs) => {
+      if (!acc[krs.id_registrasi_mahasiswa]) {
+        acc[krs.id_registrasi_mahasiswa] = [];
+      }
+      acc[krs.id_registrasi_mahasiswa].push(krs);
+      return acc;
+    }, {});
+
+    // Filter hanya mahasiswa yang seluruh KRS-nya validasi_krs adalah false
+    const mahasiswaIdsWithAllKRSFalse = Object.keys(krsByMahasiswa).filter((id) => {
+      return krsByMahasiswa[id].every((krs) => krs.validasi_krs === false);
+    });
+
+    // Ambil data mahasiswa berdasarkan ID yang difilter
+    const mahasiswaData = await Mahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: {
+          [Sequelize.Op.in]: mahasiswaIdsWithAllKRSFalse,
+        },
+      },
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Mahasiswa with All KRS Not Validated Success =====>",
+      jumlahData: mahasiswaData.length,
+      data: mahasiswaData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllMahasiswaBelumKRS = async (req, res, next) => {
+  try {
+    // Ambil tahun ajaran yang sesuai dengan kondisi
+    const tahunAjaran = await TahunAjaran.findOne({
+      where: {
+        a_periode: 1,
+      },
+    });
+
+    // Ekstrak tahun awal dari nama_tahun_ajaran
+    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
+
+    // Ambil semua periode yang sesuai dengan tahun awal
+    const periodes = await Periode.findAll({
+      where: {
+        periode_pelaporan: {
+          [Sequelize.Op.like]: `${tahunAwal}%`,
+        },
+      },
+    });
+
+    // Ambil semua id_periode dari hasil query periode
+    const idPeriodes = periodes.map((periode) => periode.id_periode);
+
+    // Ambil data KRS mahasiswa berdasarkan id_periode yang didapatkan
+    const krs_mahasiswas = await KRSMahasiswa.findAll({
+      where: {
+        id_periode: idPeriodes,
+      },
+    });
+
+    // Ekstrak id_registrasi_mahasiswa dari data KRS mahasiswa yang didapatkan
+    const idRegistrasiMahasiswas = new Set(krs_mahasiswas.map((krs) => krs.id_registrasi_mahasiswa));
+
+    // Ambil semua mahasiswa
+    const allMahasiswas = await Mahasiswa.findAll();
+
+    // Filter mahasiswa yang belum melakukan KRS
+    const mahasiswasBelumKRS = allMahasiswas.filter((mahasiswa) => !idRegistrasiMahasiswas.has(mahasiswa.id_registrasi_mahasiswa));
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Mahasiswa Belum KRS Success =====>",
+      jumlahData: mahasiswasBelumKRS.length,
+      data: mahasiswasBelumKRS,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createKRSMahasiswa = async (req, res, next) => {
+  try {
+    // Dapatkan id_registrasi_mahasiswa dari parameter URL
+    const id_registrasi_mahasiswa = req.params.id_registrasi_mahasiswa;
+
+    // Dapatkan data kelas_kuliahs dari request body
+    const { kelas_kuliahs } = req.body;
+
+    // Mengambil data mahasiswa
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        id_registrasi_mahasiswa,
+      },
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({ message: "Mahasiswa not found" });
+    }
+
+    // Mengambil data periode melalui id_periode milik mahasiswa
+    const mahasiswaPeriode = await Periode.findOne({
+      where: {
+        id_periode: mahasiswa.id_periode,
+      },
+    });
+
+    if (!mahasiswaPeriode) {
+      return res.status(404).json({ message: "Periode not found" });
+    }
+
+    // Mengambil data prodi melalui id_prodi milik periode
+    const prodi = await Prodi.findOne({
+      where: {
+        id_prodi: mahasiswaPeriode.id_prodi,
+      },
+    });
+
+    if (!prodi) {
+      return res.status(404).json({ message: "Prodi not found" });
+    }
+
+    // Mengambil tahun ajaran yang sesuai dengan kondisi
+    const tahunAjaran = await TahunAjaran.findOne({
+      where: {
+        a_periode: 1,
+      },
+    });
+
+    if (!tahunAjaran) {
+      return res.status(404).json({ message: "Tahun Ajaran not found" });
+    }
+
+    // Ekstrak tahun awal dari nama_tahun_ajaran
+    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
+
+    // Ambil periode yang sesuai dengan tahun awal
+    const periode = await Periode.findOne({
+      where: {
+        periode_pelaporan: {
+          [Sequelize.Op.like]: `${tahunAwal}%`,
+        },
+      },
+    });
+
+    if (!periode) {
+      return res.status(404).json({ message: "Periode not found" });
+    }
+
+    // Inisialisasi array untuk menyimpan data KRS yang akan dibuat
+    const krsEntries = [];
+
+    // Iterasi melalui data kelas_kuliahs dari request body
+    for (const kelas of kelas_kuliahs) {
+      // Mengambil data kelas kuliah berdasarkan id_kelas
+      const kelas_kuliah = await KelasKuliah.findOne({
+        where: {
+          id_kelas_kuliah: kelas.id_kelas,
+        },
+      });
+
+      // Jika kelas kuliah ditemukan, tambahkan ke krsEntries
+      if (kelas_kuliah) {
+        krsEntries.push({
+          angkatan: tahunAjaran.id_tahun_ajaran,
+          validasi_krs: false,
+          id_registrasi_mahasiswa,
+          id_periode: periode.id_periode,
+          id_prodi: prodi.id_prodi,
+          id_matkul: kelas_kuliah.id_matkul,
+          id_kelas: kelas_kuliah.id_kelas,
+        });
+      }
+    }
+
+    // Buat data KRS mahasiswa di database
+    await KRSMahasiswa.bulkCreate(krsEntries);
+
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: "<===== KRS Mahasiswa Created Successfully =====>",
+      jumlahData: krsEntries.length,
+      data: krsEntries,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllKRSMahasiswa,
@@ -345,6 +627,8 @@ module.exports = {
   deleteKRSMahasiswaById,
   ValidasiKRSMahasiswa,
   BatalkanValidasiKRSMahasiswa,
-  // createKrsMahasiswa,
-  // getAllMahasiswaBelumKrs,
+  GetAllMahasiswaKRSTervalidasi,
+  GetAllMahasiswaKRSBelumTervalidasi,
+  getAllMahasiswaBelumKRS,
+  createKRSMahasiswa,
 };
