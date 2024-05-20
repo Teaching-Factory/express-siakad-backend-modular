@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "",
-    "database": "express_siakad",
+    "database": "express_siakad_new",
     "host": "localhost",
     "dialect": "mysql"
   },

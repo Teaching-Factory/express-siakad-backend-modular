@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.CHAR(4),
         allowNull: true,
       },
+      validasi_krs: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
       id_registrasi_mahasiswa: {
         type: DataTypes.STRING(36),
         allowNull: true,
