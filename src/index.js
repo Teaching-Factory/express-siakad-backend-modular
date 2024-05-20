@@ -3,6 +3,7 @@ require("dotenv").config();
 const PORT = process.env.PORT || 5000;
 
 // define express server
+const cors = require("cors");
 const express = require("express");
 
 // import routes
@@ -105,6 +106,9 @@ const checkToken = require("./middlewares/check-token");
 
 // running express server
 const app = express();
+
+// inisiasi resource sharing dengan cors
+app.use(cors());
 
 // middleware request
 app.use(middlewareLogRequest);

@@ -128,7 +128,14 @@ Install Paket :
 - Instal Plugin Multer untuk upload file :
 
 ```bash
-  npm install multer
+  npm install multer npm install cors
+
+```
+
+- Instal Plugin CORS untuk resource sharing :
+
+```bash
+  npm install cors
 
 ```
 
