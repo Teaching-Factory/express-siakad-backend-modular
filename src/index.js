@@ -82,6 +82,7 @@ const pembayaranMahasiswaRoutes = require("./routes/pembayaran-mahasiswa");
 const unsurPenilaianRoutes = require("./routes/unsur-penilaian");
 const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
 const ruangPerkuliahanRoutes = require("./routes/ruang-perkuliahan");
+const beritaRoutes = require("./routes/berita");
 
 // route api local not done yet
 const settingGlobalRoutes = require("./routes/setting-global");
@@ -201,6 +202,7 @@ app.use("/pembayaran-mahasiswa", checkToken, pembayaranMahasiswaRoutes);
 app.use("/unsur-penilaian", checkToken, unsurPenilaianRoutes);
 app.use("/bobot-penilaian", checkToken, bobotPenilaianRoutes);
 app.use("/ruang-perkuliahan", checkToken, ruangPerkuliahanRoutes);
+app.use("/berita", checkToken, beritaRoutes);
 
 // route api local not done yet
 app.use("/setting/global", settingGlobalRoutes);
