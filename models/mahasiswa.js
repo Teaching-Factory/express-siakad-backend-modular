@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       Mahasiswa.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.TagihanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.SistemKuliahMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.DosenWali, { foreignKey: "id_registrasi_mahasiswa" });
     }
   }
   Mahasiswa.init(
