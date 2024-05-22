@@ -1,4 +1,5 @@
-const { SistemKuliah } = require("../../models");
+const { Op } = require("sequelize");
+const { SistemKuliah, Mahasiswa, SistemKuliahMahasiswa } = require("../../models");
 
 const getAllSistemKuliah = async (req, res, next) => {
   try {
@@ -119,10 +120,49 @@ const deleteSistemKuliahById = async (req, res, next) => {
   }
 };
 
+const getAllMahasiswaBelumSetSK = async (req, res, next) => {
+  try {
+    // Ambil semua ID mahasiswa yang sudah diatur sistem kuliah
+    const mahasiswaYangSudahDisetSK = await SistemKuliahMahasiswa.findAll({
+      attributes: ["id_registrasi_mahasiswa"],
+    });
+
+    // Ekstrak daftar ID registrasi mahasiswa yang sudah diatur sistem kuliah
+    const idMahasiswaSudahDisetSK = mahasiswaYangSudahDisetSK.map((skm) => skm.id_registrasi_mahasiswa);
+
+    // Cari semua mahasiswa yang ID-nya tidak ada di daftar di atas
+    const mahasiswasBelumSetSK = await Mahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: {
+          [Op.notIn]: idMahasiswaSudahDisetSK.length > 0 ? idMahasiswaSudahDisetSK : [0],
+        },
+      },
+    });
+
+    // Jika data mahasiswa tidak ditemukan, kirim respons 404
+    if (!mahasiswasBelumSetSK || mahasiswasBelumSetSK.length === 0) {
+      return res.status(404).json({
+        message: "Mahasiswa yang belum diatur sistem kuliah tidak ditemukan",
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "GET All Mahasiswa Belum Set Sistem Kuliah Success",
+      jumlahData: mahasiswasBelumSetSK.length,
+      data: mahasiswasBelumSetSK,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 module.exports = {
   getAllSistemKuliah,
   getSistemKuliahById,
   createSistemKuliah,
   updateSistemKuliahById,
   deleteSistemKuliahById,
+  getAllMahasiswaBelumSetSK,
 };

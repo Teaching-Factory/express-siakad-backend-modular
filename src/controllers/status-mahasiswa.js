@@ -1,5 +1,6 @@
 const { StatusMahasiswa } = require("../../models");
 const { Mahasiswa } = require("../../models");
+const { Periode } = require("../../models");
 
 const getAllStatusMahasiswa = async (req, res) => {
   try {
@@ -123,15 +124,60 @@ const setStatusNonAktif = async (req, res, next) => {
   }
 };
 
-// const updateAllStatusNonAktif = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const prodiId = req.params.id_prodi;
+const updateAllStatusMahasiswaNonaktifByProdiId = async (req, res, next) => {
+  try {
+    // Dapatkan ID prodi dari parameter permintaan
+    const prodiId = req.params.id_prodi;
 
-//   res.json({
-//     message: "Berhasil mengakses update all status non aktif",
-//     prodiId: prodiId,
-//   });
-// };
+    // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
+    const periodeIds = await Periode.findAll({
+      where: { id_prodi: prodiId },
+      attributes: ["id_periode"], // Ambil hanya kolom id_periode
+    });
+
+    // Ekstrak id periode dari hasil pencarian
+    const periodeIdList = periodeIds.map((periode) => periode.id_periode);
+
+    // Jika tidak ada periode yang ditemukan, kirim respons 404
+    if (periodeIdList.length === 0) {
+      return res.status(404).json({
+        message: `Tidak ada periode dengan id_prodi ${prodiId}`,
+      });
+    }
+
+    // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        id_periode: periodeIdList,
+      },
+    });
+
+    // Jika data mahasiswa tidak ditemukan, kirim respons 404
+    if (!mahasiswas || mahasiswas.length === 0) {
+      return res.status(404).json({
+        message: `Mahasiswa dengan prodi ID ${prodiId} tidak ditemukan`,
+      });
+    }
+
+    // Update status mahasiswa menjadi "nonaktif"
+    const [updatedCount] = await Mahasiswa.update(
+      { nama_status_mahasiswa: "Non-Aktif" },
+      {
+        where: {
+          id_periode: periodeIdList,
+        },
+      }
+    );
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `UPDATE Status Mahasiswa Nonaktif By Prodi ID ${prodiId} Success`,
+      jumlahData: updatedCount,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllStatusMahasiswa,
@@ -139,5 +185,5 @@ module.exports = {
   setStatusAktif,
   setStatusCuti,
   setStatusNonAktif,
-  // updateAllStatusNonAktif,
+  updateAllStatusMahasiswaNonaktifByProdiId,
 };
