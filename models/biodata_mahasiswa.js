@@ -183,11 +183,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_kebutuhan_khusus_mahasiswa: {
         type: DataTypes.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
       id_kebutuhan_khusus_ayah: {
         type: DataTypes.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
       id_kebutuhan_khusus_ibu: {
         type: DataTypes.INTEGER(10),

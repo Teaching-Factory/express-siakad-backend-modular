@@ -250,7 +250,7 @@ module.exports = {
       },
       id_kebutuhan_khusus_mahasiswa: {
         type: Sequelize.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
         defaultValue: 0,
         references: {
           model: {
@@ -263,7 +263,7 @@ module.exports = {
       },
       id_kebutuhan_khusus_ayah: {
         type: Sequelize.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
         defaultValue: 0,
         references: {
           model: {

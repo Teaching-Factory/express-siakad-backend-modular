@@ -47,7 +47,7 @@ module.exports = {
       },
       id_sms: {
         type: Sequelize.STRING(36),
-        allowNull: false,
+        allowNull: true,
       },
       id_mahasiswa: {
         type: Sequelize.STRING(36),

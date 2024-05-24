@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_sms: {
         type: DataTypes.STRING(36),
-        allowNull: false,
+        allowNull: true,
       },
       id_mahasiswa: {
         type: DataTypes.STRING(36),

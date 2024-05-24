@@ -139,6 +139,20 @@ Install Paket :
 
 ```
 
+- Instal Plugin Exceljs :
+
+```bash
+  npm install exceljs
+
+```
+
+- Memperbaiki Plugin yang corrupt (Optional) :
+
+```bash
+  npm audit fix
+
+```
+
 - Jalankan Aplikasi :
 
 ```bash

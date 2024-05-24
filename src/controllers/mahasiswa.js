@@ -1,4 +1,6 @@
-const { Mahasiswa, Periode, Angkatan, StatusMahasiswa } = require("../../models");
+const ExcelJS = require("exceljs");
+const fs = require("fs").promises;
+const { Mahasiswa, Periode, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah, Agama, PerguruanTinggi, Prodi, RiwayatPendidikanMahasiswa, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester } = require("../../models");
 
 const getAllMahasiswa = async (req, res) => {
   try {
@@ -173,10 +175,233 @@ const getMahasiswaByStatusMahasiswaId = async (req, res, next) => {
   }
 };
 
+const importMahasiswas = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const perguruan_tinggi = await PerguruanTinggi.findOne({
+      where: {
+        nama_singkat: "UBI",
+      },
+    });
+
+    const filePath = req.file.path;
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
+
+    const worksheet = workbook.worksheets[0];
+    if (!worksheet) {
+      throw new Error("Worksheet not found in the Excel file");
+    }
+
+    let mahasiswaData = [];
+    const riwayatPendidikanPromises = [];
+
+    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+      if (rowNumber > 1) {
+        const nim = row.getCell(2).value;
+        const nisn = row.getCell(3).value;
+        const nama = row.getCell(4).value;
+        const nik = row.getCell(5).value;
+        const tempat_lahir = row.getCell(6).value;
+        const tanggal_lahir = row.getCell(7).value;
+        const jenis_kelamin = row.getCell(8).value;
+        const no_handphone = row.getCell(9).value;
+        const email = row.getCell(10).value;
+        const kode_agama = row.getCell(11).value;
+        const desa_kelurahan = row.getCell(12).value;
+        const kode_wilayah = row.getCell(13).value;
+        const nama_ibu_kandung = row.getCell(14).value;
+        const kode_prodi = row.getCell(15).value;
+        const tanggal_masuk = row.getCell(16).value;
+        const jenis_pendaftaran = row.getCell(17).value;
+        const jalur_pendaftaran = row.getCell(18).value;
+        const kode_pt_asal = row.getCell(19).value;
+        const kode_prodi_asal = row.getCell(20).value;
+        const biaya_awal_masuk = row.getCell(21).value;
+        const jenis_pembiayaan = row.getCell(22).value;
+
+        // format data
+        const formattedNoHandphone = no_handphone ? `0${no_handphone.toString()}` : null;
+
+        mahasiswaData.push(
+          (async () => {
+            let id_wilayah = null;
+            let id_agama = null;
+            let id_jenis_daftar = null;
+            let id_jalur_masuk = null;
+            let id_prodi = null;
+            let id_pembiayaan = null;
+            let id_perguruan_tinggi_asal = null;
+            let id_prodi_asal = null;
+            let id_periode = null;
+
+            if (kode_wilayah) {
+              const wilayah = await Wilayah.findOne({ where: { id_wilayah: kode_wilayah } });
+              if (wilayah) id_wilayah = wilayah.id_wilayah;
+            }
+
+            if (kode_agama) {
+              const agama = await Agama.findOne({ where: { id_agama: kode_agama } });
+              if (agama) id_agama = agama.id_agama;
+            }
+
+            if (kode_prodi) {
+              const prodi = await Prodi.findOne({ where: { kode_program_studi: kode_prodi } });
+              if (prodi) id_prodi = prodi.id_prodi;
+            }
+
+            if (jenis_pendaftaran) {
+              const jenisPendaftaran = await JenisPendaftaran.findOne({ where: { nama_jenis_daftar: jenis_pendaftaran } });
+              if (jenisPendaftaran) id_jenis_daftar = jenisPendaftaran.id_jenis_daftar;
+            }
+
+            if (jalur_pendaftaran) {
+              const jalurMasuk = await JalurMasuk.findOne({ where: { nama_jalur_masuk: jalur_pendaftaran } });
+              if (jalurMasuk) id_jalur_masuk = jalurMasuk.id_jalur_masuk;
+            }
+
+            if (jenis_pembiayaan) {
+              const pembiayaan = await Pembiayaan.findOne({ where: { nama_pembiayaan: jenis_pembiayaan } });
+              if (pembiayaan) id_pembiayaan = pembiayaan.id_pembiayaan;
+            }
+
+            if (kode_pt_asal) {
+              const perguruan_tinggi_asal = await PerguruanTinggi.findOne({ where: { kode_perguruan_tinggi: kode_pt_asal } });
+              if (perguruan_tinggi_asal) id_perguruan_tinggi_asal = perguruan_tinggi_asal.id_perguruan_tinggi;
+            }
+
+            if (kode_prodi_asal) {
+              const prodi_asal = await Prodi.findOne({ where: { kode_program_studi: kode_prodi_asal } });
+              if (prodi_asal) id_prodi_asal = prodi_asal.id_prodi;
+            }
+
+            const currentYear = new Date().getFullYear().toString();
+            const id_semester = currentYear + "1";
+
+            const semester = await Semester.findOne({ where: { id_semester: id_semester } });
+            const periode = await Periode.findOne({ where: { periode_pelaporan: id_semester, id_prodi: id_prodi } });
+
+            if (periode) {
+              id_periode = periode.id_periode;
+            }
+
+            const biodata_mahasiswa = {
+              tempat_lahir: tempat_lahir,
+              nik: nik,
+              nisn: nisn,
+              npwp: null,
+              kewarganegaraan: "In",
+              jalan: null,
+              dusun: null,
+              rt: null,
+              rw: null,
+              kelurahan: desa_kelurahan,
+              kode_pos: null,
+              telepon: null,
+              handphone: formattedNoHandphone,
+              email: email,
+              penerima_kps: 0,
+              nomor_kps: null,
+              nik_ayah: null,
+              nama_ayah: null,
+              tanggal_lahir_ayah: null,
+              nik_ibu: null,
+              nama_ibu_kandung: nama_ibu_kandung,
+              tanggal_lahir_ibu: null,
+              nama_wali: null,
+              tanggal_lahir_wali: null,
+              id_wilayah: id_wilayah,
+              id_jenis_tinggal: null,
+              id_alat_transportasi: null,
+              id_pendidikan_ayah: null,
+              id_pekerjaan_ayah: null,
+              id_penghasilan_ayah: null,
+              id_pendidikan_ibu: null,
+              id_pekerjaan_ibu: null,
+              id_penghasilan_ibu: null,
+              id_pendidikan_wali: null,
+              id_pekerjaan_wali: null,
+              id_penghasilan_wali: null,
+              id_kebutuhan_khusus_mahasiswa: null,
+              id_kebutuhan_khusus_ayah: null,
+              id_kebutuhan_khusus_ibu: null,
+            };
+
+            const createdBiodataMahasiswa = await BiodataMahasiswa.create(biodata_mahasiswa);
+
+            let createdMahasiswa = null;
+            if (nama && jenis_kelamin && tanggal_lahir && nim) {
+              createdMahasiswa = await Mahasiswa.create({
+                nama_mahasiswa: nama,
+                jenis_kelamin: jenis_kelamin,
+                tanggal_lahir: tanggal_lahir,
+                nipd: null,
+                ipk: null,
+                total_sks: null,
+                nama_status_mahasiswa: null,
+                nim: nim,
+                nama_periode_masuk: null,
+                id_sms: null,
+                id_mahasiswa: createdBiodataMahasiswa.id_mahasiswa,
+                id_perguruan_tinggi: perguruan_tinggi.id_perguruan_tinggi,
+                id_agama: id_agama,
+                id_periode: id_periode,
+              });
+              if (createdMahasiswa) {
+                mahasiswaData.push(createdMahasiswa);
+              }
+            }
+
+            if (tanggal_masuk && createdMahasiswa) {
+              const riwayatPendidikan = await RiwayatPendidikanMahasiswa.create({
+                tanggal_daftar: tanggal_masuk,
+                keterangan_keluar: null,
+                sks_diakui: null,
+                nama_ibu_kandung: nama_ibu_kandung,
+                biaya_masuk: biaya_awal_masuk,
+                id_registrasi_mahasiswa: createdMahasiswa.id_registrasi_mahasiswa,
+                id_jenis_daftar: id_jenis_daftar,
+                id_jalur_daftar: id_jalur_masuk,
+                id_periode_masuk: semester.id_semester,
+                id_jenis_keluar: null,
+                id_prodi: id_prodi,
+                id_pembiayaan: id_pembiayaan,
+                id_bidang_minat: null,
+                id_perguruan_tinggi_asal: id_perguruan_tinggi_asal,
+                id_prodi_asal: id_prodi_asal,
+              });
+
+              riwayatPendidikanPromises.push(riwayatPendidikan);
+            }
+          })()
+        );
+      }
+    });
+
+    await Promise.all(mahasiswaData);
+    await Promise.all(riwayatPendidikanPromises);
+    mahasiswaData = mahasiswaData.filter((item) => Object.keys(item).length !== 0);
+
+    await fs.unlink(filePath);
+
+    res.status(200).json({
+      message: "Upload and Import Data Mahasiswa Success",
+      jumlahData: mahasiswaData.length,
+      data: mahasiswaData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllMahasiswa,
   getMahasiswaById,
   getMahasiswaByProdiId,
   getMahasiswaByAngkatanId,
   getMahasiswaByStatusMahasiswaId,
+  importMahasiswas,
 };
