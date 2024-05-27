@@ -67,6 +67,8 @@ const RekapJumlahMahasiswaController = require("../controllers/api-feeder/rekap-
 const RekapKHSMahasiswaController = require("../controllers/api-feeder/rekap-khs-mahasiswa");
 const RekapKRSMahasiswaController = require("../controllers/api-feeder/rekap-krs-mahasiswa");
 const DataLengkapMahasiswaProdiController = require("../controllers/api-feeder/data-lengkap-mahasiswa-prodi");
+const JenisEvaluasiController = require("../controllers/api-feeder/jenis-evaluasi");
+const DosenPengajarKelasKuliah = require("../controllers/api-feeder/dosen-pengajar-kelas-kuliah");
 
 // all routes
 router.get("/get-agama", checkRole(["admin"]), AgamaController.getAgama);
@@ -130,5 +132,7 @@ router.get("/get-rekap-jumlah-mahasiswa", checkRole(["admin"]), RekapJumlahMahas
 router.get("/get-rekap-khs-mahasiswa", checkRole(["admin"]), RekapKHSMahasiswaController.getRekapKHSMahasiswa);
 router.get("/get-rekap-krs-mahasiswa", checkRole(["admin"]), RekapKRSMahasiswaController.getRekapKRSMahasiswa);
 router.get("/get-data-lengkap-mahasiswa-prodi", checkRole(["admin"]), DataLengkapMahasiswaProdiController.getDataLengkapMahasiswaProdi);
+router.get("/get-jenis-evaluasi", checkRole(["admin"]), JenisEvaluasiController.getJenisEvaluasi);
+router.get("/get-dosen-pengajar-kelas-kuliah", checkRole(["admin"]), DosenPengajarKelasKuliah.getDosenPengajarKelasKuliah);
 
 module.exports = router;
