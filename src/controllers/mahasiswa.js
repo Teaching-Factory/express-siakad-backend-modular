@@ -175,6 +175,69 @@ const getMahasiswaByStatusMahasiswaId = async (req, res, next) => {
   }
 };
 
+const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
+  try {
+    // Dapatkan ID prodi dan ID angkatan dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+    const angkatanId = req.params.id_angkatan;
+
+    // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
+    const periodeIds = await Periode.findAll({
+      where: { id_prodi: prodiId },
+      attributes: ["id_periode"], // Ambil hanya kolom id_periode
+    });
+
+    // Ekstrak id periode dari hasil pencarian
+    const periodeIdList = periodeIds.map((periode) => periode.id_periode);
+
+    // Ambil data angkatan berdasarkan id_angkatan
+    const angkatan = await Angkatan.findOne({
+      where: {
+        id: angkatanId,
+      },
+    });
+
+    // Jika data angkatan tidak ditemukan, kirim respons 404
+    if (!angkatan) {
+      return res.status(404).json({
+        message: `Angkatan dengan ID ${angkatanId} tidak ditemukan`,
+      });
+    }
+
+    // Ekstrak tahun dari data angkatan
+    const tahunAngkatan = angkatan.tahun;
+
+    // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        id_periode: periodeIdList,
+      },
+    });
+
+    // Filter data mahasiswa berdasarkan tahun angkatan yang dicocokkan dengan nama_periode_masuk
+    const filteredMahasiswas = mahasiswas.filter((mahasiswa) => {
+      const [tahunAwal] = mahasiswa.nama_periode_masuk.split("/");
+      return tahunAwal === tahunAngkatan;
+    });
+
+    // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
+    if (filteredMahasiswas.length === 0) {
+      return res.status(404).json({
+        message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `GET Mahasiswa By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
+      jumlahData: filteredMahasiswas.length,
+      data: filteredMahasiswas,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const importMahasiswas = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -403,5 +466,6 @@ module.exports = {
   getMahasiswaByProdiId,
   getMahasiswaByAngkatanId,
   getMahasiswaByStatusMahasiswaId,
+  getMahasiswaByProdiAndAngkatanId,
   importMahasiswas,
 };

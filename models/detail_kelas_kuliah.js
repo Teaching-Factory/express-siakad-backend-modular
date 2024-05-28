@@ -48,9 +48,26 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
+      // kolom tambahan
+      hari: {
+        type: DataTypes.ENUM(["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]),
+        allowNull: true,
+      },
+      jam_mulai: {
+        type: DataTypes.TIME,
+        allowNull: true,
+      },
+      jam_selesai: {
+        type: DataTypes.TIME,
+        allowNull: true,
+      },
       id_kelas_kuliah: {
         type: DataTypes.STRING(36),
         allowNull: false,
+      },
+      id_ruang_perkuliahan: {
+        type: DataTypes.INTEGER(10),
+        allowNull: true,
       },
     },
     {

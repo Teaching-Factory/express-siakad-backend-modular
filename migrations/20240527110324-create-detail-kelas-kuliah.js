@@ -37,6 +37,19 @@ module.exports = {
         type: Sequelize.STRING(100),
         allowNull: true,
       },
+      // kolom tambahan
+      hari: {
+        type: Sequelize.ENUM(["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]),
+        allowNull: true,
+      },
+      jam_mulai: {
+        type: Sequelize.TIME,
+        allowNull: true,
+      },
+      jam_selesai: {
+        type: Sequelize.TIME,
+        allowNull: true,
+      },
       id_kelas_kuliah: {
         type: Sequelize.STRING(36),
         allowNull: false,
@@ -45,6 +58,18 @@ module.exports = {
             tableName: "kelas_kuliahs",
           },
           key: "id_kelas_kuliah",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_ruang_perkuliahan: {
+        type: Sequelize.INTEGER(10),
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "ruang_perkuliahans",
+          },
+          key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
