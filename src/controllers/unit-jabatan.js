@@ -1,9 +1,9 @@
-const { UnitJabatan } = require("../../models");
+const { UnitJabatan, Jabatan, Dosen } = require("../../models");
 
 const getAllUnitJabatan = async (req, res, next) => {
   try {
     // Ambil semua data unit_jabatan dari database
-    const unit_jabatan = await UnitJabatan.findAll();
+    const unit_jabatan = await UnitJabatan.findAll({ include: [{ model: Jabatan }, { model: Dosen }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({

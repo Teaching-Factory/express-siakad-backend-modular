@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       ListMataKuliah.hasMany(models.TranskripMahasiswa, { foreignKey: "id_matkul" });
       ListMataKuliah.hasMany(models.RekapKHSMahasiswa, { foreignKey: "id_matkul" });
       ListMataKuliah.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_matkul" });
+      ListMataKuliah.hasMany(models.PelimpahanMataKuliah, { foreignKey: "id_matkul" });
     }
   }
   ListMataKuliah.init(

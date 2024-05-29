@@ -107,8 +107,13 @@ const checkToken = require("./middlewares/check-token");
 // running express server
 const app = express();
 
-// inisiasi resource sharing dengan cors
-app.use(cors());
+const corsOptions = {
+  origin: "http://127.0.0.1:5173", // Sesuaikan dengan domain frontend Anda
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Mengaktifkan cookies dan kredensial lainnya
+};
+
+app.use(cors(corsOptions));
 
 // middleware request
 app.use(middlewareLogRequest);
