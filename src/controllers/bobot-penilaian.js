@@ -1,9 +1,9 @@
-const { BobotPenilaian } = require("../../models");
+const { BobotPenilaian, Prodi, UnsurPenilaian } = require("../../models");
 
 const getAllBobotPenilaian = async (req, res) => {
   try {
     // Ambil semua data bobot_penilaian dari database
-    const bobot_penilaian = await BobotPenilaian.findAll();
+    const bobot_penilaian = await BobotPenilaian.findAll({ include: [{ model: Prodi }, { model: UnsurPenilaian }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getBobotPenilaianById = async (req, res) => {
     const BobotPenilaianId = req.params.id;
 
     // Cari data bobot_penilaian berdasarkan ID di database
-    const bobot_penilaian = await BobotPenilaian.findByPk(BobotPenilaianId);
+    const bobot_penilaian = await BobotPenilaian.findByPk(BobotPenilaianId, {
+      include: [{ model: Prodi }, { model: UnsurPenilaian }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!bobot_penilaian) {

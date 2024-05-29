@@ -1,10 +1,9 @@
-const { where } = require("sequelize");
-const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize } = require("../../models");
+const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize, MataKuliah, BiodataMahasiswa, PerguruanTinggi, Agama } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res) => {
   try {
     // Ambil semua data krs_mahasiswa dari database
-    const krs_mahasiswa = await KRSMahasiswa.findAll();
+    const krs_mahasiswa = await KRSMahasiswa.findAll({ include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -23,7 +22,9 @@ const getKRSMahasiswaById = async (req, res) => {
     const KRSMahasiswaId = req.params.id;
 
     // Cari data krs_mahasiswa berdasarkan ID di database
-    const krs_mahasiswa = await KRSMahasiswa.findByPk(KRSMahasiswaId);
+    const krs_mahasiswa = await KRSMahasiswa.findByPk(KRSMahasiswaId, {
+      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!krs_mahasiswa) {
@@ -67,6 +68,7 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
         angkatan: tahunAjaran.id_tahun_ajaran,
       },
+      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -87,6 +89,7 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
   }
 };
 
+// get mahasiswa
 const getAllMahasiswaKRSByPeriode = async (req, res, next) => {
   try {
     // Ambil tahun ajaran yang sesuai dengan kondisi
@@ -126,6 +129,7 @@ const getAllMahasiswaKRSByPeriode = async (req, res, next) => {
       where: {
         id_registrasi_mahasiswa: Array.from(idRegistrasiMahasiswas),
       },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -172,6 +176,7 @@ const GetKRSMahasiswaByMahasiswaPeriode = async (req, res, next) => {
         id_periode: idPeriodes,
         id_registrasi_mahasiswa: mahasiswaId,
       },
+      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -379,6 +384,7 @@ const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
           [Sequelize.Op.in]: mahasiswaIdsWithAllKRSTrue,
         },
       },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -446,6 +452,7 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
           [Sequelize.Op.in]: mahasiswaIdsWithAllKRSFalse,
         },
       },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -494,7 +501,9 @@ const getAllMahasiswaBelumKRS = async (req, res, next) => {
     const idRegistrasiMahasiswas = new Set(krs_mahasiswas.map((krs) => krs.id_registrasi_mahasiswa));
 
     // Ambil semua mahasiswa
-    const allMahasiswas = await Mahasiswa.findAll();
+    const allMahasiswas = await Mahasiswa.findAll({
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+    });
 
     // Filter mahasiswa yang belum melakukan KRS
     const mahasiswasBelumKRS = allMahasiswas.filter((mahasiswa) => !idRegistrasiMahasiswas.has(mahasiswa.id_registrasi_mahasiswa));

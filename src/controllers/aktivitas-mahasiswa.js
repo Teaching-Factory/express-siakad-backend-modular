@@ -5,7 +5,7 @@ const { AktivitasMahasiswa, Prodi, JenisAktivitasMahasiswa, Semester } = require
 const getAllAktivitasMahasiswa = async (req, res) => {
   try {
     // Ambil semua data aktivitas_mahasiswa dari database
-    const aktivitas_mahasiswa = await AktivitasMahasiswa.findAll();
+    const aktivitas_mahasiswa = await AktivitasMahasiswa.findAll({ include: [{ model: JenisAktivitasMahasiswa }, { model: Prodi }, { model: Semester }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -24,7 +24,9 @@ const getAktivitasMahasiswaById = async (req, res) => {
     const AktivitasMahasiswaId = req.params.id;
 
     // Cari data aktivitas_mahasiswa berdasarkan ID di database
-    const aktivitas_mahasiswa = await AktivitasMahasiswa.findByPk(AktivitasMahasiswaId);
+    const aktivitas_mahasiswa = await AktivitasMahasiswa.findByPk(AktivitasMahasiswaId, {
+      include: [{ model: JenisAktivitasMahasiswa }, { model: Prodi }, { model: Semester }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!aktivitas_mahasiswa) {
@@ -171,4 +173,3 @@ module.exports = {
   // updateAktivitasMahasiswaById,
   // deleteAktivitasMahasiswaById,
 };
-

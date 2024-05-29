@@ -1,9 +1,24 @@
-const { DataLengkapMahasiswaProdi } = require("../../models");
+const { DataLengkapMahasiswaProdi, Prodi, Semester, Mahasiswa, Agama, Wilayah, JenisTinggal, AlatTransportasi, JenjangPendidikan, Pekerjaan, Penghasilan, KebutuhanKhusus, PerguruanTinggi } = require("../../models");
 
 const getAllDataLengkapMahasiswaProdi = async (req, res) => {
   try {
     // Ambil semua data data_lengkap_mahasiswa_prodi dari database
-    const data_lengkap_mahasiswa_prodi = await DataLengkapMahasiswaProdi.findAll();
+    const data_lengkap_mahasiswa_prodi = await DataLengkapMahasiswaProdi.findAll({
+      include: [
+        { model: Prodi },
+        { model: Semester },
+        { model: Mahasiswa },
+        { model: Agama },
+        { model: Wilayah },
+        { model: JenisTinggal },
+        { model: AlatTransportasi },
+        { model: JenjangPendidikan },
+        { model: Pekerjaan },
+        { model: Penghasilan },
+        { model: KebutuhanKhusus },
+        { model: PerguruanTinggi },
+      ],
+    });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +37,22 @@ const getDataLengkapMahasiswaProdiById = async (req, res) => {
     const DataLengkapMahasiswaProdiId = req.params.id;
 
     // Cari data data_lengkap_mahasiswa_prodi berdasarkan ID di database
-    const data_lengkap_mahasiswa_prodi = await DataLengkapMahasiswaProdi.findByPk(DataLengkapMahasiswaProdiId);
+    const data_lengkap_mahasiswa_prodi = await DataLengkapMahasiswaProdi.findByPk(DataLengkapMahasiswaProdiId, {
+      include: [
+        { model: Prodi },
+        { model: Semester },
+        { model: Mahasiswa },
+        { model: Agama },
+        { model: Wilayah },
+        { model: JenisTinggal },
+        { model: AlatTransportasi },
+        { model: JenjangPendidikan },
+        { model: Pekerjaan },
+        { model: Penghasilan },
+        { model: KebutuhanKhusus },
+        { model: PerguruanTinggi },
+      ],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!data_lengkap_mahasiswa_prodi) {

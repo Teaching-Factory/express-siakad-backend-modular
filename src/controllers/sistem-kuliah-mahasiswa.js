@@ -1,8 +1,6 @@
 const { Op } = require("sequelize");
 
-const { SistemKuliah } = require("../../models");
-const { SistemKuliahMahasiswa } = require("../../models");
-const { Mahasiswa } = require("../../models");
+const { SistemKuliah, SistemKuliahMahasiswa, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode } = require("../../models");
 
 const createSistemKuliahMahasiswaBySistemKuliahId = async (req, res, next) => {
   try {
@@ -61,6 +59,7 @@ const getMahasiswaNotHaveSistemKuliah = async (req, res, next) => {
           [Op.notIn]: idArray,
         },
       },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Kirim respons JSON jika berhasil

@@ -1,9 +1,9 @@
-const { RekapJumlahMahasiswa } = require("../../models");
+const { RekapJumlahMahasiswa, Periode, Prodi } = require("../../models");
 
 const getAllRekapJumlahMahasiswa = async (req, res) => {
   try {
     // Ambil semua data rekap_jumlah_mahasiswa dari database
-    const rekap_jumlah_mahasiswa = await RekapJumlahMahasiswa.findAll();
+    const rekap_jumlah_mahasiswa = await RekapJumlahMahasiswa.findAll({ include: [{ model: Periode }, { model: Prodi }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getRekapJumlahMahasiswaById = async (req, res) => {
     const RekapJumlahMahasiswaId = req.params.id;
 
     // Cari data rekap_jumlah_mahasiswa berdasarkan ID di database
-    const rekap_jumlah_mahasiswa = await RekapJumlahMahasiswa.findByPk(RekapJumlahMahasiswaId);
+    const rekap_jumlah_mahasiswa = await RekapJumlahMahasiswa.findByPk(RekapJumlahMahasiswaId, {
+      include: [{ model: Periode }, { model: Prodi }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!rekap_jumlah_mahasiswa) {

@@ -1,9 +1,10 @@
-const { TranskripMahasiswa } = require("../../models");
+const { TranskripMahasiswa, Mahasiswa, MataKuliah, KelasKuliah, KonversiKampusMerdeka } = require("../../models");
 
-const getAllTranskripMahasiswa = async (req, res) => {
+// overload data
+const getAllTranskripMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data transkrip_mahasiswa dari database
-    const transkrip_mahasiswa = await TranskripMahasiswa.findAll();
+    const transkrip_mahasiswa = await TranskripMahasiswa.findAll({ include: [{ model: Mahasiswa }, { model: MataKuliah }, { model: KelasKuliah }, { model: KonversiKampusMerdeka }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -16,13 +17,15 @@ const getAllTranskripMahasiswa = async (req, res) => {
   }
 };
 
-const getTranskripMahasiswaById = async (req, res) => {
+const getTranskripMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const TranskripMahasiswaId = req.params.id;
 
     // Cari data transkrip_mahasiswa berdasarkan ID di database
-    const transkrip_mahasiswa = await TranskripMahasiswa.findByPk(TranskripMahasiswaId);
+    const transkrip_mahasiswa = await TranskripMahasiswa.findByPk(TranskripMahasiswaId, {
+      include: [{ model: Mahasiswa }, { model: MataKuliah }, { model: KelasKuliah }, { model: KonversiKampusMerdeka }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!transkrip_mahasiswa) {

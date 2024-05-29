@@ -1,9 +1,9 @@
-const { DetailPerkuliahanMahasiswa } = require("../../models");
+const { DetailPerkuliahanMahasiswa, Mahasiswa, Semester, StatusMahasiswa } = require("../../models");
 
 const getAllDetailPerkuliahanMahasiswa = async (req, res) => {
   try {
     // Ambil semua data detail_perkuliahan_mahasiswa dari database
-    const detail_perkuliahan_mahasiswa = await DetailPerkuliahanMahasiswa.findAll();
+    const detail_perkuliahan_mahasiswa = await DetailPerkuliahanMahasiswa.findAll({ include: [{ model: Mahasiswa }, { model: Semester }, { model: StatusMahasiswa }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getDetailPerkuliahanMahasiswaById = async (req, res) => {
     const DetailPerkuliahanMahasiswaId = req.params.id;
 
     // Cari data detail_perkuliahan_mahasiswa berdasarkan ID di database
-    const detail_perkuliahan_mahasiswa = await DetailPerkuliahanMahasiswa.findByPk(DetailPerkuliahanMahasiswaId);
+    const detail_perkuliahan_mahasiswa = await DetailPerkuliahanMahasiswa.findByPk(DetailPerkuliahanMahasiswaId, {
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: StatusMahasiswa }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!detail_perkuliahan_mahasiswa) {

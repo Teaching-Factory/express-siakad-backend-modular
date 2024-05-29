@@ -22,7 +22,9 @@ const getUnitJabatanById = async (req, res, next) => {
     const unitJabatanId = req.params.id;
 
     // Cari data unit_jabatan berdasarkan ID di database
-    const unit_jabatan = await UnitJabatan.findByPk(unitJabatanId);
+    const unit_jabatan = await UnitJabatan.findByPk(unitJabatanId, {
+      include: [{ model: Jabatan }, { model: Dosen }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!unit_jabatan) {

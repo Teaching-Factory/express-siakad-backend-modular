@@ -1,9 +1,9 @@
-const { PesertaKelasKuliah, Angkatan, Mahasiswa } = require("../../models");
+const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah } = require("../../models");
 
 const getAllPesertaKelasKuliah = async (req, res) => {
   try {
     // Ambil semua data peserta_kelas_kuliah dari database
-    const peserta_kelas_kuliah = await PesertaKelasKuliah.findAll();
+    const peserta_kelas_kuliah = await PesertaKelasKuliah.findAll({ include: [{ model: KelasKuliah }, { model: Mahasiswa }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getPesertaKelasKuliahById = async (req, res) => {
     const PesertaKelasKuliahId = req.params.id;
 
     // Cari data peserta_kelas_kuliah berdasarkan ID di database
-    const peserta_kelas_kuliah = await PesertaKelasKuliah.findByPk(PesertaKelasKuliahId);
+    const peserta_kelas_kuliah = await PesertaKelasKuliah.findByPk(PesertaKelasKuliahId, {
+      include: [{ model: KelasKuliah }, { model: Mahasiswa }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!peserta_kelas_kuliah) {
@@ -97,6 +99,7 @@ const getPesertaKelasKuliahByKelasKuliahId = async (req, res) => {
       where: {
         id_kelas_kuliah: kelasKuliahId,
       },
+      include: [{ model: KelasKuliah }, { model: Mahasiswa }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404

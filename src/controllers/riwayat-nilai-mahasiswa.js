@@ -1,9 +1,11 @@
-const { RiwayatNilaiMahasiswa } = require("../../models");
+const { RiwayatNilaiMahasiswa, Mahasiswa, Periode, KelasKuliah } = require("../../models");
 
 const getAllRiwayatNilaiMahasiswa = async (req, res) => {
   try {
     // Ambil semua data riwayat_nilai_mahasiswa dari database
-    const riwayat_nilai_mahasiswa = await RiwayatNilaiMahasiswa.findAll();
+    const riwayat_nilai_mahasiswa = await RiwayatNilaiMahasiswa.findAll({
+      include: [{ model: Mahasiswa }, { model: Periode }, { model: KelasKuliah }],
+    });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +24,9 @@ const getRiwayatNilaiMahasiswaById = async (req, res) => {
     const RiwayatNilaiMahasiswaId = req.params.id;
 
     // Cari data riwayat_nilai_mahasiswa berdasarkan ID di database
-    const riwayat_nilai_mahasiswa = await RiwayatNilaiMahasiswa.findByPk(RiwayatNilaiMahasiswaId);
+    const riwayat_nilai_mahasiswa = await RiwayatNilaiMahasiswa.findByPk(RiwayatNilaiMahasiswaId, {
+      include: [{ model: Mahasiswa }, { model: Periode }, { model: KelasKuliah }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!riwayat_nilai_mahasiswa) {

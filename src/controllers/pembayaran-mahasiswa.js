@@ -11,6 +11,7 @@ const getAllPembayaranMahasiswaByTagihanId = async (req, res) => {
       where: {
         id_tagihan_mahasiswa: tagihanMahasiswaId,
       },
+      include: [{ model: TagihanMahasiswa }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -30,7 +31,9 @@ const getPembayaranMahasiswaById = async (req, res, next) => {
     const pembayaranMahasiswaId = req.params.id;
 
     // Cari data pembayaran_mahasiswa berdasarkan ID di database
-    const pembayaran_mahasiswa = await PembayaranMahasiswa.findByPk(pembayaranMahasiswaId);
+    const pembayaran_mahasiswa = await PembayaranMahasiswa.findByPk(pembayaranMahasiswaId, {
+      include: [{ model: TagihanMahasiswa }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!pembayaran_mahasiswa) {
@@ -158,6 +161,7 @@ const getPembayaranMahasiswaByMahasiswaId = async (req, res, next) => {
       where: {
         id_tagihan_mahasiswa: idTagihanMahasiswa,
       },
+      include: [{ model: TagihanMahasiswa }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404

@@ -1,9 +1,9 @@
-const { KonversiKampusMerdeka } = require("../../models");
+const { KonversiKampusMerdeka, MataKuliah } = require("../../models");
 
 const getAllKonversiKampusMerdeka = async (req, res) => {
   try {
     // Ambil semua data konversi_kampus_merdeka dari database
-    const konversi_kampus_merdeka = await KonversiKampusMerdeka.findAll();
+    const konversi_kampus_merdeka = await KonversiKampusMerdeka.findAll({ include: [{ model: MataKuliah }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,7 @@ const getKonversiKampusMerdekaById = async (req, res) => {
     const KonversiKampusMerdekaId = req.params.id;
 
     // Cari data konversi_kampus_merdeka berdasarkan ID di database
-    const konversi_kampus_merdeka = await KonversiKampusMerdeka.findByPk(KonversiKampusMerdekaId);
+    const konversi_kampus_merdeka = await KonversiKampusMerdeka.findByPk(KonversiKampusMerdekaId, { include: [{ model: MataKuliah }] });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!konversi_kampus_merdeka) {

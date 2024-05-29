@@ -1,9 +1,11 @@
-const { AktivitasKuliahMahasiswa } = require("../../models");
+const { AktivitasKuliahMahasiswa, Mahasiswa, Semester, Prodi, StatusMahasiswa } = require("../../models");
 
 const getAllAktivitasKuliahMahasiswa = async (req, res) => {
   try {
     // Ambil semua data aktivitas_kuliah_mahasiswa dari database
-    const aktivitas_kuliah_mahasiswa = await AktivitasKuliahMahasiswa.findAll();
+    const aktivitas_kuliah_mahasiswa = await AktivitasKuliahMahasiswa.findAll({
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: StatusMahasiswa }],
+    });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +24,9 @@ const getAktivitasKuliahMahasiswaById = async (req, res) => {
     const AktivitasKuliahMahasiswaId = req.params.id;
 
     // Cari data aktivitas_kuliah_mahasiswa berdasarkan ID di database
-    const aktivitas_kuliah_mahasiswa = await AktivitasKuliahMahasiswa.findByPk(AktivitasKuliahMahasiswaId);
+    const aktivitas_kuliah_mahasiswa = await AktivitasKuliahMahasiswa.findByPk(AktivitasKuliahMahasiswaId, {
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: StatusMahasiswa }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!aktivitas_kuliah_mahasiswa) {
@@ -51,6 +55,7 @@ const getAktivitasKuliahMahasiswaByMahasiswaId = async (req, res, next) => {
       where: {
         id_registrasi_mahasiswa: mahasiswaId,
       },
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: StatusMahasiswa }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404

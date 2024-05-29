@@ -1,9 +1,9 @@
-const { DetailPeriodePerkuliahan } = require("../../models");
+const { DetailPeriodePerkuliahan, Prodi, Semester } = require("../../models");
 
 const getAllDetailPeriodePerkuliahan = async (req, res) => {
   try {
     // Ambil semua data detail_periode_perkuliahan dari database
-    const detail_periode_perkuliahan = await DetailPeriodePerkuliahan.findAll();
+    const detail_periode_perkuliahan = await DetailPeriodePerkuliahan.findAll({ include: [{ model: Prodi }, { model: Semester }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getDetailPeriodePerkuliahanById = async (req, res) => {
     const DetailPeriodePerkuliahanId = req.params.id;
 
     // Cari data detail_periode_perkuliahan berdasarkan ID di database
-    const detail_periode_perkuliahan = await DetailPeriodePerkuliahan.findByPk(DetailPeriodePerkuliahanId);
+    const detail_periode_perkuliahan = await DetailPeriodePerkuliahan.findByPk(DetailPeriodePerkuliahanId, {
+      include: [{ model: Prodi }, { model: Semester }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!detail_periode_perkuliahan) {

@@ -1,9 +1,9 @@
-const { RekapKRSMahasiswa } = require("../../models");
+const { RekapKRSMahasiswa, Prodi, Periode, Mahasiswa, MataKuliah, Semester } = require("../../models");
 
 const getAllRekapKRSMahasiswa = async (req, res) => {
   try {
     // Ambil semua data rekap_krs_mahasiswa dari database
-    const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findAll();
+    const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findAll({ include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getRekapKRSMahasiswaById = async (req, res) => {
     const RekapKRSMahasiswaId = req.params.id;
 
     // Cari data rekap_krs_mahasiswa berdasarkan ID di database
-    const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findByPk(RekapKRSMahasiswaId);
+    const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findByPk(RekapKRSMahasiswaId, {
+      include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!rekap_krs_mahasiswa) {
