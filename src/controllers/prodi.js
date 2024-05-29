@@ -1,9 +1,9 @@
-const { Prodi } = require("../../models");
+const { Prodi, JenjangPendidikan } = require("../../models");
 
 const getAllProdi = async (req, res) => {
   try {
     // Ambil semua data prodi dari database
-    const prodi = await Prodi.findAll();
+    const prodi = await Prodi.findAll({ include: [{ model: JenjangPendidikan }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getProdiById = async (req, res) => {
     const ProdiId = req.params.id;
 
     // Cari data prodi berdasarkan ID di database
-    const prodi = await Prodi.findByPk(ProdiId);
+    const prodi = await Prodi.findByPk(ProdiId, {
+      include: [{ model: JenjangPendidikan }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!prodi) {

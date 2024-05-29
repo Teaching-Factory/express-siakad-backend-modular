@@ -1,9 +1,9 @@
-const { Dosen } = require("../../models");
+const { Dosen, Agama, StatusKeaktifanPegawai } = require("../../models");
 
 const getAllDosen = async (req, res) => {
   try {
     // Ambil semua data dosen dari database
-    const dosen = await Dosen.findAll();
+    const dosen = await Dosen.findAll({ include: [{ model: Agama }, { model: StatusKeaktifanPegawai }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getDosenById = async (req, res) => {
     const DosenId = req.params.id;
 
     // Cari data dosen berdasarkan ID di database
-    const dosen = await Dosen.findByPk(DosenId);
+    const dosen = await Dosen.findByPk(DosenId, {
+      include: [{ model: Agama }, { model: StatusKeaktifanPegawai }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!dosen) {

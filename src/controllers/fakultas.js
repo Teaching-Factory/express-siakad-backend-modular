@@ -1,9 +1,9 @@
-const { Fakultas } = require("../../models");
+const { Fakultas, JenjangPendidikan } = require("../../models");
 
 const getAllFakultas = async (req, res) => {
   try {
     // Ambil semua data fakukltas dari database
-    const fakukltas = await Fakultas.findAll();
+    const fakukltas = await Fakultas.findAll({ include: [{ model: JenjangPendidikan }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getFakultasById = async (req, res) => {
     const FakultasId = req.params.id;
 
     // Cari data fakukltas berdasarkan ID di database
-    const fakukltas = await Fakultas.findByPk(FakultasId);
+    const fakukltas = await Fakultas.findByPk(FakultasId, {
+      include: [{ model: JenjangPendidikan }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!fakukltas) {

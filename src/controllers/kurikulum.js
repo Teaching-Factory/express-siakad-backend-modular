@@ -1,9 +1,9 @@
-const { Kurikulum } = require("../../models");
+const { Kurikulum, Prodi, Semester } = require("../../models");
 
 const getAllKurikulum = async (req, res) => {
   try {
     // Ambil semua data kurikulum dari database
-    const kurikulum = await Kurikulum.findAll();
+    const kurikulum = await Kurikulum.findAll({ include: [{ model: Prodi }, { model: Semester }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getKurikulumById = async (req, res) => {
     const KurikulumId = req.params.id;
 
     // Cari data kurikulum berdasarkan ID di database
-    const kurikulum = await Kurikulum.findByPk(KurikulumId);
+    const kurikulum = await Kurikulum.findByPk(KurikulumId, {
+      include: [{ model: Prodi }, { model: Semester }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!kurikulum) {

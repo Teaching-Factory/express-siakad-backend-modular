@@ -1,9 +1,9 @@
-const { Wilayah } = require("../../models");
+const { Wilayah, Negara } = require("../../models");
 
 const getAllWilayahs = async (req, res) => {
   try {
     // Ambil semua data wilayahs dari database
-    const wilayahs = await Wilayah.findAll();
+    const wilayahs = await Wilayah.findAll({ include: [{ model: Negara }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getWilayahById = async (req, res) => {
     const wilayahId = req.params.id;
 
     // Cari data wilayah berdasarkan ID di database
-    const wilayah = await Wilayah.findByPk(wilayahId);
+    const wilayah = await Wilayah.findByPk(wilayahId, {
+      include: [{ model: Negara }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!wilayah) {

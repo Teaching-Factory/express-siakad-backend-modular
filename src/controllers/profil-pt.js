@@ -1,9 +1,9 @@
-const { ProfilPT } = require("../../models");
+const { ProfilPT, PerguruanTinggi, Wilayah } = require("../../models");
 
 const getAllProfilPT = async (req, res) => {
   try {
     // Ambil semua data profil_pt dari database
-    const profil_pt = await ProfilPT.findAll();
+    const profil_pt = await ProfilPT.findAll({ include: [{ model: PerguruanTinggi }, { model: Wilayah }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getProfilPTById = async (req, res) => {
     const profilPTId = req.params.id;
 
     // Cari data profil_pt berdasarkan ID di database
-    const profil_pt = await ProfilPT.findByPk(profilPTId);
+    const profil_pt = await ProfilPT.findByPk(profilPTId, {
+      include: [{ model: PerguruanTinggi }, { model: Wilayah }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!profil_pt) {

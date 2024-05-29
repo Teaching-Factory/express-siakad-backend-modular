@@ -1,9 +1,9 @@
-const { Semester } = require("../../models");
+const { Semester, TahunAjaran } = require("../../models");
 
 const getAllSemester = async (req, res) => {
   try {
     // Ambil semua data semester dari database
-    const semester = await Semester.findAll();
+    const semester = await Semester.findAll({ include: [{ model: TahunAjaran }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getSemesterById = async (req, res) => {
     const SemesterId = req.params.id;
 
     // Cari data semester berdasarkan ID di database
-    const semester = await Semester.findByPk(SemesterId);
+    const semester = await Semester.findByPk(SemesterId, {
+      include: [{ model: TahunAjaran }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!semester) {

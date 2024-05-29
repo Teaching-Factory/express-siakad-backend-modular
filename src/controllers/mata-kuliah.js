@@ -1,9 +1,9 @@
-const { MataKuliah } = require("../../models");
+const { MataKuliah, Prodi } = require("../../models");
 
 const getAllMataKuliah = async (req, res) => {
   try {
     // Ambil semua data mata_kuliah dari database
-    const mata_kuliah = await MataKuliah.findAll();
+    const mata_kuliah = await MataKuliah.findAll({ include: [{ model: Prodi }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getMataKuliahById = async (req, res) => {
     const MataKuliahId = req.params.id;
 
     // Cari data mata_kuliah berdasarkan ID di database
-    const mata_kuliah = await MataKuliah.findByPk(MataKuliahId);
+    const mata_kuliah = await MataKuliah.findByPk(MataKuliahId, {
+      include: [{ model: Prodi }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!mata_kuliah) {

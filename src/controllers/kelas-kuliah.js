@@ -1,10 +1,9 @@
-const { where } = require("sequelize");
-const { KelasKuliah, MataKuliah, DetailKelasKuliah } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen } = require("../../models");
 
 const getAllKelasKuliah = async (req, res) => {
   try {
     // Ambil semua data kelas_kuliah dari database
-    const kelas_kuliah = await KelasKuliah.findAll();
+    const kelas_kuliah = await KelasKuliah.findAll({ include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -23,7 +22,9 @@ const getKelasKuliahById = async (req, res) => {
     const KelasKuliahId = req.params.id;
 
     // Cari data kelas_kuliah berdasarkan ID di database
-    const kelas_kuliah = await KelasKuliah.findByPk(KelasKuliahId);
+    const kelas_kuliah = await KelasKuliah.findByPk(KelasKuliahId, {
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!kelas_kuliah) {
@@ -42,18 +43,19 @@ const getKelasKuliahById = async (req, res) => {
   }
 };
 
-const GetAllKelasKuliahByProdiAndSemesterId = async (req, res) => {
+const GetAllKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const prodiId = req.params.id_prodi;
     const semesterId = req.params.id_semester;
 
-    // Ambil semua data kelas_kuliah dari database
+    // Ambil semua data kelas_kuliah dari database dengan data relasi
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
         id_prodi: prodiId,
         id_semester: semesterId,
       },
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });
 
     // Ambil semua data mata_kuliah dari database

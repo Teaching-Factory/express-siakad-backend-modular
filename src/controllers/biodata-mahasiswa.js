@@ -1,9 +1,11 @@
-const { BiodataMahasiswa } = require("../../models");
+const { BiodataMahasiswa, Wilayah, JenisTinggal, AlatTransportasi, JenjangPendidikan, Pekerjaan, Penghasilan, KebutuhanKhusus } = require("../../models");
 
 const getAllBiodataMahasiswa = async (req, res) => {
   try {
     // Ambil semua data biodata_mahasiswa dari database
-    const biodata_mahasiswa = await BiodataMahasiswa.findAll();
+    const biodata_mahasiswa = await BiodataMahasiswa.findAll({
+      include: [{ model: Wilayah }, { model: JenisTinggal }, { model: AlatTransportasi }, { model: JenjangPendidikan }, { model: Pekerjaan }, { model: Penghasilan }, { model: KebutuhanKhusus }],
+    });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +24,9 @@ const getBiodataMahasiswaById = async (req, res) => {
     const BiodataMahasiswaId = req.params.id;
 
     // Cari data biodata_mahasiswa berdasarkan ID di database
-    const biodata_mahasiswa = await BiodataMahasiswa.findByPk(BiodataMahasiswaId);
+    const biodata_mahasiswa = await BiodataMahasiswa.findByPk(BiodataMahasiswaId, {
+      include: [{ model: Wilayah }, { model: JenisTinggal }, { model: AlatTransportasi }, { model: JenjangPendidikan }, { model: Pekerjaan }, { model: Penghasilan }, { model: KebutuhanKhusus }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!biodata_mahasiswa) {

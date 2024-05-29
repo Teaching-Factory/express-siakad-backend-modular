@@ -1,9 +1,9 @@
-const { PerhitunganSKS } = require("../../models");
+const { PerhitunganSKS, KelasKuliah, PenugasanDosen, Substansi } = require("../../models");
 
 const getAllPerhitunganSKS = async (req, res) => {
   try {
     // Ambil semua data perhitungan_sks dari database
-    const perhitungan_sks = await PerhitunganSKS.findAll();
+    const perhitungan_sks = await PerhitunganSKS.findAll({ include: [{ model: KelasKuliah }, { model: PenugasanDosen }, { model: Substansi }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getPerhitunganSKSById = async (req, res) => {
     const PerhitunganSKSId = req.params.id;
 
     // Cari data perhitungan_sks berdasarkan ID di database
-    const perhitungan_sks = await PerhitunganSKS.findByPk(PerhitunganSKSId);
+    const perhitungan_sks = await PerhitunganSKS.findByPk(PerhitunganSKSId, {
+      include: [{ model: KelasKuliah }, { model: PenugasanDosen }, { model: Substansi }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!perhitungan_sks) {

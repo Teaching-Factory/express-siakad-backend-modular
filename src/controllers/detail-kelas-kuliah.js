@@ -1,9 +1,9 @@
-const { DetailKelasKuliah } = require("../../models");
+const { DetailKelasKuliah, KelasKuliah } = require("../../models");
 
 const getAllDetailKelasKuliah = async (req, res) => {
   try {
     // Ambil semua data detail_kelas_kuliah dari database
-    const detail_kelas_kuliah = await DetailKelasKuliah.findAll();
+    const detail_kelas_kuliah = await DetailKelasKuliah.findAll({ include: [{ model: KelasKuliah }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getDetailKelasKuliahById = async (req, res) => {
     const DetailKelasKuliahId = req.params.id;
 
     // Cari data detail_kelas_kuliah berdasarkan ID di database
-    const detail_kelas_kuliah = await DetailKelasKuliah.findByPk(DetailKelasKuliahId);
+    const detail_kelas_kuliah = await DetailKelasKuliah.findByPk(DetailKelasKuliahId, {
+      include: [{ model: KelasKuliah }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!detail_kelas_kuliah) {

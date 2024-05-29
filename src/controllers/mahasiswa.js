@@ -1,11 +1,12 @@
 const ExcelJS = require("exceljs");
+const { Op } = require("sequelize");
 const fs = require("fs").promises;
 const { Mahasiswa, Periode, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah, Agama, PerguruanTinggi, Prodi, RiwayatPendidikanMahasiswa, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester } = require("../../models");
 
 const getAllMahasiswa = async (req, res) => {
   try {
     // Ambil semua data mahasiswa dari database
-    const mahasiswa = await Mahasiswa.findAll();
+    const mahasiswa = await Mahasiswa.findAll({ include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -24,7 +25,9 @@ const getMahasiswaById = async (req, res) => {
     const MahasiswaId = req.params.id;
 
     // Cari data mahasiswa berdasarkan ID di database
-    const mahasiswa = await Mahasiswa.findByPk(MahasiswaId);
+    const mahasiswa = await Mahasiswa.findByPk(MahasiswaId, {
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!mahasiswa) {
@@ -62,6 +65,7 @@ const getMahasiswaByProdiId = async (req, res, next) => {
       where: {
         id_periode: periodeIdList,
       },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
@@ -89,9 +93,7 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
 
     // Ambil data angkatan berdasarkan id_angkatan
     const angkatan = await Angkatan.findOne({
-      where: {
-        id: angkatanId,
-      },
+      where: { id: angkatanId },
     });
 
     // Jika data angkatan tidak ditemukan, kirim respons 404
@@ -104,17 +106,18 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
     // Ekstrak tahun dari data angkatan
     const tahunAngkatan = angkatan.tahun;
 
-    // Ambil semua data mahasiswa
-    const mahasiswas = await Mahasiswa.findAll();
-
-    // Filter data mahasiswa berdasarkan tahun angkatan yang dicocokkan dengan nama_periode_masuk
-    const filteredMahasiswas = mahasiswas.filter((mahasiswa) => {
-      const [tahunAwal] = mahasiswa.nama_periode_masuk.split("/");
-      return tahunAwal === tahunAngkatan;
+    // Ambil semua data mahasiswa yang memiliki tahun angkatan sesuai dengan nama_periode_masuk
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nama_periode_masuk: {
+          [Op.like]: `${tahunAngkatan}/%`, // Memastikan nama_periode_masuk mengandung tahunAngkatan di awal
+        },
+      },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
-    if (filteredMahasiswas.length === 0) {
+    if (mahasiswas.length === 0) {
       return res.status(404).json({
         message: `Mahasiswa dengan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
       });
@@ -123,8 +126,8 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `GET Mahasiswa By Angkatan ID ${angkatanId} Success`,
-      jumlahData: filteredMahasiswas.length,
-      data: filteredMahasiswas,
+      jumlahData: mahasiswas.length,
+      data: mahasiswas,
     });
   } catch (error) {
     next(error);
@@ -155,6 +158,7 @@ const getMahasiswaByStatusMahasiswaId = async (req, res, next) => {
       where: {
         nama_status_mahasiswa: status_mahasiswa.nama_status_mahasiswa,
       },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
@@ -181,6 +185,17 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     const prodiId = req.params.id_prodi;
     const angkatanId = req.params.id_angkatan;
 
+    // Ambil data angkatan berdasarkan id_angkatan
+    const angkatan = await Angkatan.findOne({ where: { id: angkatanId } });
+
+    // Jika data angkatan tidak ditemukan, kirim respons 404
+    if (!angkatan) {
+      return res.status(404).json({ message: `Angkatan dengan ID ${angkatanId} tidak ditemukan` });
+    }
+
+    // Ekstrak tahun dari data angkatan
+    const tahunAngkatan = angkatan.tahun;
+
     // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
     const periodeIds = await Periode.findAll({
       where: { id_prodi: prodiId },
@@ -190,38 +205,17 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     // Ekstrak id periode dari hasil pencarian
     const periodeIdList = periodeIds.map((periode) => periode.id_periode);
 
-    // Ambil data angkatan berdasarkan id_angkatan
-    const angkatan = await Angkatan.findOne({
-      where: {
-        id: angkatanId,
-      },
-    });
-
-    // Jika data angkatan tidak ditemukan, kirim respons 404
-    if (!angkatan) {
-      return res.status(404).json({
-        message: `Angkatan dengan ID ${angkatanId} tidak ditemukan`,
-      });
-    }
-
-    // Ekstrak tahun dari data angkatan
-    const tahunAngkatan = angkatan.tahun;
-
-    // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
+    // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList dan tahun angkatan
     const mahasiswas = await Mahasiswa.findAll({
       where: {
-        id_periode: periodeIdList,
+        id_periode: { [Op.in]: periodeIdList },
+        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
       },
-    });
-
-    // Filter data mahasiswa berdasarkan tahun angkatan yang dicocokkan dengan nama_periode_masuk
-    const filteredMahasiswas = mahasiswas.filter((mahasiswa) => {
-      const [tahunAwal] = mahasiswa.nama_periode_masuk.split("/");
-      return tahunAwal === tahunAngkatan;
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
-    if (filteredMahasiswas.length === 0) {
+    if (mahasiswas.length === 0) {
       return res.status(404).json({
         message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
       });
@@ -230,8 +224,8 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `GET Mahasiswa By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
-      jumlahData: filteredMahasiswas.length,
-      data: filteredMahasiswas,
+      jumlahData: mahasiswas.length,
+      data: mahasiswas,
     });
   } catch (error) {
     next(error);

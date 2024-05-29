@@ -1,9 +1,9 @@
-const { Substansi } = require("../../models");
+const { Substansi, Prodi, JenisSubstansi } = require("../../models");
 
 const getAllSubstansi = async (req, res) => {
   try {
     // Ambil semua data substansi dari database
-    const substansi = await Substansi.findAll();
+    const substansi = await Substansi.findAll({ include: [{ model: Prodi }, { model: JenisSubstansi }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -22,7 +22,9 @@ const getSubstansiById = async (req, res) => {
     const SubstansiId = req.params.id;
 
     // Cari data substansi berdasarkan ID di database
-    const substansi = await Substansi.findByPk(SubstansiId);
+    const substansi = await Substansi.findByPk(SubstansiId, {
+      include: [{ model: Prodi }, { model: JenisSubstansi }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!substansi) {
