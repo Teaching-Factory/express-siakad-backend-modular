@@ -218,6 +218,30 @@ const deleteKelasKuliahById = async (req, res, next) => {
   }
 };
 
+const getAllKelasKuliahByProdiId = async (req, res) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+
+    // Ambil semua data kelas_kuliah dari database
+    const kelas_kuliah = await KelasKuliah.findAll({
+      where: {
+        id_prodi: prodiId,
+      },
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Kelas Kuliah By Prodi Id ${prodiId} Success`,
+      jumlahData: kelas_kuliah.length,
+      data: kelas_kuliah,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllKelasKuliah,
   getKelasKuliahById,
@@ -225,4 +249,5 @@ module.exports = {
   createKelasKuliah,
   updateKelasKuliahById,
   deleteKelasKuliahById,
+  getAllKelasKuliahByProdiId,
 };

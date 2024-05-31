@@ -7,6 +7,9 @@ const cors = require("cors");
 const express = require("express");
 
 // import routes
+// route api feeder dikti
+const apiFeederRoutes = require("./routes/api-feeder");
+
 // route api local done
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
@@ -84,6 +87,7 @@ const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
 const ruangPerkuliahanRoutes = require("./routes/ruang-perkuliahan");
 const beritaRoutes = require("./routes/berita");
 const dosenWaliRoutes = require("./routes/dosen-wali");
+const pelimpahanMataKuliahRoutes = require("./routes/pelimpahan-mata-kuliah");
 
 // route api local not done yet
 const settingGlobalRoutes = require("./routes/setting-global");
@@ -96,7 +100,6 @@ const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
 const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
 const transkripNilaiRoutes = require("./routes/transkrip-nilai");
-const apiFeederRoutes = require("./routes/api-feeder");
 
 // import middleware
 const middlewareLogRequest = require("./middlewares/logs");
@@ -130,6 +133,9 @@ middlewareDatabaseConnection
 
 // middleware request json from client
 app.use(express.json());
+
+// route api feeder dikti
+app.use("/api-feeder", checkToken, apiFeederRoutes);
 
 // route api local done
 app.use("/user", checkToken, userRoutes);
@@ -196,7 +202,6 @@ app.use("/transkrip-mahasiswa", checkToken, transkripMahasiswaRoutes);
 app.use("/rekap-jumlah-mahasiswa", checkToken, rekapJumlahMahasiswaRoutes);
 app.use("/rekap-khs-mahasiswa", checkToken, rekapKHSMahasiswaRoutes);
 app.use("/rekap-krs-mahasiswa", checkToken, rekapKRSMahasiswaRoutes);
-app.use("/api-feeder", checkToken, apiFeederRoutes);
 app.use("/angkatan", checkToken, angkatanRoutes);
 app.use("/jabatan", checkToken, jabatanRoutes);
 app.use("/unit-jabatan", checkToken, unitJabatanRoutes);
@@ -209,6 +214,7 @@ app.use("/bobot-penilaian", checkToken, bobotPenilaianRoutes);
 app.use("/ruang-perkuliahan", checkToken, ruangPerkuliahanRoutes);
 app.use("/berita", checkToken, beritaRoutes);
 app.use("/dosen-wali", checkToken, dosenWaliRoutes);
+app.use("/pelimpahan-mata-kuliah", checkToken, pelimpahanMataKuliahRoutes);
 
 // route api local not done yet
 app.use("/setting/global", settingGlobalRoutes);

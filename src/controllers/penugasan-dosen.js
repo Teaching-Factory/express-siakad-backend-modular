@@ -43,7 +43,32 @@ const getPenugasanDosenById = async (req, res) => {
   }
 };
 
+const getAllPenugasanDosenByProdiId = async (req, res) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+
+    // Ambil semua data penugasan_dosen dari database
+    const penugasan_dosen = await PenugasanDosen.findAll({
+      where: {
+        id_prodi: prodiId,
+      },
+      include: [{ model: Dosen }, { model: TahunAjaran }, { model: PerguruanTinggi }, { model: Prodi }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Penugasan Dosen By Prodi Id ${prodiId} Success`,
+      jumlahData: penugasan_dosen.length,
+      data: penugasan_dosen,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPenugasanDosen,
   getPenugasanDosenById,
+  getAllPenugasanDosenByProdiId,
 };
