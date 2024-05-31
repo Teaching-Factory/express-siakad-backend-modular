@@ -10,5 +10,6 @@ router.get("/", PesertaKelasKuliahController.getAllPesertaKelasKuliah);
 router.get("/:id/get", PesertaKelasKuliahController.getPesertaKelasKuliahById);
 router.post("/:id_kelas_kuliah/:id_angkatan/create", PesertaKelasKuliahController.createPesertaKelasByAngkatanAndKelasKuliahId);
 router.get("/kelas-kuliah/:id_kelas_kuliah/get", PesertaKelasKuliahController.getPesertaKelasKuliahByKelasKuliahId);
+router.get("/:id_kelas_kuliah/get-nilai-kelas", PesertaKelasKuliahController.getPesertaKelasWithDetailNilai);
 
 module.exports = router;

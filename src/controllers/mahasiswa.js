@@ -6,7 +6,7 @@ const { Mahasiswa, Periode, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah
 const getAllMahasiswa = async (req, res) => {
   try {
     // Ambil semua data mahasiswa dari database
-    const mahasiswa = await Mahasiswa.findAll({ include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }] });
+    const mahasiswa = await Mahasiswa.findAll({ include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -26,7 +26,7 @@ const getMahasiswaById = async (req, res) => {
 
     // Cari data mahasiswa berdasarkan ID di database
     const mahasiswa = await Mahasiswa.findByPk(MahasiswaId, {
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -65,7 +65,7 @@ const getMahasiswaByProdiId = async (req, res, next) => {
       where: {
         id_periode: periodeIdList,
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
@@ -113,7 +113,7 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
           [Op.like]: `${tahunAngkatan}/%`, // Memastikan nama_periode_masuk mengandung tahunAngkatan di awal
         },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
@@ -158,7 +158,7 @@ const getMahasiswaByStatusMahasiswaId = async (req, res, next) => {
       where: {
         nama_status_mahasiswa: status_mahasiswa.nama_status_mahasiswa,
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
@@ -211,7 +211,7 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
         id_periode: { [Op.in]: periodeIdList },
         nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404

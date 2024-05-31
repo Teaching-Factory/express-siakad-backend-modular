@@ -1,4 +1,4 @@
-const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah } = require("../../models");
+const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas } = require("../../models");
 
 const getAllPesertaKelasKuliah = async (req, res) => {
   try {
@@ -120,9 +120,52 @@ const getPesertaKelasKuliahByKelasKuliahId = async (req, res) => {
   }
 };
 
+const getPesertaKelasWithDetailNilai = async (req, res, next) => {
+  try {
+    const idKelasKuliah = req.params.id_kelas_kuliah;
+
+    // Ambil data peserta kelas berdasarkan id_kelas_kuliah
+    const pesertaKelas = await PesertaKelasKuliah.findAll({
+      where: {
+        id_kelas_kuliah: idKelasKuliah,
+      },
+      include: {
+        model: Mahasiswa, // Include Mahasiswa untuk mendapatkan informasi detail mahasiswa
+      },
+    });
+
+    // Ambil data nilai perkuliahan berdasarkan id_kelas_kuliah
+    const detailNilaiPerkuliahan = await DetailNilaiPerkuliahanKelas.findAll({
+      where: {
+        id_kelas_kuliah: idKelasKuliah,
+      },
+    });
+
+    // Gabungkan data peserta kelas dan nilai perkuliahan berdasarkan id_registrasi_mahasiswa
+    const hasilGabungan = pesertaKelas.map((peserta) => {
+      const nilai = detailNilaiPerkuliahan.find((nilai) => nilai.id_registrasi_mahasiswa === peserta.id_registrasi_mahasiswa);
+
+      return {
+        ...peserta.toJSON(), // Konversi objek Sequelize ke plain object
+        DetailNilaiPerkuliahanKelas: nilai ? nilai.toJSON() : null, // Sertakan data nilai jika ada, jika tidak null
+      };
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Peserta Kelas With Detail Nilai By Kelas ID ${idKelasKuliah} Success =====>`,
+      jumlahData: hasilGabungan.length,
+      data: hasilGabungan,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPesertaKelasKuliah,
   getPesertaKelasKuliahById,
   createPesertaKelasByAngkatanAndKelasKuliahId,
   getPesertaKelasKuliahByKelasKuliahId,
+  getPesertaKelasWithDetailNilai,
 };
