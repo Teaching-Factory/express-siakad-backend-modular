@@ -1,0 +1,147 @@
+const { DosenPengajarKelasKuliah, PenugasanDosen, Dosen, KelasKuliah, Substansi, JenisEvaluasi, Prodi, Semester } = require("../../models");
+
+const getAllDosenPengajarKelasKuliahByIdKelasKuliah = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const kelasKuliahId = req.params.id_kelas_kuliah;
+
+    // Ambil semua data dosen_pengajar_kelas_kuliahs dari database
+    const dosen_pengajar_kelas_kuliahs = await DosenPengajarKelasKuliah.findAll({
+      where: {
+        id_kelas_kuliah: kelasKuliahId,
+      },
+      include: [{ model: PenugasanDosen }, { model: Dosen }, { model: KelasKuliah }, { model: Substansi }, { model: JenisEvaluasi }, { model: Prodi }, { model: Semester }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Pengajar Kelas Kuliah By Id Kelas Kuliah ${kelasKuliahId} Success`,
+      jumlahData: dosen_pengajar_kelas_kuliahs.length,
+      data: dosen_pengajar_kelas_kuliahs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createDosenPengajarKelasKuliah = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const kelasKuliahId = req.params.id_kelas_kuliah;
+
+    // mendapatkan data dari request body
+    const { sks, rencana_pertemuan, id_registrasi_dosen } = req.body;
+
+    // get data penugasan dosen
+    const penugasan_dosen = await PenugasanDosen.findOne({
+      where: {
+        id_registrasi_dosen: id_registrasi_dosen,
+      },
+    });
+
+    // get data kelas kuliah
+    const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
+
+    // Gunakan metode create untuk membuat data dosen pengajar kelas kuliah baru
+    const newDosenPengajarKelasKuliah = await DosenPengajarKelasKuliah.create({
+      sks_substansi_total: sks,
+      rencana_minggu_pertemuan: rencana_pertemuan,
+      realisasi_minggu_pertemuan: rencana_pertemuan,
+      id_registrasi_dosen: id_registrasi_dosen,
+      id_dosen: penugasan_dosen.id_dosen,
+      id_kelas_kuliah: kelasKuliahId,
+      id_substansi: null,
+      id_jenis_evaluasi: 1,
+      id_prodi: penugasan_dosen.id_prodi,
+      id_semester: kelas_kuliah.id_semester,
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: "<===== CREATE Dosen Pengajar Kelas Kuliah Success",
+      data: newDosenPengajarKelasKuliah,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateDosenPengajarKelasKuliahById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const dosenPengajarKelasKuliahId = req.params.id;
+
+    // mendapatkan data dari request body
+    const { sks, rencana_pertemuan, id_registrasi_dosen } = req.body;
+
+    // get data penugasan dosen
+    const penugasan_dosen = await PenugasanDosen.findOne({
+      where: {
+        id_registrasi_dosen: id_registrasi_dosen,
+      },
+    });
+
+    // Cari data dosen pengajar kelas kuliah berdasarkan ID di database
+    let dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findByPk(dosenPengajarKelasKuliahId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!dosen_pengajar_kelas_kuliah) {
+      return res.status(404).json({
+        message: `<===== Dosen Pengajar Kelas Kuliah With ID ${dosenPengajarKelasKuliahId} Not Found:`,
+      });
+    }
+
+    // Update data dosen pengajar kelas kuliah
+    dosen_pengajar_kelas_kuliah.sks_substansi_total = sks;
+    dosen_pengajar_kelas_kuliah.rencana_minggu_pertemuan = rencana_pertemuan;
+    dosen_pengajar_kelas_kuliah.realisasi_minggu_pertemuan = rencana_pertemuan;
+    dosen_pengajar_kelas_kuliah.id_registrasi_dosen = id_registrasi_dosen;
+    dosen_pengajar_kelas_kuliah.id_dosen = penugasan_dosen.id_dosen;
+    dosen_pengajar_kelas_kuliah.id_prodi = penugasan_dosen.id_prodi;
+
+    // Simpan perubahan ke dalam database
+    await dosen_pengajar_kelas_kuliah.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: `<===== UPDATE Dosen Pengajar Kelas Kuliah With ID ${dosenPengajarKelasKuliahId} Success:`,
+      data: dosen_pengajar_kelas_kuliah,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteDosenPengajarKelasKuliahById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const dosenPengajarKelasKuliahId = req.params.id;
+
+    // Cari data dosen_pengajar_kelas_kuliah berdasarkan ID di database
+    let dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findByPk(dosenPengajarKelasKuliahId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!dosen_pengajar_kelas_kuliah) {
+      return res.status(404).json({
+        message: `<===== Dosen Pengajar Kelas Kuliah With ID ${dosenPengajarKelasKuliahId} Not Found:`,
+      });
+    }
+
+    // Hapus data dosen_pengajar_kelas_kuliah dari database
+    await dosen_pengajar_kelas_kuliah.destroy();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== DELETE Dosen Pengajar Kelas Kuliah With ID ${dosenPengajarKelasKuliahId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getAllDosenPengajarKelasKuliahByIdKelasKuliah,
+  createDosenPengajarKelasKuliah,
+  updateDosenPengajarKelasKuliahById,
+  deleteDosenPengajarKelasKuliahById,
+};

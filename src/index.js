@@ -87,6 +87,7 @@ const bobotPenilaianRoutes = require("./routes/bobot-penilaian");
 const ruangPerkuliahanRoutes = require("./routes/ruang-perkuliahan");
 const beritaRoutes = require("./routes/berita");
 const dosenWaliRoutes = require("./routes/dosen-wali");
+const dosenPengajarKelasKuliah = require("./routes/dosen-pengajar-kelas-kuliah");
 const pelimpahanMataKuliahRoutes = require("./routes/pelimpahan-mata-kuliah");
 
 // route api local not done yet
@@ -214,6 +215,7 @@ app.use("/bobot-penilaian", checkToken, bobotPenilaianRoutes);
 app.use("/ruang-perkuliahan", checkToken, ruangPerkuliahanRoutes);
 app.use("/berita", checkToken, beritaRoutes);
 app.use("/dosen-wali", checkToken, dosenWaliRoutes);
+app.use("/dosen-pengajar-kelas-kuliah", checkToken, dosenPengajarKelasKuliah);
 app.use("/pelimpahan-mata-kuliah", checkToken, pelimpahanMataKuliahRoutes);
 
 // route api local not done yet
