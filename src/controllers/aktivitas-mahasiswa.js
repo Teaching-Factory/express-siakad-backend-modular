@@ -1,6 +1,7 @@
 const ExcelJS = require("exceljs");
 const fs = require("fs").promises;
 const { AktivitasMahasiswa, Prodi, JenisAktivitasMahasiswa, Semester } = require("../../models");
+const { where } = require("sequelize");
 
 const getAllAktivitasMahasiswa = async (req, res) => {
   try {
@@ -45,32 +46,6 @@ const getAktivitasMahasiswaById = async (req, res) => {
   }
 };
 
-// const createAktivitasMahasiswa = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create aktivitas mahasiswa",
-//   });
-// };
-
-// const updateAktivitasMahasiswaById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const aktivitasMahasiswaId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses update aktivitas mahasiswa by id",
-//     aktivitasMahasiswaId: aktivitasMahasiswaId,
-//   });
-// };
-
-// const deleteAktivitasMahasiswaById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const aktivitasMahasiswaId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses delete aktivitas mahasiswa by id",
-//     aktivitasMahasiswaId: aktivitasMahasiswaId,
-//   });
-// };
-
 const importAktivitasMahasiswas = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -110,8 +85,6 @@ const importAktivitasMahasiswas = async (req, res, next) => {
           lokasi,
         });
 
-        let id_jenis_aktivitas_mahasiswa = null;
-        let id_prodi = null;
         let nama_jenis_anggota = null;
         let untuk_kampus_merdeka = true;
 
@@ -165,11 +138,112 @@ const importAktivitasMahasiswas = async (req, res, next) => {
   }
 };
 
+const getAllAktivitasMahasiswaByProdiSemesterAndJenisAktivitasId = async (req, res) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+    const semesterId = req.params.id_semester;
+    const jenisAktivitasMahasiswaId = req.params.id_jenis_aktivitas;
+
+    // Ambil semua data aktivitas_mahasiswa dari database berdasarkan filter
+    const aktivitas_mahasiswa = await AktivitasMahasiswa.findAll({
+      where: {
+        id_prodi: prodiId,
+        id_semester: semesterId,
+        id_jenis_aktivitas: jenisAktivitasMahasiswaId,
+      },
+      include: [{ model: JenisAktivitasMahasiswa }, { model: Prodi }, { model: Semester }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Aktivitas Mahasiswa By Prodi, Semester and Jenis Aktivitas Mahasiswa Id Success",
+      jumlahData: aktivitas_mahasiswa.length,
+      data: aktivitas_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateAktivitasMahasiswaById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const aktivitasMahasiswaId = req.params.id;
+
+    // Dapatkan data yang akan diupdate dari body permintaan
+    const { id_prodi, id_jenis_aktivitas, judul, lokasi, sk_tugas, tanggal_sk_tugas, jenis_anggota, keterangan, untuk_kampus_merdeka } = req.body;
+
+    // Cari data aktivitas_mahasiswa berdasarkan ID di database
+    let aktivitas_mahasiswa = await AktivitasMahasiswa.findByPk(aktivitasMahasiswaId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!aktivitas_mahasiswa) {
+      return res.status(404).json({
+        message: `<===== Aktivitas Mahasiswa With ID ${aktivitasMahasiswaId} Not Found:`,
+      });
+    }
+
+    let nama_jenis_anggota = null;
+    nama_jenis_anggota = jenis_anggota == 0 ? "Personal" : "Kelompok";
+
+    // Update data aktivitas_mahasiswa
+    aktivitas_mahasiswa.id_prodi = id_prodi;
+    aktivitas_mahasiswa.id_jenis_aktivitas = id_jenis_aktivitas;
+    aktivitas_mahasiswa.judul = judul;
+    aktivitas_mahasiswa.lokasi = lokasi;
+    aktivitas_mahasiswa.sk_tugas = sk_tugas;
+    aktivitas_mahasiswa.tanggal_sk_tugas = tanggal_sk_tugas;
+    aktivitas_mahasiswa.jenis_anggota = jenis_anggota;
+    aktivitas_mahasiswa.nama_jenis_anggota = nama_jenis_anggota;
+    aktivitas_mahasiswa.keterangan = keterangan;
+    aktivitas_mahasiswa.untuk_kampus_merdeka = untuk_kampus_merdeka;
+
+    // Simpan perubahan ke dalam database
+    await aktivitas_mahasiswa.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== UPDATE Aktivitas Mahasiswa With ID ${aktivitasMahasiswaId} Success:`,
+      data: aktivitas_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteAktivitasMahasiswaById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const aktivitasMahasiswaId = req.params.id;
+
+    // Cari data aktivitas_mahasiswa berdasarkan ID di database
+    let aktivitas_mahasiswa = await AktivitasMahasiswa.findByPk(aktivitasMahasiswaId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!aktivitas_mahasiswa) {
+      return res.status(404).json({
+        message: `<===== Aktivitas Mahasiswa With ID ${aktivitasMahasiswaId} Not Found:`,
+      });
+    }
+
+    // Hapus data aktivitas_mahasiswa dari database
+    await aktivitas_mahasiswa.destroy();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== DELETE Aktivitas Mahasiswa With ID ${aktivitasMahasiswaId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllAktivitasMahasiswa,
   getAktivitasMahasiswaById,
   importAktivitasMahasiswas,
-  // createAktivitasMahasiswa,
-  // updateAktivitasMahasiswaById,
-  // deleteAktivitasMahasiswaById,
+  getAllAktivitasMahasiswaByProdiSemesterAndJenisAktivitasId,
+  updateAktivitasMahasiswaById,
+  deleteAktivitasMahasiswaById,
 };
