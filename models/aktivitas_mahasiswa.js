@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
 
       // relasi tabel child
       AktivitasMahasiswa.hasMany(models.AnggotaAktivitasMahasiswa, { foreignKey: "id_aktivitas" });
+      AktivitasMahasiswa.hasMany(models.MahasiswaBimbinganDosen, { foreignKey: "id_aktivitas" });
+      AktivitasMahasiswa.hasMany(models.UjiMahasiswa, { foreignKey: "id_aktivitas" });
     }
   }
   AktivitasMahasiswa.init(

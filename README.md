@@ -165,7 +165,7 @@ Perintah Migrasi Dan Seeder :
 - Membuat Migrasi Baru :
 
 ```bash
-npx sequelize-cli model:generate --name ModelName --attributes column:type_data,column:type_data
+  npx sequelize-cli model:generate --name ModelName --attributes column:type_data,column:type_data
 
 ```
 
