@@ -89,6 +89,8 @@ const beritaRoutes = require("./routes/berita");
 const dosenWaliRoutes = require("./routes/dosen-wali");
 const dosenPengajarKelasKuliah = require("./routes/dosen-pengajar-kelas-kuliah");
 const pelimpahanMataKuliahRoutes = require("./routes/pelimpahan-mata-kuliah");
+const mahasiswaBimbinganDosenRoutes = require("./routes/mahasiswa-bimbingan-dosen");
+const ujiMahasiswaRoutes = require("./routes/uji-mahasiswa");
 
 // route api local not done yet
 const settingGlobalRoutes = require("./routes/setting-global");
@@ -217,6 +219,8 @@ app.use("/berita", checkToken, beritaRoutes);
 app.use("/dosen-wali", checkToken, dosenWaliRoutes);
 app.use("/dosen-pengajar-kelas-kuliah", checkToken, dosenPengajarKelasKuliah);
 app.use("/pelimpahan-mata-kuliah", checkToken, pelimpahanMataKuliahRoutes);
+app.use("/mahasiswa-bimbingan-dosen", checkToken, mahasiswaBimbinganDosenRoutes);
+app.use("/uji-mahasiswa", checkToken, ujiMahasiswaRoutes);
 
 // route api local not done yet
 app.use("/setting/global", settingGlobalRoutes);
