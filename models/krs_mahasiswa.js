@@ -14,9 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       KRSMahasiswa.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
       KRSMahasiswa.belongsTo(models.MataKuliah, { foreignKey: "id_matkul" });
       KRSMahasiswa.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas" });
-
-      // relasi tabel child
-      KRSMahasiswa.hasMany(models.MatkulKRS, { foreignKey: "id_krs" });
     }
   }
   KRSMahasiswa.init(

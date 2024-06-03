@@ -91,14 +91,11 @@ const dosenPengajarKelasKuliah = require("./routes/dosen-pengajar-kelas-kuliah")
 const pelimpahanMataKuliahRoutes = require("./routes/pelimpahan-mata-kuliah");
 const mahasiswaBimbinganDosenRoutes = require("./routes/mahasiswa-bimbingan-dosen");
 const ujiMahasiswaRoutes = require("./routes/uji-mahasiswa");
+const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
 
 // route api local not done yet
 const settingGlobalRoutes = require("./routes/setting-global");
 const settingWSRoutes = require("./routes/setting-ws");
-const identitasPTRoutes = require("./routes/identitas-pt");
-const kelasDanJadwalRoutes = require("./routes/kelas-dan-jadwal");
-const matkulKrsRoutes = require("./routes/matkul-krs");
-const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
 const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
 const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
@@ -221,14 +218,11 @@ app.use("/dosen-pengajar-kelas-kuliah", checkToken, dosenPengajarKelasKuliah);
 app.use("/pelimpahan-mata-kuliah", checkToken, pelimpahanMataKuliahRoutes);
 app.use("/mahasiswa-bimbingan-dosen", checkToken, mahasiswaBimbinganDosenRoutes);
 app.use("/uji-mahasiswa", checkToken, ujiMahasiswaRoutes);
+app.use("/pertemuan-perkuliahan", checkToken, pertemuanPerkuliahanRoutes);
 
 // route api local not done yet
 app.use("/setting/global", settingGlobalRoutes);
 app.use("/setting/ws", settingWSRoutes);
-app.use("/setting/identitas-pt", identitasPTRoutes);
-app.use("/kelas-dan-jadwal", kelasDanJadwalRoutes);
-app.use("/krs/matkul-krs", matkulKrsRoutes);
-app.use("/pertemuan-perkuliahan", pertemuanPerkuliahanRoutes);
 app.use("/presensi-perkuliahan", presensiPerkuliahanRoutes);
 app.use("/nilai-perkuliahan", nilaiPerkuliahanRoutes);
 app.use("/khs-mahasiswa", khsMahasiswaRoutes);

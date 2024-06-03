@@ -26,7 +26,7 @@ async function generateToken(user) {
         data_roles: dataRoles,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "12h" }
     );
   } catch (error) {
     throw error;
