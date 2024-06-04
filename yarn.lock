@@ -1207,7 +1207,7 @@
   dependencies:
     "minimist" "^1.2.6"
 
-"moment-timezone@^0.5.43":
+"moment-timezone@^0.5.43", "moment-timezone@^0.5.45":
   "integrity" "sha512-HIWmqA86KcmCAhnMAN0wuDOARV/525R2+lOLotuGFzn4HO+FH+/645z2wx0Dt3iDv6/p61SIvKnDstISainhLQ=="
   "resolved" "https://registry.npmjs.org/moment-timezone/-/moment-timezone-0.5.45.tgz"
   "version" "0.5.45"
@@ -1253,9 +1253,9 @@
     "xtend" "^4.0.0"
 
 "mysql2@^3.9.4":
-  "integrity" "sha512-KnJT8vYRcNAZv73uf9zpXqNbvBG7DJrs+1nACsjZP1HMJ1TgXEy8wnNilXAn/5i57JizXKtrUtwDB7HxT9DDpw=="
-  "resolved" "https://registry.npmjs.org/mysql2/-/mysql2-3.9.7.tgz"
-  "version" "3.9.7"
+  "integrity" "sha512-qx0mfWYt1DpTPkw8mAcHW/OwqqyNqBLBHvY5IjN8+icIYTjt6znrgYJ+gxqNNRpVknb5Wc/gcCM4XjbCR0j5tw=="
+  "resolved" "https://registry.npmjs.org/mysql2/-/mysql2-3.10.0.tgz"
+  "version" "3.10.0"
   dependencies:
     "denque" "^2.1.0"
     "generate-function" "^2.3.1"

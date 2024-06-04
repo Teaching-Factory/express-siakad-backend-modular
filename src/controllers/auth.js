@@ -64,7 +64,7 @@ const doLogin = async (req, res) => {
   }
 };
 
-const doLogout = (req, res) => {
+const doLogout = (req, res, next) => {
   // Hapus token dari sisi klien
   res.clearCookie("token");
 

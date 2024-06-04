@@ -118,7 +118,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// middleware request
+// middleware log request
 app.use(middlewareLogRequest);
 
 // Uji koneksi ke database saat aplikasi dimulai

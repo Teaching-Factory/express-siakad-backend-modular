@@ -146,6 +146,13 @@ Install Paket :
 
 ```
 
+- Instal Plugin Moment Timezone :
+
+```bash
+  npm install moment-timezone
+
+```
+
 - Memperbaiki Plugin yang corrupt (Optional) :
 
 ```bash
