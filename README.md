@@ -153,6 +153,13 @@ Install Paket :
 
 ```
 
+- Instal Plugin Node Schedule untuk menghapus token expired secara berkala :
+
+```bash
+  npm install node-schedule
+
+```
+
 - Memperbaiki Plugin yang corrupt (Optional) :
 
 ```bash

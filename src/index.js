@@ -106,9 +106,24 @@ const middlewareLogRequest = require("./middlewares/logs");
 const middlewareDatabaseConnection = require("./middlewares/database");
 const errHandler = require("./middlewares/error-handler");
 const checkToken = require("./middlewares/check-token");
+const checkBlacklist = require("./middlewares/checkBlacklist");
 
 // running express server
 const app = express();
+
+// Import cronjob blacklisted token
+const schedule = require("node-schedule");
+const cleanExpiredTokens = require("./cronjobs/cronjobScheduler");
+
+const rule = new schedule.RecurrenceRule();
+rule.hour = 0;
+rule.minute = 0;
+
+// Atur penjadwalan tugas
+schedule.scheduleJob(rule, function () {
+  // Tambahkan kode untuk tugas yang ingin dijalankan
+  cleanExpiredTokens();
+});
 
 const corsOptions = {
   origin: "http://127.0.0.1:5173", // Sesuaikan dengan domain frontend Anda
@@ -135,91 +150,91 @@ middlewareDatabaseConnection
 app.use(express.json());
 
 // route api feeder dikti
-app.use("/api-feeder", checkToken, apiFeederRoutes);
+app.use("/api-feeder", checkToken, checkBlacklist, apiFeederRoutes);
 
 // route api local done
-app.use("/user", checkToken, userRoutes);
+app.use("/user", checkToken, checkBlacklist, userRoutes);
 app.use("/auth", authRoutes);
-app.use("/role", checkToken, roleRoutes);
-app.use("/agama", checkToken, agamaRoutes);
-app.use("/negara", checkToken, negaraRoutes);
-app.use("/wilayah", checkToken, wilayahRoutes);
-app.use("/perguruan-tinggi", checkToken, perguruanTinggiRoutes);
-app.use("/profil-pt", checkToken, profilPTRoutes);
-app.use("/jalur-masuk", checkToken, jalurMasukRoutes);
-app.use("/jenis-pendaftaran", checkToken, jenisPendaftaranRoutes);
-app.use("/jenis-tinggal", checkToken, jenisTinggalRoutes);
-app.use("/alat-transportasi", checkToken, alatTransportasiRoutes);
-app.use("/status-mahasiswa", checkToken, statusMahasiswaRoutes);
-app.use("/kebutuhan-khusus", checkToken, kebutuhanKhususRoutes);
-app.use("/penghasilan", checkToken, penghasilanRoutes);
-app.use("/jenis-sms", checkToken, jenisSMSRoutes);
-app.use("/lembaga-pengangkatan", checkToken, lembagaPengangkatanRoutes);
-app.use("/status-keaktifan-pegawai", checkToken, statusKeaktifanPegawaiRoutes);
-app.use("/pangkat-golongan", checkToken, pangkatGolonganRoutes);
-app.use("/pekerjaan", checkToken, pekerjaanRoutes);
-app.use("/dosen", checkToken, dosenRoutes);
-app.use("/biodata-dosen", checkToken, biodataDosenRoutes);
-app.use("/jenjang-pendidikan", checkToken, jenjangPendidikanRoutes);
-app.use("/prodi", checkToken, prodiRoutes);
-app.use("/periode", checkToken, periodeRoutes);
-app.use("/jenis-substansi", checkToken, jenisSubstansiRoutes);
-app.use("/substansi", checkToken, substansiRoutes);
-app.use("/substansi-kuliah", checkToken, substansiKuliahRoutes);
-app.use("/mata-kuliah", checkToken, mataKuliahRoutes);
-app.use("/tahun-ajaran", checkToken, tahunAjaranRoutes);
-app.use("/fakultas", checkToken, fakultasRoutes);
-app.use("/semester", checkToken, semesterRoutes);
-app.use("/kurikulum", checkToken, kurikulumRoutes);
-app.use("/detail-kurikulum", checkToken, detailKurikulumRoutes);
-app.use("/penugasan-dosen", checkToken, penugasanDosenRoutes);
-app.use("/matkul-kurikulum", checkToken, matkulKurikulumRoutes);
-app.use("/kelas-kuliah", checkToken, kelasKuliahRoutes);
-app.use("/detail-kelas-kuliah", checkToken, detailKelasKuliahRoutes);
-app.use("/perhitungan-sks", checkToken, perhitunganSKSRoutes);
-app.use("/biodata-mahasiswa", checkToken, biodataMahasiswaRoutes);
-app.use("/mahasiswa", checkToken, mahasiswaRoutes);
-app.use("/jenis-keluar", checkToken, jenisKeluarRoutes);
-app.use("/pembiayaan", checkToken, pembiayaanRoutes);
-app.use("/bidang-minat", checkToken, bidangMinatRoutes);
-app.use("/riwayat-pendidikan-mahasiswa", checkToken, riwayatPendidikanMahasiswaRoutes);
-app.use("/detail-nilai-perkuliahan-kelas", checkToken, detailNilaiPerkuliahanKelasRoutes);
-app.use("/skala-nilai-prodi", checkToken, skalaNilaiProdiRoutes);
-app.use("/riwayat-nilai-mahasiswa", checkToken, riwayatNilaiMahasiswaRoutes);
-app.use("/peserta-kelas-kuliah", checkToken, pesertaKelasKuliahRoutes);
-app.use("/perkuliahan-mahasiswa", checkToken, perkuliahanMahasiswaRoutes);
-app.use("/detail-perkuliahan-mahasiswa", checkToken, detailPerkuliahanMahasiswaRoutes);
-app.use("/periode-perkuliahan", checkToken, periodePerkuliahanRoutes);
-app.use("/detail-periode-perkuliahan", checkToken, detailPeriodePerkuliahanRoutes);
-app.use("/krs-mahasiswa", checkToken, krsMahasiswaRoutes);
-app.use("/aktivitas-kuliah-mahasiswa", checkToken, aktivitasKuliahMahasiswaRoutes);
-app.use("/jenis-aktivitas-mahasiswa", checkToken, jenisAktivitasMahasiswaRoutes);
-app.use("/data-lengkap-mahasiswa-prodi", checkToken, dataLengkapMahasiswaProdiRoutes);
-app.use("/aktivitas-mahasiswa", checkToken, aktivitasMahasiswaRoutes);
-app.use("/anggota-aktivitas-mahasiswa", checkToken, anggotaAktivitasMahasiswaRoutes);
-app.use("/konversi-kampus-merdeka", checkToken, konversiKampusMerdekaRoutes);
-app.use("/transkrip-mahasiswa", checkToken, transkripMahasiswaRoutes);
-app.use("/rekap-jumlah-mahasiswa", checkToken, rekapJumlahMahasiswaRoutes);
-app.use("/rekap-khs-mahasiswa", checkToken, rekapKHSMahasiswaRoutes);
-app.use("/rekap-krs-mahasiswa", checkToken, rekapKRSMahasiswaRoutes);
-app.use("/angkatan", checkToken, angkatanRoutes);
-app.use("/jabatan", checkToken, jabatanRoutes);
-app.use("/unit-jabatan", checkToken, unitJabatanRoutes);
-app.use("/sistem-kuliah", checkToken, sistemKuliahRoutes);
-app.use("/sistem-kuliah-mahasiswa", checkToken, sistemKuliahMahasiswaRoutes);
-app.use("/tagihan-mahasiswa", checkToken, tagihanMahasiswaRoutes);
-app.use("/pembayaran-mahasiswa", checkToken, pembayaranMahasiswaRoutes);
-app.use("/unsur-penilaian", checkToken, unsurPenilaianRoutes);
-app.use("/bobot-penilaian", checkToken, bobotPenilaianRoutes);
-app.use("/ruang-perkuliahan", checkToken, ruangPerkuliahanRoutes);
-app.use("/berita", checkToken, beritaRoutes);
-app.use("/dosen-wali", checkToken, dosenWaliRoutes);
-app.use("/dosen-pengajar-kelas-kuliah", checkToken, dosenPengajarKelasKuliah);
-app.use("/pelimpahan-mata-kuliah", checkToken, pelimpahanMataKuliahRoutes);
-app.use("/mahasiswa-bimbingan-dosen", checkToken, mahasiswaBimbinganDosenRoutes);
-app.use("/uji-mahasiswa", checkToken, ujiMahasiswaRoutes);
-app.use("/pertemuan-perkuliahan", checkToken, pertemuanPerkuliahanRoutes);
-app.use("/presensi-perkuliahan", checkToken, presensiPerkuliahanRoutes);
+app.use("/role", checkToken, checkBlacklist, roleRoutes);
+app.use("/agama", checkToken, checkBlacklist, checkBlacklist, agamaRoutes);
+app.use("/negara", checkToken, checkBlacklist, negaraRoutes);
+app.use("/wilayah", checkToken, checkBlacklist, wilayahRoutes);
+app.use("/perguruan-tinggi", checkToken, checkBlacklist, perguruanTinggiRoutes);
+app.use("/profil-pt", checkToken, checkBlacklist, profilPTRoutes);
+app.use("/jalur-masuk", checkToken, checkBlacklist, jalurMasukRoutes);
+app.use("/jenis-pendaftaran", checkToken, checkBlacklist, jenisPendaftaranRoutes);
+app.use("/jenis-tinggal", checkToken, checkBlacklist, jenisTinggalRoutes);
+app.use("/alat-transportasi", checkToken, checkBlacklist, alatTransportasiRoutes);
+app.use("/status-mahasiswa", checkToken, checkBlacklist, statusMahasiswaRoutes);
+app.use("/kebutuhan-khusus", checkToken, checkBlacklist, kebutuhanKhususRoutes);
+app.use("/penghasilan", checkToken, checkBlacklist, penghasilanRoutes);
+app.use("/jenis-sms", checkToken, checkBlacklist, jenisSMSRoutes);
+app.use("/lembaga-pengangkatan", checkToken, checkBlacklist, lembagaPengangkatanRoutes);
+app.use("/status-keaktifan-pegawai", checkToken, checkBlacklist, statusKeaktifanPegawaiRoutes);
+app.use("/pangkat-golongan", checkToken, checkBlacklist, pangkatGolonganRoutes);
+app.use("/pekerjaan", checkToken, checkBlacklist, pekerjaanRoutes);
+app.use("/dosen", checkToken, checkBlacklist, dosenRoutes);
+app.use("/biodata-dosen", checkToken, checkBlacklist, biodataDosenRoutes);
+app.use("/jenjang-pendidikan", checkToken, checkBlacklist, jenjangPendidikanRoutes);
+app.use("/prodi", checkToken, checkBlacklist, prodiRoutes);
+app.use("/periode", checkToken, checkBlacklist, periodeRoutes);
+app.use("/jenis-substansi", checkToken, checkBlacklist, jenisSubstansiRoutes);
+app.use("/substansi", checkToken, checkBlacklist, substansiRoutes);
+app.use("/substansi-kuliah", checkToken, checkBlacklist, substansiKuliahRoutes);
+app.use("/mata-kuliah", checkToken, checkBlacklist, mataKuliahRoutes);
+app.use("/tahun-ajaran", checkToken, checkBlacklist, tahunAjaranRoutes);
+app.use("/fakultas", checkToken, checkBlacklist, fakultasRoutes);
+app.use("/semester", checkToken, checkBlacklist, semesterRoutes);
+app.use("/kurikulum", checkToken, checkBlacklist, kurikulumRoutes);
+app.use("/detail-kurikulum", checkToken, checkBlacklist, detailKurikulumRoutes);
+app.use("/penugasan-dosen", checkToken, checkBlacklist, penugasanDosenRoutes);
+app.use("/matkul-kurikulum", checkToken, checkBlacklist, matkulKurikulumRoutes);
+app.use("/kelas-kuliah", checkToken, checkBlacklist, kelasKuliahRoutes);
+app.use("/detail-kelas-kuliah", checkToken, checkBlacklist, detailKelasKuliahRoutes);
+app.use("/perhitungan-sks", checkToken, checkBlacklist, perhitunganSKSRoutes);
+app.use("/biodata-mahasiswa", checkToken, checkBlacklist, biodataMahasiswaRoutes);
+app.use("/mahasiswa", checkToken, checkBlacklist, mahasiswaRoutes);
+app.use("/jenis-keluar", checkToken, checkBlacklist, jenisKeluarRoutes);
+app.use("/pembiayaan", checkToken, checkBlacklist, pembiayaanRoutes);
+app.use("/bidang-minat", checkToken, checkBlacklist, bidangMinatRoutes);
+app.use("/riwayat-pendidikan-mahasiswa", checkToken, checkBlacklist, riwayatPendidikanMahasiswaRoutes);
+app.use("/detail-nilai-perkuliahan-kelas", checkToken, checkBlacklist, detailNilaiPerkuliahanKelasRoutes);
+app.use("/skala-nilai-prodi", checkToken, checkBlacklist, skalaNilaiProdiRoutes);
+app.use("/riwayat-nilai-mahasiswa", checkToken, checkBlacklist, riwayatNilaiMahasiswaRoutes);
+app.use("/peserta-kelas-kuliah", checkToken, checkBlacklist, pesertaKelasKuliahRoutes);
+app.use("/perkuliahan-mahasiswa", checkToken, checkBlacklist, perkuliahanMahasiswaRoutes);
+app.use("/detail-perkuliahan-mahasiswa", checkToken, checkBlacklist, detailPerkuliahanMahasiswaRoutes);
+app.use("/periode-perkuliahan", checkToken, checkBlacklist, periodePerkuliahanRoutes);
+app.use("/detail-periode-perkuliahan", checkToken, checkBlacklist, detailPeriodePerkuliahanRoutes);
+app.use("/krs-mahasiswa", checkToken, checkBlacklist, krsMahasiswaRoutes);
+app.use("/aktivitas-kuliah-mahasiswa", checkToken, checkBlacklist, aktivitasKuliahMahasiswaRoutes);
+app.use("/jenis-aktivitas-mahasiswa", checkToken, checkBlacklist, jenisAktivitasMahasiswaRoutes);
+app.use("/data-lengkap-mahasiswa-prodi", checkToken, checkBlacklist, dataLengkapMahasiswaProdiRoutes);
+app.use("/aktivitas-mahasiswa", checkToken, checkBlacklist, aktivitasMahasiswaRoutes);
+app.use("/anggota-aktivitas-mahasiswa", checkToken, checkBlacklist, anggotaAktivitasMahasiswaRoutes);
+app.use("/konversi-kampus-merdeka", checkToken, checkBlacklist, konversiKampusMerdekaRoutes);
+app.use("/transkrip-mahasiswa", checkToken, checkBlacklist, transkripMahasiswaRoutes);
+app.use("/rekap-jumlah-mahasiswa", checkToken, checkBlacklist, rekapJumlahMahasiswaRoutes);
+app.use("/rekap-khs-mahasiswa", checkToken, checkBlacklist, rekapKHSMahasiswaRoutes);
+app.use("/rekap-krs-mahasiswa", checkToken, checkBlacklist, rekapKRSMahasiswaRoutes);
+app.use("/angkatan", checkToken, checkBlacklist, angkatanRoutes);
+app.use("/jabatan", checkToken, checkBlacklist, jabatanRoutes);
+app.use("/unit-jabatan", checkToken, checkBlacklist, unitJabatanRoutes);
+app.use("/sistem-kuliah", checkToken, checkBlacklist, sistemKuliahRoutes);
+app.use("/sistem-kuliah-mahasiswa", checkToken, checkBlacklist, sistemKuliahMahasiswaRoutes);
+app.use("/tagihan-mahasiswa", checkToken, checkBlacklist, tagihanMahasiswaRoutes);
+app.use("/pembayaran-mahasiswa", checkToken, checkBlacklist, pembayaranMahasiswaRoutes);
+app.use("/unsur-penilaian", checkToken, checkBlacklist, unsurPenilaianRoutes);
+app.use("/bobot-penilaian", checkToken, checkBlacklist, bobotPenilaianRoutes);
+app.use("/ruang-perkuliahan", checkToken, checkBlacklist, ruangPerkuliahanRoutes);
+app.use("/berita", checkToken, checkBlacklist, beritaRoutes);
+app.use("/dosen-wali", checkToken, checkBlacklist, dosenWaliRoutes);
+app.use("/dosen-pengajar-kelas-kuliah", checkToken, checkBlacklist, dosenPengajarKelasKuliah);
+app.use("/pelimpahan-mata-kuliah", checkToken, checkBlacklist, pelimpahanMataKuliahRoutes);
+app.use("/mahasiswa-bimbingan-dosen", checkToken, checkBlacklist, mahasiswaBimbinganDosenRoutes);
+app.use("/uji-mahasiswa", checkToken, checkBlacklist, ujiMahasiswaRoutes);
+app.use("/pertemuan-perkuliahan", checkToken, checkBlacklist, pertemuanPerkuliahanRoutes);
+app.use("/presensi-perkuliahan", checkToken, checkBlacklist, presensiPerkuliahanRoutes);
 
 // route api local not done yet
 app.use("/setting/global", settingGlobalRoutes);

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { User, UserRole, Role } = require("../../models");
+const { User, UserRole, Role, BlacklistedToken } = require("../../models");
 
 // Fungsi untuk membuat token JWT
 async function generateToken(user) {
@@ -64,13 +64,39 @@ const doLogin = async (req, res) => {
   }
 };
 
-const doLogout = (req, res, next) => {
-  // Hapus token dari sisi klien
-  res.clearCookie("token");
+const doLogout = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    console.log(token);
+    if (!token) {
+      return res.status(400).json({ message: "Token tidak ditemukan" });
+    }
 
-  res.json({
-    message: "Anda baru saja logout",
-  });
+    const blacklistToken = await BlacklistedToken.findOne({
+      where: {
+        token: token,
+      },
+    });
+
+    // mengecek apakah data blacklist token ada
+    if (blacklistToken) {
+      return res.status(400).json({ message: "Token Sudah Expired" });
+    }
+
+    // Tambahkan token ke dalam blacklist
+    await BlacklistedToken.create({
+      token,
+    });
+
+    // Hapus token dari sisi klien
+    res.clearCookie("token");
+
+    res.json({
+      message: "Anda baru saja logout",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
