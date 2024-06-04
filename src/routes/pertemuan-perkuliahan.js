@@ -12,5 +12,7 @@ router.get("/:id/get", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPe
 router.post("/:id_kelas_kuliah/create", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.createPertemuanPerkuliahanByKelasKuliahId);
 router.put("/:id/update", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.updatePertemuanPerkuliahanById);
 router.delete("/:id/delete", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.deletePertemuanPerkuliahanById);
+router.put("/:id/lock-enable", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.lockEnablePertemuanPerkuliahanById);
+router.put("/:id/lock-disable", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.lockDisablePertemuanPerkuliahanById);
 
 module.exports = router;

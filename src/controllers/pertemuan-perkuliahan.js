@@ -143,10 +143,74 @@ const deletePertemuanPerkuliahanById = async (req, res, next) => {
   }
 };
 
+const lockEnablePertemuanPerkuliahanById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const pertemuanPerkuliahanId = req.params.id;
+
+    // Cari data pertemuan_perkuliahan berdasarkan ID di database
+    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findByPk(pertemuanPerkuliahanId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!pertemuan_perkuliahan) {
+      return res.status(404).json({
+        message: `<===== Pertemuan Perkuliahan With ID ${pertemuanPerkuliahanId} Not Found:`,
+      });
+    }
+
+    // ubah kolom lock pertemuan perkuliahan menjadi true
+    pertemuan_perkuliahan.kunci_pertemuan = true;
+
+    // Simpan perubahan ke dalam database
+    await pertemuan_perkuliahan.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== UPDATE Lock Pertemuan Perkuliahan Enable By ID ${pertemuanPerkuliahanId} Success:`,
+      data: pertemuan_perkuliahan,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const lockDisablePertemuanPerkuliahanById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const pertemuanPerkuliahanId = req.params.id;
+
+    // Cari data pertemuan_perkuliahan berdasarkan ID di database
+    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findByPk(pertemuanPerkuliahanId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!pertemuan_perkuliahan) {
+      return res.status(404).json({
+        message: `<===== Pertemuan Perkuliahan With ID ${pertemuanPerkuliahanId} Not Found:`,
+      });
+    }
+
+    // ubah kolom lock pertemuan perkuliahan menjadi false
+    pertemuan_perkuliahan.kunci_pertemuan = false;
+
+    // Simpan perubahan ke dalam database
+    await pertemuan_perkuliahan.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== UPDATE Lock Pertemuan Perkuliahan Disable By ID ${pertemuanPerkuliahanId} Success:`,
+      data: pertemuan_perkuliahan,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPertemuanPerkuliahanByKelasKuliahId,
   getPertemuanPerkuliahanById,
   createPertemuanPerkuliahanByKelasKuliahId,
   updatePertemuanPerkuliahanById,
   deletePertemuanPerkuliahanById,
+  lockEnablePertemuanPerkuliahanById,
+  lockDisablePertemuanPerkuliahanById,
 };

@@ -1,68 +1,170 @@
-const getAllPresensiPerkuliahans = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const pertemuanPerkuliahanId = req.params.id_pertemuan_perkuliahan;
+const { PresensiMahasiswa, PertemuanPerkuliahan, UserRole, Role, User, Mahasiswa } = require("../../models");
 
-  res.json({
-    message: "Berhasil mengakses all presensi perkuliahans",
-    pertemuanPerkuliahanId: pertemuanPerkuliahanId,
-  });
+const getAllPresensiPerkuliahanByPertemuanPerkuliahanId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const pertemuanPerkuliahanId = req.params.id_pertemuan_perkuliahan;
+
+    // Cari data presensi_mahasiswa berdasarkan ID di database
+    const presensi_mahasiswa = await PresensiMahasiswa.findAll({
+      where: {
+        id_pertemuan_perkuliahan: pertemuanPerkuliahanId,
+      },
+      include: [{ model: PertemuanPerkuliahan }, { model: Mahasiswa }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!presensi_mahasiswa) {
+      return res.status(404).json({
+        message: `<===== Presensi Mahasiswa By ID Pertemuan Perkuliahan ${pertemuanPerkuliahanId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Presensi Mahasiswa By ID Pertemuan Perkuliahan ${pertemuanPerkuliahanId} Success:`,
+      jumlahData: presensi_mahasiswa.length,
+      data: presensi_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getPresensiPerkuliahanById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const presensiPerkuliahanId = req.params.id;
+const doPresensiPertemuanByMahasiswaAndPertemuanId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const pertemuanPerkuliahanId = req.params.id_pertemuan_perkuliahan;
 
-  res.json({
-    message: "Berhasil mengakses get presensi perkuliahan by id",
-    presensiPerkuliahanId: presensiPerkuliahanId,
-  });
+    // Dapatkan user yang sedang login
+    const userId = req.user.id; // Asumsikan Anda menggunakan middleware untuk mendapatkan user ID yang sedang login
+
+    // Ambil data user dengan role mahasiswa
+    const userRole = await UserRole.findOne({
+      where: {
+        id_user: userId,
+      },
+      include: [
+        {
+          model: Role,
+          where: {
+            nama_role: "mahasiswa",
+          },
+        },
+      ],
+    });
+
+    if (!userRole) {
+      return res.status(403).json({ message: "Anda tidak memiliki akses untuk melakukan presensi." });
+    }
+
+    // Ambil data user berdasarkan ID
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan." });
+    }
+
+    // Ambil data mahasiswa berdasarkan username user
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: user.username,
+      },
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({ message: "Mahasiswa tidak ditemukan." });
+    }
+
+    // Cek apakah presensi untuk mahasiswa dan pertemuan ini sudah ada
+    const existingPresensi = await PresensiMahasiswa.findOne({
+      where: {
+        id_pertemuan_perkuliahan: pertemuanPerkuliahanId,
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+      },
+    });
+
+    if (existingPresensi) {
+      return res.status(400).json({ message: "Presensi sudah dilakukan untuk pertemuan ini." });
+    }
+
+    // mengecek apakah pertemuan perkuliahan lock enable
+    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findByPk(pertemuanPerkuliahanId);
+
+    if (pertemuan_perkuliahan.kunci_pertemuan === true) {
+      return res.status(400).json({ message: "Pertemuan telah berakhir, Anda tidak dapat melakukan presensi" });
+    } else {
+      // Increment kolom jumlah_mahasiswa_hadir
+      await pertemuan_perkuliahan.increment("jumlah_mahasiswa_hadir");
+
+      // Buat data presensi mahasiswa
+      const newPresensi = await PresensiMahasiswa.create({
+        presensi_hadir: true,
+        status_presensi: "Hadir",
+        id_pertemuan_perkuliahan: pertemuanPerkuliahanId,
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+      });
+
+      // Kirim respons JSON jika berhasil
+      res.status(201).json({
+        message: "<===== Absensi Pertemuan Perkuliahan Success =====>",
+        data: newPresensi,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
 };
 
-const createPresensiPerkuliahan = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const pertemuanPerkuliahanId = req.params.id_pertemuan_perkuliahan;
+const updatePresensiMahasiswaByPertemuanPerkuliahanId = async (req, res, next) => {
+  try {
+    // Dapatkan ID pertemuan dari parameter permintaan
+    const pertemuanPerkuliahanId = req.params.id_pertemuan_perkuliahan;
+    const { presensiMahasiswa } = req.body;
 
-  res.json({
-    message: "Berhasil mengakses create presensi perkuliahan",
-    pertemuanPerkuliahanId: pertemuanPerkuliahanId,
-  });
-};
+    // Pastikan request body adalah array
+    if (!Array.isArray(presensiMahasiswa)) {
+      return res.status(400).json({ message: "Data presensi harus berupa array." });
+    }
 
-const updatePresensiPerkuliahanById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const presensiPerkuliahanId = req.params.id;
+    // Loop melalui setiap data presensi dan update sesuai dengan id dan status_presensi
+    for (const presensi of presensiMahasiswa) {
+      const { id, status_presensi } = presensi;
 
-  res.json({
-    message: "Berhasil mengakses update presensi perkuliahan by id",
-    presensiPerkuliahanId: presensiPerkuliahanId,
-  });
-};
+      // Periksa apakah id dan status_presensi ada dalam objek presensi
+      if (!id || !status_presensi) {
+        return res.status(400).json({ message: "Setiap data presensi harus memiliki id dan status_presensi." });
+      }
 
-const deletePresensiPerkuliahanById = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const presensiPerkuliahanId = req.params.id;
+      // Temukan data presensi mahasiswa berdasarkan id dan id_pertemuan_perkuliahan
+      const presensiMahasiswa = await PresensiMahasiswa.findOne({
+        where: {
+          id: id,
+          id_pertemuan_perkuliahan: pertemuanPerkuliahanId,
+        },
+      });
 
-  res.json({
-    message: "Berhasil mengakses delete presensi perkuliahan by id",
-    presensiPerkuliahanId: presensiPerkuliahanId,
-  });
-};
+      // Jika data presensi tidak ditemukan, kembalikan pesan kesalahan
+      if (!presensiMahasiswa) {
+        return res.status(404).json({ message: `Presensi mahasiswa dengan ID ${id} tidak ditemukan untuk pertemuan perkuliahan ${pertemuanPerkuliahanId}.` });
+      }
 
-const konfirmasiPresensi = (req, res) => {
-  // Dapatkan ID dari parameter permintaan
-  const pertemuanPerkuliahanId = req.params.id_pertemuan_perkuliahan;
+      // Update status presensi
+      presensiMahasiswa.status_presensi = status_presensi;
+      await presensiMahasiswa.save();
+    }
 
-  res.json({
-    message: "Berhasil mengakses konfirmasi presensi",
-    pertemuanPerkuliahanId: pertemuanPerkuliahanId,
-  });
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== Update Presensi Mahasiswa Success =====>",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
-  getAllPresensiPerkuliahans,
-  getPresensiPerkuliahanById,
-  createPresensiPerkuliahan,
-  updatePresensiPerkuliahanById,
-  deletePresensiPerkuliahanById,
-  konfirmasiPresensi,
+  getAllPresensiPerkuliahanByPertemuanPerkuliahanId,
+  doPresensiPertemuanByMahasiswaAndPertemuanId,
+  updatePresensiMahasiswaByPertemuanPerkuliahanId,
 };
