@@ -160,6 +160,14 @@ Install Paket :
 
 ```
 
+- Instal Plugin untuk pengujian Unit Testing :
+
+```bash
+  npm install --save-dev jest @babel/core @babel/preset-env
+  npm install node-mocks-http
+
+```
+
 - Memperbaiki Plugin yang corrupt (Optional) :
 
 ```bash
@@ -215,6 +223,15 @@ Perintah Migrasi Dan Seeder :
 
 ```bash
   npx sequelize-cli db:migrate:undo:all
+
+```
+
+Perintah Pengujian Unit Testing :
+
+- Menjalankan kode uji manual :
+
+```bash
+  npx jest test/folder-path/fileName.test.js
 
 ```
 
