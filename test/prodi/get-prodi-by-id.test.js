@@ -59,4 +59,16 @@ describe("getProdiById", () => {
       message: `<===== Prodi With ID ${nonExistentProdiId} Not Found:`,
     });
   });
+
+  // Kode uji 3 - ketika terdapat kesalahan selain kasus sebelumnya
+  it("should handle errors", async () => {
+    const errorMessage = "Database error";
+    jest.spyOn(Prodi, "findByPk").mockRejectedValue(new Error(errorMessage));
+
+    req.params.id = "some-id";
+
+    await getProdiById(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(new Error(errorMessage));
+  });
 });

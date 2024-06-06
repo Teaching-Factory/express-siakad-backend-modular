@@ -129,7 +129,7 @@ const getAllMahasiswaKRSByPeriode = async (req, res, next) => {
       where: {
         id_registrasi_mahasiswa: Array.from(idRegistrasiMahasiswas),
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -384,7 +384,7 @@ const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
           [Sequelize.Op.in]: mahasiswaIdsWithAllKRSTrue,
         },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -452,7 +452,7 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
           [Sequelize.Op.in]: mahasiswaIdsWithAllKRSFalse,
         },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -502,7 +502,7 @@ const getAllMahasiswaBelumKRS = async (req, res, next) => {
 
     // Ambil semua mahasiswa
     const allMahasiswas = await Mahasiswa.findAll({
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Filter mahasiswa yang belum melakukan KRS

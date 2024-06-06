@@ -48,4 +48,14 @@ describe("getAllProdi", () => {
       message: "<===== Prodi Not Found:",
     });
   });
+
+  // Kasus Uji 3 - menangani eror ketika fungsi ingin mengambil dan mengakses data dari database
+  it("should handle errors", async () => {
+    const errorMessage = "Database error";
+    Prodi.findAll.mockRejectedValue(new Error(errorMessage));
+
+    await getAllProdi(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(new Error(errorMessage));
+  });
 });

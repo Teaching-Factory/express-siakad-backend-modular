@@ -1,9 +1,9 @@
-const { AnggotaAktivitasMahasiswa, AktivitasMahasiswa, Mahasiswa } = require("../../models");
+const { AnggotaAktivitasMahasiswa, AktivitasMahasiswa, Mahasiswa, Periode, Prodi } = require("../../models");
 
 const getAllAnggotaAktivitasMahasiswa = async (req, res) => {
   try {
     // Ambil semua data anggota_aktivitas_mahasiswa dari database
-    const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findAll({ include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa }] });
+    const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findAll({ include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -23,7 +23,7 @@ const getAnggotaAktivitasMahasiswaById = async (req, res) => {
 
     // Cari data anggota_aktivitas_mahasiswa berdasarkan ID di database
     const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findByPk(AnggotaAktivitasMahasiswaId, {
-      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa }],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -53,7 +53,7 @@ const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res) => {
       where: {
         id_aktivitas: aktivitasId,
       },
-      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa }],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
