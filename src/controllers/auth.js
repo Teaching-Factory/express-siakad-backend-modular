@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { User, UserRole, Role, BlacklistedToken } = require("../../models");
 
 // Fungsi untuk membuat token JWT
-async function generateToken(user) {
+const generateToken = async (user) => {
   try {
     // Dapatkan peran pengguna dari tabel UserRole
     const userRoles = await UserRole.findAll({
@@ -31,9 +31,9 @@ async function generateToken(user) {
   } catch (error) {
     throw error;
   }
-}
+};
 
-const doLogin = async (req, res) => {
+const doLogin = async (req, res, next) => {
   // Di sini Anda dapat memverifikasi username dan password
   const { username, password } = req.body;
 
@@ -54,20 +54,17 @@ const doLogin = async (req, res) => {
 
     // Jika username dan password cocok, buat token JWT
     const token = await generateToken(user);
-    console.log(token);
 
     // Kirim token sebagai respons
     res.json({ message: "Login berhasil", token });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Terjadi kesalahan saat login" });
+    next(error);
   }
 };
 
 const doLogout = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
-    console.log(token);
     if (!token) {
       return res.status(400).json({ message: "Token tidak ditemukan" });
     }
@@ -100,6 +97,7 @@ const doLogout = async (req, res, next) => {
 };
 
 module.exports = {
+  generateToken,
   doLogin,
   doLogout,
 };

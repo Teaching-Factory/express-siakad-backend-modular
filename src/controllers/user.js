@@ -2,10 +2,17 @@ const bcrypt = require("bcrypt");
 const { Mahasiswa } = require("../../models");
 const { User, Dosen, Role, UserRole } = require("../../models");
 
-const getAllUser = async (req, res) => {
+const getAllUser = async (req, res, next) => {
   try {
     // Ambil semua data user dari database
     const user = await User.findAll();
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!user || user.length === 0) {
+      return res.status(404).json({
+        message: `<===== User Not Found:`,
+      });
+    }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -18,7 +25,7 @@ const getAllUser = async (req, res) => {
   }
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const UserId = req.params.id;
@@ -45,19 +52,26 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res, next) => {
   try {
-    const { nama, username, password, hints, email, status, id_role } = req.body;
+    const { nama, username, password, email, status, id_role } = req.body;
 
     // Hash password sebelum disimpan ke database
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const role = await Role.findByPk(id_role);
 
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!role) {
+      return res.status(404).json({
+        message: "<===== Role Not Found:",
+      });
+    }
+
     // Buat user baru
     const newUser = await User.create({
       nama: nama,
       username: username,
       password: hashedPassword,
-      hints: hints,
+      hints: password,
       email: email,
       status: status,
     });
@@ -83,20 +97,23 @@ const updateUserById = async (req, res, next) => {
     const userId = req.params.id;
 
     // Ambil data untuk update dari body permintaan
-    const { nama, username, password, hints, email, status, id_role } = req.body;
+    const { nama, username, password, email, status, id_role } = req.body;
 
     // Temukan user yang akan diperbarui berdasarkan ID
     const user = await User.findByPk(userId);
 
+    // Jika data tidak ditemukan, kirim respons 404
     if (!user) {
-      return res.status(404).json({ message: "User tidak ditemukan" });
+      return res.status(404).json({
+        message: "<===== User Not Found:",
+      });
     }
 
     // Update data user
     user.nama = nama || user.nama;
     user.username = username || user.username;
     user.password = password ? await bcrypt.hash(password, 10) : user.password;
-    user.hints = hints || user.hints;
+    user.hints = password || user.hints;
     user.email = email || user.email;
     user.status = status || user.status;
 
@@ -106,7 +123,9 @@ const updateUserById = async (req, res, next) => {
     if (id_role && id_role !== user.id_role) {
       const role = await Role.findByPk(id_role);
       if (!role) {
-        return res.status(404).json({ message: "Role tidak ditemukan" });
+        return res.status(404).json({
+          message: "<===== Role Not Found:",
+        });
       }
       await user.update({ id_role: role.id });
     }
