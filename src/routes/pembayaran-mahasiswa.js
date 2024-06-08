@@ -4,7 +4,7 @@ const path = require("path");
 
 const router = express.Router();
 
-// import controller
+// import controller dan middleware
 const PembayaranMahasiswaController = require("../controllers/pembayaran-mahasiswa");
 const checkRole = require("../middlewares/check-role");
 

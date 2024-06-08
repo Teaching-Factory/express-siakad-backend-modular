@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 const { Mahasiswa } = require("../../models");
 const { User, Dosen, Role, UserRole } = require("../../models");
 
@@ -51,11 +52,79 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-  try {
-    const { nama, username, password, email, status, id_role } = req.body;
+  const { nama, username, password, email, status, id_role } = req.body;
 
+  // validasi required
+  if (!nama) {
+    return res.status(400).json({ message: "nama is required" });
+  }
+  if (!username) {
+    return res.status(400).json({ message: "username is required" });
+  }
+  if (!password) {
+    return res.status(400).json({ message: "password is required" });
+  }
+  if (!status) {
+    return res.status(400).json({ message: "status is required" });
+  }
+  if (!id_role) {
+    return res.status(400).json({ message: "id_role is required" });
+  }
+
+  // valiasi tipe data
+  if (typeof nama !== "string") {
+    return res.status(400).json({ message: "nama must be a string" });
+  }
+  if (typeof username !== "string") {
+    return res.status(400).json({ message: "username must be a string" });
+  }
+  if (typeof password !== "string") {
+    return res.status(400).json({ message: "password must be a string" });
+  }
+  if (typeof email !== "string") {
+    return res.status(400).json({ message: "email must be a string" });
+  }
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ message: "email is not valid" });
+  }
+
+  try {
     // Hash password sebelum disimpan ke database
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // validasi required
+    if (!nama) {
+      return res.status(400).json({ message: "nama is required" });
+    }
+    if (!username) {
+      return res.status(400).json({ message: "username is required" });
+    }
+    if (!password) {
+      return res.status(400).json({ message: "password is required" });
+    }
+    if (!status) {
+      return res.status(400).json({ message: "status is required" });
+    }
+    if (!id_role) {
+      return res.status(400).json({ message: "id_role is required" });
+    }
+
+    // valiasi tipe data
+    if (typeof nama !== "string") {
+      return res.status(400).json({ message: "nama must be a string" });
+    }
+    if (typeof username !== "string") {
+      return res.status(400).json({ message: "username must be a string" });
+    }
+    if (typeof password !== "string") {
+      return res.status(400).json({ message: "password must be a string" });
+    }
+    if (typeof email !== "string") {
+      return res.status(400).json({ message: "email must be a string" });
+    }
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ message: "email is not valid" });
+    }
 
     const role = await Role.findByPk(id_role);
 
@@ -92,12 +161,46 @@ const createUser = async (req, res, next) => {
 };
 
 const updateUserById = async (req, res, next) => {
+  // Ambil data untuk update dari body permintaan
+  const { nama, username, password, email, status, id_role } = req.body;
+
+  // validasi required
+  if (!nama) {
+    return res.status(400).json({ message: "nama is required" });
+  }
+  if (!username) {
+    return res.status(400).json({ message: "username is required" });
+  }
+  if (!password) {
+    return res.status(400).json({ message: "password is required" });
+  }
+  if (!status) {
+    return res.status(400).json({ message: "status is required" });
+  }
+  if (!id_role) {
+    return res.status(400).json({ message: "id_role is required" });
+  }
+
+  // valiasi tipe data
+  if (typeof nama !== "string") {
+    return res.status(400).json({ message: "nama must be a string" });
+  }
+  if (typeof username !== "string") {
+    return res.status(400).json({ message: "username must be a string" });
+  }
+  if (typeof password !== "string") {
+    return res.status(400).json({ message: "password must be a string" });
+  }
+  if (typeof email !== "string") {
+    return res.status(400).json({ message: "email must be a string" });
+  }
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ message: "email is not valid" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const userId = req.params.id;
-
-    // Ambil data untuk update dari body permintaan
-    const { nama, username, password, email, status, id_role } = req.body;
 
     // Temukan user yang akan diperbarui berdasarkan ID
     const user = await User.findByPk(userId);
@@ -113,7 +216,6 @@ const updateUserById = async (req, res, next) => {
     user.nama = nama || user.nama;
     user.username = username || user.username;
     user.password = password ? await bcrypt.hash(password, 10) : user.password;
-    user.hints = password || user.hints;
     user.email = email || user.email;
     user.status = status || user.status;
 

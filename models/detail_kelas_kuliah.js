@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel parent
       DetailKelasKuliah.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas_kuliah" });
+      DetailKelasKuliah.belongsTo(models.RuangPerkuliahan, { foreignKey: "id_ruang_perkuliahan" });
     }
   }
   DetailKelasKuliah.init(

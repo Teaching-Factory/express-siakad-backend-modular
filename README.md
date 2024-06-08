@@ -168,6 +168,13 @@ Install Paket :
 
 ```
 
+- Instal Plugin Validator :
+
+```bash
+  npm install validator
+
+```
+
 - Memperbaiki Plugin yang corrupt (Optional) :
 
 ```bash

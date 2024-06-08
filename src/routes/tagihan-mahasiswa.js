@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-// import controller
+// import controller dan middleware
 const TagihanMahasiswaController = require("../controllers/tagihan-mahasiswa");
 const checkRole = require("../middlewares/check-role");
 

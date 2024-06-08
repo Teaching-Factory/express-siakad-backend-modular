@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 const { User, UserRole, Role, BlacklistedToken } = require("../../models");
 
 // Fungsi untuk membuat token JWT
@@ -36,6 +37,30 @@ const generateToken = async (user) => {
 const doLogin = async (req, res, next) => {
   // Di sini Anda dapat memverifikasi username dan password
   const { username, password } = req.body;
+
+  // validasi required
+  if (!username) {
+    return res.status(400).json({ message: "username is required" });
+  }
+  if (!password) {
+    return res.status(400).json({ message: "password is required" });
+  }
+
+  // valiasi tipe data
+  if (typeof username !== "string") {
+    return res.status(400).json({ message: "username must be a string" });
+  }
+  if (typeof password !== "string") {
+    return res.status(400).json({ message: "password must be a string" });
+  }
+
+  // validasi input
+  if (!validator.isLength(username, { min: 1, max: 12 })) {
+    return res.status(400).json({ message: "username must be between 1 and 12 characters" });
+  }
+  if (!validator.isLength(password, { min: 8, max: 8 })) {
+    return res.status(400).json({ message: "password must be 8 characters" });
+  }
 
   try {
     // Cari user berdasarkan username
