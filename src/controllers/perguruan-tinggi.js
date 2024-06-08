@@ -1,6 +1,6 @@
 const { PerguruanTinggi } = require("../../models");
 
-const getAllPerguruanTinggi = async (req, res) => {
+const getAllPerguruanTinggi = async (req, res, next) => {
   try {
     // Ambil semua data perguruan_tinggi dari database
     const perguruan_tinggi = await PerguruanTinggi.findAll();
@@ -16,7 +16,7 @@ const getAllPerguruanTinggi = async (req, res) => {
   }
 };
 
-const getPerguruanTinggiById = async (req, res) => {
+const getPerguruanTinggiById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const perguruanTinggiId = req.params.id;
@@ -42,12 +42,34 @@ const getPerguruanTinggiById = async (req, res) => {
 };
 
 const updatePerguruanTinggiById = async (req, res, next) => {
+  // Ambil data untuk update dari body permintaan
+  const { kode_perguruan_tinggi, nama_perguruan_tinggi, nama_singkat } = req.body;
+
+  // validasi required
+  if (!kode_perguruan_tinggi) {
+    return res.status(400).json({ message: "kode_perguruan_tinggi is required" });
+  }
+  if (!nama_perguruan_tinggi) {
+    return res.status(400).json({ message: "nama_perguruan_tinggi is required" });
+  }
+  if (!nama_singkat) {
+    return res.status(400).json({ message: "nama_singkat is required" });
+  }
+
+  // valiasi tipe data
+  if (typeof kode_perguruan_tinggi !== "string") {
+    return res.status(400).json({ message: "kode_perguruan_tinggi must be a string" });
+  }
+  if (typeof nama_perguruan_tinggi !== "string") {
+    return res.status(400).json({ message: "nama_perguruan_tinggi must be a string" });
+  }
+  if (typeof nama_singkat !== "string") {
+    return res.status(400).json({ message: "nama_singkat must be a string" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const perguruanTinggiId = req.params.id;
-
-    // Ambil data untuk update dari body permintaan
-    const { kode_perguruan_tinggi, nama_perguruan_tinggi, nama_singkat } = req.body;
 
     // Temukan perguruan_tinggi yang akan diperbarui berdasarkan ID
     const perguruan_tinggi = await PerguruanTinggi.findByPk(perguruanTinggiId);

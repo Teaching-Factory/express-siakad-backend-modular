@@ -42,8 +42,18 @@ const getRoleById = async (req, res, next) => {
 };
 
 const createRole = async (req, res, next) => {
+  const { nama_role } = req.body;
+
+  // validasi required
+  if (!nama_role) {
+    return res.status(400).json({ message: "nama_role is required" });
+  }
+  // valiasi tipe data
+  if (typeof nama_role !== "string") {
+    return res.status(400).json({ message: "nama_role must be a string" });
+  }
+
   try {
-    const { nama_role } = req.body;
     // Gunakan metode create untuk membuat data role baru
     const newRole = await Role.create({ nama_role });
 
@@ -58,12 +68,21 @@ const createRole = async (req, res, next) => {
 };
 
 const updateRoleById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { nama_role } = req.body;
+
+  // validasi required
+  if (!nama_role) {
+    return res.status(400).json({ message: "nama_role is required" });
+  }
+  // valiasi tipe data
+  if (typeof nama_role !== "string") {
+    return res.status(400).json({ message: "nama_role must be a string" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const roleId = req.params.id;
-
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { nama_role } = req.body;
 
     // Cari data role berdasarkan ID di database
     let role = await Role.findByPk(roleId);

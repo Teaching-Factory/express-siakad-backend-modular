@@ -1,6 +1,6 @@
 const { Negara } = require("../../models");
 
-const getAllNegaras = async (req, res) => {
+const getAllNegaras = async (req, res, next) => {
   try {
     // Ambil semua data negaras dari database
     const negaras = await Negara.findAll();
@@ -16,7 +16,7 @@ const getAllNegaras = async (req, res) => {
   }
 };
 
-const getNegaraById = async (req, res) => {
+const getNegaraById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const negaraId = req.params.id;
