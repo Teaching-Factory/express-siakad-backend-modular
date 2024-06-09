@@ -1,6 +1,6 @@
 const { JenisPendaftaran } = require("../../models");
 
-const getAllJenisPendaftaran = async (req, res) => {
+const getAllJenisPendaftaran = async (req, res, next) => {
   try {
     // Ambil semua data jenis_pendaftaran dari database
     const jenis_pendaftaran = await JenisPendaftaran.findAll();
@@ -16,7 +16,7 @@ const getAllJenisPendaftaran = async (req, res) => {
   }
 };
 
-const getJenisPendaftaranById = async (req, res) => {
+const getJenisPendaftaranById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const JenisPendaftaranId = req.params.id;

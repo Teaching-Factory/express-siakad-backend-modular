@@ -1,6 +1,6 @@
 const { AlatTransportasi } = require("../../models");
 
-const getAllAlatTransportasi = async (req, res) => {
+const getAllAlatTransportasi = async (req, res, next) => {
   try {
     // Ambil semua data alat_transportasi dari database
     const alat_transportasi = await AlatTransportasi.findAll();
@@ -16,7 +16,7 @@ const getAllAlatTransportasi = async (req, res) => {
   }
 };
 
-const getAlatTransportasiById = async (req, res) => {
+const getAlatTransportasiById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const AlatTransportasiId = req.params.id;

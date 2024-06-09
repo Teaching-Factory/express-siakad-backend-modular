@@ -1,6 +1,6 @@
 const { JalurMasuk } = require("../../models");
 
-const getAllJalurMasuk = async (req, res) => {
+const getAllJalurMasuk = async (req, res, next) => {
   try {
     // Ambil semua data jalur_masuk dari database
     const jalur_masuk = await JalurMasuk.findAll();
@@ -16,7 +16,7 @@ const getAllJalurMasuk = async (req, res) => {
   }
 };
 
-const getJalurMasukById = async (req, res) => {
+const getJalurMasukById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const JalurMasukId = req.params.id;

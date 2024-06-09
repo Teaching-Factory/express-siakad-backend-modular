@@ -1,6 +1,6 @@
 const { ProfilPT, PerguruanTinggi, Wilayah } = require("../../models");
 
-const getAllProfilPT = async (req, res) => {
+const getAllProfilPT = async (req, res, next) => {
   try {
     // Ambil semua data profil_pt dari database
     const profil_pt = await ProfilPT.findAll({ include: [{ model: PerguruanTinggi }, { model: Wilayah }] });
@@ -16,7 +16,7 @@ const getAllProfilPT = async (req, res) => {
   }
 };
 
-const getProfilPTById = async (req, res) => {
+const getProfilPTById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const profilPTId = req.params.id;
@@ -44,38 +44,58 @@ const getProfilPTById = async (req, res) => {
 };
 
 const updateProfilPTById = async (req, res, next) => {
+  // Ambil data untuk update dari body permintaan
+  const {
+    telepon,
+    faximile,
+    email,
+    website,
+    jalan,
+    dusun,
+    rt_rw,
+    kelurahan,
+    kode_pos,
+    lintang_bujur,
+    bank,
+    unit_cabang,
+    nomor_rekening,
+    mbs,
+    luas_tanah_milik,
+    luas_tanah_bukan_milik,
+    sk_pendirian,
+    tanggal_sk_pendirian,
+    id_status_milik,
+    nama_status_milik,
+    status_perguruan_tinggi,
+    sk_izin_operasional,
+    tanggal_izin_operasional,
+    id_perguruan_tinggi,
+    id_wilayah,
+  } = req.body;
+
+  // validasi
+  if (!kelurahan) {
+    return res.status(400).json({ message: "kelurahan is required" });
+  }
+  if (!mbs) {
+    return res.status(400).json({ message: "mbs is required" });
+  }
+  if (!luas_tanah_milik) {
+    return res.status(400).json({ message: "luas_tanah_milik is required" });
+  }
+  if (!luas_tanah_bukan_milik) {
+    return res.status(400).json({ message: "luas_tanah_bukan_milik is required" });
+  }
+  if (!id_status_milik) {
+    return res.status(400).json({ message: "id_status_milik is required" });
+  }
+  if (!status_perguruan_tinggi) {
+    return res.status(400).json({ message: "status_perguruan_tinggi is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const profilPTId = req.params.id;
-
-    // Ambil data untuk update dari body permintaan
-    const {
-      telepon,
-      faximile,
-      email,
-      website,
-      jalan,
-      dusun,
-      rt_rw,
-      kelurahan,
-      kode_pos,
-      lintang_bujur,
-      bank,
-      unit_cabang,
-      nomor_rekening,
-      mbs,
-      luas_tanah_milik,
-      luas_tanah_bukan_milik,
-      sk_pendirian,
-      tanggal_sk_pendirian,
-      id_status_milik,
-      nama_status_milik,
-      status_perguruan_tinggi,
-      sk_izin_operasional,
-      tanggal_izin_operasional,
-      id_perguruan_tinggi,
-      id_wilayah,
-    } = req.body;
 
     // Temukan profil_pt yang akan diperbarui berdasarkan ID
     const profil_pt = await ProfilPT.findByPk(profilPTId);
