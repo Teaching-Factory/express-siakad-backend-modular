@@ -1,6 +1,6 @@
 const { Pekerjaan } = require("../../models");
 
-const getAllPekerjaan = async (req, res) => {
+const getAllPekerjaan = async (req, res, next) => {
   try {
     // Ambil semua data pekerjaan dari database
     const pekerjaan = await Pekerjaan.findAll();
@@ -16,10 +16,17 @@ const getAllPekerjaan = async (req, res) => {
   }
 };
 
-const getPekerjaanById = async (req, res) => {
+const getPekerjaanById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const PekerjaanId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!PekerjaanId) {
+      return res.status(400).json({
+        message: "Pekerjaan ID is required",
+      });
+    }
 
     // Cari data pekerjaan berdasarkan ID di database
     const pekerjaan = await Pekerjaan.findByPk(PekerjaanId);

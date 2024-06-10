@@ -1,6 +1,6 @@
 const { KebutuhanKhusus } = require("../../models");
 
-const getAllKebutuhanKhusus = async (req, res) => {
+const getAllKebutuhanKhusus = async (req, res, next) => {
   try {
     // Ambil semua data kebutuhan_khusus dari database
     const kebutuhan_khusus = await KebutuhanKhusus.findAll();
@@ -16,10 +16,17 @@ const getAllKebutuhanKhusus = async (req, res) => {
   }
 };
 
-const getKebutuhanKhususById = async (req, res) => {
+const getKebutuhanKhususById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const KebutuhanKhususId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!KebutuhanKhususId) {
+      return res.status(400).json({
+        message: "Kebutuhan Khusus ID is required",
+      });
+    }
 
     // Cari data kebutuhan_khusus berdasarkan ID di database
     const kebutuhan_khusus = await KebutuhanKhusus.findByPk(KebutuhanKhususId);

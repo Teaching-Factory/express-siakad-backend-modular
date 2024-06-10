@@ -1,6 +1,6 @@
 const { JenisSMS } = require("../../models");
 
-const getAllJenisSMS = async (req, res) => {
+const getAllJenisSMS = async (req, res, next) => {
   try {
     // Ambil semua data jenis_sms dari database
     const jenis_sms = await JenisSMS.findAll();
@@ -16,10 +16,17 @@ const getAllJenisSMS = async (req, res) => {
   }
 };
 
-const getJenisSMSById = async (req, res) => {
+const getJenisSMSById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const JenisSMSId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!JenisSMSId) {
+      return res.status(400).json({
+        message: "Jenis SMS ID is required",
+      });
+    }
 
     // Cari data jenis_sms berdasarkan ID di database
     const jenis_sms = await JenisSMS.findByPk(JenisSMSId);
