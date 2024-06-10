@@ -1,6 +1,6 @@
 const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen } = require("../../models");
 
-const getAllKelasKuliah = async (req, res) => {
+const getAllKelasKuliah = async (req, res, next) => {
   try {
     // Ambil semua data kelas_kuliah dari database
     const kelas_kuliah = await KelasKuliah.findAll({ include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] });
@@ -16,10 +16,17 @@ const getAllKelasKuliah = async (req, res) => {
   }
 };
 
-const getKelasKuliahById = async (req, res) => {
+const getKelasKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const KelasKuliahId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!KelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
 
     // Cari data kelas_kuliah berdasarkan ID di database
     const kelas_kuliah = await KelasKuliah.findByPk(KelasKuliahId, {
@@ -48,6 +55,20 @@ const GetAllKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const prodiId = req.params.id_prodi;
     const semesterId = req.params.id_semester;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+
+    // Periksa apakah ID disediakan
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
 
     // Ambil semua data kelas_kuliah dari database dengan data relasi
     const kelas_kuliah = await KelasKuliah.findAll({
@@ -78,7 +99,7 @@ const GetAllKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
   }
 };
 
-const createKelasKuliah = async (req, res) => {
+const createKelasKuliah = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const prodiId = req.params.id_prodi;
@@ -132,7 +153,7 @@ const createKelasKuliah = async (req, res) => {
   }
 };
 
-const updateKelasKuliahById = async (req, res) => {
+const updateKelasKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const kelasKuliahId = req.params.id_kelas_kuliah;
@@ -218,7 +239,7 @@ const deleteKelasKuliahById = async (req, res, next) => {
   }
 };
 
-const getAllKelasKuliahByProdiId = async (req, res) => {
+const getAllKelasKuliahByProdiId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const prodiId = req.params.id_prodi;
