@@ -1,6 +1,6 @@
 const { JenjangPendidikan } = require("../../models");
 
-const getAllJenjangPendidikan = async (req, res) => {
+const getAllJenjangPendidikan = async (req, res, next) => {
   try {
     // Ambil semua data jenjang_pendidikan dari database
     const jenjang_pendidikan = await JenjangPendidikan.findAll();
@@ -16,10 +16,17 @@ const getAllJenjangPendidikan = async (req, res) => {
   }
 };
 
-const getJenjangPendidikanById = async (req, res) => {
+const getJenjangPendidikanById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const JenjangPendidikanId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!JenjangPendidikanId) {
+      return res.status(400).json({
+        message: "Jenjang Pendidikan ID is required",
+      });
+    }
 
     // Cari data jenjang_pendidikan berdasarkan ID di database
     const jenjang_pendidikan = await JenjangPendidikan.findByPk(JenjangPendidikanId);
