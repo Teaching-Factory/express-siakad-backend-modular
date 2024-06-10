@@ -21,6 +21,13 @@ const getProfilPTById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const profilPTId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!profilPTId) {
+      return res.status(400).json({
+        message: "Profil PT ID is required",
+      });
+    }
+
     // Cari data profil_pt berdasarkan ID di database
     const profil_pt = await ProfilPT.findByPk(profilPTId, {
       include: [{ model: PerguruanTinggi }, { model: Wilayah }],

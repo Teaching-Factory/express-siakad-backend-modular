@@ -9,7 +9,7 @@ jest.mock("../../models", () => ({
 }));
 
 describe("getAllUser", () => {
-  /* menguji jika pengambilan semua pengguna berhasil,
+  /* Kode uji 1 - menguji jika pengambilan semua pengguna berhasil,
    maka akan mengembalikan status 200 beserta data pengguna yang diharapkan
    */
   it("should return all users successfully", async () => {
@@ -33,7 +33,7 @@ describe("getAllUser", () => {
     });
   });
 
-  // menguji jika tidak ada pengguna yang ditemukan, maka akan mengembalikan status 404
+  // Kode uji 2 - menguji jika tidak ada pengguna yang ditemukan, maka akan mengembalikan status 404
   it("should return 404 if no users found", async () => {
     const req = {};
     const res = httpMocks.createResponse();
@@ -47,7 +47,7 @@ describe("getAllUser", () => {
     expect(res._getJSONData()).toEqual({ message: "<===== User Not Found:" });
   });
 
-  // menguji penanganan error jika terjadi kesalahan saat melakukan operasi di database
+  // Kode uji 3 - menguji penanganan error jika terjadi kesalahan saat melakukan operasi di database
   it("should handle errors", async () => {
     const req = {};
     const res = httpMocks.createResponse();

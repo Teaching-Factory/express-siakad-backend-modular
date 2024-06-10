@@ -1,6 +1,6 @@
 const { MataKuliah, Prodi } = require("../../models");
 
-const getAllMataKuliah = async (req, res) => {
+const getAllMataKuliah = async (req, res, next) => {
   try {
     // Ambil semua data mata_kuliah dari database
     const mata_kuliah = await MataKuliah.findAll({ include: [{ model: Prodi }] });
@@ -16,10 +16,17 @@ const getAllMataKuliah = async (req, res) => {
   }
 };
 
-const getMataKuliahById = async (req, res) => {
+const getMataKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const MataKuliahId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!MataKuliahId) {
+      return res.status(400).json({
+        message: "Mata Kuliah ID is required",
+      });
+    }
 
     // Cari data mata_kuliah berdasarkan ID di database
     const mata_kuliah = await MataKuliah.findByPk(MataKuliahId, {
@@ -43,36 +50,7 @@ const getMataKuliahById = async (req, res) => {
   }
 };
 
-// const createMataKuliah = (req, res) => {
-//   res.json({
-//     message: "Berhasil mengakses create mata kuliah",
-//   });
-// };
-
-// const updateMataKuliahById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const mataKuliahId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses update mata kuliah by id",
-//     mataKuliahId: mataKuliahId,
-//   });
-// };
-
-// const deleteMataKuliahById = (req, res) => {
-//   // Dapatkan ID dari parameter permintaan
-//   const mataKuliahId = req.params.id;
-
-//   res.json({
-//     message: "Berhasil mengakses delete mata kuliah by id",
-//     mataKuliahId: mataKuliahId,
-//   });
-// };
-
 module.exports = {
   getAllMataKuliah,
   getMataKuliahById,
-  // createMataKuliah,
-  // updateMataKuliahById,
-  // deleteMataKuliahById,
 };

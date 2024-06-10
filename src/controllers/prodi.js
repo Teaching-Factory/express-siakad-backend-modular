@@ -28,6 +28,13 @@ const getProdiById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const ProdiId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!ProdiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+
     // Cari data prodi berdasarkan ID di database
     const prodi = await Prodi.findByPk(ProdiId, {
       include: [{ model: JenjangPendidikan }],

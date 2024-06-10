@@ -1,6 +1,6 @@
 const { Dosen, Agama, StatusKeaktifanPegawai } = require("../../models");
 
-const getAllDosen = async (req, res) => {
+const getAllDosen = async (req, res, next) => {
   try {
     // Ambil semua data dosen dari database
     const dosen = await Dosen.findAll({ include: [{ model: Agama }, { model: StatusKeaktifanPegawai }] });
@@ -16,10 +16,17 @@ const getAllDosen = async (req, res) => {
   }
 };
 
-const getDosenById = async (req, res) => {
+const getDosenById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const DosenId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!DosenId) {
+      return res.status(400).json({
+        message: "Dosen ID is required",
+      });
+    }
 
     // Cari data dosen berdasarkan ID di database
     const dosen = await Dosen.findByPk(DosenId, {

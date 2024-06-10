@@ -13,6 +13,7 @@ describe("getProfilPTById", () => {
     next = jest.fn();
   });
 
+  // Kode uji 1 - mengambil data profil pt dengan id yang valid
   it("should return 200 and profil_pt data if found", async () => {
     const profilPTId = 1;
     const mockProfilPT = {
@@ -37,8 +38,9 @@ describe("getProfilPTById", () => {
     });
   });
 
+  // Kode uji 2 - mengambil data profil pt dengan id yang tidak valid
   it("should return 404 if profil_pt is not found", async () => {
-    const profilPTId = 1;
+    const profilPTId = "s";
 
     ProfilPT.findByPk.mockResolvedValue(null);
 
@@ -55,6 +57,19 @@ describe("getProfilPTById", () => {
     });
   });
 
+  // Kode uji 3 - tidak memasukkan id profil pt pada parameter
+  it("should return error response when id profil pt is not provided", async () => {
+    req.params.id = undefined; // Tidak ada ID profil pt dalam parameter
+
+    await getProfilPTById(req, res, next);
+
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData()).toEqual({
+      message: "Profil PT ID is required",
+    });
+  });
+
+  // Kode uji 4 - menguji penanganan error jika terjadi kesalahan saat melakukan operasi di database
   it("should handle errors correctly", async () => {
     const errorMessage = "Database error";
     const profilPTId = 1;

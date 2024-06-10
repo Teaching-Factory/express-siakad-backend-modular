@@ -13,6 +13,7 @@ describe("getAgamaById", () => {
     next = jest.fn();
   });
 
+  // Kode uji 1 - menguji data agama dengan input id agama yang sesuai
   it("should return agama with status 200 if found", async () => {
     const agamaId = 1;
     const mockAgama = { id: agamaId, nama: "Islam" };
@@ -31,8 +32,9 @@ describe("getAgamaById", () => {
     });
   });
 
+  // Kode uji 2 - menguji data agama dengan input id agama yang tidak sesuai
   it("should handle not found error", async () => {
-    const agamaId = 1;
+    const agamaId = "s";
 
     Agama.findByPk.mockResolvedValue(null);
 
@@ -47,6 +49,19 @@ describe("getAgamaById", () => {
     });
   });
 
+  // Kode uji 3 - tidak memasukkan id agama pada parameter
+  it("should return error response when id agama is not provided", async () => {
+    req.params.id = undefined; // Tidak ada ID agama dalam parameter
+
+    await getAgamaById(req, res, next);
+
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData()).toEqual({
+      message: "Agama ID is required",
+    });
+  });
+
+  // Kode uji 4 - menguji penanganan error jika terjadi kesalahan saat melakukan operasi di database
   it("should handle errors", async () => {
     const agamaId = 1;
     const errorMessage = "Database error";

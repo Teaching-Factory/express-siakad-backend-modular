@@ -42,7 +42,7 @@ describe("getProdiById", () => {
   // Kode uji 2 - ketika data prodi tidak ditemukan
   it("should return 404 when prodi with ID does not exist", async () => {
     // ID Prodi yang akan diuji
-    const nonExistentProdiId = "161ee729-6284-422d-b4b8-42640abb9ab41";
+    const nonExistentProdiId = "s";
 
     // Stub Prodi.findByPk untuk mengembalikan null (prodi tidak ditemukan)
     jest.spyOn(Prodi, "findByPk").mockResolvedValue(null);
@@ -60,7 +60,19 @@ describe("getProdiById", () => {
     });
   });
 
-  // Kode uji 3 - ketika terdapat kesalahan selain kasus sebelumnya
+  // Kode uji 3 - tidak memasukkan id prodi pada parameter
+  it("should return error response when id prodi is not provided", async () => {
+    req.params.id = undefined; // Tidak ada ID prodi dalam parameter
+
+    await getProdiById(req, res, next);
+
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData()).toEqual({
+      message: "Prodi ID is required",
+    });
+  });
+
+  // Kode uji 4 - menguji penanganan error jika terjadi kesalahan saat melakukan operasi di database
   it("should handle errors", async () => {
     const errorMessage = "Database error";
     jest.spyOn(Prodi, "findByPk").mockRejectedValue(new Error(errorMessage));

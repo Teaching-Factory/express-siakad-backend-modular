@@ -13,8 +13,9 @@ describe("getWilayahById", () => {
     next = jest.fn();
   });
 
+  // Kode uji 1 - menguji dengan memasukkan data id wilayah yang valid
   it("should return wilayah data with status 200 if found", async () => {
-    const wilayahId = 1;
+    const wilayahId = "052500";
     const mockWilayah = {
       id: wilayahId,
       nama: "Wilayah 1",
@@ -37,8 +38,9 @@ describe("getWilayahById", () => {
     });
   });
 
+  // Kode uji 2 - menguji dengan memasukkan data id wilayah yang tidak valid
   it("should return 404 if wilayah is not found", async () => {
-    const wilayahId = 999; // ID yang tidak ada
+    const wilayahId = "s"; // ID yang tidak ada
     const errorMessage = `<===== Wilayah With ID ${wilayahId} Not Found:`;
 
     Wilayah.findByPk.mockResolvedValue(null);
@@ -54,6 +56,19 @@ describe("getWilayahById", () => {
     expect(res._getJSONData()).toEqual({ message: errorMessage });
   });
 
+  // Kode uji 3 - tidak memasukkan id wilayah pada parameter
+  it("should return error response when id wilayah is not provided", async () => {
+    req.params.id = undefined; // Tidak ada ID wilayah dalam parameter
+
+    await getWilayahById(req, res, next);
+
+    expect(res.statusCode).toBe(400);
+    expect(res._getJSONData()).toEqual({
+      message: "Wilayah ID is required",
+    });
+  });
+
+  // Kode uji 4 - menguji penanganan error jika terjadi kesalahan saat melakukan operasi di database
   it("should call next with error if database query fails", async () => {
     const wilayahId = 1;
     const errorMessage = "Database error";

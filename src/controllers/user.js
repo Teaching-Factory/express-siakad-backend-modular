@@ -31,6 +31,13 @@ const getUserById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const UserId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!UserId) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
     // Cari data user berdasarkan ID di database
     const user = await User.findByPk(UserId);
 

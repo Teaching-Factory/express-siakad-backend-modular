@@ -13,6 +13,7 @@ describe("getAllWilayahs", () => {
     next = jest.fn();
   });
 
+  // Kode uji 1 - menjalankan function wilayah dengan menggunakan method get
   it("should return all wilayahs with status 200 if found", async () => {
     const mockWilayahs = [
       { id: 1, nama: "Wilayah 1", Negara: { nama: "Negara 1" } },
@@ -32,6 +33,7 @@ describe("getAllWilayahs", () => {
     });
   });
 
+  // Kode uji 2 - menguji penanganan error jika terjadi kesalahan saat melakukan operasi di database
   it("should call next with error if database query fails", async () => {
     const errorMessage = "Database error";
     Wilayah.findAll.mockRejectedValue(new Error(errorMessage));

@@ -2,7 +2,7 @@ const { StatusMahasiswa } = require("../../models");
 const { Mahasiswa } = require("../../models");
 const { Periode } = require("../../models");
 
-const getAllStatusMahasiswa = async (req, res) => {
+const getAllStatusMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data status_mahasiswa dari database
     const status_mahasiswa = await StatusMahasiswa.findAll();
@@ -18,10 +18,17 @@ const getAllStatusMahasiswa = async (req, res) => {
   }
 };
 
-const getStatusMahasiswaById = async (req, res) => {
+const getStatusMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const StatusMahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!StatusMahasiswaId) {
+      return res.status(400).json({
+        message: "Status Mahasiswa ID is required",
+      });
+    }
 
     // Cari data status_mahasiswa berdasarkan ID di database
     const status_mahasiswa = await StatusMahasiswa.findByPk(StatusMahasiswaId);

@@ -21,6 +21,13 @@ const getAgamaById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const agamaId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!agamaId) {
+      return res.status(400).json({
+        message: "Agama ID is required",
+      });
+    }
+
     // Cari data agama berdasarkan ID di database
     const agama = await Agama.findByPk(agamaId);
 
