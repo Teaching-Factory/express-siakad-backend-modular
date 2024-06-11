@@ -24,7 +24,7 @@ module.exports = {
         defaultValue: Sequelize.literal("CURRENT_TIME"),
       },
       status_presensi: {
-        type: Sequelize.ENUM(["Hadir", "Izin", "Alfa", "Tidak Ada Keterangan"]),
+        type: Sequelize.ENUM(["Hadir", "Izin", "Alfa", "Sakit"]),
         allowNull: false,
       },
       id_pertemuan_perkuliahan: {

@@ -21,6 +21,13 @@ const getDetailKelasKuliahById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const DetailKelasKuliahId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!DetailKelasKuliahId) {
+      return res.status(400).json({
+        message: "Detail Kelas Kuliah ID is required",
+      });
+    }
+
     // Cari data detail_kelas_kuliah berdasarkan ID di database
     const detail_kelas_kuliah = await DetailKelasKuliah.findByPk(DetailKelasKuliahId, {
       include: [{ model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: RuangPerkuliahan }] }],
@@ -48,6 +55,20 @@ const getDetailKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const prodiId = req.params.id_prodi;
     const semesterId = req.params.id_semester;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+
+    // Periksa apakah ID disediakan
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
 
     const detail_kelas_kuliah = await DetailKelasKuliah.findAll({
       include: [

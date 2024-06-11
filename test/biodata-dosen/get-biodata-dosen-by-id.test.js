@@ -15,7 +15,7 @@ describe("getBiodataDosenById", () => {
 
   // Kode uji 1 - Mengambil biodata dosen berdasarkan ID jika ditemukan
   it("should return biodata dosen by ID with status 200 if found", async () => {
-    const biodataDosenId = 1;
+    const biodataDosenId = "00006f67-3a43-4903-8c50-49eb02f4ded5";
     const mockBiodataDosen = { id: biodataDosenId, nama: "Biodata Dosen 1" };
 
     req.params.id = biodataDosenId;
@@ -33,7 +33,7 @@ describe("getBiodataDosenById", () => {
 
   // Kode uji 2 - Menangani kasus jika ID biodata dosen tidak ditemukan
   it("should return 404 if biodata dosen by ID is not found", async () => {
-    const biodataDosenId = 1;
+    const biodataDosenId = "s";
 
     req.params.id = biodataDosenId;
     BiodataDosen.findByPk.mockResolvedValue(null);
