@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 const fs = require("fs").promises;
 const { Mahasiswa, Periode, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah, Agama, PerguruanTinggi, Prodi, RiwayatPendidikanMahasiswa, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester } = require("../../models");
 
-const getAllMahasiswa = async (req, res) => {
+const getAllMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data mahasiswa dari database
     const mahasiswa = await Mahasiswa.findAll({ include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }] });
@@ -19,10 +19,17 @@ const getAllMahasiswa = async (req, res) => {
   }
 };
 
-const getMahasiswaById = async (req, res) => {
+const getMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const MahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!MahasiswaId) {
+      return res.status(400).json({
+        message: "Mahasiswa ID is required",
+      });
+    }
 
     // Cari data mahasiswa berdasarkan ID di database
     const mahasiswa = await Mahasiswa.findByPk(MahasiswaId, {
@@ -50,6 +57,13 @@ const getMahasiswaByProdiId = async (req, res, next) => {
   try {
     // Dapatkan ID prodi dari parameter permintaan
     const prodiId = req.params.id_prodi;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
 
     // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
     const periodeIds = await Periode.findAll({
@@ -90,6 +104,13 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
   try {
     // Dapatkan ID angkatan dari parameter permintaan
     const angkatanId = req.params.id_angkatan;
+
+    // Periksa apakah ID disediakan
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
 
     // Ambil data angkatan berdasarkan id_angkatan
     const angkatan = await Angkatan.findOne({
@@ -139,6 +160,13 @@ const getMahasiswaByStatusMahasiswaId = async (req, res, next) => {
     // Dapatkan ID status mahasiswa dari parameter permintaan
     const statusMahasiswaId = req.params.id_status_mahasiswa;
 
+    // Periksa apakah ID disediakan
+    if (!statusMahasiswaId) {
+      return res.status(400).json({
+        message: "Status Mahasiswa ID is required",
+      });
+    }
+
     // Temukan status mahasiswa berdasarkan ID
     const status_mahasiswa = await StatusMahasiswa.findOne({
       where: {
@@ -184,6 +212,18 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     // Dapatkan ID prodi dan ID angkatan dari parameter permintaan
     const prodiId = req.params.id_prodi;
     const angkatanId = req.params.id_angkatan;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
 
     // Ambil data angkatan berdasarkan id_angkatan
     const angkatan = await Angkatan.findOne({ where: { id: angkatanId } });
@@ -236,6 +276,11 @@ const importMahasiswas = async (req, res, next) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Check if the uploaded file is not an Excel file
+    if (req.file.mimetype !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+      return res.status(400).json({ message: "File type not supported" });
     }
 
     const perguruan_tinggi = await PerguruanTinggi.findOne({

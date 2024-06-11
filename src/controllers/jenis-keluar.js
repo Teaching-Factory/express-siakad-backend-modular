@@ -1,6 +1,6 @@
 const { JenisKeluar } = require("../../models");
 
-const getAllJenisKeluar = async (req, res) => {
+const getAllJenisKeluar = async (req, res, next) => {
   try {
     // Ambil semua data jenis_keluar dari database
     const jenis_keluar = await JenisKeluar.findAll();
@@ -16,10 +16,17 @@ const getAllJenisKeluar = async (req, res) => {
   }
 };
 
-const getJenisKeluarById = async (req, res) => {
+const getJenisKeluarById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const JenisKeluarId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!JenisKeluarId) {
+      return res.status(400).json({
+        message: "Jenis Keluar ID is required",
+      });
+    }
 
     // Cari data jenis_keluar berdasarkan ID di database
     const jenis_keluar = await JenisKeluar.findByPk(JenisKeluarId);

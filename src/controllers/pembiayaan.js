@@ -1,6 +1,6 @@
 const { Pembiayaan } = require("../../models");
 
-const getAllPembiayaan = async (req, res) => {
+const getAllPembiayaan = async (req, res, next) => {
   try {
     // Ambil semua data pembiayaan dari database
     const pembiayaan = await Pembiayaan.findAll();
@@ -16,10 +16,17 @@ const getAllPembiayaan = async (req, res) => {
   }
 };
 
-const getPembiayaanById = async (req, res) => {
+const getPembiayaanById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const PembiayaanId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!PembiayaanId) {
+      return res.status(400).json({
+        message: "Pembiayaan ID is required",
+      });
+    }
 
     // Cari data pembiayaan berdasarkan ID di database
     const pembiayaan = await Pembiayaan.findByPk(PembiayaanId);
