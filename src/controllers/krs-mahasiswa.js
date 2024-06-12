@@ -519,6 +519,56 @@ const getAllMahasiswaBelumKRS = async (req, res, next) => {
   }
 };
 
+const getMahasiswaBelumKRSByPeriodeAndProdiId = async (req, res, next) => {
+  try {
+    const periodeId = req.params.id_periode;
+    const prodiId = req.params.id_prodi;
+
+    if (!periodeId) {
+      return res.status(400).json({ message: "Periode ID is required" });
+    }
+    if (!prodiId) {
+      return res.status(400).json({ message: "Prodi ID is required" });
+    }
+
+    // Ambil data KRS mahasiswa berdasarkan id_periode yang didapatkan
+    const krs_mahasiswas = await KRSMahasiswa.findAll({
+      where: {
+        id_periode: periodeId,
+        id_prodi: prodiId,
+      },
+    });
+
+    // Ekstrak id_registrasi_mahasiswa dari data KRS mahasiswa yang didapatkan
+    const idRegistrasiMahasiswas = new Set(krs_mahasiswas.map((krs) => krs.id_registrasi_mahasiswa));
+
+    // Ambil semua mahasiswa
+    const allMahasiswas = await Mahasiswa.findAll({
+      include: [
+        { model: BiodataMahasiswa },
+        { model: PerguruanTinggi },
+        { model: Agama },
+        {
+          model: Periode,
+          include: [{ model: Prodi }],
+        },
+      ],
+    });
+
+    const mahasiswasBelumKRS = allMahasiswas.filter((mahasiswa) => !idRegistrasiMahasiswas.has(mahasiswa.id_registrasi_mahasiswa));
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Mahasiswa Belum KRS By Periode ID ${periodeId} And Prodi ID ${prodiId} Success =====>`,
+      // idRegistrasiMahasiswas: Array.from(idRegistrasiMahasiswas).length,
+      jumlahData: mahasiswasBelumKRS.length,
+      data: mahasiswasBelumKRS,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createKRSMahasiswa = async (req, res, next) => {
   try {
     // Dapatkan id_registrasi_mahasiswa dari parameter URL
@@ -639,5 +689,6 @@ module.exports = {
   GetAllMahasiswaKRSTervalidasi,
   GetAllMahasiswaKRSBelumTervalidasi,
   getAllMahasiswaBelumKRS,
+  getMahasiswaBelumKRSByPeriodeAndProdiId,
   createKRSMahasiswa,
 };

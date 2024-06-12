@@ -21,6 +21,13 @@ const getAnggotaAktivitasMahasiswaById = async (req, res) => {
     // Dapatkan ID dari parameter permintaan
     const AnggotaAktivitasMahasiswaId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!AnggotaAktivitasMahasiswaId) {
+      return res.status(400).json({
+        message: "Anggota Aktivitas Mahasiswa ID is required",
+      });
+    }
+
     // Cari data anggota_aktivitas_mahasiswa berdasarkan ID di database
     const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findByPk(AnggotaAktivitasMahasiswaId, {
       include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
@@ -48,6 +55,13 @@ const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res) => {
     // Dapatkan ID dari parameter permintaan
     const aktivitasId = req.params.id_aktivitas;
 
+    // Periksa apakah ID disediakan
+    if (!aktivitasId) {
+      return res.status(400).json({
+        message: "Aktivitas ID is required",
+      });
+    }
+
     // Cari data anggota_aktivitas_mahasiswa berdasarkan ID di database
     const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findAll({
       where: {
@@ -74,10 +88,68 @@ const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res) => {
   }
 };
 
+const getAnggotaAktivitasMahasiswaBySemesterProdiAndJenisAktivitasId = async (req, res) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+    const prodiId = req.params.id_prodi;
+    const jenisAktivitasId = req.params.id_jenis_aktivitas;
+
+    // Periksa apakah ID disediakan
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!jenisAktivitasId) {
+      return res.status(400).json({
+        message: "Jenis Aktivitas ID is required",
+      });
+    }
+
+    // Ambil semua data anggota_aktivitas_mahasiswa dari database
+    const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findAll({
+      include: [
+        {
+          model: AktivitasMahasiswa,
+          where: {
+            id_semester: semesterId,
+            id_prodi: prodiId,
+            id_jenis_aktivitas: jenisAktivitasId,
+          },
+        },
+      ],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Anggota Aktivitas Mahasiswa By Semester ID ${semesterId}, Prodi ID ${prodiId} And Jenis Aktivitas ID ${jenisAktivitasId} Success`,
+      jumlahData: anggota_aktivitas_mahasiswa.length,
+      data: anggota_aktivitas_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createAnggotaAktivitasMahasiswa = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const aktivitasId = req.params.id_aktivitas;
+
+    // Periksa apakah ID disediakan
+    if (!aktivitasId) {
+      return res.status(400).json({
+        message: "Aktivitas ID is required",
+      });
+    }
+
     const { id_registrasi_mahasiswa, jenis_peran } = req.body;
 
     // Tentukan nama_jenis_peran berdasarkan nilai jenis_peran
@@ -106,6 +178,13 @@ const deleteAnggotaAktivitasMahasiswaById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const anggotaAktivitasMahasiswaId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!anggotaAktivitasMahasiswaId) {
+      return res.status(400).json({
+        message: "Anggota Aktivitas Mahasiswa ID is required",
+      });
+    }
+
     // Cari data anggota_aktivitas_mahasiswa berdasarkan ID di database
     let anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findByPk(anggotaAktivitasMahasiswaId);
 
@@ -132,6 +211,7 @@ module.exports = {
   getAllAnggotaAktivitasMahasiswa,
   getAnggotaAktivitasMahasiswaById,
   getAnggotaAktivitasMahasiswaByAktivitasId,
+  getAnggotaAktivitasMahasiswaBySemesterProdiAndJenisAktivitasId,
   createAnggotaAktivitasMahasiswa,
   deleteAnggotaAktivitasMahasiswaById,
 };

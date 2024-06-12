@@ -26,6 +26,7 @@ router.get("/get-mahasiswa-krs-belum-tervalidasi", checkRole(["admin", "admin-pr
 
 // mahasiswa belum krs
 router.get("/mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaBelumKRS);
+router.get("/:id_periode/:id_prodi/get-mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getMahasiswaBelumKRSByPeriodeAndProdiId);
 
 // tambah krs
 router.post("/:id_registrasi_mahasiswa/create", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.createKRSMahasiswa);
