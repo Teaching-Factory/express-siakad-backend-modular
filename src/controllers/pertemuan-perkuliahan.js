@@ -49,6 +49,39 @@ const getPertemuanPerkuliahanById = async (req, res, next) => {
   }
 };
 
+const getPertemuanPerkuliahanBySemesterProdiAndKelasKuliahId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+    const prodiId = req.params.id_prodi;
+    const kelasKuliahId = req.params.id_kelas_kuliah;
+
+    // Ambil semua data pertemuan_perkuliahan dari database
+    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findAll({
+      where: { id_kelas_kuliah: kelasKuliahId },
+      include: [
+        {
+          model: KelasKuliah,
+          where: {
+            id_prodi: prodiId,
+            id_semester: semesterId,
+          },
+        },
+        { model: RuangPerkuliahan },
+      ],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Pertemuan Perkuliahan By Semester ID ${semesterId}, Prodi ID ${prodiId} And Kelas Kuliah ID ${kelasKuliahId} Success`,
+      jumlahData: pertemuan_perkuliahan.length,
+      data: pertemuan_perkuliahan,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
@@ -208,6 +241,7 @@ const lockDisablePertemuanPerkuliahanById = async (req, res, next) => {
 module.exports = {
   getAllPertemuanPerkuliahanByKelasKuliahId,
   getPertemuanPerkuliahanById,
+  getPertemuanPerkuliahanBySemesterProdiAndKelasKuliahId,
   createPertemuanPerkuliahanByKelasKuliahId,
   updatePertemuanPerkuliahanById,
   deletePertemuanPerkuliahanById,

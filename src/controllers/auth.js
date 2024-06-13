@@ -87,38 +87,49 @@ const doLogin = async (req, res, next) => {
   }
 };
 
-const doLogout = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization;
-    if (!token) {
-      return res.status(400).json({ message: "Token tidak ditemukan" });
-    }
+// do logout dengan implementasi blacklist token
+// const doLogout = async (req, res, next) => {
+//   try {
+//     const token = req.headers.authorization;
+//     if (!token) {
+//       return res.status(400).json({ message: "Token tidak ditemukan" });
+//     }
 
-    const blacklistToken = await BlacklistedToken.findOne({
-      where: {
-        token: token,
-      },
-    });
+//     const blacklistToken = await BlacklistedToken.findOne({
+//       where: {
+//         token: token,
+//       },
+//     });
 
-    // mengecek apakah data blacklist token ada
-    if (blacklistToken) {
-      return res.status(400).json({ message: "Token Sudah Expired" });
-    }
+//     // mengecek apakah data blacklist token ada
+//     if (blacklistToken) {
+//       return res.status(400).json({ message: "Token Sudah Expired" });
+//     }
 
-    // Tambahkan token ke dalam blacklist
-    await BlacklistedToken.create({
-      token,
-    });
+//     // Tambahkan token ke dalam blacklist
+//     await BlacklistedToken.create({
+//       token,
+//     });
 
-    // Hapus token dari sisi klien
-    res.clearCookie("token");
+//     // Hapus token dari sisi klien
+//     res.clearCookie("token");
 
-    res.json({
-      message: "Anda baru saja logout",
-    });
-  } catch (error) {
-    next(error);
-  }
+//     res.json({
+//       message: "Anda baru saja logout",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+const doLogout = (req, res) => {
+  // Hapus token dari sisi klien
+  res.clearCookie("token");
+
+  res.json({
+    message: "Berhasil mengakses do logout",
+    message: "Anda baru saja logout",
+  });
 };
 
 module.exports = {
