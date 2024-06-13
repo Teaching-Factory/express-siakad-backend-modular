@@ -1,6 +1,6 @@
 const { RekapKRSMahasiswa, Prodi, Periode, Mahasiswa, MataKuliah, Semester } = require("../../models");
 
-const getAllRekapKRSMahasiswa = async (req, res) => {
+const getAllRekapKRSMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data rekap_krs_mahasiswa dari database
     const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findAll({ include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }] });
@@ -16,10 +16,17 @@ const getAllRekapKRSMahasiswa = async (req, res) => {
   }
 };
 
-const getRekapKRSMahasiswaById = async (req, res) => {
+const getRekapKRSMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const RekapKRSMahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!RekapKRSMahasiswaId) {
+      return res.status(400).json({
+        message: "Rekap KRS Mahasiswa ID is required",
+      });
+    }
 
     // Cari data rekap_krs_mahasiswa berdasarkan ID di database
     const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findByPk(RekapKRSMahasiswaId, {

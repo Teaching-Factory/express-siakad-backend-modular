@@ -122,14 +122,18 @@ const doLogin = async (req, res, next) => {
 //   }
 // };
 
-const doLogout = (req, res) => {
-  // Hapus token dari sisi klien
-  res.clearCookie("token");
+const doLogout = (req, res, next) => {
+  try {
+    // Hapus token dari sisi klien
+    res.clearCookie("token");
 
-  res.json({
-    message: "Berhasil mengakses do logout",
-    message: "Anda baru saja logout",
-  });
+    res.json({
+      message: "Berhasil mengakses do logout",
+      message: "Anda baru saja logout",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {

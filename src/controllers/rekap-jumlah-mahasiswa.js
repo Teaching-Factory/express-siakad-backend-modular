@@ -1,6 +1,6 @@
 const { RekapJumlahMahasiswa, Periode, Prodi } = require("../../models");
 
-const getAllRekapJumlahMahasiswa = async (req, res) => {
+const getAllRekapJumlahMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data rekap_jumlah_mahasiswa dari database
     const rekap_jumlah_mahasiswa = await RekapJumlahMahasiswa.findAll({ include: [{ model: Periode }, { model: Prodi }] });
@@ -16,10 +16,17 @@ const getAllRekapJumlahMahasiswa = async (req, res) => {
   }
 };
 
-const getRekapJumlahMahasiswaById = async (req, res) => {
+const getRekapJumlahMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const RekapJumlahMahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!RekapJumlahMahasiswaId) {
+      return res.status(400).json({
+        message: "Rekap Jumlah Mahasiswa ID is required",
+      });
+    }
 
     // Cari data rekap_jumlah_mahasiswa berdasarkan ID di database
     const rekap_jumlah_mahasiswa = await RekapJumlahMahasiswa.findByPk(RekapJumlahMahasiswaId, {
