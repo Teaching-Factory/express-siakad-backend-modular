@@ -1,9 +1,16 @@
 const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas } = require("../../models");
 
-const getAllPesertaKelasKuliah = async (req, res) => {
+const getAllPesertaKelasKuliah = async (req, res, next) => {
   try {
     // Ambil semua data peserta_kelas_kuliah dari database
     const peserta_kelas_kuliah = await PesertaKelasKuliah.findAll({ include: [{ model: KelasKuliah }, { model: Mahasiswa }] });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!peserta_kelas_kuliah || peserta_kelas_kuliah.length === 0) {
+      return res.status(404).json({
+        message: `<===== Peserta Kelas Kuliah Not Found`,
+      });
+    }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -16,10 +23,17 @@ const getAllPesertaKelasKuliah = async (req, res) => {
   }
 };
 
-const getPesertaKelasKuliahById = async (req, res) => {
+const getPesertaKelasKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const PesertaKelasKuliahId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!PesertaKelasKuliahId) {
+      return res.status(400).json({
+        message: "Peserta Kelas Kuliah ID is required",
+      });
+    }
 
     // Cari data peserta_kelas_kuliah berdasarkan ID di database
     const peserta_kelas_kuliah = await PesertaKelasKuliah.findByPk(PesertaKelasKuliahId, {
@@ -48,6 +62,18 @@ const createPesertaKelasByAngkatanAndKelasKuliahId = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const kelasKuliahId = req.params.id_kelas_kuliah;
     const angkatanId = req.params.id_angkatan;
+
+    // Periksa apakah ID disediakan
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
 
     const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
     const peserta_kelas = []; // Simpan data yang berhasil dibuat di sini
@@ -89,10 +115,17 @@ const createPesertaKelasByAngkatanAndKelasKuliahId = async (req, res, next) => {
   }
 };
 
-const getPesertaKelasKuliahByKelasKuliahId = async (req, res) => {
+const getPesertaKelasKuliahByKelasKuliahId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const kelasKuliahId = req.params.id_kelas_kuliah;
+
+    // Periksa apakah ID disediakan
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
 
     // Cari data peserta_kelas_kuliah berdasarkan ID kelas kuliah di database
     const peserta_kelas_kuliah = await PesertaKelasKuliah.findAll({
@@ -103,7 +136,7 @@ const getPesertaKelasKuliahByKelasKuliahId = async (req, res) => {
     });
 
     // Jika data tidak ditemukan, kirim respons 404
-    if (!peserta_kelas_kuliah) {
+    if (peserta_kelas_kuliah.length === 0) {
       return res.status(404).json({
         message: `<===== Peserta Kelas Kuliah With ID ${kelasKuliahId} Not Found:`,
       });
@@ -123,6 +156,13 @@ const getPesertaKelasKuliahByKelasKuliahId = async (req, res) => {
 const getPesertaKelasWithDetailNilai = async (req, res, next) => {
   try {
     const idKelasKuliah = req.params.id_kelas_kuliah;
+
+    // Periksa apakah ID disediakan
+    if (!idKelasKuliah) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
 
     // Ambil data peserta kelas berdasarkan id_kelas_kuliah
     const pesertaKelas = await PesertaKelasKuliah.findAll({
