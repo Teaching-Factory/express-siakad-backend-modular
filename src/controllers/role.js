@@ -21,6 +21,13 @@ const getRoleById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const roleId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!roleId) {
+      return res.status(400).json({
+        message: "Role ID is required",
+      });
+    }
+
     // Cari data role berdasarkan ID di database
     const role = await Role.findByPk(roleId);
 
@@ -114,6 +121,13 @@ const deleteRoleById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const roleId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!roleId) {
+      return res.status(400).json({
+        message: "Role ID is required",
+      });
+    }
 
     // Cari data role berdasarkan ID di database
     let role = await Role.findByPk(roleId);

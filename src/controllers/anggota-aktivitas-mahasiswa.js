@@ -1,6 +1,6 @@
 const { AnggotaAktivitasMahasiswa, AktivitasMahasiswa, Mahasiswa, Periode, Prodi } = require("../../models");
 
-const getAllAnggotaAktivitasMahasiswa = async (req, res) => {
+const getAllAnggotaAktivitasMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data anggota_aktivitas_mahasiswa dari database
     const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findAll({ include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }] });
@@ -16,7 +16,7 @@ const getAllAnggotaAktivitasMahasiswa = async (req, res) => {
   }
 };
 
-const getAnggotaAktivitasMahasiswaById = async (req, res) => {
+const getAnggotaAktivitasMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const AnggotaAktivitasMahasiswaId = req.params.id;
@@ -50,7 +50,7 @@ const getAnggotaAktivitasMahasiswaById = async (req, res) => {
   }
 };
 
-const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res) => {
+const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const aktivitasId = req.params.id_aktivitas;
@@ -71,7 +71,7 @@ const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res) => {
     });
 
     // Jika data tidak ditemukan, kirim respons 404
-    if (!anggota_aktivitas_mahasiswa) {
+    if (anggota_aktivitas_mahasiswa.length === 0) {
       return res.status(404).json({
         message: `<===== Anggota Aktivitas Mahasiswa With ID ${aktivitasId} Not Found:`,
       });
@@ -88,7 +88,7 @@ const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res) => {
   }
 };
 
-const getAnggotaAktivitasMahasiswaBySemesterProdiAndJenisAktivitasId = async (req, res) => {
+const getAnggotaAktivitasMahasiswaBySemesterProdiAndJenisAktivitasId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const semesterId = req.params.id_semester;
@@ -139,6 +139,15 @@ const getAnggotaAktivitasMahasiswaBySemesterProdiAndJenisAktivitasId = async (re
 };
 
 const createAnggotaAktivitasMahasiswa = async (req, res, next) => {
+  const { id_registrasi_mahasiswa, jenis_peran } = req.body;
+
+  if (!id_registrasi_mahasiswa) {
+    return res.status(400).json({ message: "id_registrasi_mahasiswa is required" });
+  }
+  if (!jenis_peran) {
+    return res.status(400).json({ message: "jenis_peran is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const aktivitasId = req.params.id_aktivitas;
@@ -149,8 +158,6 @@ const createAnggotaAktivitasMahasiswa = async (req, res, next) => {
         message: "Aktivitas ID is required",
       });
     }
-
-    const { id_registrasi_mahasiswa, jenis_peran } = req.body;
 
     // Tentukan nama_jenis_peran berdasarkan nilai jenis_peran
     const nama_jenis_peran = jenis_peran == "3" ? "Personal" : "Anggota";
@@ -177,6 +184,12 @@ const deleteAnggotaAktivitasMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const anggotaAktivitasMahasiswaId = req.params.id;
+
+    if (!anggotaAktivitasMahasiswaId) {
+      return res.status(400).json({
+        message: "Anggota Aktvitas Mahasiswa ID is required",
+      });
+    }
 
     // Periksa apakah ID disediakan
     if (!anggotaAktivitasMahasiswaId) {

@@ -1,9 +1,8 @@
 const ExcelJS = require("exceljs");
 const fs = require("fs").promises;
 const { AktivitasMahasiswa, Prodi, JenisAktivitasMahasiswa, Semester } = require("../../models");
-const { where } = require("sequelize");
 
-const getAllAktivitasMahasiswa = async (req, res) => {
+const getAllAktivitasMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data aktivitas_mahasiswa dari database
     const aktivitas_mahasiswa = await AktivitasMahasiswa.findAll({ include: [{ model: JenisAktivitasMahasiswa }, { model: Prodi }, { model: Semester }] });
@@ -19,10 +18,17 @@ const getAllAktivitasMahasiswa = async (req, res) => {
   }
 };
 
-const getAktivitasMahasiswaById = async (req, res) => {
+const getAktivitasMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const AktivitasMahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!AktivitasMahasiswaId) {
+      return res.status(400).json({
+        message: "Aktivitas Mahasiswa ID is required",
+      });
+    }
 
     // Cari data aktivitas_mahasiswa berdasarkan ID di database
     const aktivitas_mahasiswa = await AktivitasMahasiswa.findByPk(AktivitasMahasiswaId, {
@@ -138,12 +144,29 @@ const importAktivitasMahasiswas = async (req, res, next) => {
   }
 };
 
-const getAllAktivitasMahasiswaByProdiSemesterAndJenisAktivitasId = async (req, res) => {
+const getAllAktivitasMahasiswaByProdiSemesterAndJenisAktivitasId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const prodiId = req.params.id_prodi;
     const semesterId = req.params.id_semester;
     const jenisAktivitasMahasiswaId = req.params.id_jenis_aktivitas;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+    if (!jenisAktivitasMahasiswaId) {
+      return res.status(400).json({
+        message: "Jenis Aktivitas Mahasiswa ID is required",
+      });
+    }
 
     // Ambil semua data aktivitas_mahasiswa dari database berdasarkan filter
     const aktivitas_mahasiswa = await AktivitasMahasiswa.findAll({
@@ -167,12 +190,33 @@ const getAllAktivitasMahasiswaByProdiSemesterAndJenisAktivitasId = async (req, r
 };
 
 const updateAktivitasMahasiswaById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { id_prodi, id_jenis_aktivitas, judul, lokasi, sk_tugas, tanggal_sk_tugas, jenis_anggota, keterangan, untuk_kampus_merdeka } = req.body;
+
+  // validasi required
+  if (!jenis_anggota) {
+    return res.status(400).json({ message: "jenis_anggota is required" });
+  }
+  if (!judul) {
+    return res.status(400).json({ message: "judul is required" });
+  }
+  if (!id_jenis_aktivitas) {
+    return res.status(400).json({ message: "id_jenis_aktivitas is required" });
+  }
+  if (!id_prodi) {
+    return res.status(400).json({ message: "id_prodi is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const aktivitasMahasiswaId = req.params.id;
 
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { id_prodi, id_jenis_aktivitas, judul, lokasi, sk_tugas, tanggal_sk_tugas, jenis_anggota, keterangan, untuk_kampus_merdeka } = req.body;
+    // Periksa apakah ID disediakan
+    if (!aktivitasMahasiswaId) {
+      return res.status(400).json({
+        message: "Aktivitas Mahasiswa ID is required",
+      });
+    }
 
     // Cari data aktivitas_mahasiswa berdasarkan ID di database
     let aktivitas_mahasiswa = await AktivitasMahasiswa.findByPk(aktivitasMahasiswaId);
@@ -216,6 +260,13 @@ const deleteAktivitasMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const aktivitasMahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!aktivitasMahasiswaId) {
+      return res.status(400).json({
+        message: "Aktivitas Mahasiswa ID is required",
+      });
+    }
 
     // Cari data aktivitas_mahasiswa berdasarkan ID di database
     let aktivitas_mahasiswa = await AktivitasMahasiswa.findByPk(aktivitasMahasiswaId);
