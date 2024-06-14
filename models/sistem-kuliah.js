@@ -23,10 +23,26 @@ module.exports = (sequelize, DataTypes) => {
       nama_sk: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        validate: {
+          len: { args: [1, 255], msg: "nama_sk must be between 1 and 255 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("nama_sk must be a string");
+          }
+        },
       },
       kode_sk: {
         type: DataTypes.STRING(4),
         allowNull: false,
+        validate: {
+          len: { args: [1, 4], msg: "kode_sk must be between 1 and 4 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("kode_sk must be a string");
+          }
+        },
       },
     },
     {

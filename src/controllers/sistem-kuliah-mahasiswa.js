@@ -6,8 +6,16 @@ const createSistemKuliahMahasiswaBySistemKuliahId = async (req, res, next) => {
   try {
     const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
 
-    const sistem_kuliah_mahasiswa = []; // Simpan data sistem_kuliah_mahasiswa yang berhasil dibuat di sini
     const sistem_kuliah_id = req.params.id_sistem_kuliah;
+
+    // Periksa apakah ID disediakan
+    if (!sistem_kuliah_id) {
+      return res.status(400).json({
+        message: "Sistem Kuliah ID is required",
+      });
+    }
+
+    const sistem_kuliah_mahasiswa = []; // Simpan data sistem_kuliah_mahasiswa yang berhasil dibuat di sini
 
     // Cari data sistem_kuliah berdasarkan ID di database
     const sistem_kuliah = await SistemKuliah.findByPk(sistem_kuliah_id);

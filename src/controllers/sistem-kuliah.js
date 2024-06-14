@@ -98,9 +98,16 @@ const getSistemKuliahMahasiswaByProdiAndSistemKuliahId = async (req, res, next) 
 };
 
 const createSistemKuliah = async (req, res, next) => {
-  try {
-    const { nama_sk, kode_sk } = req.body;
+  const { nama_sk, kode_sk } = req.body;
 
+  if (!nama_sk) {
+    return res.status(400).json({ message: "nama_sk is required" });
+  }
+  if (!kode_sk) {
+    return res.status(400).json({ message: "kode_sk is required" });
+  }
+
+  try {
     // Gunakan metode create untuk membuat data sistem_kuliah baru
     const newSistemKuliah = await SistemKuliah.create({ nama_sk, kode_sk });
 
@@ -115,6 +122,16 @@ const createSistemKuliah = async (req, res, next) => {
 };
 
 const updateSistemKuliahById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { nama_sk, kode_sk } = req.body;
+
+  if (!nama_sk) {
+    return res.status(400).json({ message: "nama_sk is required" });
+  }
+  if (!kode_sk) {
+    return res.status(400).json({ message: "kode_sk is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const sistemKuliahId = req.params.id;
@@ -125,9 +142,6 @@ const updateSistemKuliahById = async (req, res, next) => {
         message: "Sistem Kuliah Mahasiswa ID is required",
       });
     }
-
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { nama_sk, kode_sk } = req.body;
 
     // Cari data sistem_kuliah berdasarkan ID di database
     let sistem_kuliah = await SistemKuliah.findByPk(sistemKuliahId);
@@ -223,7 +237,6 @@ const getAllMahasiswaBelumSetSK = async (req, res, next) => {
       data: mahasiswasBelumSetSK,
     });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
