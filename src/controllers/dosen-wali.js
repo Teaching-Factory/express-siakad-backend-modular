@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { DosenWali, Periode, Angkatan, TahunAjaran, Dosen, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama } = require("../../models");
 
-const getAllDosenWaliByDosenAndTahunAjaranId = async (req, res) => {
+const getAllDosenWaliByDosenAndTahunAjaranId = async (req, res, next) => {
   try {
     const dosenId = req.params.id_dosen;
     const tahunAjaranId = req.params.id_tahun_ajaran;
@@ -78,7 +78,7 @@ const getDosenWaliByTahunAjaranId = async (req, res, next) => {
   }
 };
 
-const getDosenWaliByDosenId = async (req, res) => {
+const getDosenWaliByDosenId = async (req, res, next) => {
   try {
     const dosenId = req.params.id_dosen;
 
@@ -109,10 +109,26 @@ const getDosenWaliByDosenId = async (req, res) => {
 };
 
 const createDosenWaliSingle = async (req, res, next) => {
+  const nim = req.body.nim;
+
+  if (!nim) {
+    return res.status(400).json({ message: "nim is required" });
+  }
+
   try {
-    const nim = req.body.nim;
     const dosenId = req.params.id_dosen;
     const tahunAjaranId = req.params.id_tahun_ajaran;
+
+    if (!dosenId) {
+      return res.status(400).json({
+        message: "Dosen ID is required",
+      });
+    }
+    if (!tahunAjaranId) {
+      return res.status(400).json({
+        message: "Tahun Ajaran ID is required",
+      });
+    }
 
     // Cari data mahasiswa berdasarkan nim
     const mahasiswa = await Mahasiswa.findOne({
@@ -148,6 +164,12 @@ const deleteDosenWaliById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const dosenWaliId = req.params.id;
 
+    if (!dosenWaliId) {
+      return res.status(400).json({
+        message: "Dosen Wali ID is required",
+      });
+    }
+
     // Cari data dosen_wali berdasarkan ID di database
     let dosen_wali = await DosenWali.findByPk(dosenWaliId);
 
@@ -175,6 +197,17 @@ const getAllMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     // Dapatkan ID prodi dan ID angkatan dari parameter permintaan
     const prodiId = req.params.id_prodi;
     const angkatanId = req.params.id_angkatan;
+
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
 
     // Ambil data angkatan berdasarkan id_angkatan
     const angkatan = await Angkatan.findOne({ where: { id: angkatanId } });
@@ -227,6 +260,12 @@ const createDosenWaliKolektif = async (req, res, next) => {
   try {
     const { mahasiswas } = req.body;
     const dosenId = req.params.id_dosen;
+
+    if (!dosenId) {
+      return res.status(400).json({
+        message: "Dosen ID is required",
+      });
+    }
 
     // Ambil data tahun ajaran yang aktif
     const tahunAjaran = await TahunAjaran.findOne({
