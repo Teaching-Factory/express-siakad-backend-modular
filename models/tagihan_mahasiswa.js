@@ -27,6 +27,12 @@ module.exports = (sequelize, DataTypes) => {
       jumlah_tagihan: {
         type: DataTypes.INTEGER(10),
         allowNull: false,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "jumlah_tagihan must be an integer",
+          },
+        },
       },
       jenis_tagihan: {
         type: DataTypes.ENUM("SPP", "KRS", "Yudisium", "Wisuda"),
@@ -47,6 +53,12 @@ module.exports = (sequelize, DataTypes) => {
       id_periode: {
         type: DataTypes.INTEGER(10),
         allowNull: false,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "id_periode must be an integer",
+          },
+        },
       },
       id_registrasi_mahasiswa: {
         type: DataTypes.STRING(36),

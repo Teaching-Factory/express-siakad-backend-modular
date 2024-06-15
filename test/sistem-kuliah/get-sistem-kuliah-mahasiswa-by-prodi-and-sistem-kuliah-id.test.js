@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getSistemKuliahMahasiswaByProdiAndSistemKuliahId } = require("../../src/controllers/sistem-kuliah");
-const { SistemKuliahMahasiswa, Mahasiswa, Periode, Prodi } = require("../../models");
+const { SistemKuliahMahasiswa, Mahasiswa, Periode, Prodi, BiodataMahasiswa } = require("../../models");
 
 jest.mock("../../models");
 
@@ -33,14 +33,17 @@ describe("getSistemKuliahMahasiswaByProdiAndSistemKuliahId", () => {
       include: {
         model: Mahasiswa,
         required: true,
-        include: {
-          model: Periode,
-          required: true,
-          where: {
-            id_prodi: prodiId,
+        include: [
+          {
+            model: Periode,
+            required: true,
+            where: {
+              id_prodi: prodiId,
+            },
+            include: [{ model: Prodi }],
           },
-          include: [{ model: Prodi }],
-        },
+          { model: BiodataMahasiswa },
+        ],
       },
       where: {
         id_sistem_kuliah: sistemKuliahId,
@@ -97,14 +100,17 @@ describe("getSistemKuliahMahasiswaByProdiAndSistemKuliahId", () => {
       include: {
         model: Mahasiswa,
         required: true,
-        include: {
-          model: Periode,
-          required: true,
-          where: {
-            id_prodi: prodiId,
+        include: [
+          {
+            model: Periode,
+            required: true,
+            where: {
+              id_prodi: prodiId,
+            },
+            include: [{ model: Prodi }],
           },
-          include: [{ model: Prodi }],
-        },
+          { model: BiodataMahasiswa },
+        ],
       },
       where: {
         id_sistem_kuliah: sistemKuliahId,

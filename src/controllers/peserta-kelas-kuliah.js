@@ -1,4 +1,4 @@
-const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas } = require("../../models");
+const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas, Prodi, MataKuliah, Semester } = require("../../models");
 
 const getAllPesertaKelasKuliah = async (req, res, next) => {
   try {
@@ -169,9 +169,7 @@ const getPesertaKelasWithDetailNilai = async (req, res, next) => {
       where: {
         id_kelas_kuliah: idKelasKuliah,
       },
-      include: {
-        model: Mahasiswa, // Include Mahasiswa untuk mendapatkan informasi detail mahasiswa
-      },
+      include: [{ model: Mahasiswa }, { model: KelasKuliah, include: [{ model: Prodi }, { model: MataKuliah }, { model: Semester }] }],
     });
 
     // Ambil data nilai perkuliahan berdasarkan id_kelas_kuliah
