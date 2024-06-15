@@ -111,7 +111,7 @@ const checkToken = require("./middlewares/check-token");
 const app = express();
 
 const corsOptions = {
-  origin: "http://127.0.0.1:5173", // Sesuaikan dengan domain frontend Anda
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"], 
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // Mengaktifkan cookies dan kredensial lainnya
 };
