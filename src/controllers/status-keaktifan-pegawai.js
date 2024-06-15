@@ -1,6 +1,6 @@
 const { StatusKeaktifanPegawai } = require("../../models");
 
-const getAllStatusKeaktifanPegawai = async (req, res) => {
+const getAllStatusKeaktifanPegawai = async (req, res, next) => {
   try {
     // Ambil semua data status_keaktifan_pegawai dari database
     const status_keaktifan_pegawai = await StatusKeaktifanPegawai.findAll();
@@ -16,10 +16,17 @@ const getAllStatusKeaktifanPegawai = async (req, res) => {
   }
 };
 
-const getStatusKeaktifanPegawaiById = async (req, res) => {
+const getStatusKeaktifanPegawaiById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const StatusKeaktifanPegawaiId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!StatusKeaktifanPegawaiId) {
+      return res.status(400).json({
+        message: "Status Keaktifan Pegawai ID is required",
+      });
+    }
 
     // Cari data status_keaktifan_pegawai berdasarkan ID di database
     const status_keaktifan_pegawai = await StatusKeaktifanPegawai.findByPk(StatusKeaktifanPegawaiId);

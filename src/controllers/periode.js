@@ -1,6 +1,6 @@
 const { Periode, Prodi } = require("../../models");
 
-const getAllPeriode = async (req, res) => {
+const getAllPeriode = async (req, res, next) => {
   try {
     // Ambil semua data periode dari database
     const periode = await Periode.findAll({ include: [{ model: Prodi }] });
@@ -16,10 +16,17 @@ const getAllPeriode = async (req, res) => {
   }
 };
 
-const getPeriodeById = async (req, res) => {
+const getPeriodeById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const PeriodeId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!PeriodeId) {
+      return res.status(400).json({
+        message: "Periode ID is required",
+      });
+    }
 
     // Cari data periode berdasarkan ID di database
     const periode = await Periode.findByPk(PeriodeId, {

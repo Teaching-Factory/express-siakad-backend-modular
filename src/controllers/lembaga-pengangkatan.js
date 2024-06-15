@@ -1,6 +1,6 @@
 const { LembagaPengangkatan } = require("../../models");
 
-const getAllLembagaPengangkatan = async (req, res) => {
+const getAllLembagaPengangkatan = async (req, res, next) => {
   try {
     // Ambil semua data lembaga_pengangkatan dari database
     const lembaga_pengangkatan = await LembagaPengangkatan.findAll();
@@ -16,10 +16,17 @@ const getAllLembagaPengangkatan = async (req, res) => {
   }
 };
 
-const getLembagaPengangkatanById = async (req, res) => {
+const getLembagaPengangkatanById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const LembagaPengangkatanId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!LembagaPengangkatanId) {
+      return res.status(400).json({
+        message: "Lembaga Pengangkatan ID is required",
+      });
+    }
 
     // Cari data lembaga_pengangkatan berdasarkan ID di database
     const lembaga_pengangkatan = await LembagaPengangkatan.findByPk(LembagaPengangkatanId);

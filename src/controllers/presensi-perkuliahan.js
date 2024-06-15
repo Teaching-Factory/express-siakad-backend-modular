@@ -1,4 +1,5 @@
 const { PresensiMahasiswa, PertemuanPerkuliahan, UserRole, Role, User, Mahasiswa } = require("../../models");
+const moment = require("moment-timezone");
 
 const getAllPresensiPerkuliahanByPertemuanPerkuliahanId = async (req, res, next) => {
   try {
@@ -37,7 +38,7 @@ const doPresensiPertemuanByMahasiswaAndPertemuanId = async (req, res, next) => {
     const pertemuanPerkuliahanId = req.params.id_pertemuan_perkuliahan;
 
     // Dapatkan user yang sedang login
-    const userId = req.user.id; // Asumsikan Anda menggunakan middleware untuk mendapatkan user ID yang sedang login
+    const userId = req.user.id; // mengambil data id user yang aktif
 
     // Ambil data user dengan role mahasiswa
     const userRole = await UserRole.findOne({
@@ -90,6 +91,16 @@ const doPresensiPertemuanByMahasiswaAndPertemuanId = async (req, res, next) => {
 
     // mengecek apakah pertemuan perkuliahan lock enable
     const pertemuan_perkuliahan = await PertemuanPerkuliahan.findByPk(pertemuanPerkuliahanId);
+
+    // Mengecek apakah waktu saat ini sesuai dengan jadwal pertemuan
+    const now = moment().tz("Asia/Jakarta");
+    const tanggalPertemuan = moment(pertemuan_perkuliahan.tanggal_pertemuan).tz("Asia/Jakarta").format("YYYY-MM-DD");
+    const waktuMulai = moment(tanggalPertemuan + " " + pertemuan_perkuliahan.waktu_mulai).tz("Asia/Jakarta");
+    const waktuSelesai = moment(tanggalPertemuan + " " + pertemuan_perkuliahan.waktu_selesai).tz("Asia/Jakarta");
+
+    if (!now.isBetween(waktuMulai, waktuSelesai)) {
+      return res.status(400).json({ message: "Anda hanya dapat melakukan presensi pada waktu pertemuan yang ditentukan." });
+    }
 
     if (pertemuan_perkuliahan.kunci_pertemuan === true) {
       return res.status(400).json({ message: "Pertemuan telah berakhir, Anda tidak dapat melakukan presensi" });

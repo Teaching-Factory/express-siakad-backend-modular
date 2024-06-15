@@ -21,6 +21,12 @@ const getAngkatanById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const angkatanId = req.params.id;
 
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
+
     // Cari data angkatan berdasarkan ID di database
     const angkatan = await Angkatan.findByPk(angkatanId);
 
@@ -42,8 +48,13 @@ const getAngkatanById = async (req, res, next) => {
 };
 
 const createAngkatan = async (req, res, next) => {
+  const { tahun } = req.body;
+
+  if (!tahun) {
+    return res.status(400).json({ message: "tahun is required" });
+  }
+
   try {
-    const { tahun } = req.body;
     // Gunakan metode create untuk membuat data angkatan baru
     const newAngkatan = await Angkatan.create({ tahun });
 
@@ -58,12 +69,22 @@ const createAngkatan = async (req, res, next) => {
 };
 
 const updateAngkatanById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { tahun } = req.body;
+
+  if (!tahun) {
+    return res.status(400).json({ message: "tahun is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const angkatanId = req.params.id;
 
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { tahun } = req.body;
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
 
     // Cari data angkatan berdasarkan ID di database
     let angkatan = await Angkatan.findByPk(angkatanId);
@@ -95,6 +116,12 @@ const deleteAngkatanById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const angkatanId = req.params.id;
+
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
 
     // Cari data angkatan berdasarkan ID di database
     let angkatan = await Angkatan.findByPk(angkatanId);

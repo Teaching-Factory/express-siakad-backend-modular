@@ -1,6 +1,6 @@
 const { PenugasanDosen, Dosen, TahunAjaran, PerguruanTinggi, Prodi } = require("../../models");
 
-const getAllPenugasanDosen = async (req, res) => {
+const getAllPenugasanDosen = async (req, res, next) => {
   try {
     // Ambil semua data penugasan_dosen dari database
     const penugasan_dosen = await PenugasanDosen.findAll({ include: [{ model: Dosen }, { model: TahunAjaran }, { model: PerguruanTinggi }, { model: Prodi }] });
@@ -16,10 +16,17 @@ const getAllPenugasanDosen = async (req, res) => {
   }
 };
 
-const getPenugasanDosenById = async (req, res) => {
+const getPenugasanDosenById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const PenugasanDosenId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!PenugasanDosenId) {
+      return res.status(400).json({
+        message: "Penugasan Dosen ID is required",
+      });
+    }
 
     // Cari data penugasan_dosen berdasarkan ID di database
     const penugasan_dosen = await PenugasanDosen.findByPk(PenugasanDosenId, {
@@ -43,10 +50,17 @@ const getPenugasanDosenById = async (req, res) => {
   }
 };
 
-const getAllPenugasanDosenByProdiId = async (req, res) => {
+const getAllPenugasanDosenByProdiId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const prodiId = req.params.id_prodi;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
 
     // Ambil semua data penugasan_dosen dari database
     const penugasan_dosen = await PenugasanDosen.findAll({

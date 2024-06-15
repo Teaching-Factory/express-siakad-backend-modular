@@ -1,13 +1,21 @@
 const { Op } = require("sequelize");
 
-const { SistemKuliah, SistemKuliahMahasiswa, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode } = require("../../models");
+const { SistemKuliah, SistemKuliahMahasiswa, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode, Prodi } = require("../../models");
 
 const createSistemKuliahMahasiswaBySistemKuliahId = async (req, res, next) => {
   try {
     const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
 
-    const sistem_kuliah_mahasiswa = []; // Simpan data sistem_kuliah_mahasiswa yang berhasil dibuat di sini
     const sistem_kuliah_id = req.params.id_sistem_kuliah;
+
+    // Periksa apakah ID disediakan
+    if (!sistem_kuliah_id) {
+      return res.status(400).json({
+        message: "Sistem Kuliah ID is required",
+      });
+    }
+
+    const sistem_kuliah_mahasiswa = []; // Simpan data sistem_kuliah_mahasiswa yang berhasil dibuat di sini
 
     // Cari data sistem_kuliah berdasarkan ID di database
     const sistem_kuliah = await SistemKuliah.findByPk(sistem_kuliah_id);
@@ -59,7 +67,7 @@ const getMahasiswaNotHaveSistemKuliah = async (req, res, next) => {
           [Op.notIn]: idArray,
         },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
     });
 
     // Kirim respons JSON jika berhasil

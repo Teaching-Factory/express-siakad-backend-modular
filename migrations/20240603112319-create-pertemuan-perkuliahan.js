@@ -39,6 +39,11 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      buka_presensi: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       id_ruang_perkuliahan: {
         type: Sequelize.INTEGER(10),
         allowNull: false,

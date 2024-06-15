@@ -54,6 +54,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
       },
+      buka_presensi: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       id_ruang_perkuliahan: {
         type: DataTypes.INTEGER(10),
         allowNull: false,

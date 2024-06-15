@@ -1,6 +1,6 @@
 const { Agama } = require("../../models");
 
-const getAllAgamas = async (req, res) => {
+const getAllAgamas = async (req, res, next) => {
   try {
     // Ambil semua data agamas dari database
     const agamas = await Agama.findAll();
@@ -16,10 +16,17 @@ const getAllAgamas = async (req, res) => {
   }
 };
 
-const getAgamaById = async (req, res) => {
+const getAgamaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const agamaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!agamaId) {
+      return res.status(400).json({
+        message: "Agama ID is required",
+      });
+    }
 
     // Cari data agama berdasarkan ID di database
     const agama = await Agama.findByPk(agamaId);

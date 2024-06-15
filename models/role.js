@@ -18,14 +18,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(50),
         allowNull: false,
         validate: {
-          notEmpty: { args: true, msg: "nama_role is required" },
-          notNull: { args: true, msg: "nama_role is required" },
+          // notEmpty: { args: true, msg: "nama_role is required" },
+          // notNull: { args: true, msg: "nama_role is required" },
           len: { args: [1, 50], msg: "nama_role must be between 1 and 50 characters" },
-          isString(value) {
-            if (typeof value !== "string") {
-              throw new Error("nama_role must be a string");
-            }
-          },
+          // isString(value) {
+          //   if (typeof value !== "string") {
+          //     throw new Error("nama_role must be a string");
+          //   }
+          // },
         },
       },
     },

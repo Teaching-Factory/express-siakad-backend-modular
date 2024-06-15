@@ -21,6 +21,12 @@ const getJabatanById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const jabatanId = req.params.id;
 
+    if (!jabatanId) {
+      return res.status(400).json({
+        message: "Jabatan ID is required",
+      });
+    }
+
     // Cari data jabatan berdasarkan ID di database
     const jabatan = await Jabatan.findByPk(jabatanId);
 
@@ -42,8 +48,13 @@ const getJabatanById = async (req, res, next) => {
 };
 
 const createJabatan = async (req, res, next) => {
+  const { nama_jabatan } = req.body;
+
+  if (!nama_jabatan) {
+    return res.status(400).json({ message: "nama_jabatan is required" });
+  }
+
   try {
-    const { nama_jabatan } = req.body;
     // Gunakan metode create untuk membuat data jabatan baru
     const newJabatan = await Jabatan.create({ nama_jabatan });
 
@@ -58,12 +69,28 @@ const createJabatan = async (req, res, next) => {
 };
 
 const updateJabatanById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { nama_jabatan } = req.body;
+
+  if (!nama_jabatan) {
+    return res.status(400).json({ message: "nama_jabatan is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const jabatanId = req.params.id;
 
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { nama_jabatan } = req.body;
+    if (!jabatanId) {
+      return res.status(400).json({
+        message: "Jabatan ID is required",
+      });
+    }
+
+    if (!jabatanId) {
+      return res.status(400).json({
+        message: "Jabatan ID is required",
+      });
+    }
 
     // Cari data jabatan berdasarkan ID di database
     let jabatan = await Jabatan.findByPk(jabatanId);
@@ -95,6 +122,12 @@ const deleteJabatanById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const jabatanId = req.params.id;
+
+    if (!jabatanId) {
+      return res.status(400).json({
+        message: "Jabatan ID is required",
+      });
+    }
 
     // Cari data jabatan berdasarkan ID di database
     let jabatan = await Jabatan.findByPk(jabatanId);

@@ -2,11 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 
-// import controller
+// import controller dan middleware
 const RiwayatNilaiMahasiswaController = require("../controllers/riwayat-nilai-mahasiswa");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", RiwayatNilaiMahasiswaController.getAllRiwayatNilaiMahasiswa);
-router.get("/:id/get", RiwayatNilaiMahasiswaController.getRiwayatNilaiMahasiswaById);
+router.get("/", checkRole(["admin", "admin-prodi"]), RiwayatNilaiMahasiswaController.getAllRiwayatNilaiMahasiswa);
+router.get("/:id/get", checkRole(["admin", "admin-prodi"]), RiwayatNilaiMahasiswaController.getRiwayatNilaiMahasiswaById);
 
 module.exports = router;

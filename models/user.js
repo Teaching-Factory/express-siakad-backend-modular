@@ -17,10 +17,16 @@ module.exports = (sequelize, DataTypes) => {
       nama: {
         type: DataTypes.STRING(200),
         allowNull: false,
+        validate: {
+          len: { args: [1, 200], msg: "nama must be between 1 and 200 characters" },
+        },
       },
       username: {
         type: DataTypes.STRING(12),
         allowNull: false,
+        validate: {
+          len: { args: [1, 12], msg: "username must be between 1 and 12 characters" },
+        },
       },
       password: {
         type: DataTypes.STRING(255),
@@ -34,9 +40,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(60),
         allowNull: true,
         unique: true,
+        validate: {
+          len: { args: [1, 60], msg: "email must be between 1 and 60 characters" },
+        },
       },
       status: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
       },
     },
     {

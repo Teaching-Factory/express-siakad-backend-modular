@@ -1,9 +1,16 @@
 const { Prodi, JenjangPendidikan } = require("../../models");
 
-const getAllProdi = async (req, res) => {
+const getAllProdi = async (req, res, next) => {
   try {
     // Ambil semua data prodi dari database
     const prodi = await Prodi.findAll({ include: [{ model: JenjangPendidikan }] });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!prodi || prodi.length === 0) {
+      return res.status(404).json({
+        message: `<===== Prodi Not Found:`,
+      });
+    }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -16,10 +23,17 @@ const getAllProdi = async (req, res) => {
   }
 };
 
-const getProdiById = async (req, res) => {
+const getProdiById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const ProdiId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!ProdiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
 
     // Cari data prodi berdasarkan ID di database
     const prodi = await Prodi.findByPk(ProdiId, {
@@ -36,7 +50,7 @@ const getProdiById = async (req, res) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Prodi By ID ${ProdiId} Success:`,
-      data: prodi,
+      data: prodi, // Mengubah objek Sequelize ke bentuk JSON
     });
   } catch (error) {
     next(error);

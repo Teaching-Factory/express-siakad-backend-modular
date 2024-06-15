@@ -1,6 +1,6 @@
 const { DataLengkapMahasiswaProdi, Prodi, Semester, Mahasiswa, Agama, Wilayah, JenisTinggal, AlatTransportasi, JenjangPendidikan, Pekerjaan, Penghasilan, KebutuhanKhusus, PerguruanTinggi } = require("../../models");
 
-const getAllDataLengkapMahasiswaProdi = async (req, res) => {
+const getAllDataLengkapMahasiswaProdi = async (req, res, next) => {
   try {
     // Ambil semua data data_lengkap_mahasiswa_prodi dari database
     const data_lengkap_mahasiswa_prodi = await DataLengkapMahasiswaProdi.findAll({
@@ -31,10 +31,17 @@ const getAllDataLengkapMahasiswaProdi = async (req, res) => {
   }
 };
 
-const getDataLengkapMahasiswaProdiById = async (req, res) => {
+const getDataLengkapMahasiswaProdiById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const DataLengkapMahasiswaProdiId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!DataLengkapMahasiswaProdiId) {
+      return res.status(400).json({
+        message: "Data Lengkap Mahasiswa Prodi ID is required",
+      });
+    }
 
     // Cari data data_lengkap_mahasiswa_prodi berdasarkan ID di database
     const data_lengkap_mahasiswa_prodi = await DataLengkapMahasiswaProdi.findByPk(DataLengkapMahasiswaProdiId, {

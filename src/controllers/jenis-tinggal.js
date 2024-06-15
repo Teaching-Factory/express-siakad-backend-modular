@@ -1,6 +1,6 @@
 const { JenisTinggal } = require("../../models");
 
-const getAllJenisTinggal = async (req, res) => {
+const getAllJenisTinggal = async (req, res, next) => {
   try {
     // Ambil semua data jenis_tinggal dari database
     const jenis_tinggal = await JenisTinggal.findAll();
@@ -16,7 +16,7 @@ const getAllJenisTinggal = async (req, res) => {
   }
 };
 
-const getJenisTinggalById = async (req, res) => {
+const getJenisTinggalById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const JenisTinggalId = req.params.id;

@@ -6,6 +6,18 @@ const getAllDosenWaliByDosenAndTahunAjaranId = async (req, res) => {
     const dosenId = req.params.id_dosen;
     const tahunAjaranId = req.params.id_tahun_ajaran;
 
+    // Periksa apakah ID disediakan
+    if (!dosenId) {
+      return res.status(400).json({
+        message: "Dosen ID is required",
+      });
+    }
+    if (!tahunAjaranId) {
+      return res.status(400).json({
+        message: "Tahun Ajaran ID is required",
+      });
+    }
+
     // Ambil semua data dosen_walis dari database
     const dosen_walis = await DosenWali.findAll({
       where: {
@@ -18,6 +30,76 @@ const getAllDosenWaliByDosenAndTahunAjaranId = async (req, res) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Mahasiswa Wali Success",
+      jumlahData: dosen_walis.length,
+      data: dosen_walis,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getDosenWaliByTahunAjaranId = async (req, res, next) => {
+  try {
+    const tahunAjaranId = req.params.id_tahun_ajaran;
+
+    if (!tahunAjaranId) {
+      return res.status(400).json({
+        message: "Tahun Ajaran ID is required",
+      });
+    }
+
+    // Ambil semua data dosen_walis dari database berdasarkan tahun ajaran
+    const dosen_walis = await DosenWali.findAll({
+      where: {
+        id_tahun_ajaran: tahunAjaranId,
+      },
+      include: [{ model: Mahasiswa }, { model: TahunAjaran }],
+    });
+
+    // Ekstrak id_dosen dari data dosen_walis yang didapatkan
+    const idDosenSet = new Set(dosen_walis.map((dosen_wali) => dosen_wali.id_dosen));
+    const idDosenArray = Array.from(idDosenSet);
+
+    // Ambil data dosen berdasarkan id_dosen yang dikumpulkan
+    const dosens = await Dosen.findAll({
+      where: {
+        id_dosen: idDosenArray,
+      },
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Dosen Wali By Tahun Ajaran ID ${tahunAjaranId} Success =====>`,
+      jumlahData: dosens.length,
+      data: dosens,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getDosenWaliByDosenId = async (req, res) => {
+  try {
+    const dosenId = req.params.id_dosen;
+
+    // Periksa apakah ID disediakan
+    if (!dosenId) {
+      return res.status(400).json({
+        message: "Dosen ID is required",
+      });
+    }
+
+    // Ambil semua data dosen_walis dari database
+    const dosen_walis = await DosenWali.findAll({
+      where: {
+        id_dosen: dosenId,
+      },
+      include: [{ model: Dosen }, { model: Mahasiswa }, { model: TahunAjaran }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Mahasiswa Wali By ${dosenId} Success`,
       jumlahData: dosen_walis.length,
       data: dosen_walis,
     });
@@ -182,8 +264,10 @@ const createDosenWaliKolektif = async (req, res, next) => {
 
 module.exports = {
   getAllDosenWaliByDosenAndTahunAjaranId,
+  getDosenWaliByTahunAjaranId,
+  getDosenWaliByDosenId,
+  getAllMahasiswaByProdiAndAngkatanId,
   createDosenWaliSingle,
   deleteDosenWaliById,
-  getAllMahasiswaByProdiAndAngkatanId,
   createDosenWaliKolektif,
 };

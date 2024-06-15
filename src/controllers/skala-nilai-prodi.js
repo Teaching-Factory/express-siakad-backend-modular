@@ -1,6 +1,6 @@
 const { SkalaNilaiProdi, Prodi } = require("../../models");
 
-const getAllSkalaNilaiProdi = async (req, res) => {
+const getAllSkalaNilaiProdi = async (req, res, next) => {
   try {
     // Ambil semua data skala_nilai_prodi dari database
     const skala_nilai_prodi = await SkalaNilaiProdi.findAll({ include: [{ model: Prodi }] });
@@ -16,10 +16,17 @@ const getAllSkalaNilaiProdi = async (req, res) => {
   }
 };
 
-const getSkalaNilaiProdiById = async (req, res) => {
+const getSkalaNilaiProdiById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const SkalaNilaiProdiId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!SkalaNilaiProdiId) {
+      return res.status(400).json({
+        message: "Skala Nilai Prodi ID is required",
+      });
+    }
 
     // Cari data skala_nilai_prodi berdasarkan ID di database
     const skala_nilai_prodi = await SkalaNilaiProdi.findByPk(SkalaNilaiProdiId, {

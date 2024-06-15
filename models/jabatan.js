@@ -23,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
       nama_jabatan: {
         type: DataTypes.STRING(100),
         allowNull: false,
+        validate: {
+          len: { args: [1, 100], msg: "nama_jabatan must be between 1 and 100 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("nama_jabatan must be a string");
+          }
+        },
       },
     },
     {

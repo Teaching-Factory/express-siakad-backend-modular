@@ -146,6 +146,35 @@ Install Paket :
 
 ```
 
+- Instal Plugin Moment Timezone :
+
+```bash
+  npm install moment-timezone
+
+```
+
+- Instal Plugin Node Schedule untuk menghapus token expired secara berkala :
+
+```bash
+  npm install node-schedule
+
+```
+
+- Instal Plugin untuk pengujian Unit Testing :
+
+```bash
+  npm install --save-dev jest @babel/core @babel/preset-env
+  npm install node-mocks-http
+
+```
+
+- Instal Plugin Validator :
+
+```bash
+  npm install validator
+
+```
+
 - Memperbaiki Plugin yang corrupt (Optional) :
 
 ```bash
@@ -201,6 +230,15 @@ Perintah Migrasi Dan Seeder :
 
 ```bash
   npx sequelize-cli db:migrate:undo:all
+
+```
+
+Perintah Pengujian Unit Testing :
+
+- Menjalankan kode uji manual :
+
+```bash
+  npx jest test/folder-path/fileName.test.js
 
 ```
 

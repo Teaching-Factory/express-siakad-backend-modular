@@ -1,6 +1,6 @@
 const { BiodataDosen } = require("../../models");
 
-const getAllBiodataDosen = async (req, res) => {
+const getAllBiodataDosen = async (req, res, next) => {
   try {
     // Ambil semua data biodata_dosen dari database
     const biodata_dosen = await BiodataDosen.findAll();
@@ -16,10 +16,17 @@ const getAllBiodataDosen = async (req, res) => {
   }
 };
 
-const getBiodataDosenById = async (req, res) => {
+const getBiodataDosenById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const BiodataDosenId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!BiodataDosenId) {
+      return res.status(400).json({
+        message: "Biodata Dosen ID is required",
+      });
+    }
 
     // Cari data biodata_dosen berdasarkan ID di database
     const biodata_dosen = await BiodataDosen.findByPk(BiodataDosenId);

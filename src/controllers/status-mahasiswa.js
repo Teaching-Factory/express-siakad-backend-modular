@@ -1,8 +1,7 @@
-const { StatusMahasiswa } = require("../../models");
-const { Mahasiswa } = require("../../models");
-const { Periode } = require("../../models");
+const { Sequelize } = require("sequelize");
+const { StatusMahasiswa, Mahasiswa, Periode, Prodi, Angkatan } = require("../../models");
 
-const getAllStatusMahasiswa = async (req, res) => {
+const getAllStatusMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data status_mahasiswa dari database
     const status_mahasiswa = await StatusMahasiswa.findAll();
@@ -18,10 +17,17 @@ const getAllStatusMahasiswa = async (req, res) => {
   }
 };
 
-const getStatusMahasiswaById = async (req, res) => {
+const getStatusMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const StatusMahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!StatusMahasiswaId) {
+      return res.status(400).json({
+        message: "Status Mahasiswa ID is required",
+      });
+    }
 
     // Cari data status_mahasiswa berdasarkan ID di database
     const status_mahasiswa = await StatusMahasiswa.findByPk(StatusMahasiswaId);
@@ -37,6 +43,122 @@ const getStatusMahasiswaById = async (req, res) => {
     res.status(200).json({
       message: `<===== GET Status Mahasiswa By ID ${StatusMahasiswaId} Success:`,
       data: status_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getProdiWithCountMahasiswaBelumSetSK = async (req, res, next) => {
+  try {
+    // Ambil data semua prodi beserta jumlah mahasiswa yang memiliki nama_status_mahasiswa null
+    const prodiData = await Prodi.findAll({
+      include: {
+        model: Periode,
+        include: {
+          model: Mahasiswa,
+          where: {
+            nama_status_mahasiswa: null,
+          },
+          required: false,
+        },
+      },
+    });
+
+    // Siapkan data untuk respons
+    const result = prodiData.map((prodi) => {
+      const jumlahMahasiswa = prodi.Periodes.reduce((count, periode) => count + periode.Mahasiswas.length, 0);
+      return {
+        id_prodi: prodi.id_prodi,
+        nama_prodi: prodi.nama_program_studi,
+        status: prodi.status,
+        jumlahMahasiswa,
+      };
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "GET ALL Prodi With Count Mahasiswa Belum Set SK Success",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPeriodeByProdiIdWithCountMahasiswa = async (req, res, next) => {
+  try {
+    const prodiId = req.params.id_prodi;
+
+    // Ambil semua data periode dari database berdasarkan id_prodi
+    const periodeList = await Periode.findAll({
+      where: {
+        id_prodi: prodiId,
+      },
+    });
+
+    // Konversi periode_pelaporan dari periodeList menjadi format tahun yang sesuai
+    const periodePelaporanList = periodeList.map((p) => p.periode_pelaporan.toString().substring(0, 4));
+
+    // Ambil semua data mahasiswa yang memiliki nama_periode_masuk sesuai dengan periodePelaporanList
+    const mahasiswaList = await Mahasiswa.findAll({
+      include: [
+        {
+          model: Periode,
+          where: {
+            periode_pelaporan: {
+              [Sequelize.Op.or]: periodePelaporanList.map((period) => ({
+                [Sequelize.Op.like]: `${period}%`,
+              })),
+            },
+          },
+        },
+      ],
+    });
+
+    // Buat peta untuk menghitung jumlah mahasiswa per periode
+    const mahasiswaCountMap = mahasiswaList.reduce((acc, mahasiswa) => {
+      const periodeMasuk = mahasiswa.nama_periode_masuk.substring(0, 4);
+      const periodePelaporan = mahasiswa.Periode.periode_pelaporan.toString().substring(0, 4);
+
+      if (periodePelaporanList.includes(periodePelaporan)) {
+        if (!acc[periodePelaporan]) {
+          acc[periodePelaporan] = { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
+        }
+        acc[periodePelaporan].jumlahMahasiswa += 1;
+        if (mahasiswa.nama_status_mahasiswa === null) {
+          acc[periodePelaporan].jumlahMahasiswaBelumSetSK += 1;
+        }
+      }
+      return acc;
+    }, {});
+
+    // Ambil data angkatan yang sesuai dengan tahun periode_pelaporan
+    const angkatan = await Angkatan.findAll({
+      where: {
+        tahun: {
+          [Sequelize.Op.in]: periodePelaporanList,
+        },
+      },
+    });
+
+    // Gabungkan data angkatan dengan jumlah mahasiswa
+    const result = angkatan.map((angkatanItem) => {
+      const counts = mahasiswaCountMap[angkatanItem.tahun] || { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
+
+      return {
+        id_angkatan: angkatanItem.id, // Ubah sesuai dengan nama kolom yang sesuai
+        tahun: angkatanItem.tahun,
+        jumlahMahasiswa: counts.jumlahMahasiswa,
+        jumlahMahasiswaBelumSetSK: counts.jumlahMahasiswaBelumSetSK,
+      };
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Angkatan By Prodi ID ${prodiId} With Count Mahasiswa Success`,
+      jumlahData: result.length,
+      data: result,
     });
   } catch (error) {
     next(error);
@@ -182,6 +304,8 @@ const updateAllStatusMahasiswaNonaktifByProdiId = async (req, res, next) => {
 module.exports = {
   getAllStatusMahasiswa,
   getStatusMahasiswaById,
+  getProdiWithCountMahasiswaBelumSetSK,
+  getPeriodeByProdiIdWithCountMahasiswa,
   setStatusAktif,
   setStatusCuti,
   setStatusNonAktif,

@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { User, UserRole, Role } = require("../../models");
+const validator = require("validator");
+const { User, UserRole, Role, BlacklistedToken } = require("../../models");
 
 // Fungsi untuk membuat token JWT
-async function generateToken(user) {
+const generateToken = async (user) => {
   try {
     // Dapatkan peran pengguna dari tabel UserRole
     const userRoles = await UserRole.findAll({
@@ -31,11 +32,35 @@ async function generateToken(user) {
   } catch (error) {
     throw error;
   }
-}
+};
 
-const doLogin = async (req, res) => {
+const doLogin = async (req, res, next) => {
   // Di sini Anda dapat memverifikasi username dan password
   const { username, password } = req.body;
+
+  // validasi required
+  if (!username) {
+    return res.status(400).json({ message: "username is required" });
+  }
+  if (!password) {
+    return res.status(400).json({ message: "password is required" });
+  }
+
+  // valiasi tipe data
+  if (typeof username !== "string") {
+    return res.status(400).json({ message: "username must be a string" });
+  }
+  if (typeof password !== "string") {
+    return res.status(400).json({ message: "password must be a string" });
+  }
+
+  // validasi input
+  if (!validator.isLength(username, { min: 1, max: 12 })) {
+    return res.status(400).json({ message: "username must be between 1 and 12 characters" });
+  }
+  if (!validator.isLength(password, { min: 8, max: 8 })) {
+    return res.status(400).json({ message: "password must be 8 characters" });
+  }
 
   try {
     // Cari user berdasarkan username
@@ -54,26 +79,65 @@ const doLogin = async (req, res) => {
 
     // Jika username dan password cocok, buat token JWT
     const token = await generateToken(user);
-    console.log(token);
 
     // Kirim token sebagai respons
     res.json({ message: "Login berhasil", token });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Terjadi kesalahan saat login" });
+    next(error);
   }
 };
 
-const doLogout = (req, res) => {
-  // Hapus token dari sisi klien
-  res.clearCookie("token");
+// do logout dengan implementasi blacklist token
+// const doLogout = async (req, res, next) => {
+//   try {
+//     const token = req.headers.authorization;
+//     if (!token) {
+//       return res.status(400).json({ message: "Token tidak ditemukan" });
+//     }
 
-  res.json({
-    message: "Anda baru saja logout",
-  });
+//     const blacklistToken = await BlacklistedToken.findOne({
+//       where: {
+//         token: token,
+//       },
+//     });
+
+//     // mengecek apakah data blacklist token ada
+//     if (blacklistToken) {
+//       return res.status(400).json({ message: "Token Sudah Expired" });
+//     }
+
+//     // Tambahkan token ke dalam blacklist
+//     await BlacklistedToken.create({
+//       token,
+//     });
+
+//     // Hapus token dari sisi klien
+//     res.clearCookie("token");
+
+//     res.json({
+//       message: "Anda baru saja logout",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+const doLogout = (req, res, next) => {
+  try {
+    // Hapus token dari sisi klien
+    res.clearCookie("token");
+
+    res.json({
+      message: "Berhasil mengakses do logout",
+      message: "Anda baru saja logout",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
+  generateToken,
   doLogin,
   doLogout,
 };

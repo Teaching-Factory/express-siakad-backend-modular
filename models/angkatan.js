@@ -22,6 +22,14 @@ module.exports = (sequelize, DataTypes) => {
       tahun: {
         type: DataTypes.STRING(4),
         allowNull: false,
+        validate: {
+          len: { args: [1, 4], msg: "tahun must be between 1 and 4 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("tahun must be a string");
+          }
+        },
       },
     },
     {

@@ -1,6 +1,6 @@
 const { TahunAjaran } = require("../../models");
 
-const getAllTahunAjaran = async (req, res) => {
+const getAllTahunAjaran = async (req, res, next) => {
   try {
     // Ambil semua data tahun_ajaran dari database
     const tahun_ajaran = await TahunAjaran.findAll();
@@ -16,10 +16,17 @@ const getAllTahunAjaran = async (req, res) => {
   }
 };
 
-const getTahunAjaranById = async (req, res) => {
+const getTahunAjaranById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const TahunAjaranId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!TahunAjaranId) {
+      return res.status(400).json({
+        message: "Tahun Ajaran ID is required",
+      });
+    }
 
     // Cari data tahun_ajaran berdasarkan ID di database
     const tahun_ajaran = await TahunAjaran.findByPk(TahunAjaranId);

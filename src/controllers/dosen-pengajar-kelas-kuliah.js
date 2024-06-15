@@ -1,4 +1,4 @@
-const { DosenPengajarKelasKuliah, PenugasanDosen, Dosen, KelasKuliah, Substansi, JenisEvaluasi, Prodi, Semester } = require("../../models");
+const { DosenPengajarKelasKuliah, PenugasanDosen, Dosen, KelasKuliah, Substansi, JenisEvaluasi, Prodi, Semester, MataKuliah } = require("../../models");
 
 const getAllDosenPengajarKelasKuliahByIdKelasKuliah = async (req, res, next) => {
   try {
@@ -6,11 +6,11 @@ const getAllDosenPengajarKelasKuliahByIdKelasKuliah = async (req, res, next) => 
     const kelasKuliahId = req.params.id_kelas_kuliah;
 
     // Ambil semua data dosen_pengajar_kelas_kuliahs dari database
-    const dosen_pengajar_kelas_kuliahs = await DosenPengajarKelasKuliah.findAll({
+    const dosen_pengajar_kelas_kuliahs = await DosenPengajarKelasKuliah.findOne({
       where: {
         id_kelas_kuliah: kelasKuliahId,
       },
-      include: [{ model: PenugasanDosen }, { model: Dosen }, { model: KelasKuliah }, { model: Substansi }, { model: JenisEvaluasi }, { model: Prodi }, { model: Semester }],
+      include: [{ model: PenugasanDosen }, { model: Dosen }, { model: KelasKuliah, include: [{ model: MataKuliah }] }, { model: Substansi }, { model: JenisEvaluasi }, { model: Prodi }, { model: Semester }],
     });
 
     // Kirim respons JSON jika berhasil

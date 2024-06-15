@@ -1,6 +1,6 @@
 const { AktivitasKuliahMahasiswa, Mahasiswa, Semester, Prodi, StatusMahasiswa } = require("../../models");
 
-const getAllAktivitasKuliahMahasiswa = async (req, res) => {
+const getAllAktivitasKuliahMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data aktivitas_kuliah_mahasiswa dari database
     const aktivitas_kuliah_mahasiswa = await AktivitasKuliahMahasiswa.findAll({
@@ -18,10 +18,17 @@ const getAllAktivitasKuliahMahasiswa = async (req, res) => {
   }
 };
 
-const getAktivitasKuliahMahasiswaById = async (req, res) => {
+const getAktivitasKuliahMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const AktivitasKuliahMahasiswaId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!AktivitasKuliahMahasiswaId) {
+      return res.status(400).json({
+        message: "Aktivitas Kuliah Mahasiswa ID is required",
+      });
+    }
 
     // Cari data aktivitas_kuliah_mahasiswa berdasarkan ID di database
     const aktivitas_kuliah_mahasiswa = await AktivitasKuliahMahasiswa.findByPk(AktivitasKuliahMahasiswaId, {
@@ -49,6 +56,13 @@ const getAktivitasKuliahMahasiswaByMahasiswaId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const mahasiswaId = req.params.id_registrasi_mahasiswa;
+
+    // Periksa apakah ID disediakan
+    if (!mahasiswaId) {
+      return res.status(400).json({
+        message: "Mahasiswa ID is required",
+      });
+    }
 
     // Cari data aktivitas_kuliah_mahasiswa berdasarkan ID di database
     const aktivitasKuliahMahasiswa = await AktivitasKuliahMahasiswa.findAll({

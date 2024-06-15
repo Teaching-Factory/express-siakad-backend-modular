@@ -1,6 +1,6 @@
 const { DetailNilaiPerkuliahanKelas, KelasKuliah, Mahasiswa } = require("../../models");
 
-const getAllDetailNilaiPerkuliahanKelas = async (req, res) => {
+const getAllDetailNilaiPerkuliahanKelas = async (req, res, next) => {
   try {
     // Ambil semua data detail_nilai_perkuliahan_kelas dari database
     const detail_nilai_perkuliahan_kelas = await DetailNilaiPerkuliahanKelas.findAll({
@@ -18,10 +18,17 @@ const getAllDetailNilaiPerkuliahanKelas = async (req, res) => {
   }
 };
 
-const getDetailNilaiPerkuliahanKelasById = async (req, res) => {
+const getDetailNilaiPerkuliahanKelasById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const DetailNilaiPerkuliahanKelasId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!DetailNilaiPerkuliahanKelasId) {
+      return res.status(400).json({
+        message: "Detail Nilai Perkuliahan Kelas ID is required",
+      });
+    }
 
     // Cari data detail_nilai_perkuliahan_kelas berdasarkan ID di database
     const detail_nilai_perkuliahan_kelas = await DetailNilaiPerkuliahanKelas.findByPk(DetailNilaiPerkuliahanKelasId, {

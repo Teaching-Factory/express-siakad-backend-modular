@@ -33,6 +33,13 @@ const getRiwayatPendidikanMahasiswaById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const RiwayatPendidikanMahasiswaId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!RiwayatPendidikanMahasiswaId) {
+      return res.status(400).json({
+        message: "Riwayat Pendidikan Mahasiswa ID is required",
+      });
+    }
+
     // Cari data riwayat_pendidikan_mahasiswa berdasarkan ID di database
     const riwayat_pendidikan_mahasiswa = await RiwayatPendidikanMahasiswa.findByPk(RiwayatPendidikanMahasiswaId, {
       include: [{ model: Mahasiswa }, { model: JenisPendaftaran }, { model: JalurMasuk }, { model: Semester }, { model: JenisKeluar }, { model: Prodi }, { model: Pembiayaan }, { model: BidangMinat }, { model: PerguruanTinggi }],

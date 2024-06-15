@@ -1,6 +1,6 @@
 const { MatkulKurikulum, Kurikulum, MataKuliah } = require("../../models");
 
-const getAllMatkulKurikulum = async (req, res) => {
+const getAllMatkulKurikulum = async (req, res, next) => {
   try {
     // Ambil semua data matkul_kurikulum dari database
     const matkul_kurikulum = await MatkulKurikulum.findAll({ include: [{ model: Kurikulum }, { model: MataKuliah }] });
@@ -16,10 +16,17 @@ const getAllMatkulKurikulum = async (req, res) => {
   }
 };
 
-const getMatkulKurikulumById = async (req, res) => {
+const getMatkulKurikulumById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const MatkulKurikulumId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!MatkulKurikulumId) {
+      return res.status(400).json({
+        message: "Matkul Kurikulum ID is required",
+      });
+    }
 
     // Cari data matkul_kurikulum berdasarkan ID di database
     const matkul_kurikulum = await MatkulKurikulum.findByPk(MatkulKurikulumId, {

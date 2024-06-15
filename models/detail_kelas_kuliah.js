@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel parent
       DetailKelasKuliah.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas_kuliah" });
+      DetailKelasKuliah.belongsTo(models.RuangPerkuliahan, { foreignKey: "id_ruang_perkuliahan" });
     }
   }
   DetailKelasKuliah.init(
@@ -23,6 +24,14 @@ module.exports = (sequelize, DataTypes) => {
       bahasan: {
         type: DataTypes.STRING(200),
         allowNull: true,
+        validate: {
+          len: { args: [1, 200], msg: "bahasan must be between 1 and 200 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("bahasan must be a string");
+          }
+        },
       },
       tanggal_mulai_efektif: {
         type: DataTypes.DATEONLY,
@@ -35,6 +44,20 @@ module.exports = (sequelize, DataTypes) => {
       kapasitas: {
         type: DataTypes.DECIMAL(5, 0),
         allowNull: true,
+        validate: {
+          isDecimal: {
+            args: true,
+            msg: "kapasitas must be a valid decimal number",
+          },
+          min: {
+            args: [0],
+            msg: "kapasitas must be greater than or equal to 0",
+          },
+          max: {
+            args: [99999],
+            msg: "kapasitas must be less than or equal to 99999",
+          },
+        },
       },
       tanggal_tutup_daftar: {
         type: DataTypes.DATE,
@@ -43,10 +66,26 @@ module.exports = (sequelize, DataTypes) => {
       prodi_penyelenggara: {
         type: DataTypes.STRING(100),
         allowNull: true,
+        validate: {
+          len: { args: [1, 200], msg: "prodi_penyelenggara must be between 1 and 200 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("prodi_penyelenggara must be a string");
+          }
+        },
       },
       perguruan_tinggi_penyelenggara: {
         type: DataTypes.STRING(100),
         allowNull: true,
+        validate: {
+          len: { args: [1, 100], msg: "perguruan_tinggi_penyelenggara must be between 1 and 100 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("perguruan_tinggi_penyelenggara must be a string");
+          }
+        },
       },
       // kolom tambahan
       hari: {
@@ -64,10 +103,24 @@ module.exports = (sequelize, DataTypes) => {
       id_kelas_kuliah: {
         type: DataTypes.STRING(36),
         allowNull: false,
+        validate: {
+          len: { args: [1, 36], msg: "id_kelas_kuliah must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_kelas_kuliah must be a string");
+          }
+        },
       },
       id_ruang_perkuliahan: {
         type: DataTypes.INTEGER(10),
         allowNull: true,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "id_ruang_perkuliahan must be an integer",
+          },
+        },
       },
     },
     {

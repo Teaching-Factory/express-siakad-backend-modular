@@ -1,6 +1,6 @@
 const { SubstansiKuliah, Substansi } = require("../../models");
 
-const getAllSubstansiKuliah = async (req, res) => {
+const getAllSubstansiKuliah = async (req, res, next) => {
   try {
     // Ambil semua data substansi_kuliah dari database
     const substansi_kuliah = await SubstansiKuliah.findAll({ include: [{ model: Substansi }] });
@@ -16,10 +16,17 @@ const getAllSubstansiKuliah = async (req, res) => {
   }
 };
 
-const getSubstansiKuliahById = async (req, res) => {
+const getSubstansiKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const SubstansiKuliahId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!SubstansiKuliahId) {
+      return res.status(400).json({
+        message: "Substansi Kuliah ID is required",
+      });
+    }
 
     // Cari data substansi_kuliah berdasarkan ID di database
     const substansi_kuliah = await SubstansiKuliah.findByPk(SubstansiKuliahId, {

@@ -22,6 +22,13 @@ const getTranskripMahasiswaById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const TranskripMahasiswaId = req.params.id;
 
+    // Periksa apakah ID disediakan
+    if (!TranskripMahasiswaId) {
+      return res.status(400).json({
+        message: "Transkrip Mahasiswa ID is required",
+      });
+    }
+
     // Cari data transkrip_mahasiswa berdasarkan ID di database
     const transkrip_mahasiswa = await TranskripMahasiswa.findByPk(TranskripMahasiswaId, {
       include: [{ model: Mahasiswa }, { model: MataKuliah }, { model: KelasKuliah }, { model: KonversiKampusMerdeka }],
