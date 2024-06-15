@@ -1,6 +1,6 @@
 const { UnsurPenilaian } = require("../../models");
 
-const getAllUnsurPenilaian = async (req, res) => {
+const getAllUnsurPenilaian = async (req, res, next) => {
   try {
     // Ambil semua data unsur_penilaian dari database
     const unsur_penilaian = await UnsurPenilaian.findAll();
@@ -16,10 +16,17 @@ const getAllUnsurPenilaian = async (req, res) => {
   }
 };
 
-const getUnsurPenilaianById = async (req, res) => {
+const getUnsurPenilaianById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const UnsurPenilaianId = req.params.id;
+
+    // Periksa apakah ID disediakan
+    if (!UnsurPenilaianId) {
+      return res.status(400).json({
+        message: "Unsur Penilaian ID is required",
+      });
+    }
 
     // Cari data unsur_penilaian berdasarkan ID di database
     const unsur_penilaian = await UnsurPenilaian.findByPk(UnsurPenilaianId);
@@ -42,8 +49,16 @@ const getUnsurPenilaianById = async (req, res) => {
 };
 
 const createUnsurPenilaian = async (req, res, next) => {
+  const { id_unsur, nama_unsur_penilaian } = req.body;
+
+  if (!id_unsur) {
+    return res.status(400).json({ message: "id_unsur is required" });
+  }
+  if (!nama_unsur_penilaian) {
+    return res.status(400).json({ message: "nama_unsur_penilaian is required" });
+  }
+
   try {
-    const { id_unsur, nama_unsur_penilaian } = req.body;
     // Gunakan metode create untuk membuat data unsur_penilaian baru
     const newUnsurPenilaian = await UnsurPenilaian.create({
       id_unsur,
@@ -62,12 +77,25 @@ const createUnsurPenilaian = async (req, res, next) => {
 };
 
 const updateUnsurPenilaianById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { id_unsur, nama_unsur_penilaian } = req.body;
+
+  if (!id_unsur) {
+    return res.status(400).json({ message: "id_unsur is required" });
+  }
+  if (!nama_unsur_penilaian) {
+    return res.status(400).json({ message: "nama_unsur_penilaian is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const unsurPenilaianId = req.params.id;
 
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { id_unsur, nama_unsur_penilaian } = req.body;
+    if (!unsurPenilaianId) {
+      return res.status(400).json({
+        message: "Unsur Penilaian ID is required",
+      });
+    }
 
     // Cari data unsur_penilaian berdasarkan ID di database
     let unsur_penilaian = await UnsurPenilaian.findByPk(unsurPenilaianId);
@@ -100,6 +128,12 @@ const deleteUnsurPenilaianById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const unsurPenilaianId = req.params.id;
+
+    if (!unsurPenilaianId) {
+      return res.status(400).json({
+        message: "Unsur Penilaian ID is required",
+      });
+    }
 
     // Cari data unsur_penilaian berdasarkan ID di database
     let unsur_penilaian = await UnsurPenilaian.findByPk(unsurPenilaianId);

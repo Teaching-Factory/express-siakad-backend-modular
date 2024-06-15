@@ -1,6 +1,6 @@
 const { BobotPenilaian, Prodi, UnsurPenilaian } = require("../../models");
 
-const getAllBobotPenilaian = async (req, res) => {
+const getAllBobotPenilaian = async (req, res, next) => {
   try {
     // Ambil semua data bobot_penilaian dari database
     const bobot_penilaian = await BobotPenilaian.findAll({ include: [{ model: Prodi }, { model: UnsurPenilaian }] });
@@ -16,10 +16,16 @@ const getAllBobotPenilaian = async (req, res) => {
   }
 };
 
-const getBobotPenilaianById = async (req, res) => {
+const getBobotPenilaianById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const BobotPenilaianId = req.params.id;
+
+    if (!BobotPenilaianId) {
+      return res.status(400).json({
+        message: "Bobot Penilaian ID is required",
+      });
+    }
 
     // Cari data bobot_penilaian berdasarkan ID di database
     const bobot_penilaian = await BobotPenilaian.findByPk(BobotPenilaianId, {
@@ -44,8 +50,19 @@ const getBobotPenilaianById = async (req, res) => {
 };
 
 const createBobotPenilaian = async (req, res, next) => {
+  const { bobot_penilaian, id_prodi, id_unsur_penilaian } = req.body;
+
+  if (!bobot_penilaian) {
+    return res.status(400).json({ message: "bobot_penilaian is required" });
+  }
+  if (!id_prodi) {
+    return res.status(400).json({ message: "id_prodi is required" });
+  }
+  if (!id_unsur_penilaian) {
+    return res.status(400).json({ message: "id_unsur_penilaian is required" });
+  }
+
   try {
-    const { bobot_penilaian, id_prodi, id_unsur_penilaian } = req.body;
     // Gunakan metode create untuk membuat data bobot_penilaian baru
     const newBobotPenilaian = await BobotPenilaian.create({
       bobot_penilaian,
@@ -64,12 +81,28 @@ const createBobotPenilaian = async (req, res, next) => {
 };
 
 const updateBobotPenilaianById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { bobot_penilaian, id_prodi, id_unsur_penilaian } = req.body;
+
+  if (!bobot_penilaian) {
+    return res.status(400).json({ message: "bobot_penilaian is required" });
+  }
+  if (!id_prodi) {
+    return res.status(400).json({ message: "id_prodi is required" });
+  }
+  if (!id_unsur_penilaian) {
+    return res.status(400).json({ message: "id_unsur_penilaian is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const bobotPenilaianId = req.params.id;
 
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { bobot_penilaian, id_prodi, id_unsur_penilaian } = req.body;
+    if (!bobotPenilaianId) {
+      return res.status(400).json({
+        message: "Bobot Penilaian ID is required",
+      });
+    }
 
     // Cari data bobotPenilaian berdasarkan ID di database
     let bobotPenilaian = await BobotPenilaian.findByPk(bobotPenilaianId);
@@ -103,6 +136,12 @@ const deleteBobotPenilaianById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const bobotPenilaianId = req.params.id;
+
+    if (!bobotPenilaianId) {
+      return res.status(400).json({
+        message: "Bobot Penilaian ID is required",
+      });
+    }
 
     // Cari data bobot_penilaian berdasarkan ID di database
     let bobot_penilaian = await BobotPenilaian.findByPk(bobotPenilaianId);

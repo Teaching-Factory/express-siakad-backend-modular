@@ -24,14 +24,34 @@ module.exports = (sequelize, DataTypes) => {
       bobot_penilaian: {
         type: DataTypes.INTEGER(4),
         allowNull: false,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "bobot_penilaian must be an integer",
+          },
+        },
       },
       id_prodi: {
         type: DataTypes.STRING(36),
         allowNull: false,
+        validate: {
+          len: { args: [1, 36], msg: "id_prodi must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_prodi must be a string");
+          }
+        },
       },
       id_unsur_penilaian: {
         type: DataTypes.INTEGER(10),
         allowNull: false,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "id_unsur_penilaian must be an integer",
+          },
+        },
       },
     },
     {
