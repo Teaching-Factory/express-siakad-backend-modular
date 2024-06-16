@@ -25,18 +25,46 @@ module.exports = (sequelize, DataTypes) => {
       penguji_ke: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "penguji_ke must be an integer",
+          },
+        },
       },
       id_aktivitas: {
         type: DataTypes.STRING(36),
         allowNull: false,
+        validate: {
+          len: { args: [1, 36], msg: "id_aktivitas must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_aktivitas must be a string");
+          }
+        },
       },
       id_kategori_kegiatan: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "id_kategori_kegiatan must be an integer",
+          },
+        },
       },
       id_dosen: {
         type: DataTypes.STRING(36),
         allowNull: false,
+        validate: {
+          len: { args: [1, 36], msg: "id_dosen must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_dosen must be a string");
+          }
+        },
       },
     },
     {

@@ -1,4 +1,4 @@
-const { PelimpahanMataKuliah, PenugasanDosen, Dosen, MataKuliah, KelasKuliah } = require("../../models");
+const { PelimpahanMataKuliah, Dosen, MataKuliah, KelasKuliah } = require("../../models");
 
 const getAllPelimpahanMataKuliah = async (req, res, next) => {
   try {
@@ -22,6 +22,12 @@ const getPelimpahanMataKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const pelimpahanMataKuliahId = req.params.id;
+
+    if (!pelimpahanMataKuliahId) {
+      return res.status(400).json({
+        message: "Pelimpahan Mata Kuliah ID is required",
+      });
+    }
 
     // Cari data pelimpahan_mata_kuliah berdasarkan ID di database
     const pelimpahan_mata_kuliah = await PelimpahanMataKuliah.findByPk(pelimpahanMataKuliahId, {
@@ -48,16 +54,27 @@ const getPelimpahanMataKuliahById = async (req, res, next) => {
 const createPelimpahanMataKuliah = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
-    const penugasanDosenId = req.params.id_registrasi_dosen;
+    const dosenId = req.params.id_dosen;
     const kelasKuliahId = req.params.id_kelas_kuliah;
 
+    if (!dosenId) {
+      return res.status(400).json({
+        message: "Dosen ID is required",
+      });
+    }
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
+
     // get data penugasan dosen dan kelas kuliah
-    const penugasan_dosen = await PenugasanDosen.findByPk(penugasanDosenId);
+    const dosen = await Dosen.findByPk(dosenId);
     const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
 
     // Gunakan metode create untuk membuat data pelimpahan mata kuliah baru
     const newPelimpahanMataKuliah = await PelimpahanMataKuliah.create({
-      id_dosen: penugasan_dosen.id_dosen,
+      id_dosen: dosen.id_dosen,
       id_matkul: kelas_kuliah.id_matkul,
     });
 
