@@ -51,14 +51,14 @@ const getStatusMahasiswaById = async (req, res, next) => {
 
 const getProdiWithCountMahasiswaBelumSetSK = async (req, res, next) => {
   try {
-    // Ambil data semua prodi beserta jumlah mahasiswa yang memiliki nama_status_mahasiswa null
+    // Ambil data semua prodi beserta jumlah mahasiswa yang memiliki nama_status_mahasiswa Non-Aktif
     const prodiData = await Prodi.findAll({
       include: {
         model: Periode,
         include: {
           model: Mahasiswa,
           where: {
-            nama_status_mahasiswa: null,
+            nama_status_mahasiswa: "Non-Aktif",
           },
           required: false,
         },
@@ -126,7 +126,7 @@ const getPeriodeByProdiIdWithCountMahasiswa = async (req, res, next) => {
           acc[periodePelaporan] = { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
         }
         acc[periodePelaporan].jumlahMahasiswa += 1;
-        if (mahasiswa.nama_status_mahasiswa === null) {
+        if (mahasiswa.nama_status_mahasiswa === "Non-Aktif") {
           acc[periodePelaporan].jumlahMahasiswaBelumSetSK += 1;
         }
       }
@@ -246,54 +246,64 @@ const setStatusNonAktif = async (req, res, next) => {
   }
 };
 
-const updateAllStatusMahasiswaNonaktifByProdiId = async (req, res, next) => {
+const updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId = async (req, res, next) => {
   try {
     // Dapatkan ID prodi dari parameter permintaan
     const prodiId = req.params.id_prodi;
+    const angkatanId = req.params.id_angkatan;
 
-    // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
-    const periodeIds = await Periode.findAll({
-      where: { id_prodi: prodiId },
-      attributes: ["id_periode"], // Ambil hanya kolom id_periode
-    });
-
-    // Ekstrak id periode dari hasil pencarian
-    const periodeIdList = periodeIds.map((periode) => periode.id_periode);
-
-    // Jika tidak ada periode yang ditemukan, kirim respons 404
-    if (periodeIdList.length === 0) {
-      return res.status(404).json({
-        message: `Tidak ada periode dengan id_prodi ${prodiId}`,
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
       });
     }
 
+    const angkatan = await Angkatan.findByPk(angkatanId);
+
     // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
     const mahasiswas = await Mahasiswa.findAll({
+      include: [
+        {
+          model: Periode,
+          where: {
+            id_prodi: prodiId,
+          },
+        },
+      ],
       where: {
-        id_periode: periodeIdList,
+        // Gunakan Sequelize literal untuk melakukan substring pada kolom nama_periode_masuk
+        [Sequelize.Op.and]: [Sequelize.where(Sequelize.literal(`substring(nama_periode_masuk, 1, 4)`), angkatan.tahun.toString())],
       },
     });
 
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
     if (!mahasiswas || mahasiswas.length === 0) {
       return res.status(404).json({
-        message: `Mahasiswa dengan prodi ID ${prodiId} tidak ditemukan`,
+        message: `Mahasiswa dengan prodi ID ${prodiId} dan Angkatan ID ${angkatanId} tidak ditemukan`,
       });
     }
 
-    // Update status mahasiswa menjadi "nonaktif"
+    // Ambil ID dari data mahasiswa yang ditemukan
+    const mahasiswaIds = mahasiswas.map((mahasiswa) => mahasiswa.id_registrasi_mahasiswa);
+
+    // Update status mahasiswa menjadi "Non-Aktif"
     const [updatedCount] = await Mahasiswa.update(
       { nama_status_mahasiswa: "Non-Aktif" },
       {
         where: {
-          id_periode: periodeIdList,
+          id_registrasi_mahasiswa: mahasiswaIds,
         },
       }
     );
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: `UPDATE Status Mahasiswa Nonaktif By Prodi ID ${prodiId} Success`,
+      message: `UPDATE Status Mahasiswa Nonaktif By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
       jumlahData: updatedCount,
     });
   } catch (error) {
@@ -309,5 +319,5 @@ module.exports = {
   setStatusAktif,
   setStatusCuti,
   setStatusNonAktif,
-  updateAllStatusMahasiswaNonaktifByProdiId,
+  updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId,
 };
