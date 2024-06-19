@@ -12,5 +12,6 @@ router.get("/:id/get", checkRole(["admin", "admin-prodi"]), BobotPenilaianContro
 router.post("/create", checkRole(["admin", "admin-prodi"]), BobotPenilaianController.createBobotPenilaian);
 router.put("/:id/update", checkRole(["admin", "admin-prodi"]), BobotPenilaianController.updateBobotPenilaianById);
 router.delete("/:id/delete", checkRole(["admin", "admin-prodi"]), BobotPenilaianController.deleteBobotPenilaianById);
+router.get("/prodi/:id_prodi/get", checkRole(["admin", "admin-prodi"]), BobotPenilaianController.getBobotPenilaianByProdiId);
 
 module.exports = router;

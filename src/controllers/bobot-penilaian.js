@@ -165,10 +165,48 @@ const deleteBobotPenilaianById = async (req, res, next) => {
   }
 };
 
+const getBobotPenilaianByProdiId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+
+    // Cari data bobot_penilaian berdasarkan Prodi ID
+    const bobot_penilaian = await BobotPenilaian.findAll({
+      where: {
+        id_prodi: prodiId,
+      },
+      include: [{ model: Prodi }, { model: UnsurPenilaian }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!bobot_penilaian) {
+      return res.status(404).json({
+        message: `<===== Bobot Penilaian With Prodi ID ${prodiId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Bobot Penilaian By Prodi ID ${prodiId} Success:`,
+      dataJumlah: bobot_penilaian.length,
+      data: bobot_penilaian,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllBobotPenilaian,
   getBobotPenilaianById,
   createBobotPenilaian,
   updateBobotPenilaianById,
   deleteBobotPenilaianById,
+  getBobotPenilaianByProdiId,
 };
