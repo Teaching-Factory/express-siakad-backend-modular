@@ -1,6 +1,6 @@
-const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize, MataKuliah, BiodataMahasiswa, PerguruanTinggi, Agama } = require("../../models");
+const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize, MataKuliah, BiodataMahasiswa, PerguruanTinggi, Agama, PesertaKelasKuliah } = require("../../models");
 
-const getAllKRSMahasiswa = async (req, res) => {
+const getAllKRSMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data krs_mahasiswa dari database
     const krs_mahasiswa = await KRSMahasiswa.findAll({ include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }] });
@@ -16,10 +16,16 @@ const getAllKRSMahasiswa = async (req, res) => {
   }
 };
 
-const getKRSMahasiswaById = async (req, res) => {
+const getKRSMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const KRSMahasiswaId = req.params.id;
+
+    if (!KRSMahasiswaId) {
+      return res.status(400).json({
+        message: "KRS Mahasiswa ID is required",
+      });
+    }
 
     // Cari data krs_mahasiswa berdasarkan ID di database
     const krs_mahasiswa = await KRSMahasiswa.findByPk(KRSMahasiswaId, {
@@ -45,6 +51,15 @@ const getKRSMahasiswaById = async (req, res) => {
 
 const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
   try {
+    // Dapatkan ID dari parameter permintaan
+    const idRegistrasiMahasiswa = req.params.id_registrasi_mahasiswa;
+
+    if (!idRegistrasiMahasiswa) {
+      return res.status(400).json({
+        message: "ID Registrasi Mahasiswa is required",
+      });
+    }
+
     // Mengambil data tahun ajaran yang kolom a_periode bernilai = 1
     const tahunAjaran = await TahunAjaran.findOne({
       where: {
@@ -58,9 +73,6 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
         message: "Tahun Ajaran with a_periode 1 not found",
       });
     }
-
-    // Dapatkan ID dari parameter permintaan
-    const idRegistrasiMahasiswa = req.params.id_registrasi_mahasiswa;
 
     // Cari data krs_mahasiswa berdasarkan id_registrasi_mahasiswa dan id_tahun_ajaran di database
     const krsMahasiswa = await KRSMahasiswa.findAll({
@@ -148,6 +160,12 @@ const GetKRSMahasiswaByMahasiswaPeriode = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const mahasiswaId = req.params.id_registrasi_mahasiswa;
 
+    if (!mahasiswaId) {
+      return res.status(400).json({
+        message: "ID Registrasi Mahasiswa is required",
+      });
+    }
+
     // Ambil tahun ajaran yang sesuai dengan kondisi
     const tahunAjaran = await TahunAjaran.findOne({
       where: {
@@ -194,6 +212,12 @@ const deleteKRSMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const krsMahasiswaId = req.params.id;
+
+    if (!krsMahasiswaId) {
+      return res.status(400).json({
+        message: "KRS Mahasiswa ID is required",
+      });
+    }
 
     // Cari data krs_mahasiswa berdasarkan ID di database
     let krs_mahasiswa = await KRSMahasiswa.findByPk(krsMahasiswaId);
@@ -262,10 +286,35 @@ const ValidasiKRSMahasiswa = async (req, res, next) => {
       krs_mahasiswas = krs_mahasiswas.concat(krs_mahasiswa);
     }
 
-    // Lakukan iterasi melalui setiap objek KRS mahasiswa yang sudah diambil
+    //  Lakukan iterasi melalui setiap objek KRS mahasiswa yang sudah diambil
     for (const krs_mahasiswa of krs_mahasiswas) {
-      // Ubah nilai validasi_krs menjadi true
-      await krs_mahasiswa.update({ validasi_krs: true });
+      // pengecekan jumlah mahasiswa peserta kelas kuliah pada kelas kuliah
+      let kelas_kuliah = await KelasKuliah.findOne({
+        where: {
+          id_kelas_kuliah: krs_mahasiswa.id_kelas,
+        },
+      });
+
+      // Pastikan kelas_kuliah ditemukan sebelum melanjutkan
+      if (!kelas_kuliah) {
+        continue;
+      }
+
+      let jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
+        where: { id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah },
+      });
+
+      if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
+        // Ubah nilai validasi_krs menjadi true
+        await krs_mahasiswa.update({ validasi_krs: true });
+
+        // proses penambahan data peserta kelas kuliah dari data krs milik mahasiswa
+        await PesertaKelasKuliah.create({
+          angkatan: tahunAwal,
+          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+          id_kelas_kuliah: krs_mahasiswa.id_kelas,
+        });
+      }
     }
 
     // Kirim respons JSON jika berhasil
@@ -574,6 +623,12 @@ const createKRSMahasiswa = async (req, res, next) => {
     // Dapatkan id_registrasi_mahasiswa dari parameter URL
     const id_registrasi_mahasiswa = req.params.id_registrasi_mahasiswa;
 
+    if (!id_registrasi_mahasiswa) {
+      return res.status(400).json({
+        message: "ID Registrasi Mahasiswa is required",
+      });
+    }
+
     // Dapatkan data kelas_kuliahs dari request body
     const { kelas_kuliahs } = req.body;
 
@@ -645,21 +700,27 @@ const createKRSMahasiswa = async (req, res, next) => {
       // Mengambil data kelas kuliah berdasarkan id_kelas
       const kelas_kuliah = await KelasKuliah.findOne({
         where: {
-          id_kelas_kuliah: kelas.id_kelas,
+          id_kelas_kuliah: kelas.id_kelas_kuliah,
         },
       });
 
       // Jika kelas kuliah ditemukan, tambahkan ke krsEntries
       if (kelas_kuliah) {
-        krsEntries.push({
-          angkatan: tahunAjaran.id_tahun_ajaran,
-          validasi_krs: false,
-          id_registrasi_mahasiswa,
-          id_periode: periode.id_periode,
-          id_prodi: prodi.id_prodi,
-          id_matkul: kelas_kuliah.id_matkul,
-          id_kelas: kelas_kuliah.id_kelas,
+        const jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
+          where: { id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah },
         });
+
+        if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
+          krsEntries.push({
+            angkatan: tahunAjaran.id_tahun_ajaran,
+            validasi_krs: false,
+            id_registrasi_mahasiswa,
+            id_periode: periode.id_periode,
+            id_prodi: prodi.id_prodi,
+            id_matkul: kelas_kuliah.id_matkul,
+            id_kelas: kelas_kuliah.id_kelas_kuliah,
+          });
+        }
       }
     }
 
