@@ -41,7 +41,7 @@ describe("getDetailKelasKuliahById", () => {
     await getDetailKelasKuliahById(req, res, next);
 
     expect(DetailKelasKuliah.findByPk).toHaveBeenCalledWith(detailKelasKuliahId, {
-      include: [{ model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: RuangPerkuliahan }] }],
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -63,7 +63,7 @@ describe("getDetailKelasKuliahById", () => {
     await getDetailKelasKuliahById(req, res, next);
 
     expect(DetailKelasKuliah.findByPk).toHaveBeenCalledWith(detailKelasKuliahId, {
-      include: [{ model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: RuangPerkuliahan }] }],
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({

@@ -3,7 +3,9 @@ const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkul
 const getAllDetailKelasKuliah = async (req, res, next) => {
   try {
     // Ambil semua data detail_kelas_kuliah dari database
-    const detail_kelas_kuliah = await DetailKelasKuliah.findAll({ include: [{ model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: RuangPerkuliahan }] }] });
+    const detail_kelas_kuliah = await DetailKelasKuliah.findAll({
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+    });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -30,7 +32,7 @@ const getDetailKelasKuliahById = async (req, res, next) => {
 
     // Cari data detail_kelas_kuliah berdasarkan ID di database
     const detail_kelas_kuliah = await DetailKelasKuliah.findByPk(DetailKelasKuliahId, {
-      include: [{ model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: RuangPerkuliahan }] }],
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404

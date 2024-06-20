@@ -58,7 +58,7 @@ const getProdiWithCountMahasiswaBelumSetSK = async (req, res, next) => {
         include: {
           model: Mahasiswa,
           where: {
-            nama_status_mahasiswa: "Non-Aktif",
+            nama_status_mahasiswa: "Aktif",
           },
           required: false,
         },
@@ -126,7 +126,7 @@ const getPeriodeByProdiIdWithCountMahasiswa = async (req, res, next) => {
           acc[periodePelaporan] = { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
         }
         acc[periodePelaporan].jumlahMahasiswa += 1;
-        if (mahasiswa.nama_status_mahasiswa === "Non-Aktif") {
+        if (mahasiswa.nama_status_mahasiswa === "Aktif") {
           acc[periodePelaporan].jumlahMahasiswaBelumSetSK += 1;
         }
       }

@@ -1,4 +1,4 @@
-const { AnggotaAktivitasMahasiswa, AktivitasMahasiswa, Mahasiswa, Periode, Prodi, Semester, JenisAktivitas } = require("../../models");
+const { AnggotaAktivitasMahasiswa, AktivitasMahasiswa, Mahasiswa, Periode, Prodi, Semester, JenisAktivitasMahasiswa } = require("../../models");
 
 const getAllAnggotaAktivitasMahasiswa = async (req, res, next) => {
   try {
@@ -123,10 +123,8 @@ const getAnggotaAktivitasMahasiswaBySemesterProdiAndJenisAktivitasId = async (re
             id_jenis_aktivitas: jenisAktivitasId,
           },
         },
-      ],
-      include: [
-        { model: AktivitasMahasiswa, include: [{ model: Prodi }, { model: Semester }, { model: JenisAktivitas }] },
         { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] },
+        { model: AktivitasMahasiswa, include: [{ model: Prodi }, { model: Semester }, { model: JenisAktivitasMahasiswa }] },
       ],
     });
 
