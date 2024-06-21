@@ -22,10 +22,26 @@ module.exports = (sequelize, DataTypes) => {
       judul_berita: {
         type: DataTypes.STRING(100),
         allowNull: false,
+        validate: {
+          len: { args: [1, 100], msg: "judul_berita must be between 1 and 100 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("judul_berita must be a string");
+          }
+        },
       },
       deskripsi_pendek: {
         type: DataTypes.STRING(100),
         allowNull: false,
+        validate: {
+          len: { args: [1, 100], msg: "deskripsi_pendek must be between 1 and 100 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("deskripsi_pendek must be a string");
+          }
+        },
       },
       kategori_berita: {
         type: DataTypes.ENUM(["Info", "Pengumuman"]),
@@ -39,6 +55,14 @@ module.exports = (sequelize, DataTypes) => {
       thumbnail: {
         type: DataTypes.STRING(255),
         allowNull: true,
+        validate: {
+          len: { args: [1, 255], msg: "thumbnail must be between 1 and 255 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("thumbnail must be a string");
+          }
+        },
       },
       konten_berita: {
         type: DataTypes.TEXT,

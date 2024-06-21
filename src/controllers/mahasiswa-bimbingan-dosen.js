@@ -5,6 +5,12 @@ const getMahasiswaBimbinganDosenByAktivitasId = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const aktivitasId = req.params.id_aktivitas;
 
+    if (!aktivitasId) {
+      return res.status(400).json({
+        message: "Aktivitas Mahasiswa ID is required",
+      });
+    }
+
     // Cari data mahasiswa_bimbingan_dosen berdasarkan ID di database
     const mahasiswa_bimbingan_dosen = await MahasiswaBimbinganDosen.findAll({
       where: {
@@ -32,11 +38,27 @@ const getMahasiswaBimbinganDosenByAktivitasId = async (req, res, next) => {
 };
 
 const createMahasiswaBimbinganDosen = async (req, res, next) => {
+  const { pembimbing_ke, id_kategori_kegiatan, id_dosen } = req.body;
+
+  if (!pembimbing_ke) {
+    return res.status(400).json({ message: "pembimbing_ke is required" });
+  }
+  if (!id_kategori_kegiatan) {
+    return res.status(400).json({ message: "id_kategori_kegiatan is required" });
+  }
+  if (!id_dosen) {
+    return res.status(400).json({ message: "id_dosen is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const aktivitasId = req.params.id_aktivitas;
 
-    const { pembimbing_ke, id_kategori_kegiatan, id_dosen } = req.body;
+    if (!aktivitasId) {
+      return res.status(400).json({
+        message: "Aktivitas Mahasiswa ID is required",
+      });
+    }
 
     // Gunakan metode create untuk membuat data MahasiswaBimbinganDosen baru
     const newMahasiswaBimbinganDosen = await MahasiswaBimbinganDosen.create({
@@ -60,6 +82,12 @@ const deleteMahasiswaBimbinganDosenById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const MahasiswaBimbinganDosenId = req.params.id;
+
+    if (!MahasiswaBimbinganDosenId) {
+      return res.status(400).json({
+        message: "Mahasiswa Bimbingan Dosen ID is required",
+      });
+    }
 
     // Cari data mahasiswa_bimbingan_dosen berdasarkan ID di database
     let mahasiswa_bimbingan_dosen = await MahasiswaBimbinganDosen.findByPk(MahasiswaBimbinganDosenId);

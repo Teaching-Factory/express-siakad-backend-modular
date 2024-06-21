@@ -5,6 +5,12 @@ const getAllDosenPengajarKelasKuliahByIdKelasKuliah = async (req, res, next) => 
     // Dapatkan ID dari parameter permintaan
     const kelasKuliahId = req.params.id_kelas_kuliah;
 
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
+
     // Ambil semua data dosen_pengajar_kelas_kuliahs dari database
     const dosen_pengajar_kelas_kuliahs = await DosenPengajarKelasKuliah.findOne({
       where: {
@@ -25,12 +31,28 @@ const getAllDosenPengajarKelasKuliahByIdKelasKuliah = async (req, res, next) => 
 };
 
 const createDosenPengajarKelasKuliah = async (req, res, next) => {
+  // mendapatkan data dari request body
+  const { sks, rencana_pertemuan, id_registrasi_dosen } = req.body;
+
+  if (!sks) {
+    return res.status(400).json({ message: "sks is required" });
+  }
+  if (!rencana_pertemuan) {
+    return res.status(400).json({ message: "rencana_pertemuan is required" });
+  }
+  if (!id_registrasi_dosen) {
+    return res.status(400).json({ message: "id_registrasi_dosen is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const kelasKuliahId = req.params.id_kelas_kuliah;
 
-    // mendapatkan data dari request body
-    const { sks, rencana_pertemuan, id_registrasi_dosen } = req.body;
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
 
     // get data penugasan dosen
     const penugasan_dosen = await PenugasanDosen.findOne({
@@ -67,12 +89,28 @@ const createDosenPengajarKelasKuliah = async (req, res, next) => {
 };
 
 const updateDosenPengajarKelasKuliahById = async (req, res, next) => {
+  // mendapatkan data dari request body
+  const { sks, rencana_pertemuan, id_registrasi_dosen } = req.body;
+
+  if (!sks) {
+    return res.status(400).json({ message: "sks is required" });
+  }
+  if (!rencana_pertemuan) {
+    return res.status(400).json({ message: "rencana_pertemuan is required" });
+  }
+  if (!id_registrasi_dosen) {
+    return res.status(400).json({ message: "id_registrasi_dosen is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const dosenPengajarKelasKuliahId = req.params.id;
 
-    // mendapatkan data dari request body
-    const { sks, rencana_pertemuan, id_registrasi_dosen } = req.body;
+    if (!dosenPengajarKelasKuliahId) {
+      return res.status(400).json({
+        message: "Dosen Pengajar Kelas Kuliah ID is required",
+      });
+    }
 
     // get data penugasan dosen
     const penugasan_dosen = await PenugasanDosen.findOne({
@@ -116,6 +154,12 @@ const deleteDosenPengajarKelasKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const dosenPengajarKelasKuliahId = req.params.id;
+
+    if (!dosenPengajarKelasKuliahId) {
+      return res.status(400).json({
+        message: "Dosen Pengajar Kelas Kuliah ID is required",
+      });
+    }
 
     // Cari data dosen_pengajar_kelas_kuliah berdasarkan ID di database
     let dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findByPk(dosenPengajarKelasKuliahId);

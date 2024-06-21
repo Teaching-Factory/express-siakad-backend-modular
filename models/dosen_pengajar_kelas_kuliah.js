@@ -29,30 +29,104 @@ module.exports = (sequelize, DataTypes) => {
       sks_substansi_total: {
         type: DataTypes.DECIMAL(5, 2),
         allowNull: false,
+        validate: {
+          isDecimal: {
+            args: true,
+            msg: "sks_substansi_total must be a valid decimal number",
+          },
+          min: {
+            args: [0],
+            msg: "sks_substansi_total must be greater than or equal to 0",
+          },
+          max: {
+            args: [999.99],
+            msg: "sks_substansi_total must be less than or equal to 999.99",
+          },
+        },
       },
       rencana_minggu_pertemuan: {
         type: DataTypes.DECIMAL(2, 0),
         allowNull: false,
+        validate: {
+          isDecimal: {
+            args: true,
+            msg: "rencana_minggu_pertemuan must be a valid decimal number",
+          },
+          min: {
+            args: [0],
+            msg: "rencana_minggu_pertemuan must be greater than or equal to 0",
+          },
+          max: {
+            args: [99],
+            msg: "rencana_minggu_pertemuan must be less than or equal to 99",
+          },
+        },
       },
       realisasi_minggu_pertemuan: {
         type: DataTypes.DECIMAL(2, 0),
         allowNull: true,
+        validate: {
+          isDecimal: {
+            args: true,
+            msg: "realisasi_minggu_pertemuan must be a valid decimal number",
+          },
+          min: {
+            args: [0],
+            msg: "realisasi_minggu_pertemuan must be greater than or equal to 0",
+          },
+          max: {
+            args: [99],
+            msg: "realisasi_minggu_pertemuan must be less than or equal to 99",
+          },
+        },
       },
       id_registrasi_dosen: {
         type: DataTypes.STRING(36),
         allowNull: true,
+        validate: {
+          len: { args: [1, 36], msg: "id_registrasi_dosen must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_registrasi_dosen must be a string");
+          }
+        },
       },
       id_dosen: {
         type: DataTypes.STRING(36),
         allowNull: true,
+        validate: {
+          len: { args: [1, 36], msg: "id_dosen must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_dosen must be a string");
+          }
+        },
       },
       id_kelas_kuliah: {
         type: DataTypes.STRING(36),
         allowNull: true,
+        validate: {
+          len: { args: [1, 36], msg: "id_kelas_kuliah must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_kelas_kuliah must be a string");
+          }
+        },
       },
       id_substansi: {
         type: DataTypes.STRING(36),
         allowNull: true,
+        validate: {
+          len: { args: [1, 36], msg: "id_substansi must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_substansi must be a string");
+          }
+        },
       },
       id_jenis_evaluasi: {
         type: DataTypes.SMALLINT,
@@ -60,10 +134,21 @@ module.exports = (sequelize, DataTypes) => {
       id_prodi: {
         type: DataTypes.STRING(36),
         allowNull: false,
+        validate: {
+          len: { args: [1, 36], msg: "id_prodi must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_prodi must be a string");
+          }
+        },
       },
       id_semester: {
         type: DataTypes.CHAR(5),
         allowNull: false,
+        validate: {
+          len: { args: [1, 5], msg: "mode must be between 1 and 5 characters" },
+        },
       },
     },
     {

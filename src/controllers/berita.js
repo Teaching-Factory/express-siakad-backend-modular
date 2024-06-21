@@ -23,6 +23,12 @@ const getBeritaById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const beritaId = req.params.id;
 
+    if (!beritaId) {
+      return res.status(400).json({
+        message: "Berita ID is required",
+      });
+    }
+
     // Cari data berita berdasarkan ID di database
     const berita = await Berita.findByPk(beritaId);
 
@@ -44,10 +50,26 @@ const getBeritaById = async (req, res, next) => {
 };
 
 const createBerita = async (req, res, next) => {
-  try {
-    // Destrukturisasi data dari request body
-    const { judul_berita, deskripsi_pendek, kategori_berita, share_public, konten_berita } = req.body;
+  // Destrukturisasi data dari request body
+  const { judul_berita, deskripsi_pendek, kategori_berita, share_public, konten_berita } = req.body;
 
+  if (!judul_berita) {
+    return res.status(400).json({ message: "judul_berita is required" });
+  }
+  if (!deskripsi_pendek) {
+    return res.status(400).json({ message: "deskripsi_pendek is required" });
+  }
+  if (!kategori_berita) {
+    return res.status(400).json({ message: "kategori_berita is required" });
+  }
+  if (!share_public) {
+    return res.status(400).json({ message: "share_public is required" });
+  }
+  if (!konten_berita) {
+    return res.status(400).json({ message: "konten_berita is required" });
+  }
+
+  try {
     // Deklarasi variabel thumbnail
     let thumbnail = null;
 
@@ -77,12 +99,34 @@ const createBerita = async (req, res, next) => {
 };
 
 const updateBeritaById = async (req, res, next) => {
+  // Ambil data untuk update dari form-data
+  const { judul_berita, deskripsi_pendek, kategori_berita, share_public, konten_berita } = req.body;
+
+  if (!judul_berita) {
+    return res.status(400).json({ message: "judul_berita is required" });
+  }
+  if (!deskripsi_pendek) {
+    return res.status(400).json({ message: "deskripsi_pendek is required" });
+  }
+  if (!kategori_berita) {
+    return res.status(400).json({ message: "kategori_berita is required" });
+  }
+  if (!share_public) {
+    return res.status(400).json({ message: "share_public is required" });
+  }
+  if (!konten_berita) {
+    return res.status(400).json({ message: "konten_berita is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const beritaId = req.params.id;
 
-    // Ambil data untuk update dari form-data
-    const { judul_berita, deskripsi_pendek, kategori_berita, share_public, konten_berita } = req.body;
+    if (!beritaId) {
+      return res.status(400).json({
+        message: "Berita ID is required",
+      });
+    }
 
     // Temukan berita yang akan diperbarui berdasarkan ID
     const berita = await Berita.findByPk(beritaId);
@@ -131,6 +175,12 @@ const deleteBeritaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const beritaId = req.params.id;
+
+    if (!beritaId) {
+      return res.status(400).json({
+        message: "Berita ID is required",
+      });
+    }
 
     // Cari data berita berdasarkan ID di database
     let berita = await Berita.findByPk(beritaId);

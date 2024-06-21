@@ -21,6 +21,12 @@ const getRuangPerkuliahanById = async (req, res, next) => {
     // Dapatkan ID dari parameter permintaan
     const ruangPerkuliahanId = req.params.id;
 
+    if (!ruangPerkuliahanId) {
+      return res.status(400).json({
+        message: "Ruang Perkuliahan ID is required",
+      });
+    }
+
     // Cari data ruang_perkuliahan berdasarkan ID di database
     const ruang_perkuliahan = await RuangPerkuliahan.findByPk(ruangPerkuliahanId);
 
@@ -42,9 +48,19 @@ const getRuangPerkuliahanById = async (req, res, next) => {
 };
 
 const createRuangPerkuliahan = async (req, res, next) => {
-  try {
-    const { id_ruang, nama_ruang_perkuliahan, lokasi } = req.body;
+  const { id_ruang, nama_ruang_perkuliahan, lokasi } = req.body;
 
+  if (!id_ruang) {
+    return res.status(400).json({ message: "id_ruang is required" });
+  }
+  if (!nama_ruang_perkuliahan) {
+    return res.status(400).json({ message: "nama_ruang_perkuliahan is required" });
+  }
+  if (!lokasi) {
+    return res.status(400).json({ message: "lokasi is required" });
+  }
+
+  try {
     // Gunakan metode create untuk membuat data ruang perkuliahan baru
     const newRuangPerkuliahan = await RuangPerkuliahan.create({ id_ruang, nama_ruang_perkuliahan, lokasi });
 
@@ -59,12 +75,28 @@ const createRuangPerkuliahan = async (req, res, next) => {
 };
 
 const updateRuangPerkuliahanById = async (req, res, next) => {
+  // Dapatkan data yang akan diupdate dari body permintaan
+  const { id_ruang, nama_ruang_perkuliahan, lokasi } = req.body;
+
+  if (!id_ruang) {
+    return res.status(400).json({ message: "id_ruang is required" });
+  }
+  if (!nama_ruang_perkuliahan) {
+    return res.status(400).json({ message: "nama_ruang_perkuliahan is required" });
+  }
+  if (!lokasi) {
+    return res.status(400).json({ message: "lokasi is required" });
+  }
+
   try {
     // Dapatkan ID dari parameter permintaan
     const ruangPerkuliahanId = req.params.id;
 
-    // Dapatkan data yang akan diupdate dari body permintaan
-    const { id_ruang, nama_ruang_perkuliahan, lokasi } = req.body;
+    if (!ruangPerkuliahanId) {
+      return res.status(400).json({
+        message: "Ruang Perkuliahan ID is required",
+      });
+    }
 
     // Cari data ruang_perkuliahan berdasarkan ID di database
     let ruang_perkuliahan = await RuangPerkuliahan.findByPk(ruangPerkuliahanId);
@@ -98,6 +130,12 @@ const deleteRuangPerkuliahanById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const ruangPerkuliahanId = req.params.id;
+
+    if (!ruangPerkuliahanId) {
+      return res.status(400).json({
+        message: "Ruang Perkuliahan ID is required",
+      });
+    }
 
     // Cari data ruang_perkuliahan berdasarkan ID di database
     let ruang_perkuliahan = await RuangPerkuliahan.findByPk(ruangPerkuliahanId);

@@ -1,4 +1,4 @@
-const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, Periode, PesertaKelasKuliah } = require("../../models");
 
 const getAllKelasKuliah = async (req, res, next) => {
   try {
@@ -384,6 +384,76 @@ const getAllKelasKuliahByProdiId = async (req, res, next) => {
   }
 };
 
+const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: user.username,
+      },
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({
+        message: "Mahasiswa not found",
+      });
+    }
+
+    const periode = await Periode.findOne({
+      where: {
+        id_periode: mahasiswa.id_periode,
+      },
+    });
+
+    if (!periode) {
+      return res.status(404).json({
+        message: "Periode not found",
+      });
+    }
+
+    // Ambil semua data kelas_kuliah dari database
+    const kelas_kuliah = await KelasKuliah.findAll({
+      where: {
+        id_prodi: periode.id_prodi,
+      },
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
+    });
+
+    // Periksa apakah data kelas_kuliah ditemukan
+    if (kelas_kuliah.length === 0) {
+      return res.status(404).json({
+        message: "<===== No Kelas Kuliah Found",
+      });
+    }
+
+    // Array untuk menyimpan kelas_kuliah yang memenuhi syarat
+    const finalKelasKuliah = [];
+
+    // Iterasi setiap kelas_kuliah
+    for (const kelas of kelas_kuliah) {
+      // Hitung jumlah peserta_kelas_kuliah untuk kelas tertentu
+      const jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
+        where: { id_kelas_kuliah: kelas.id_kelas_kuliah },
+      });
+
+      // Periksa apakah jumlah peserta_kelas_kuliah kurang dari jumlah_mahasiswa
+      if (jumlahPesertaKelasKuliah < kelas.jumlah_mahasiswa) {
+        finalKelasKuliah.push(kelas);
+      }
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Kelas Kuliah By Prodi Mahasiswa Success`,
+      jumlahData: finalKelasKuliah.length,
+      data: finalKelasKuliah,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllKelasKuliah,
   getKelasKuliahById,
@@ -392,4 +462,5 @@ module.exports = {
   updateKelasKuliahById,
   deleteKelasKuliahById,
   getAllKelasKuliahByProdiId,
+  getAllKelasKuliahAvailableByProdiMahasiswa,
 };
