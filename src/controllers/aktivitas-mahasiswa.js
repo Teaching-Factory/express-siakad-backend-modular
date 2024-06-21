@@ -92,7 +92,7 @@ const importAktivitasMahasiswas = async (req, res, next) => {
         });
 
         let nama_jenis_anggota = null;
-        let untuk_kampus_merdeka = true;
+        let untuk_kampus_merdeka = 1;
 
         // Mengambil data prodi
         const prodiPromise = Prodi.findOne({ where: { kode_program_studi: kode_prodi } });

@@ -45,9 +45,10 @@ describe("getAllDetailKelasKuliah", () => {
 
     expect(DetailKelasKuliah.findAll).toHaveBeenCalledWith({
       include: [
+        { model: RuangPerkuliahan },
         {
           model: KelasKuliah,
-          include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: RuangPerkuliahan }],
+          include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }],
         },
       ],
     });

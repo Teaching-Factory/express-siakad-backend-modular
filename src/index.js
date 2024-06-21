@@ -93,11 +93,11 @@ const mahasiswaBimbinganDosenRoutes = require("./routes/mahasiswa-bimbingan-dose
 const ujiMahasiswaRoutes = require("./routes/uji-mahasiswa");
 const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
 const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
+const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 
 // route api local not done yet
 const settingGlobalRoutes = require("./routes/setting-global");
 const settingWSRoutes = require("./routes/setting-ws");
-const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
 const transkripNilaiRoutes = require("./routes/transkrip-nilai");
 
@@ -235,11 +235,11 @@ app.use("/mahasiswa-bimbingan-dosen", checkToken, checkBlacklist, mahasiswaBimbi
 app.use("/uji-mahasiswa", checkToken, checkBlacklist, ujiMahasiswaRoutes);
 app.use("/pertemuan-perkuliahan", checkToken, checkBlacklist, pertemuanPerkuliahanRoutes);
 app.use("/presensi-perkuliahan", checkToken, checkBlacklist, presensiPerkuliahanRoutes);
+app.use("/nilai-perkuliahan", checkToken, checkBlacklist, nilaiPerkuliahanRoutes);
 
 // route api local not done yet
 app.use("/setting/global", settingGlobalRoutes);
 app.use("/setting/ws", settingWSRoutes);
-app.use("/nilai-perkuliahan", nilaiPerkuliahanRoutes);
 app.use("/khs-mahasiswa", khsMahasiswaRoutes);
 app.use("/transkrip-nilai", transkripNilaiRoutes);
 
