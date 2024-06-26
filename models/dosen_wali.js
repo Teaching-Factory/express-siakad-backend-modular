@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   DosenWali.init(
     {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       id_dosen: {
         type: DataTypes.STRING(36),
         allowNull: false,

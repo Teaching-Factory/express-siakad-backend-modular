@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   PresensiMahasiswa.init(
     {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER(10),
+      },
       presensi_hadir: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

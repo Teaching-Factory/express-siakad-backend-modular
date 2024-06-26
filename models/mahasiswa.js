@@ -84,7 +84,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_mahasiswa: {
         type: DataTypes.STRING(36),
-        allowNull: false,
+        allowNull: true,
       },
       id_perguruan_tinggi: {
         type: DataTypes.STRING(36),

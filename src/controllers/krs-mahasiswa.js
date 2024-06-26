@@ -1,4 +1,4 @@
-const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize, MataKuliah, BiodataMahasiswa, PerguruanTinggi, Agama, PesertaKelasKuliah } = require("../../models");
+const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize, MataKuliah, BiodataMahasiswa, PerguruanTinggi, Agama, PesertaKelasKuliah, Dosen, DetailKelasKuliah, RuangPerkuliahan } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res, next) => {
   try {
@@ -194,7 +194,26 @@ const GetKRSMahasiswaByMahasiswaPeriode = async (req, res, next) => {
         id_periode: idPeriodes,
         id_registrasi_mahasiswa: mahasiswaId,
       },
-      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [
+        { model: Mahasiswa },
+        { model: Periode },
+        { model: Prodi },
+        { model: MataKuliah },
+        {
+          model: KelasKuliah,
+          include: [
+            { model: MataKuliah },
+            { model: Dosen },
+            {
+              model: DetailKelasKuliah,
+              where: {
+                id_kelas_kuliah: Sequelize.col("KelasKuliah.id_kelas_kuliah"),
+              },
+              include: [{ model: RuangPerkuliahan }],
+            },
+          ],
+        },
+      ],
     });
 
     // Kirim respons JSON jika berhasil

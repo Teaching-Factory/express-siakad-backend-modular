@@ -81,7 +81,11 @@ const doLogin = async (req, res, next) => {
     const token = await generateToken(user);
 
     // Kirim token sebagai respons
-    res.json({ message: "Login berhasil", token });
+    res.json({
+      message: "Login berhasil",
+      token,
+      user: user.nama,
+    });
   } catch (error) {
     next(error);
   }
