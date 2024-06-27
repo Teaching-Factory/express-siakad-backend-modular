@@ -1,4 +1,4 @@
-const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize, MataKuliah, BiodataMahasiswa, PerguruanTinggi, Agama, PesertaKelasKuliah } = require("../../models");
+const { KRSMahasiswa, TahunAjaran, Periode, Mahasiswa, Prodi, KelasKuliah, Sequelize, MataKuliah, BiodataMahasiswa, PerguruanTinggi, Agama, PesertaKelasKuliah, Dosen, DetailKelasKuliah, RuangPerkuliahan } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res, next) => {
   try {
@@ -194,7 +194,26 @@ const GetKRSMahasiswaByMahasiswaPeriode = async (req, res, next) => {
         id_periode: idPeriodes,
         id_registrasi_mahasiswa: mahasiswaId,
       },
-      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [
+        { model: Mahasiswa },
+        { model: Periode },
+        { model: Prodi },
+        { model: MataKuliah },
+        {
+          model: KelasKuliah,
+          include: [
+            { model: MataKuliah },
+            { model: Dosen },
+            {
+              model: DetailKelasKuliah,
+              where: {
+                id_kelas_kuliah: Sequelize.col("KelasKuliah.id_kelas_kuliah"),
+              },
+              include: [{ model: RuangPerkuliahan }],
+            },
+          ],
+        },
+      ],
     });
 
     // Kirim respons JSON jika berhasil
@@ -738,6 +757,118 @@ const createKRSMahasiswa = async (req, res, next) => {
   }
 };
 
+const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
+  try {
+    // Dapatkan data kelas_kuliahs dari request body
+    const { kelas_kuliahs } = req.body;
+
+    const user = req.user;
+
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: user.username,
+      },
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({ message: "Mahasiswa not found" });
+    }
+
+    // Mengambil data periode melalui id_periode milik mahasiswa
+    const mahasiswaPeriode = await Periode.findOne({
+      where: {
+        id_periode: mahasiswa.id_periode,
+      },
+    });
+
+    if (!mahasiswaPeriode) {
+      return res.status(404).json({ message: "Periode not found" });
+    }
+
+    // Mengambil data prodi melalui id_prodi milik periode
+    const prodi = await Prodi.findOne({
+      where: {
+        id_prodi: mahasiswaPeriode.id_prodi,
+      },
+    });
+
+    if (!prodi) {
+      return res.status(404).json({ message: "Prodi not found" });
+    }
+
+    // Mengambil tahun ajaran yang sesuai dengan kondisi
+    const tahunAjaran = await TahunAjaran.findOne({
+      where: {
+        a_periode: 1,
+      },
+    });
+
+    if (!tahunAjaran) {
+      return res.status(404).json({ message: "Tahun Ajaran not found" });
+    }
+
+    // Ekstrak tahun awal dari nama_tahun_ajaran
+    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
+
+    // Ambil periode yang sesuai dengan tahun awal
+    const periode = await Periode.findOne({
+      where: {
+        periode_pelaporan: {
+          [Sequelize.Op.like]: `${tahunAwal}%`,
+        },
+      },
+    });
+
+    if (!periode) {
+      return res.status(404).json({ message: "Periode not found" });
+    }
+
+    // Inisialisasi array untuk menyimpan data KRS yang akan dibuat
+    const krsEntries = [];
+
+    // Iterasi melalui data kelas_kuliahs dari request body
+    for (const kelas of kelas_kuliahs) {
+      // Mengambil data kelas kuliah berdasarkan id_kelas
+      const kelas_kuliah = await KelasKuliah.findOne({
+        where: {
+          id_kelas_kuliah: kelas.id_kelas_kuliah,
+        },
+      });
+
+      // Jika kelas kuliah ditemukan, tambahkan ke krsEntries
+      if (kelas_kuliah) {
+        const jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
+          where: { id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah },
+        });
+
+        if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
+          krsEntries.push({
+            angkatan: tahunAjaran.id_tahun_ajaran,
+            validasi_krs: false,
+            id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+            id_periode: periode.id_periode,
+            id_prodi: prodi.id_prodi,
+            id_matkul: kelas_kuliah.id_matkul,
+            id_kelas: kelas_kuliah.id_kelas_kuliah,
+          });
+        }
+      }
+    }
+
+    // Buat data KRS mahasiswa di database
+    await KRSMahasiswa.bulkCreate(krsEntries);
+
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: "<===== KRS Mahasiswa Created Successfully =====>",
+      jumlahData: krsEntries.length,
+      data: krsEntries,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllKRSMahasiswa,
   getKRSMahasiswaById,
@@ -752,4 +883,5 @@ module.exports = {
   getAllMahasiswaBelumKRS,
   getMahasiswaBelumKRSByPeriodeAndProdiId,
   createKRSMahasiswa,
+  createKRSMahasiswaByMahasiswaActive,
 };

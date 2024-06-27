@@ -30,5 +30,6 @@ router.get("/:id_periode/:id_prodi/get-mahasiswa-belum-krs", checkRole(["admin",
 
 // tambah krs
 router.post("/:id_registrasi_mahasiswa/create", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.createKRSMahasiswa);
+router.post("/create-krs-mahasiswa-active", checkRole(["mahasiswa"]), KrsMahasiswaController.createKRSMahasiswaByMahasiswaActive);
 
 module.exports = router;

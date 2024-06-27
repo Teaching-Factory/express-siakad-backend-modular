@@ -1,4 +1,5 @@
-const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan } = require("../../models");
+const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, PesertaKelasKuliah } = require("../../models");
+const { Op, fn, col } = require("sequelize");
 
 const getAllDetailKelasKuliah = async (req, res, next) => {
   try {
@@ -65,13 +66,13 @@ const getDetailKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
       });
     }
 
-    // Periksa apakah ID disediakan
     if (!semesterId) {
       return res.status(400).json({
         message: "Semester ID is required",
       });
     }
 
+    // Ambil data detail_kelas_kuliah
     const detail_kelas_kuliah = await DetailKelasKuliah.findAll({
       include: [
         {
@@ -95,11 +96,60 @@ const getDetailKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
       });
     }
 
+    const idKelasKuliahList = detail_kelas_kuliah.map((detail) => detail.KelasKuliah.id_kelas_kuliah);
+
+    // Variable to store the counts
+    let pesertaKelasCounts = [];
+
+    // Iterate through the list manually
+    for (let idKelasKuliah of idKelasKuliahList) {
+      let pesertaKelasCount = await PesertaKelasKuliah.findAll({
+        where: {
+          id_kelas_kuliah: idKelasKuliah,
+        },
+      });
+
+      let pesertaCount = pesertaKelasCount.length;
+
+      pesertaKelasCounts.push({
+        id_kelas_kuliah: idKelasKuliah,
+        jumlah_peserta_kelas: pesertaCount,
+      });
+    }
+
+    // Assign the counts to detail_kelas_kuliah
+    detail_kelas_kuliah.forEach((detail) => {
+      const countData = pesertaKelasCounts.find((count) => count.id_kelas_kuliah === detail.KelasKuliah.id_kelas_kuliah);
+      detail.dataValues.jumlah_peserta_kelas = countData ? countData.jumlah_peserta_kelas : 0;
+    });
+
+    // Mengelompokkan data detail_kelas_kuliah berdasarkan mata kuliah
+    const groupedDetailKelasKuliah = {};
+
+    detail_kelas_kuliah.forEach((detail) => {
+      const mataKuliah = detail.KelasKuliah.MataKuliah;
+      const id_matkul = mataKuliah.id_matkul;
+
+      if (!groupedDetailKelasKuliah[id_matkul]) {
+        groupedDetailKelasKuliah[id_matkul] = {
+          mataKuliah: mataKuliah,
+          details: [],
+        };
+      }
+      groupedDetailKelasKuliah[id_matkul].details.push(detail);
+    });
+
+    // Menghapus id_matkul dari level atas objek
+    const formattedResponse = Object.keys(groupedDetailKelasKuliah).map((key) => ({
+      mataKuliah: groupedDetailKelasKuliah[key].mataKuliah,
+      details: groupedDetailKelasKuliah[key].details,
+    }));
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Detail Kelas Kuliah By ID Prodi ${prodiId} And ID Semester ${semesterId} Success:`,
       jumlahData: detail_kelas_kuliah.length,
-      data: detail_kelas_kuliah,
+      data: formattedResponse,
     });
   } catch (error) {
     next(error);
