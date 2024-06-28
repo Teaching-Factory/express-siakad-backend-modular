@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel child
       Role.hasMany(models.UserRole, { foreignKey: "id_role" });
+      Role.hasMany(models.RolePermission, { foreignKey: "id_role" });
     }
   }
   Role.init(

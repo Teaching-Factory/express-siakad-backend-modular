@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-const { User, UserRole, Role, BlacklistedToken } = require("../../models");
+const { User, UserRole, Role, BlacklistedToken, RolePermission, Permission } = require("../../models");
 
 // Fungsi untuk membuat token JWT
 const generateToken = async (user) => {
@@ -80,11 +80,43 @@ const doLogin = async (req, res, next) => {
     // Jika username dan password cocok, buat token JWT
     const token = await generateToken(user);
 
+    // mengambil data user role pengguna yang telah melakukan login
+    const userRole = await UserRole.findOne({
+      where: {
+        id_user: user.id,
+      },
+    });
+
+    // mengambil data role pengguna yang telah melakukan login
+    const role = await Role.findOne({
+      where: {
+        id: userRole.id_role,
+      },
+    });
+
+    // mengambil data permission berdasarkan role yang telah diperoleh
+    const permissions = await RolePermission.findAll({
+      where: {
+        id_role: role.id,
+      },
+      include: [
+        {
+          model: Permission,
+          attributes: ["nama_permission"],
+        },
+      ],
+    });
+
+    // Format permissions untuk hanya mengembalikan nama_permission
+    const formattedPermissions = permissions.map((permission) => permission.Permission.nama_permission);
+
     // Kirim token sebagai respons
     res.json({
       message: "Login berhasil",
       token,
       user: user.nama,
+      role: role.nama_role,
+      permissions: formattedPermissions,
     });
   } catch (error) {
     next(error);
