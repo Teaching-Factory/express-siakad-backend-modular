@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       Prodi.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_prodi" });
       Prodi.hasMany(models.BobotPenilaian, { foreignKey: "id_prodi" });
       Prodi.hasMany(models.DosenPengajarKelasKuliah, { foreignKey: "id_prodi" });
+      Prodi.hasMany(models.SettingGlobal, { foreignKey: "id_prodi" });
     }
   }
   Prodi.init(
