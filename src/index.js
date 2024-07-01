@@ -98,9 +98,9 @@ const ujiMahasiswaRoutes = require("./routes/uji-mahasiswa");
 const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
 const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
 const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
+const settingGlobalRoutes = require("./routes/setting-global");
 
 // route api local not done yet
-const settingGlobalRoutes = require("./routes/setting-global");
 const settingWSRoutes = require("./routes/setting-ws");
 const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
 const transkripNilaiRoutes = require("./routes/transkrip-nilai");
@@ -243,9 +243,9 @@ app.use("/uji-mahasiswa", checkToken, ujiMahasiswaRoutes);
 app.use("/pertemuan-perkuliahan", checkToken, pertemuanPerkuliahanRoutes);
 app.use("/presensi-perkuliahan", checkToken, presensiPerkuliahanRoutes);
 app.use("/nilai-perkuliahan", checkToken, nilaiPerkuliahanRoutes);
+app.use("/setting-global", checkToken, settingGlobalRoutes);
 
 // route api local not done yet
-app.use("/setting/global", settingGlobalRoutes);
 app.use("/setting/ws", settingWSRoutes);
 app.use("/khs-mahasiswa", khsMahasiswaRoutes);
 app.use("/transkrip-nilai", transkripNilaiRoutes);

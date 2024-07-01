@@ -308,26 +308,18 @@ const listPermissionsFromRole = async (req, res, next) => {
     }
 
     // Temukan role dengan id_role yang diberikan
-    const role = await Role.findByPk(id_role, {
-      include: { model: RolePermission, as: "RolePermissions" },
+    const role_permission = await RolePermission.findAll({
+      where: {
+        id_role: id_role,
+      },
+      include: [{ model: Role }, { model: Permission }],
     });
-
-    // Periksa apakah role ditemukan
-    if (!role) {
-      return res.status(404).json({ message: `Role with ID ${id_role} Not Found` });
-    }
-
-    // Ekstrak semua permission dari role
-    const permissions = role.RolePermissions.map((permission) => ({
-      id: permission.id,
-      id_role: permission.id_role,
-      id_permission: permission.id_permission,
-    }));
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Permissions from Role Success",
-      data: permissions,
+      jumlahData: role_permission.length,
+      data: role_permission,
     });
   } catch (error) {
     next(error);
