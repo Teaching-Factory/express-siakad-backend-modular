@@ -30,7 +30,7 @@ module.exports = {
         defaultValue: false,
       },
       id_prodi: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

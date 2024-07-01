@@ -99,6 +99,7 @@ const pertemuanPerkuliahanRoutes = require("./routes/pertemuan-perkuliahan");
 const presensiPerkuliahanRoutes = require("./routes/presensi-perkuliahan");
 const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 const settingGlobalRoutes = require("./routes/setting-global");
+const perguruanTinggiGuestRoutes = require("./routes/perguruan-tinggi-guest");
 
 // route api local not done yet
 const settingWSRoutes = require("./routes/setting-ws");
@@ -244,6 +245,7 @@ app.use("/pertemuan-perkuliahan", checkToken, pertemuanPerkuliahanRoutes);
 app.use("/presensi-perkuliahan", checkToken, presensiPerkuliahanRoutes);
 app.use("/nilai-perkuliahan", checkToken, nilaiPerkuliahanRoutes);
 app.use("/setting-global", checkToken, settingGlobalRoutes);
+app.use("/perguruan-tinggi-guest", perguruanTinggiGuestRoutes);
 
 // route api local not done yet
 app.use("/setting/ws", settingWSRoutes);

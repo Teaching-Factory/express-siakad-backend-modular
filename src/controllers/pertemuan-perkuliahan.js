@@ -1,4 +1,4 @@
-const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah } = require("../../models");
+const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen } = require("../../models");
 
 const getAllPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
   try {
@@ -62,6 +62,7 @@ const getPertemuanPerkuliahanBySemesterProdiAndKelasKuliahId = async (req, res, 
       include: [
         {
           model: KelasKuliah,
+          include: [{ model: Dosen }],
           where: {
             id_prodi: prodiId,
             id_semester: semesterId,
