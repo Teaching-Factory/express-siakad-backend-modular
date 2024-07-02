@@ -104,6 +104,8 @@ const doPresensiPertemuanByMahasiswaAndPertemuanId = async (req, res, next) => {
 
     if (pertemuan_perkuliahan.kunci_pertemuan === true) {
       return res.status(400).json({ message: "Pertemuan telah berakhir, Anda tidak dapat melakukan presensi" });
+    } else if (pertemuan_perkuliahan.buka_presensi === false) {
+      return res.status(400).json({ message: "Pertemuan belum dibuka, Anda tidak dapat melakukan presensi" });
     } else {
       // Increment kolom jumlah_mahasiswa_hadir
       await pertemuan_perkuliahan.increment("jumlah_mahasiswa_hadir");
