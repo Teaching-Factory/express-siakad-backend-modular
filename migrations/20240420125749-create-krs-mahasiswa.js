@@ -13,6 +13,11 @@ module.exports = {
         type: Sequelize.CHAR(4),
         allowNull: true,
       },
+      validasi_krs: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
       id_registrasi_mahasiswa: {
         type: Sequelize.STRING(36),
         allowNull: true,

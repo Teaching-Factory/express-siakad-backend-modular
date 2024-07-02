@@ -3,10 +3,10 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert("penghasilans", [
+    return queryInterface.bulkInsert("kebutuhan_khusus", [
       {
-        id_penghasilan: 0, // ganti dari 18 jadi 0 di database secara manual (penting)
-        nama_penghasilan: "",
+        id_kebutuhan_khusus: 0, // ubah dari 65536 - jadi 0 pada database, secara manual
+        nama_kebutuhan_khusus: "Tidak ada",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -14,6 +14,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.bulkDelete("penghasilans", null, {});
+    return queryInterface.bulkDelete("kebutuhan_khusus", null, {});
   },
 };

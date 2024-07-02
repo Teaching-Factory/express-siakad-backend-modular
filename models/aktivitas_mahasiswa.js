@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: true,
         validate: {
-          len: { args: [1, 255], msg: "lokasi must be between 1 and 255 characters" },
+          len: { args: [0, 255], msg: "lokasi must be between 0 and 255 characters" },
         },
         isString(value) {
           if (typeof value !== "string") {
@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: true,
         validate: {
-          len: { args: [1, 255], msg: "sk_tugas must be between 1 and 255 characters" },
+          len: { args: [0, 255], msg: "sk_tugas must be between 0 and 255 characters" },
         },
         isString(value) {
           if (typeof value !== "string") {

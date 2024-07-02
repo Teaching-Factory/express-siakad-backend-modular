@@ -50,38 +50,38 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       nik: {
-        type: DataTypes.CHAR(16),
+        type: DataTypes.CHAR(18),
         allowNull: true,
         validate: {
-          len: { args: [1, 16], msg: "mode must be between 1 and 16 characters" },
+          len: { args: [0, 18], msg: "nik must be between 0 and 18 characters" },
         },
       },
       nisn: {
         type: DataTypes.CHAR(10),
         allowNull: true,
         validate: {
-          len: { args: [1, 10], msg: "mode must be between 1 and 10 characters" },
+          len: { args: [1, 10], msg: "nisn must be between 1 and 10 characters" },
         },
       },
       npwp: {
         type: DataTypes.CHAR(15),
         allowNull: true,
         validate: {
-          len: { args: [1, 15], msg: "mode must be between 1 and 15 characters" },
+          len: { args: [1, 15], msg: "npwp must be between 1 and 15 characters" },
         },
       },
       kewarganegaraan: {
-        type: DataTypes.CHAR(2),
+        type: DataTypes.CHAR(20),
         allowNull: false,
         validate: {
-          len: { args: [1, 2], msg: "mode must be between 1 and 2 characters" },
+          len: { args: [1, 20], msg: "kewarganegaraan must be between 1 and 20 characters" },
         },
       },
       jalan: {
         type: DataTypes.STRING(80),
         allowNull: true,
         validate: {
-          len: { args: [1, 80], msg: "jalan must be between 1 and 80 characters" },
+          len: { args: [0, 80], msg: "jalan must be between 0 and 80 characters" },
         },
         isString(value) {
           if (typeof value !== "string") {
@@ -102,7 +102,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       rt: {
-        type: DataTypes.DECIMAL(2, 0),
+        type: DataTypes.DECIMAL(3, 0),
         allowNull: true,
         validate: {
           isDecimal: {
@@ -114,13 +114,13 @@ module.exports = (sequelize, DataTypes) => {
             msg: "rt must be greater than or equal to 0",
           },
           max: {
-            args: [99],
-            msg: "rt must be less than or equal to 9",
+            args: [999],
+            msg: "rt must be less than or equal to 999",
           },
         },
       },
       rw: {
-        type: DataTypes.DECIMAL(2, 0),
+        type: DataTypes.DECIMAL(3, 0),
         allowNull: true,
         validate: {
           isDecimal: {
@@ -132,8 +132,8 @@ module.exports = (sequelize, DataTypes) => {
             msg: "rw must be greater than or equal to 0",
           },
           max: {
-            args: [99],
-            msg: "rw must be less than or equal to 9",
+            args: [999],
+            msg: "rw must be less than or equal to 999",
           },
         },
       },
@@ -152,20 +152,20 @@ module.exports = (sequelize, DataTypes) => {
       kode_pos: {
         type: DataTypes.DECIMAL(5, 0),
         allowNull: true,
-        validate: {
-          isDecimal: {
-            args: true,
-            msg: "kode_pos must be a valid decimal number",
-          },
-          min: {
-            args: [0],
-            msg: "kode_pos must be greater than or equal to 0",
-          },
-          max: {
-            args: [99999],
-            msg: "kode_pos must be less than or equal to 9",
-          },
-        },
+        // validate: {
+        //   isDecimal: {
+        //     args: true,
+        //     msg: "kode_pos must be a valid decimal number",
+        //   },
+        //   min: {
+        //     args: [0],
+        //     msg: "kode_pos must be greater than or equal to 0",
+        //   },
+        //   max: {
+        //     args: [99999],
+        //     msg: "kode_pos must be less than or equal to 9",
+        //   },
+        // },
       },
       telepon: {
         type: DataTypes.STRING(20),
@@ -237,7 +237,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.CHAR(16),
         allowNull: true,
         validate: {
-          len: { args: [1, 16], msg: "mode must be between 1 and 16 characters" },
+          len: { args: [1, 16], msg: "nik_ayah must be between 1 and 16 characters" },
         },
       },
       nama_ayah: {
@@ -260,14 +260,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.CHAR(16),
         allowNull: true,
         validate: {
-          len: { args: [1, 16], msg: "mode must be between 1 and 16 characters" },
+          len: { args: [1, 16], msg: "nik_ibu must be between 1 and 16 characters" },
         },
       },
       nama_ibu_kandung: {
         type: DataTypes.STRING(100),
         allowNull: false,
         validate: {
-          len: { args: [1, 100], msg: "nama_ibu_kandung must be between 1 and 100 characters" },
+          len: { args: [0, 100], msg: "nama_ibu_kandung must be between 0 and 100 characters" },
         },
         isString(value) {
           if (typeof value !== "string") {

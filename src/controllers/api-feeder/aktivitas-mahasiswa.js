@@ -10,6 +10,7 @@ const getAktivitasMahasiswa = async (req, res, next) => {
     const requestBody = {
       act: "GetListAktivitasMahasiswa",
       token: `${token}`,
+      order: "id_aktivitas",
     };
 
     // Menggunakan token untuk mengambil data

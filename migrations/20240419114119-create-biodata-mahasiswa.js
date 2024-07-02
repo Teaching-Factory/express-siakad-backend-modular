@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       nik: {
-        type: Sequelize.CHAR(16),
+        type: Sequelize.CHAR(18),
         allowNull: true,
       },
       nisn: {
@@ -26,7 +26,7 @@ module.exports = {
         allowNull: true,
       },
       kewarganegaraan: {
-        type: Sequelize.CHAR(2),
+        type: Sequelize.CHAR(20),
         allowNull: false,
       },
       jalan: {
@@ -38,11 +38,11 @@ module.exports = {
         allowNull: true,
       },
       rt: {
-        type: Sequelize.DECIMAL(2, 0),
+        type: Sequelize.DECIMAL(3, 0),
         allowNull: true,
       },
       rw: {
-        type: Sequelize.DECIMAL(2, 0),
+        type: Sequelize.DECIMAL(3, 0),
         allowNull: true,
       },
       kelurahan: {

@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.bulkInsert("pekerjaans", [
       {
-        id_pekerjaan: 0, // ganti jadi 0 di database secara manual (penting)
+        id_pekerjaan: 0, // ganti 100 jadi 0 di database secara manual (penting)
         nama_pekerjaan: "",
         createdAt: new Date(),
         updatedAt: new Date(),

@@ -212,6 +212,13 @@ Perintah Migrasi Dan Seeder :
 
 ```
 
+- Menjalankan Seeder secara manual :
+
+```bash
+  npx sequelize-cli db:seed --seed nama_file_seeder.js
+
+```
+
 - Melakukan Migrasi :
 
 ```bash
