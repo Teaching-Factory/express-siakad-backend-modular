@@ -1,4 +1,4 @@
-const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah } = require("../../models");
+const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Periode, Sequelize } = require("../../models");
 
 const getAllPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
   try {
@@ -62,6 +62,7 @@ const getPertemuanPerkuliahanBySemesterProdiAndKelasKuliahId = async (req, res, 
       include: [
         {
           model: KelasKuliah,
+          include: [{ model: Dosen }],
           where: {
             id_prodi: prodiId,
             id_semester: semesterId,
@@ -238,6 +239,197 @@ const lockDisablePertemuanPerkuliahanById = async (req, res, next) => {
   }
 };
 
+const openPertemuanPerkuliahan = async (req, res, next) => {
+  try {
+    // ambil request body
+    const { id_kelas_kuliah, id_pertemuan_perkuliahan } = req.body;
+
+    // Ambil semua data pertemuan_perkuliahan dari database
+    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findOne({
+      where: {
+        id: id_pertemuan_perkuliahan,
+        id_kelas_kuliah,
+      },
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!pertemuan_perkuliahan) {
+      return res.status(404).json({
+        message: `<===== Pertemuan Perkuliahan Not Found:`,
+      });
+    }
+
+    // Update data jabatan
+    pertemuan_perkuliahan.buka_presensi = true;
+
+    // Simpan perubahan ke dalam database
+    await pertemuan_perkuliahan.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== OPEN Pertemuan Perkuliahan Success`,
+      data: pertemuan_perkuliahan,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const closePertemuanPerkuliahanById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const pertemuanPerkuliahanId = req.params.id;
+
+    if (!pertemuanPerkuliahanId) {
+      return res.status(400).json({
+        message: "Pertemuan Perkuliahan ID is required",
+      });
+    }
+
+    // Ambil semua data pertemuan_perkuliahan dari database
+    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findByPk(pertemuanPerkuliahanId, {
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!pertemuan_perkuliahan) {
+      return res.status(404).json({
+        message: `<===== Pertemuan Perkuliahan With ID ${pertemuanPerkuliahanId} Not Found:`,
+      });
+    }
+
+    // Update data jabatan
+    pertemuan_perkuliahan.buka_presensi = false;
+
+    // Simpan perubahan ke dalam database
+    await pertemuan_perkuliahan.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== CLOSE Pertemuan Perkuliahan By ID ${pertemuanPerkuliahanId} Success`,
+      data: pertemuan_perkuliahan,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllPertemuanPerkuliahanActiveByDosen = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const dosen = await Dosen.findOne({
+      where: {
+        nidn: user.username,
+      },
+    });
+
+    if (!dosen) {
+      return res.status(404).json({ message: "Dosen not found" });
+    }
+
+    // Ambil semua data kelas kuliah dengan dosen.id_dosen dari database
+    const kelas_kuliahs = await KelasKuliah.findAll({
+      where: {
+        id_dosen: dosen.id_dosen,
+      },
+    });
+
+    // Ambil semua pertemuan perkuliahan yang buka_presensi == true dan id_kelas_kuliah ada di kelas_kuliahs
+    const pertemuan_perkuliahan_aktifs = await PertemuanPerkuliahan.findAll({
+      where: {
+        buka_presensi: true,
+        kunci_pertemuan: false,
+        id_kelas_kuliah: kelas_kuliahs.map((kelas) => kelas.id_kelas_kuliah), // Ambil id_kelas_kuliah dari kelas_kuliahs
+      },
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Pertemuan Perkuliahan Aktif By Dosen Success",
+      jumlahData: pertemuan_perkuliahan_aktifs.length,
+      data: pertemuan_perkuliahan_aktifs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllPertemuanPerkuliahanActiveByMahasiswa = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: user.username,
+      },
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({ message: "Mahasiswa not found" });
+    }
+
+    // Ambil tahun ajaran yang sesuai dengan kondisi
+    const tahunAjaran = await TahunAjaran.findOne({
+      where: {
+        a_periode: 1,
+      },
+    });
+
+    // Ekstrak tahun awal dari nama_tahun_ajaran
+    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
+
+    // Ambil semua periode yang sesuai dengan tahun awal
+    const periodes = await Periode.findAll({
+      where: {
+        periode_pelaporan: {
+          [Sequelize.Op.like]: `${tahunAwal}%`,
+        },
+      },
+    });
+
+    // Ambil semua id_periode dari hasil query periode
+    const idPeriodes = periodes.map((periode) => periode.id_periode);
+
+    // Ambil data KRS mahasiswa berdasarkan id_periode yang didapatkan
+    const krs_mahasiswas = await KRSMahasiswa.findAll({
+      where: {
+        id_periode: idPeriodes,
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+      },
+    });
+
+    // Ambil semua id_kelas_kuliah dari hasil query krs_mahasiswas
+    const idKelasKuliahs = krs_mahasiswas.map((krs) => krs.id_kelas);
+
+    // Ambil semua data kelas kuliah yang sesuai dengan idKelasKuliahs
+    const kelas_kuliahs = await KelasKuliah.findAll({
+      where: {
+        id_kelas_kuliah: idKelasKuliahs,
+      },
+    });
+
+    // Ambil semua pertemuan perkuliahan yang buka_presensi == true dan id_kelas_kuliah ada di kelas_kuliahs
+    const pertemuan_perkuliahan_aktifs = await PertemuanPerkuliahan.findAll({
+      where: {
+        buka_presensi: true,
+        kunci_pertemuan: false,
+        id_kelas_kuliah: kelas_kuliahs.map((kelas) => kelas.id_kelas_kuliah), // Ambil id_kelas_kuliah dari kelas_kuliahs
+      },
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Pertemuan Perkuliahan Aktif By Mahasiswa Success",
+      jumlahData: pertemuan_perkuliahan_aktifs.length,
+      data: pertemuan_perkuliahan_aktifs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPertemuanPerkuliahanByKelasKuliahId,
   getPertemuanPerkuliahanById,
@@ -247,4 +439,8 @@ module.exports = {
   deletePertemuanPerkuliahanById,
   lockEnablePertemuanPerkuliahanById,
   lockDisablePertemuanPerkuliahanById,
+  openPertemuanPerkuliahan,
+  closePertemuanPerkuliahanById,
+  getAllPertemuanPerkuliahanActiveByDosen,
+  getAllPertemuanPerkuliahanActiveByMahasiswa,
 };

@@ -1,12 +1,14 @@
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-const { Mahasiswa } = require("../../models");
-const { User, Dosen, Role, UserRole } = require("../../models");
+const { Op } = require("sequelize");
+const { User, Dosen, Role, UserRole, Mahasiswa, Angkatan, Periode, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, StatusKeaktifanPegawai } = require("../../models");
 
 const getAllUser = async (req, res, next) => {
   try {
     // Ambil semua data user dari database
-    const user = await User.findAll();
+    const user = await User.findAll({
+      include: [{ model: UserRole, include: [{ model: Role }] }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!user || user.length === 0) {
@@ -395,6 +397,115 @@ const generateUserByDosen = async (req, res, next) => {
   }
 };
 
+const getMahasiswaDontHaveUserByProdiAndAngkatanId = async (req, res, next) => {
+  try {
+    // Dapatkan ID prodi dan ID angkatan dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+    const angkatanId = req.params.id_angkatan;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
+
+    // Ambil data angkatan berdasarkan id_angkatan
+    const angkatan = await Angkatan.findOne({ where: { id: angkatanId } });
+
+    // Jika data angkatan tidak ditemukan, kirim respons 404
+    if (!angkatan) {
+      return res.status(404).json({ message: `Angkatan dengan ID ${angkatanId} tidak ditemukan` });
+    }
+
+    // Ekstrak tahun dari data angkatan
+    const tahunAngkatan = angkatan.tahun;
+
+    // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
+    const periodeIds = await Periode.findAll({
+      where: { id_prodi: prodiId },
+      attributes: ["id_periode"], // Ambil hanya kolom id_periode
+    });
+
+    // Ekstrak id periode dari hasil pencarian
+    const periodeIdList = periodeIds.map((periode) => periode.id_periode);
+
+    // Ambil semua username dari tabel User untuk dibandingkan dengan nim mahasiswa
+    const users = await User.findAll({
+      attributes: ["username"],
+    });
+
+    const userUsernames = users.map((user) => user.username);
+
+    // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList dan tahun angkatan
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        id_periode: { [Op.in]: periodeIdList },
+        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
+      },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
+    });
+
+    // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
+    if (mahasiswas.length === 0) {
+      return res.status(404).json({
+        message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
+      });
+    }
+
+    const filteredMahasiswas = mahasiswas.filter((mahasiswa) => !userUsernames.includes(mahasiswa.nim));
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `GET Mahasiswa By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
+      jumlahData: filteredMahasiswas.length,
+      data: filteredMahasiswas,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getDosenDontHaveUser = async (req, res, next) => {
+  try {
+    // Ambil semua username dari tabel User untuk dibandingkan dengan nip dosen
+    const users = await User.findAll({
+      attributes: ["username"],
+    });
+
+    const userUsernames = users.map((user) => user.username);
+
+    // Ambil semua data dosen dari database
+    const dosen = await Dosen.findAll({
+      include: [{ model: Agama }, { model: StatusKeaktifanPegawai }],
+    });
+
+    // Filter dosen yang nip-nya ada dalam daftar username dari tabel User
+    const filteredDosen = dosen.filter((dosen) => !userUsernames.includes(dosen.nidn));
+
+    // Jika data dosen yang sesuai tidak ditemukan, kirim respons 404
+    if (filteredDosen.length === 0) {
+      return res.status(404).json({
+        message: "Tidak ada dosen yang belum memiliki user",
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Dosen Success",
+      jumlahData: filteredDosen.length,
+      data: filteredDosen,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -412,4 +523,6 @@ module.exports = {
   deleteUserById,
   generateUserByMahasiswa,
   generateUserByDosen,
+  getMahasiswaDontHaveUserByProdiAndAngkatanId,
+  getDosenDontHaveUser,
 };

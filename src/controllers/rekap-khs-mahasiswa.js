@@ -1,4 +1,6 @@
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan } = require("../../models");
+const axios = require("axios");
+const { getToken } = require("././api-feeder/get-token");
 
 const getAllRekapKHSMahasiswa = async (req, res, next) => {
   try {
@@ -88,8 +90,82 @@ const getRekapKHSMahasiswaByMahasiswaId = async (req, res, next) => {
   }
 };
 
+// filter function rekap khs mahasiswa
+const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
+  try {
+    // memperoleh id
+    const prodiId = req.params.id_prodi;
+    const angkatanId = req.params.id_angkatan;
+    const periodeId = req.params.id_periode;
+    const mataKuliahId = req.params.id_matkul;
+
+    // pengecekan parameter id
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
+    if (!periodeId) {
+      return res.status(400).json({
+        message: "Periode ID is required",
+      });
+    }
+    if (!mataKuliahId) {
+      return res.status(400).json({
+        message: "Mata Kuliah ID is required",
+      });
+    }
+
+    // get data angktan
+    const angkatan = await Angkatan.findByPk(angkatanId);
+    const periode = await Periode.findByPk(periodeId);
+
+    // jika data tidak ditemukan
+    if (!angkatan) {
+      return res.status(404).json({
+        message: `<===== Angkatan With ID ${angkatanId} Not Found:`,
+      });
+    }
+    if (!periode) {
+      return res.status(404).json({
+        message: `<===== Periode With ID ${periodeId} Not Found:`,
+      });
+    }
+
+    // Mendapatkan token
+    const token = await getToken();
+
+    const requestBody = {
+      act: "GetRekapKHSMahasiswa",
+      token: `${token}`,
+      filter: `id_prodi='${prodiId}' AND angkatan='${angkatan.tahun}' AND id_periode='${periode.periode_pelaporan}' AND id_matkul='${mataKuliahId}'`,
+    };
+
+    // Menggunakan token untuk mengambil data
+    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+
+    // Tanggapan dari API
+    const dataRekapKHSMahasiswa = response.data.data;
+
+    // Kirim data sebagai respons
+    res.status(200).json({
+      message: "Get Rekap KHS Mahasiswa from Feeder Success",
+      totalData: dataRekapKHSMahasiswa.length,
+      dataRekapKHSMahasiswa: dataRekapKHSMahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRekapKHSMahasiswa,
   getRekapKHSMahasiswaById,
   getRekapKHSMahasiswaByMahasiswaId,
+  getRekapKHSMahasiswaByFilter,
 };

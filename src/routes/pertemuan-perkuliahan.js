@@ -15,5 +15,9 @@ router.put("/:id/update", checkRole(["admin", "admin-prodi", "dosen"]), Pertemua
 router.delete("/:id/delete", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.deletePertemuanPerkuliahanById);
 router.put("/:id/lock-enable", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.lockEnablePertemuanPerkuliahanById);
 router.put("/:id/lock-disable", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.lockDisablePertemuanPerkuliahanById);
+router.put("/open-pertemuan-perkuliahan", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.openPertemuanPerkuliahan);
+router.put("/:id/close-pertemuan-perkuliahan", checkRole(["admin", "admin-prodi", "dosen"]), PertemuanPerkuliahanController.closePertemuanPerkuliahanById);
+router.get("/get-pertemuan-perkuliahan-aktif-by-dosen", checkRole(["dosen"]), PertemuanPerkuliahanController.getAllPertemuanPerkuliahanActiveByDosen);
+router.get("/get-pertemuan-perkuliahan-aktif-by-mahasiswa", checkRole(["mahasiswa"]), PertemuanPerkuliahanController.getAllPertemuanPerkuliahanActiveByMahasiswa);
 
 module.exports = router;

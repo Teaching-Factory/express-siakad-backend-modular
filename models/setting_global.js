@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
       },
       id_prodi: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(36),
         allowNull: false,
       },
     },
