@@ -1,4 +1,6 @@
 const { RekapKRSMahasiswa, Prodi, Periode, Mahasiswa, MataKuliah, Semester } = require("../../models");
+const axios = require("axios");
+const { getToken } = require("././api-feeder/get-token");
 
 const getAllRekapKRSMahasiswa = async (req, res, next) => {
   try {
@@ -50,7 +52,81 @@ const getRekapKRSMahasiswaById = async (req, res, next) => {
   }
 };
 
+// filter function rekap krs mahasiswa
+const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
+  try {
+    // memperoleh id
+    const prodiId = req.params.id_prodi;
+    const periodeId = req.params.id_periode;
+    const semesterId = req.params.id_semester;
+    const mataKuliahId = req.params.id_matkul;
+    const mahasiswaId = req.params.id_registrasi_mahasiswa;
+
+    // pengecekan parameter id
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!periodeId) {
+      return res.status(400).json({
+        message: "Periode ID is required",
+      });
+    }
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+    if (!mataKuliahId) {
+      return res.status(400).json({
+        message: "Mata Kuliah ID is required",
+      });
+    }
+    if (!mahasiswaId) {
+      return res.status(400).json({
+        message: "Mahasiswa ID is required",
+      });
+    }
+
+    // ambil data
+    const periode = await Periode.findByPk(periodeId);
+
+    // jika data tidak ditemukan
+    if (!periode) {
+      return res.status(404).json({
+        message: `<===== Periode With ID ${periodeId} Not Found:`,
+      });
+    }
+
+    // Mendapatkan token
+    const token = await getToken();
+
+    const requestBody = {
+      act: "GetRekapKRSMahasiswa",
+      token: `${token}`,
+      filter: `id_prodi='${prodiId}' and id_periode='${periode.periode_pelaporan}' and id_semester='${semesterId}' and id_matkul='${mataKuliahId}' and id_registrasi_mahasiswa='${mahasiswaId}'`,
+    };
+
+    // Menggunakan token untuk mengambil data
+    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+
+    // Tanggapan dari API
+    const dataRekapKRSMahasiswa = response.data.data;
+
+    // Kirim data sebagai respons
+    res.status(200).json({
+      message: "Get Rekap KRS Mahasiswa from Feeder Success",
+      totalData: dataRekapKRSMahasiswa.length,
+      dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRekapKRSMahasiswa,
   getRekapKRSMahasiswaById,
+  getRekapKRSMahasiswaByFilter,
 };

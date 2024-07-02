@@ -10,4 +10,7 @@ const checkRole = require("../middlewares/check-role");
 router.get("/", checkRole(["admin", "admin-prodi"]), RekapKRSMahasiswaController.getAllRekapKRSMahasiswa);
 router.get("/:id/get", checkRole(["admin", "admin-prodi"]), RekapKRSMahasiswaController.getRekapKRSMahasiswaById);
 
+// filter rekap krs mahasiswa
+router.get("/:id_prodi/:id_periode/:id_semester/:id_matkul/:id_registrasi_mahasiswa/get-rekap-krs-mahasiswa", checkRole(["admin", "admin-prodi", "mahasiswa"]), RekapKRSMahasiswaController.getRekapKRSMahasiswaByFilter);
+
 module.exports = router;
