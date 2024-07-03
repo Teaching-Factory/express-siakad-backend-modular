@@ -1,9 +1,8 @@
-const { createPenilaianByKelasKuliahId } = require("../../src/controllers/nilai-perkuliahan");
-
-const { DetailNilaiPerkuliahanKelas, BobotPenilaian, KelasKuliah, Prodi, Mahasiswa } = require("../../models");
+const { createOrUpdatePenilaianByKelasKuliahId } = require("../../src/controllers/nilai-perkuliahan");
+const { KelasKuliah, Prodi, BobotPenilaian, Mahasiswa, DetailNilaiPerkuliahanKelas } = require("../../models");
 const httpMocks = require("node-mocks-http");
 
-describe("createPenilaianByKelasKuliahId", () => {
+describe("createOrUpdatePenilaianByKelasKuliahId", () => {
   let req, res, next;
 
   beforeEach(() => {
@@ -12,60 +11,11 @@ describe("createPenilaianByKelasKuliahId", () => {
     next = jest.fn();
   });
 
-  //   belum pass
-  //   it("should create penilaian and return status 201", async () => {
-  //     // Mock request parameters and body
-  //     req.params.id_kelas_kuliah = 1;
-  //     req.body = {
-  //       penilaians: [
-  //         {
-  //           id_registrasi_mahasiswa: "00179d79-07e2-473d-998c-d67acc20275b",
-  //           nilai_bobot: [
-  //             { id_bobot: 4, nilai: 85 },
-  //             { id_bobot: 5, nilai: 90 },
-  //             { id_bobot: 6, nilai: 75 },
-  //             { id_bobot: 7, nilai: 80 },
-  //           ],
-  //         },
-  //         {
-  //           id_registrasi_mahasiswa: "001d0645-ff4e-40db-9bb4-ccf6636f27d9",
-  //           nilai_bobot: [
-  //             { id_bobot: 4, nilai: 85 },
-  //             { id_bobot: 5, nilai: 90 },
-  //             { id_bobot: 6, nilai: 75 },
-  //             { id_bobot: 7, nilai: 80 },
-  //           ],
-  //         },
-  //       ],
-  //     };
-
-  //     // Mocking models and methods
-  //     KelasKuliah.findByPk = jest.fn().mockResolvedValue({ id_prodi: 1 });
-  //     Prodi.findOne = jest.fn().mockResolvedValue({ id_prodi: 1, nama_program_studi: "Teknik Informatika" });
-  //     BobotPenilaian.findAll = jest.fn().mockResolvedValue([
-  //       { id_bobot: 4, bobot_penilaian: 25 },
-  //       { id_bobot: 5, bobot_penilaian: 25 },
-  //       { id_bobot: 6, bobot_penilaian: 25 },
-  //       { id_bobot: 7, bobot_penilaian: 25 },
-  //     ]);
-  //     Mahasiswa.findOne = jest.fn().mockResolvedValue({ nama_periode_masuk: "202001" });
-  //     DetailNilaiPerkuliahanKelas.create = jest.fn().mockResolvedValue({});
-
-  //     // Call the controller function
-  //     await createPenilaianByKelasKuliahId(req, res, next);
-
-  //     // Assertions
-  //     expect(res.statusCode).toEqual(400);
-  //     expect(res._getJSONData().message).toBe("Penilaian created successfully");
-  //     expect(res._getJSONData().dataJumlah).toBe(2);
-  //     expect(DetailNilaiPerkuliahanKelas.create).toHaveBeenCalledTimes(2);
-  //   });
-
-  it("should return 400 if Kelas Kuliah ID is missing", async () => {
+  it("should return 400 if kelas kuliah ID is not provided", async () => {
     req.body = {
       penilaians: [
         {
-          id_registrasi_mahasiswa: "00179d79-07e2-473d-998c-d67acc20275b",
+          id_registrasi_mahasiswa: "00159683-001a-487b-a798-7ed15a8c14e0",
           nilai_bobot: [
             { id_bobot: 4, nilai: 85 },
             { id_bobot: 5, nilai: 90 },
@@ -76,27 +26,215 @@ describe("createPenilaianByKelasKuliahId", () => {
       ],
     };
 
-    // Call the controller function
-    await createPenilaianByKelasKuliahId(req, res, next);
+    await createOrUpdatePenilaianByKelasKuliahId(req, res, next);
 
-    // Assertions
     expect(res.statusCode).toEqual(400);
-    expect(res._getJSONData().message).toBe("Kelas Kuliah ID is required");
+    expect(res._getJSONData()).toEqual({
+      message: "Kelas Kuliah ID is required",
+    });
   });
 
   it("should return 400 if penilaians data is invalid or empty", async () => {
     req.params.id_kelas_kuliah = 1;
-
-    // Missing or empty penilaians
     req.body = {};
 
-    // Call the controller function
-    await createPenilaianByKelasKuliahId(req, res, next);
+    await createOrUpdatePenilaianByKelasKuliahId(req, res, next);
 
-    // Assertions
     expect(res.statusCode).toEqual(400);
-    expect(res._getJSONData().message).toBe("Invalid or empty penilaians data");
+    expect(res._getJSONData()).toEqual({
+      message: "Invalid or empty penilaians data",
+    });
   });
 
-  // Add more test cases as needed
+  it("should return 404 if kelas kuliah is not found", async () => {
+    req.params.id_kelas_kuliah = 1;
+    req.body = {
+      penilaians: [
+        {
+          id_registrasi_mahasiswa: "00159683-001a-487b-a798-7ed15a8c14e0",
+          nilai_bobot: [
+            { id_bobot: 4, nilai: 85 },
+            { id_bobot: 5, nilai: 90 },
+            { id_bobot: 6, nilai: 75 },
+            { id_bobot: 7, nilai: 80 },
+          ],
+        },
+      ],
+    };
+
+    jest.spyOn(KelasKuliah, "findByPk").mockResolvedValue(null);
+
+    await createOrUpdatePenilaianByKelasKuliahId(req, res, next);
+
+    expect(res.statusCode).toEqual(404);
+    expect(res._getJSONData()).toEqual({
+      message: "Kelas Kuliah not found",
+    });
+  });
+
+  it("should return 404 if prodi is not found", async () => {
+    req.params.id_kelas_kuliah = 1;
+    req.body = {
+      penilaians: [
+        {
+          id_registrasi_mahasiswa: "00159683-001a-487b-a798-7ed15a8c14e0",
+          nilai_bobot: [
+            { id_bobot: 4, nilai: 85 },
+            { id_bobot: 5, nilai: 90 },
+            { id_bobot: 6, nilai: 75 },
+            { id_bobot: 7, nilai: 80 },
+          ],
+        },
+      ],
+    };
+
+    const mockKelasKuliah = {
+      id_kelas_kuliah: 1,
+      id_prodi: 1,
+    };
+
+    jest.spyOn(KelasKuliah, "findByPk").mockResolvedValue(mockKelasKuliah);
+    jest.spyOn(Prodi, "findOne").mockResolvedValue(null);
+
+    await createOrUpdatePenilaianByKelasKuliahId(req, res, next);
+
+    expect(res.statusCode).toEqual(404);
+    expect(res._getJSONData()).toEqual({
+      message: "Prodi not found",
+    });
+  });
+
+  it("should return 404 if bobot penilaian is not found", async () => {
+    req.params.id_kelas_kuliah = 1;
+    req.body = {
+      penilaians: [
+        {
+          id_registrasi_mahasiswa: "00159683-001a-487b-a798-7ed15a8c14e0",
+          nilai_bobot: [
+            { id_bobot: 4, nilai: 85 },
+            { id_bobot: 5, nilai: 90 },
+            { id_bobot: 6, nilai: 75 },
+            { id_bobot: 7, nilai: 80 },
+          ],
+        },
+      ],
+    };
+
+    const mockKelasKuliah = {
+      id_kelas_kuliah: 1,
+      id_prodi: 1,
+    };
+
+    const mockProdi = {
+      id_prodi: 1,
+    };
+
+    jest.spyOn(KelasKuliah, "findByPk").mockResolvedValue(mockKelasKuliah);
+    jest.spyOn(Prodi, "findOne").mockResolvedValue(mockProdi);
+    jest.spyOn(BobotPenilaian, "findAll").mockResolvedValue([]);
+
+    await createOrUpdatePenilaianByKelasKuliahId(req, res, next);
+
+    expect(res.statusCode).toEqual(404);
+    expect(res._getJSONData()).toEqual({
+      message: "Bobot Penilaian not found for the given prodi",
+    });
+  });
+
+  it("should return 404 if a specific bobot penilaian is not found", async () => {
+    req.params.id_kelas_kuliah = 1;
+    req.body = {
+      penilaians: [
+        {
+          id_registrasi_mahasiswa: "00159683-001a-487b-a798-7ed15a8c14e0",
+          nilai_bobot: [
+            { id_bobot: 4, nilai: 85 },
+            { id_bobot: 5, nilai: 90 },
+            { id_bobot: 6, nilai: 75 },
+            { id_bobot: 7, nilai: 80 },
+          ],
+        },
+      ],
+    };
+
+    const mockKelasKuliah = {
+      id_kelas_kuliah: 1,
+      id_prodi: 1,
+    };
+
+    const mockProdi = {
+      id_prodi: 1,
+    };
+
+    const mockBobotPenilaians = [
+      { id_bobot: 4, bobot_penilaian: 30 },
+      { id_bobot: 5, bobot_penilaian: 30 },
+      { id_bobot: 6, bobot_penilaian: 20 },
+    ];
+
+    jest.spyOn(KelasKuliah, "findByPk").mockResolvedValue(mockKelasKuliah);
+    jest.spyOn(Prodi, "findOne").mockResolvedValue(mockProdi);
+    jest.spyOn(BobotPenilaian, "findAll").mockResolvedValue(mockBobotPenilaians);
+    jest.spyOn(BobotPenilaian, "findByPk").mockImplementation((id) => {
+      if (id === 7) {
+        return null;
+      }
+      return mockBobotPenilaians.find((bobot) => bobot.id_bobot === id);
+    });
+
+    await createOrUpdatePenilaianByKelasKuliahId(req, res, next);
+
+    expect(res.statusCode).toEqual(404);
+    expect(res._getJSONData()).toEqual({
+      message: "Bobot Penilaian with ID 7 not found",
+    });
+  });
+
+  it("should return 404 if mahasiswa is not found", async () => {
+    req.params.id_kelas_kuliah = 1;
+    req.body = {
+      penilaians: [
+        {
+          id_registrasi_mahasiswa: "00159683-001a-487b-a798-7ed15a8c14e0",
+          nilai_bobot: [
+            { id_bobot: 4, nilai: 85 },
+            { id_bobot: 5, nilai: 90 },
+            { id_bobot: 6, nilai: 75 },
+            { id_bobot: 7, nilai: 80 },
+          ],
+        },
+      ],
+    };
+
+    const mockKelasKuliah = {
+      id_kelas_kuliah: 1,
+      id_prodi: 1,
+    };
+
+    const mockProdi = {
+      id_prodi: 1,
+    };
+
+    const mockBobotPenilaians = [
+      { id_bobot: 4, bobot_penilaian: 25 },
+      { id_bobot: 5, bobot_penilaian: 25 },
+      { id_bobot: 6, bobot_penilaian: 25 },
+      { id_bobot: 7, bobot_penilaian: 25 },
+    ];
+
+    jest.spyOn(KelasKuliah, "findByPk").mockResolvedValue(mockKelasKuliah);
+    jest.spyOn(Prodi, "findOne").mockResolvedValue(mockProdi);
+    jest.spyOn(BobotPenilaian, "findAll").mockResolvedValue(mockBobotPenilaians);
+    jest.spyOn(BobotPenilaian, "findByPk").mockImplementation((id) => {
+      return mockBobotPenilaians.find((bobot) => bobot.id_bobot === id);
+    });
+    jest.spyOn(Mahasiswa, "findOne").mockResolvedValue(null);
+
+    await createOrUpdatePenilaianByKelasKuliahId(req, res, next);
+
+    expect(res.statusCode).toEqual(404);
+    expect(res._getJSONData()).toEqual({
+      message: `Mahasiswa with ID 00159683-001a-487b-a798-7ed15a8c14e0 not found`,
+    });
+  });
 });

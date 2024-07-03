@@ -18,11 +18,11 @@ module.exports = {
         allowNull: false,
       },
       nilai_angka: {
-        type: Sequelize.DECIMAL(4, 0),
+        type: Sequelize.DECIMAL(4, 2),
         allowNull: true,
       },
       nilai_indeks: {
-        type: Sequelize.DECIMAL(4, 0),
+        type: Sequelize.DECIMAL(4, 2),
         allowNull: true,
       },
       nilai_huruf: {

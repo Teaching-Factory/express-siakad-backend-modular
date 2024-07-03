@@ -8,6 +8,6 @@ const checkRole = require("../middlewares/check-role");
 
 // all routes
 router.get("/:id_kelas_kuliah/get-peserta-kelas", checkRole(["admin", "admin-prodi"]), NilaiPerkuliahanController.getPesertaKelasKuliahByKelasKuliahId);
-router.post("/:id_kelas_kuliah/penilaian-detail-perkuliahan-kelas", checkRole(["admin", "admin-prodi"]), NilaiPerkuliahanController.createPenilaianByKelasKuliahId);
+router.post("/:id_kelas_kuliah/penilaian-detail-perkuliahan-kelas", checkRole(["admin", "admin-prodi"]), NilaiPerkuliahanController.createOrUpdatePenilaianByKelasKuliahId);
 
 module.exports = router;
