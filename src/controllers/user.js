@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const { Op } = require("sequelize");
-const { User, Dosen, Role, UserRole, Mahasiswa, Angkatan, Periode, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, StatusKeaktifanPegawai } = require("../../models");
+const { User, Dosen, Role, UserRole, Mahasiswa, Angkatan, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, StatusKeaktifanPegawai, Semester } = require("../../models");
 
 const getAllUser = async (req, res, next) => {
   try {
@@ -226,20 +226,30 @@ const updateUserById = async (req, res, next) => {
     user.username = username || user.username;
     user.password = password ? await bcrypt.hash(password, 10) : user.password;
     user.email = email || user.email;
+    user.hints = password || user.password;
     user.status = status || user.status;
 
     await user.save();
 
-    // Perbarui juga role user jika id_role berbeda
-    if (id_role && id_role !== user.id_role) {
-      const role = await Role.findByPk(id_role);
-      if (!role) {
-        return res.status(404).json({
-          message: "<===== Role Not Found:",
-        });
-      }
-      await user.update({ id_role: role.id });
+    // get data user role
+    const user_role = await UserRole.findOne({
+      where: {
+        id_user: user.id,
+      },
+      include: [{ model: User }, { model: Role }],
+    });
+
+    if (!user_role) {
+      return res.status(404).json({
+        message: "<===== User Role Not Found:",
+      });
     }
+
+    // Update data user role
+    user_role.id_role = id_role;
+
+    // Simpan perubahan ke dalam database
+    await user_role.save();
 
     res.json({
       message: "UPDATE User Success",
@@ -426,15 +436,6 @@ const getMahasiswaDontHaveUserByProdiAndAngkatanId = async (req, res, next) => {
     // Ekstrak tahun dari data angkatan
     const tahunAngkatan = angkatan.tahun;
 
-    // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
-    const periodeIds = await Periode.findAll({
-      where: { id_prodi: prodiId },
-      attributes: ["id_periode"], // Ambil hanya kolom id_periode
-    });
-
-    // Ekstrak id periode dari hasil pencarian
-    const periodeIdList = periodeIds.map((periode) => periode.id_periode);
-
     // Ambil semua username dari tabel User untuk dibandingkan dengan nim mahasiswa
     const users = await User.findAll({
       attributes: ["username"],
@@ -445,10 +446,10 @@ const getMahasiswaDontHaveUserByProdiAndAngkatanId = async (req, res, next) => {
     // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList dan tahun angkatan
     const mahasiswas = await Mahasiswa.findAll({
       where: {
-        id_periode: { [Op.in]: periodeIdList },
+        id_prodi: prodiId,
         nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Prodi }, { model: Semester }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404

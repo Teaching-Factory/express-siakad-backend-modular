@@ -1,7 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
 const { Mahasiswa } = require("../../../models");
-const { Periode } = require("../../../models");
 
 const getMahasiswa = async (req, res, next) => {
   try {
@@ -30,20 +29,6 @@ const getMahasiswa = async (req, res, next) => {
         },
       });
 
-      let id_periode = null;
-
-      // Periksa apakah id_periode atau periode_pelaporan ada di Periode
-      const periode = await Periode.findOne({
-        where: {
-          periode_pelaporan: data_mahasiswa.id_periode,
-        },
-      });
-
-      // Jika ditemukan, simpan nilainya
-      if (periode) {
-        id_periode = periode.id_periode;
-      }
-
       if (!existingMahasiswa) {
         // Data belum ada, buat entri baru di database
         const dateParts = data_mahasiswa.tanggal_lahir.split("-"); // Membagi tanggal menjadi bagian-bagian
@@ -64,7 +49,8 @@ const getMahasiswa = async (req, res, next) => {
           id_mahasiswa: data_mahasiswa.id_mahasiswa,
           id_perguruan_tinggi: data_mahasiswa.id_perguruan_tinggi,
           id_agama: data_mahasiswa.id_agama,
-          id_periode: id_periode,
+          id_semester: data_mahasiswa.id_periode,
+          id_prodi: data_mahasiswa.id_prodi,
         });
       }
     }

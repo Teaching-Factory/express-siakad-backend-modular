@@ -3,7 +3,7 @@ const { AnggotaAktivitasMahasiswa, AktivitasMahasiswa, Mahasiswa, Periode, Prodi
 const getAllAnggotaAktivitasMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data anggota_aktivitas_mahasiswa dari database
-    const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findAll({ include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }] });
+    const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findAll({ include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Prodi }] }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -30,7 +30,7 @@ const getAnggotaAktivitasMahasiswaById = async (req, res, next) => {
 
     // Cari data anggota_aktivitas_mahasiswa berdasarkan ID di database
     const anggota_aktivitas_mahasiswa = await AnggotaAktivitasMahasiswa.findByPk(AnggotaAktivitasMahasiswaId, {
-      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Prodi }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -67,7 +67,7 @@ const getAnggotaAktivitasMahasiswaByAktivitasId = async (req, res, next) => {
       where: {
         id_aktivitas: aktivitasId,
       },
-      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Prodi }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -123,7 +123,7 @@ const getAnggotaAktivitasMahasiswaBySemesterProdiAndJenisAktivitasId = async (re
             id_jenis_aktivitas: jenisAktivitasId,
           },
         },
-        { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] },
+        { model: Mahasiswa, include: [{ model: Prodi }] },
         { model: AktivitasMahasiswa, include: [{ model: Prodi }, { model: Semester }, { model: JenisAktivitasMahasiswa }] },
       ],
     });

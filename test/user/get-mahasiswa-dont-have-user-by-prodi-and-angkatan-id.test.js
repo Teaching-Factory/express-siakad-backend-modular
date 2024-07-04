@@ -1,13 +1,10 @@
 const { getMahasiswaDontHaveUserByProdiAndAngkatanId } = require("../../src/controllers/user");
-const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode, Prodi, Angkatan, User } = require("../../models");
+const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, Semester, Angkatan, User } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const { Op } = require("sequelize");
 
 jest.mock("../../models", () => ({
   Mahasiswa: {
-    findAll: jest.fn(),
-  },
-  Periode: {
     findAll: jest.fn(),
   },
   Angkatan: {
@@ -35,7 +32,6 @@ describe("getMahasiswaDontHaveUserByProdiAndAngkatanId", () => {
       message: "Prodi ID is required",
     });
     expect(Angkatan.findOne).not.toHaveBeenCalled();
-    expect(Periode.findAll).not.toHaveBeenCalled();
     expect(Mahasiswa.findAll).not.toHaveBeenCalled();
   });
 
@@ -53,7 +49,6 @@ describe("getMahasiswaDontHaveUserByProdiAndAngkatanId", () => {
       message: "Angkatan ID is required",
     });
     expect(Angkatan.findOne).not.toHaveBeenCalled();
-    expect(Periode.findAll).not.toHaveBeenCalled();
     expect(Mahasiswa.findAll).not.toHaveBeenCalled();
   });
 
@@ -76,7 +71,6 @@ describe("getMahasiswaDontHaveUserByProdiAndAngkatanId", () => {
     expect(res._getJSONData()).toEqual({
       message: `Angkatan dengan ID ${angkatanId} tidak ditemukan`,
     });
-    expect(Periode.findAll).not.toHaveBeenCalled();
     expect(Mahasiswa.findAll).not.toHaveBeenCalled();
   });
 
@@ -93,7 +87,6 @@ describe("getMahasiswaDontHaveUserByProdiAndAngkatanId", () => {
     ];
 
     Angkatan.findOne.mockResolvedValue(mockAngkatan);
-    Periode.findAll.mockResolvedValue([{ id_periode: "789" }]);
     Mahasiswa.findAll.mockResolvedValue(mockMahasiswa);
     User.findAll.mockResolvedValue(mockUsers);
 
@@ -108,19 +101,15 @@ describe("getMahasiswaDontHaveUserByProdiAndAngkatanId", () => {
     expect(Angkatan.findOne).toHaveBeenCalledWith({
       where: { id: angkatanId },
     });
-    expect(Periode.findAll).toHaveBeenCalledWith({
-      where: { id_prodi: prodiId },
-      attributes: ["id_periode"],
-    });
     expect(User.findAll).toHaveBeenCalledWith({
       attributes: ["username"],
     });
     expect(Mahasiswa.findAll).toHaveBeenCalledWith({
       where: {
-        id_periode: { [Op.in]: ["789"] },
+        id_prodi: prodiId,
         nama_periode_masuk: { [Op.like]: "2020/%" },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Prodi }, { model: Semester }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({

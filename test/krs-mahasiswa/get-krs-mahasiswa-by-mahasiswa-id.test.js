@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getKRSMahasiswaByMahasiswaId } = require("../../src/controllers/krs-mahasiswa");
-const { KRSMahasiswa, Mahasiswa, Periode, Prodi, MataKuliah, KelasKuliah, TahunAjaran } = require("../../models");
+const { KRSMahasiswa, Mahasiswa, Semester, Prodi, MataKuliah, KelasKuliah, TahunAjaran } = require("../../models");
 
 jest.mock("../../models");
 
@@ -34,7 +34,7 @@ describe("getKRSMahasiswaByMahasiswaId", () => {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
         angkatan: mockTahunAjaran.id_tahun_ajaran,
       },
-      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -65,7 +65,7 @@ describe("getKRSMahasiswaByMahasiswaId", () => {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
         angkatan: mockTahunAjaran.id_tahun_ajaran,
       },
-      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({

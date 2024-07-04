@@ -1,4 +1,4 @@
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan, Semester } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
 
@@ -96,7 +96,7 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
     // memperoleh id
     const prodiId = req.params.id_prodi;
     const angkatanId = req.params.id_angkatan;
-    const periodeId = req.params.id_periode;
+    const semesterId = req.params.id_semester;
     const mataKuliahId = req.params.id_matkul;
 
     // pengecekan parameter id
@@ -110,9 +110,9 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
         message: "Angkatan ID is required",
       });
     }
-    if (!periodeId) {
+    if (!semesterId) {
       return res.status(400).json({
-        message: "Periode ID is required",
+        message: "Semester ID is required",
       });
     }
     if (!mataKuliahId) {
@@ -123,17 +123,11 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
 
     // get data angktan
     const angkatan = await Angkatan.findByPk(angkatanId);
-    const periode = await Periode.findByPk(periodeId);
 
     // jika data tidak ditemukan
     if (!angkatan) {
       return res.status(404).json({
         message: `<===== Angkatan With ID ${angkatanId} Not Found:`,
-      });
-    }
-    if (!periode) {
-      return res.status(404).json({
-        message: `<===== Periode With ID ${periodeId} Not Found:`,
       });
     }
 
@@ -143,7 +137,7 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
     const requestBody = {
       act: "GetRekapKHSMahasiswa",
       token: `${token}`,
-      filter: `id_prodi='${prodiId}' AND angkatan='${angkatan.tahun}' AND id_periode='${periode.periode_pelaporan}' AND id_matkul='${mataKuliahId}'`,
+      filter: `id_prodi='${prodiId}' AND angkatan='${angkatan.tahun}' AND id_periode='${semesterId}' AND id_matkul='${mataKuliahId}'`,
     };
 
     // Menggunakan token untuk mengambil data

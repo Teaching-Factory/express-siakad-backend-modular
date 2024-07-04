@@ -51,23 +51,20 @@ const getStatusMahasiswaById = async (req, res, next) => {
 
 const getProdiWithCountMahasiswaBelumSetSK = async (req, res, next) => {
   try {
-    // Ambil data semua prodi beserta jumlah mahasiswa yang memiliki nama_status_mahasiswa Non-Aktif
+    // Ambil data semua prodi beserta jumlah mahasiswa yang memiliki nama_status_mahasiswa Aktif
     const prodiData = await Prodi.findAll({
       include: {
-        model: Periode,
-        include: {
-          model: Mahasiswa,
-          where: {
-            nama_status_mahasiswa: "Aktif",
-          },
-          required: false,
+        model: Mahasiswa,
+        where: {
+          nama_status_mahasiswa: "Aktif",
         },
+        required: false,
       },
     });
 
     // Siapkan data untuk respons
     const result = prodiData.map((prodi) => {
-      const jumlahMahasiswa = prodi.Periodes.reduce((count, periode) => count + periode.Mahasiswas.length, 0);
+      const jumlahMahasiswa = prodi.Mahasiswas.length;
       return {
         id_prodi: prodi.id_prodi,
         nama_prodi: prodi.nama_program_studi,
@@ -102,32 +99,26 @@ const getPeriodeByProdiIdWithCountMahasiswa = async (req, res, next) => {
 
     // Ambil semua data mahasiswa yang memiliki nama_periode_masuk sesuai dengan periodePelaporanList
     const mahasiswaList = await Mahasiswa.findAll({
-      include: [
-        {
-          model: Periode,
-          where: {
-            periode_pelaporan: {
-              [Sequelize.Op.or]: periodePelaporanList.map((period) => ({
-                [Sequelize.Op.like]: `${period}%`,
-              })),
-            },
-          },
+      where: {
+        nama_periode_masuk: {
+          [Sequelize.Op.or]: periodePelaporanList.map((period) => ({
+            [Sequelize.Op.like]: `${period}%`,
+          })),
         },
-      ],
+      },
     });
 
     // Buat peta untuk menghitung jumlah mahasiswa per periode
     const mahasiswaCountMap = mahasiswaList.reduce((acc, mahasiswa) => {
       const periodeMasuk = mahasiswa.nama_periode_masuk.substring(0, 4);
-      const periodePelaporan = mahasiswa.Periode.periode_pelaporan.toString().substring(0, 4);
 
-      if (periodePelaporanList.includes(periodePelaporan)) {
-        if (!acc[periodePelaporan]) {
-          acc[periodePelaporan] = { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
+      if (periodePelaporanList.includes(periodeMasuk)) {
+        if (!acc[periodeMasuk]) {
+          acc[periodeMasuk] = { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
         }
-        acc[periodePelaporan].jumlahMahasiswa += 1;
+        acc[periodeMasuk].jumlahMahasiswa += 1;
         if (mahasiswa.nama_status_mahasiswa === "Aktif") {
-          acc[periodePelaporan].jumlahMahasiswaBelumSetSK += 1;
+          acc[periodeMasuk].jumlahMahasiswaBelumSetSK += 1;
         }
       }
       return acc;
@@ -147,7 +138,7 @@ const getPeriodeByProdiIdWithCountMahasiswa = async (req, res, next) => {
       const counts = mahasiswaCountMap[angkatanItem.tahun] || { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
 
       return {
-        id_angkatan: angkatanItem.id, // Ubah sesuai dengan nama kolom yang sesuai
+        id_angkatan: angkatanItem.id,
         tahun: angkatanItem.tahun,
         jumlahMahasiswa: counts.jumlahMahasiswa,
         jumlahMahasiswaBelumSetSK: counts.jumlahMahasiswaBelumSetSK,
@@ -267,17 +258,9 @@ const updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId = async (req, res, ne
 
     // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
     const mahasiswas = await Mahasiswa.findAll({
-      include: [
-        {
-          model: Periode,
-          where: {
-            id_prodi: prodiId,
-          },
-        },
-      ],
       where: {
-        // Gunakan Sequelize literal untuk melakukan substring pada kolom nama_periode_masuk
-        [Sequelize.Op.and]: [Sequelize.where(Sequelize.literal(`substring(nama_periode_masuk, 1, 4)`), angkatan.tahun.toString())],
+        id_prodi: prodiId,
+        [Sequelize.Op.and]: [Sequelize.where(Sequelize.literal(`substring(nama_periode_masuk, 1, 4)`), angkatan.tahun.toString())], // Gunakan Sequelize literal untuk melakukan substring pada kolom nama_periode_masuk
       },
     });
 

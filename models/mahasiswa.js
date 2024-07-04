@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       Mahasiswa.belongsTo(models.BiodataMahasiswa, { foreignKey: "id_mahasiswa" });
       Mahasiswa.belongsTo(models.PerguruanTinggi, { foreignKey: "id_perguruan_tinggi" });
       Mahasiswa.belongsTo(models.Agama, { foreignKey: "id_agama" });
-      Mahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
+      Mahasiswa.belongsTo(models.Semester, { foreignKey: "id_semester" });
+      Mahasiswa.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
 
       // relasi tabel child
       Mahasiswa.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
@@ -94,8 +95,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.SMALLINT(5),
         allowNull: false,
       },
-      id_periode: {
-        type: DataTypes.INTEGER(10),
+      id_semester: {
+        type: DataTypes.CHAR(5),
+        allowNull: true,
+      },
+      id_prodi: {
+        type: DataTypes.STRING(36),
         allowNull: true,
       },
     },

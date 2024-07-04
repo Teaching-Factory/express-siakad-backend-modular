@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { DosenWali, Periode, Angkatan, TahunAjaran, Dosen, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama } = require("../../models");
+const { DosenWali, Prodi, Angkatan, TahunAjaran, Dosen, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Semester } = require("../../models");
 
 const getAllDosenWaliByDosenAndTahunAjaranId = async (req, res, next) => {
   try {
@@ -220,22 +220,13 @@ const getAllMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     // Ekstrak tahun dari data angkatan
     const tahunAngkatan = angkatan.tahun;
 
-    // Cari semua periode yang memiliki id_prodi sesuai dengan id_prodi yang diberikan
-    const periodeIds = await Periode.findAll({
-      where: { id_prodi: prodiId },
-      attributes: ["id_periode"], // Ambil hanya kolom id_periode
-    });
-
-    // Ekstrak id periode dari hasil pencarian
-    const periodeIdList = periodeIds.map((periode) => periode.id_periode);
-
     // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList dan tahun angkatan
     const mahasiswas = await Mahasiswa.findAll({
       where: {
-        id_periode: { [Op.in]: periodeIdList },
+        id_prodi: prodiId,
         nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404

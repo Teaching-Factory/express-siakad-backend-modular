@@ -1,4 +1,4 @@
-const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, Periode, PesertaKelasKuliah } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah } = require("../../models");
 
 const getAllKelasKuliah = async (req, res, next) => {
   try {
@@ -185,7 +185,7 @@ const createKelasKuliah = async (req, res, next) => {
     });
 
     // create data detail kelas kuliah
-    let detail_kelas_kuliah = DetailKelasKuliah.create({
+    let detail_kelas_kuliah = await DetailKelasKuliah.create({
       bahasan: null,
       tanggal_mulai_efektif: tanggal_mulai_efektif,
       tanggal_akhir_efektif: tanggal_akhir_efektif,
@@ -281,17 +281,17 @@ const updateKelasKuliahById = async (req, res, next) => {
       },
     });
 
-    // update data detail kelas kuliah
-    dataDetailKelasKuliah.tanggal_mulai_efektif = tanggal_mulai_efektif;
-    dataDetailKelasKuliah.tanggal_akhir_efektif = tanggal_akhir_efektif;
-    dataDetailKelasKuliah.kapasitas = kapasitas_peserta_kelas;
-    dataDetailKelasKuliah.hari = hari;
-    dataDetailKelasKuliah.jam_mulai = jam_mulai;
-    dataDetailKelasKuliah.jam_selesai = jam_selesai;
-    dataDetailKelasKuliah.id_ruang_perkuliahan = id_ruang_perkuliahan;
+    // // update data detail kelas kuliah
+    // dataDetailKelasKuliah.tanggal_mulai_efektif = tanggal_mulai_efektif;
+    // dataDetailKelasKuliah.tanggal_akhir_efektif = tanggal_akhir_efektif;
+    // dataDetailKelasKuliah.kapasitas = kapasitas_peserta_kelas;
+    // dataDetailKelasKuliah.hari = hari;
+    // dataDetailKelasKuliah.jam_mulai = jam_mulai;
+    // dataDetailKelasKuliah.jam_selesai = jam_selesai;
+    // dataDetailKelasKuliah.id_ruang_perkuliahan = id_ruang_perkuliahan;
 
-    // Simpan perubahan ke dalam database
-    await dataDetailKelasKuliah.save();
+    // // Simpan perubahan ke dalam database
+    // await dataDetailKelasKuliah.save();
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -400,22 +400,10 @@ const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
       });
     }
 
-    const periode = await Periode.findOne({
-      where: {
-        id_periode: mahasiswa.id_periode,
-      },
-    });
-
-    if (!periode) {
-      return res.status(404).json({
-        message: "Periode not found",
-      });
-    }
-
     // Ambil semua data kelas_kuliah dari database
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
-        id_prodi: periode.id_prodi,
+        id_prodi: mahasiswa.id_prodi,
       },
       include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });
@@ -467,22 +455,10 @@ const getAllKelasKuliahAvailableByProdiMahasiswaId = async (req, res, next) => {
       });
     }
 
-    const periode = await Periode.findOne({
-      where: {
-        id_periode: mahasiswa.id_periode,
-      },
-    });
-
-    if (!periode) {
-      return res.status(404).json({
-        message: "Periode not found",
-      });
-    }
-
     // Ambil semua data kelas_kuliah dari database
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
-        id_prodi: periode.id_prodi,
+        id_prodi: mahasiswa.id_prodi,
       },
       include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });

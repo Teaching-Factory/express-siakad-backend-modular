@@ -1,7 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
 const { KRSMahasiswa } = require("../../../models");
-const { Periode } = require("../../../models");
 
 const getKRSMahasiswa = async (req, res, next) => {
   try {
@@ -23,24 +22,10 @@ const getKRSMahasiswa = async (req, res, next) => {
 
     // Loop untuk menambahkan data ke dalam database
     for (const krs_mahasiswa of dataKRSMahasiswa) {
-      let id_periode = null;
-
-      // Periksa apakah id_periode atau periode_pelaporan ada di Periode
-      const periode = await Periode.findOne({
-        where: {
-          periode_pelaporan: krs_mahasiswa.id_periode,
-        },
-      });
-
-      // Jika ditemukan, simpan nilainya
-      if (periode) {
-        id_periode = periode.id_periode;
-      }
-
       await KRSMahasiswa.create({
         angkatan: krs_mahasiswa.angkatan,
         id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
-        id_periode: id_periode,
+        id_semester: krs_mahasiswa.id_periode,
         id_prodi: krs_mahasiswa.id_prodi,
         id_matkul: krs_mahasiswa.id_matkul,
         id_kelas: krs_mahasiswa.id_kelas,

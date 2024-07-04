@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { SistemKuliah, Mahasiswa, SistemKuliahMahasiswa, Periode, Prodi, BiodataMahasiswa } = require("../../models");
+const { SistemKuliah, Mahasiswa, SistemKuliahMahasiswa, Prodi, BiodataMahasiswa } = require("../../models");
 
 const getAllSistemKuliah = async (req, res, next) => {
   try {
@@ -72,17 +72,10 @@ const getSistemKuliahMahasiswaByProdiAndSistemKuliahId = async (req, res, next) 
       include: {
         model: Mahasiswa,
         required: true,
-        include: [
-          {
-            model: Periode,
-            required: true,
-            where: {
-              id_prodi: prodiId,
-            },
-            include: [{ model: Prodi }],
-          },
-          { model: BiodataMahasiswa },
-        ],
+        where: {
+          id_prodi: prodiId,
+        },
+        include: [{ model: Prodi }, { model: BiodataMahasiswa }],
       },
       where: {
         id_sistem_kuliah: sistemKuliahId,

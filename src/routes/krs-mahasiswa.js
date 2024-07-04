@@ -14,8 +14,8 @@ router.get("/:id/get", checkRole(["admin", "admin-prodi"]), KrsMahasiswaControll
 router.get("/mahasiswa/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getKRSMahasiswaByMahasiswaId);
 
 // validasi krs
-router.get("/periode", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaKRSByPeriode);
-router.get("/mahasiswa/periode/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetKRSMahasiswaByMahasiswaPeriode);
+router.get("/semester", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaKRSBySemester);
+router.get("/mahasiswa/semester/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetKRSMahasiswaByMahasiswaSemester);
 router.delete("/:id/delete", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.deleteKRSMahasiswaById);
 router.put("/validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.ValidasiKRSMahasiswa);
 router.put("/:id_registrasi_mahasiswa/batalkan-validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.BatalkanValidasiKRSMahasiswa);
@@ -26,7 +26,7 @@ router.get("/get-mahasiswa-krs-belum-tervalidasi", checkRole(["admin", "admin-pr
 
 // mahasiswa belum krs
 router.get("/mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaBelumKRS);
-router.get("/:id_periode/:id_prodi/get-mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getMahasiswaBelumKRSByPeriodeAndProdiId);
+router.get("/:id_semester/:id_prodi/get-mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getMahasiswaBelumKRSBySemesterAndProdiId);
 
 // tambah krs
 router.post("/:id_registrasi_mahasiswa/create", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.createKRSMahasiswa);

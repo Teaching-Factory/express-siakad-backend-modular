@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getProdiWithCountMahasiswaBelumSetSK } = require("../../src/controllers/status-mahasiswa");
-const { Prodi } = require("../../models");
+const { Prodi, Mahasiswa } = require("../../models");
 
 jest.mock("../../models");
 
@@ -20,24 +20,16 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
         id_prodi: "prodi1",
         nama_program_studi: "Prodi 1",
         status: "active",
-        Periodes: [
-          {
-            Mahasiswas: [
-              { id_mahasiswa: "mhs1", nama_status_mahasiswa: null },
-              { id_mahasiswa: "mhs2", nama_status_mahasiswa: null },
-            ],
-          },
+        Mahasiswas: [
+          { id_mahasiswa: "mhs1", nama_status_mahasiswa: "Aktif" },
+          { id_mahasiswa: "mhs2", nama_status_mahasiswa: "Aktif" },
         ],
       },
       {
         id_prodi: "prodi2",
         nama_program_studi: "Prodi 2",
         status: "inactive",
-        Periodes: [
-          {
-            Mahasiswas: [{ id_mahasiswa: "mhs3", nama_status_mahasiswa: null }],
-          },
-        ],
+        Mahasiswas: [{ id_mahasiswa: "mhs3", nama_status_mahasiswa: "Aktif" }],
       },
     ];
 
@@ -45,7 +37,15 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
 
     await getProdiWithCountMahasiswaBelumSetSK(req, res, next);
 
-    expect(Prodi.findAll).toHaveBeenCalled();
+    expect(Prodi.findAll).toHaveBeenCalledWith({
+      include: {
+        model: Mahasiswa,
+        where: {
+          nama_status_mahasiswa: "Aktif",
+        },
+        required: false,
+      },
+    });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
       message: "GET ALL Prodi With Count Mahasiswa Belum Set SK Success",
@@ -73,7 +73,15 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
 
     await getProdiWithCountMahasiswaBelumSetSK(req, res, next);
 
-    expect(Prodi.findAll).toHaveBeenCalled();
+    expect(Prodi.findAll).toHaveBeenCalledWith({
+      include: {
+        model: Mahasiswa,
+        where: {
+          nama_status_mahasiswa: "Aktif",
+        },
+        required: false,
+      },
+    });
     expect(next).toHaveBeenCalledWith(new Error(errorMessage));
   });
 });
