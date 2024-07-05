@@ -1,4 +1,4 @@
-const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, PesertaKelasKuliah } = require("../../models");
+const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, PesertaKelasKuliah, Prodi } = require("../../models");
 const { Op, fn, col } = require("sequelize");
 
 const getAllDetailKelasKuliah = async (req, res, next) => {
@@ -183,7 +183,9 @@ const getAllDetailKelasKuliahBySemesterAndDosenActive = async (req, res, next) =
             id_semester: semesterId,
             id_dosen: dosen.id_dosen,
           },
+          include: [{ model: Semester }, { model: Prodi }, { model: MataKuliah }],
         },
+        { model: RuangPerkuliahan },
       ],
     });
 

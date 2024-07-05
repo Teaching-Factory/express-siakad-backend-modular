@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getAllDetailKelasKuliahBySemesterAndDosenActive } = require("../../src/controllers/detail-kelas-kuliah");
-const { Dosen, DetailKelasKuliah, KelasKuliah } = require("../../models");
+const { Dosen, DetailKelasKuliah, KelasKuliah, Semester, Prodi, RuangPerkuliahan, MataKuliah } = require("../../models");
 
 jest.mock("../../models");
 
@@ -39,7 +39,9 @@ describe("getAllDetailKelasKuliahBySemesterAndDosenActive", () => {
             id_semester: mockSemesterId,
             id_dosen: mockDosen.id_dosen,
           },
+          include: [{ model: Semester }, { model: Prodi }, { model: MataKuliah }],
         },
+        { model: RuangPerkuliahan },
       ],
     });
 
