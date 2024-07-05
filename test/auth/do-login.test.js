@@ -75,7 +75,7 @@ describe("doLogin", () => {
     await doLogin(req, res, next);
 
     expect(res.statusCode).toEqual(400);
-    expect(res._getJSONData()).toEqual({ message: "username must be between 1 and 12 characters" });
+    expect(res._getJSONData()).toEqual({ message: "username must be between 1 and 13 characters" });
   });
 
   // Kasus uji 7 - Validasi panjang password minimal 1 karakter
@@ -95,7 +95,7 @@ describe("doLogin", () => {
     await doLogin(req, res, next);
 
     expect(res.statusCode).toEqual(400);
-    expect(res._getJSONData()).toEqual({ message: "username must be between 1 and 12 characters" });
+    expect(res._getJSONData()).toEqual({ message: "username must be between 1 and 13 characters" });
   });
 
   // Kasus uji 9 - Validasi panjang password maksimal 8 karakter

@@ -13,6 +13,11 @@ module.exports = {
         type: Sequelize.CHAR(4),
         allowNull: true,
       },
+      validasi_krs: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
       id_registrasi_mahasiswa: {
         type: Sequelize.STRING(36),
         allowNull: true,
@@ -25,14 +30,14 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_periode: {
-        type: Sequelize.INTEGER(10),
+      id_semester: {
+        type: Sequelize.char(5),
         allowNull: true,
         references: {
           model: {
-            tableName: "periodes",
+            tableName: "semesters",
           },
-          key: "id_periode",
+          key: "id_semester",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { createKelasKuliah } = require("../../src/controllers/kelas-kuliah");
-const { KelasKuliah, MataKuliah } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah } = require("../../models");
 
 jest.mock("../../models");
 
@@ -33,6 +33,7 @@ describe("createKelasKuliah", () => {
 
     MataKuliah.findByPk.mockResolvedValue(mockMataKuliah);
     KelasKuliah.create.mockResolvedValue({ id_kelas_kuliah: 1 }); // Mock the created KelasKuliah
+    DetailKelasKuliah.create.mockResolvedValue({ id_kelas_kuliah: 1 }); // Mock the created DetailKelasKuliah with id_kelas_kuliah
 
     req.body = requestBody;
     req.params.id_prodi = 1;
@@ -55,11 +56,26 @@ describe("createKelasKuliah", () => {
       id_dosen: requestBody.id_dosen,
     });
 
+    expect(DetailKelasKuliah.create).toHaveBeenCalledWith({
+      bahasan: null,
+      tanggal_mulai_efektif: requestBody.tanggal_mulai_efektif,
+      tanggal_akhir_efektif: requestBody.tanggal_akhir_efektif,
+      kapasitas: requestBody.kapasitas_peserta_kelas,
+      tanggal_tutup_daftar: null,
+      prodi_penyelenggara: null,
+      perguruan_tinggi_penyelenggara: null,
+      hari: requestBody.hari,
+      jam_mulai: requestBody.jam_mulai,
+      jam_selesai: requestBody.jam_selesai,
+      id_kelas_kuliah: 1,
+      id_ruang_perkuliahan: requestBody.id_ruang_perkuliahan,
+    });
+
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
       message: "<===== CREATE Kelas Kuliah Success",
       dataKelasKuliah: { id_kelas_kuliah: 1 },
-      dataDetailKelasKuliah: {},
+      dataDetailKelasKuliah: { id_kelas_kuliah: 1 },
     });
     expect(next).not.toHaveBeenCalled();
   });

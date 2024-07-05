@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getKRSMahasiswaById } = require("../../src/controllers/krs-mahasiswa");
-const { KRSMahasiswa, Mahasiswa, Periode, Prodi, MataKuliah, KelasKuliah } = require("../../models");
+const { KRSMahasiswa, Mahasiswa, Prodi, MataKuliah, KelasKuliah, Semester } = require("../../models");
 
 jest.mock("../../models");
 
@@ -24,7 +24,7 @@ describe("getKRSMahasiswaById", () => {
     await getKRSMahasiswaById(req, res, next);
 
     expect(KRSMahasiswa.findByPk).toHaveBeenCalledWith(KRSMahasiswaId, {
-      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -44,7 +44,7 @@ describe("getKRSMahasiswaById", () => {
     await getKRSMahasiswaById(req, res, next);
 
     expect(KRSMahasiswa.findByPk).toHaveBeenCalledWith(KRSMahasiswaId, {
-      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
@@ -77,7 +77,7 @@ describe("getKRSMahasiswaById", () => {
     await getKRSMahasiswaById(req, res, next);
 
     expect(KRSMahasiswa.findByPk).toHaveBeenCalledWith(KRSMahasiswaId, {
-      include: [{ model: Mahasiswa }, { model: Periode }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
     expect(next).toHaveBeenCalledWith(new Error(errorMessage));
   });

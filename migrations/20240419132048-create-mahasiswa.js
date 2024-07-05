@@ -85,14 +85,26 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      id_periode: {
-        type: Sequelize.INTEGER(10),
+      id_semester: {
+        type: Sequelize.CHAR(5),
         allowNull: true,
         references: {
           model: {
-            tableName: "periodes",
+            tableName: "semesters",
           },
-          key: "id_periode",
+          key: "id_semester",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_prodi: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "prodis",
+          },
+          key: "id_prodi",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

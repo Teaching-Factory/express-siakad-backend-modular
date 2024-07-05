@@ -30,11 +30,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       nilai_angka: {
-        type: DataTypes.DECIMAL(4, 0),
+        type: DataTypes.DECIMAL(4, 2),
         allowNull: true,
       },
       nilai_indeks: {
-        type: DataTypes.DECIMAL(4, 0),
+        type: DataTypes.DECIMAL(4, 2),
         allowNull: true,
       },
       nilai_huruf: {

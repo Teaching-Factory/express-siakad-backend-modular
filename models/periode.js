@@ -12,9 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Periode.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
 
       // relasi tabel child
-      Periode.hasMany(models.Mahasiswa, { foreignKey: "id_periode" });
       Periode.hasMany(models.RiwayatNilaiMahasiswa, { foreignKey: "id_periode" });
-      Periode.hasMany(models.KRSMahasiswa, { foreignKey: "id_periode" });
       Periode.hasMany(models.RekapJumlahMahasiswa, { foreignKey: "id_periode" });
       Periode.hasMany(models.RekapKHSMahasiswa, { foreignKey: "id_periode" });
       Periode.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_periode" });

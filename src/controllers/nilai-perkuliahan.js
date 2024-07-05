@@ -34,19 +34,36 @@ const getPesertaKelasKuliahByKelasKuliahId = async (req, res, next) => {
       });
     }
 
+    // Ambil detail nilai perkuliahan kelas untuk setiap peserta
+    const pesertaDenganNilai = await Promise.all(
+      peserta_kelas_kuliah.map(async (peserta) => {
+        const detailNilai = await DetailNilaiPerkuliahanKelas.findOne({
+          where: {
+            id_kelas_kuliah: peserta.id_kelas_kuliah,
+            id_registrasi_mahasiswa: peserta.id_registrasi_mahasiswa,
+          },
+        });
+
+        return {
+          ...peserta.toJSON(),
+          detailNilaiPerkuliahanKelas: detailNilai,
+        };
+      })
+    );
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Peserta Kelas Kuliah By ID ${kelasKuliahId} Success:`,
       jumlahData: peserta_kelas_kuliah.length,
       dataKelasKuliah: detail_kelas_kuliah,
-      data: peserta_kelas_kuliah,
+      data: pesertaDenganNilai,
     });
   } catch (error) {
     next(error);
   }
 };
 
-const createPenilaianByKelasKuliahId = async (req, res, next) => {
+const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
   try {
     const kelasKuliahId = req.params.id_kelas_kuliah;
     const { penilaians } = req.body;
@@ -61,13 +78,20 @@ const createPenilaianByKelasKuliahId = async (req, res, next) => {
 
     const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
 
+    if (!kelas_kuliah) {
+      return res.status(404).json({ message: "Kelas Kuliah not found" });
+    }
+
     const prodi = await Prodi.findOne({
       where: {
         id_prodi: kelas_kuliah.id_prodi,
       },
     });
 
-    // Fetch all bobot_penilaian for the given kelasKuliahId's prodi
+    if (!prodi) {
+      return res.status(404).json({ message: "Prodi not found" });
+    }
+
     const bobotPenilaians = await BobotPenilaian.findAll({
       where: {
         id_prodi: prodi.id_prodi,
@@ -78,17 +102,14 @@ const createPenilaianByKelasKuliahId = async (req, res, next) => {
       return res.status(404).json({ message: "Bobot Penilaian not found for the given prodi" });
     }
 
-    // Prepare an array to store created detail nilai perkuliahan
-    const createdDetails = [];
+    const createdOrUpdatedDetails = [];
 
-    // Process each penilaians entry
     for (const penilaian of penilaians) {
       const { id_registrasi_mahasiswa, nilai_bobot } = penilaian;
 
       let totalNilai = 0;
       let totalBobot = 0;
 
-      // Calculate total nilai based on bobot_penilaian and nilai_bobot
       for (const bobot of nilai_bobot) {
         const bobotPenilaian = await BobotPenilaian.findByPk(bobot.id_bobot);
 
@@ -100,18 +121,15 @@ const createPenilaianByKelasKuliahId = async (req, res, next) => {
         totalBobot += bobotPenilaian.bobot_penilaian;
       }
 
-      // Ensure totalBobot is 100
       if (totalBobot !== 100) {
         return res.status(400).json({ message: "Total bobot penilaian does not equal 100" });
       }
 
-      // Calculate nilai angka divided by 25 to get a value between 0 and 4
       let nilai_angka = (totalNilai / 25).toFixed(2);
 
       let nilai_huruf;
       let nilai_indeks;
 
-      // Convert nilai_angka to nilai_huruf and nilai_indeks
       if (nilai_angka >= 3.5) {
         nilai_huruf = "A";
         nilai_indeks = 4.0;
@@ -129,35 +147,51 @@ const createPenilaianByKelasKuliahId = async (req, res, next) => {
         nilai_indeks = 0.0;
       }
 
-      console.log(nilai_huruf, nilai_indeks, nilai_angka);
-
-      // get data mahasiswa
       let mahasiswa = await Mahasiswa.findOne({
         where: {
           id_registrasi_mahasiswa: id_registrasi_mahasiswa,
         },
       });
 
+      if (!mahasiswa) {
+        return res.status(404).json({ message: `Mahasiswa with ID ${id_registrasi_mahasiswa} not found` });
+      }
+
       let angkatan_mahasiswa = mahasiswa.nama_periode_masuk.substring(0, 4);
 
-      // Create entry in DetailNilaiPerkuliahanKelas
-      const detailNilai = await DetailNilaiPerkuliahanKelas.create({
-        jurusan: prodi.nama_program_studi,
-        angkatan: angkatan_mahasiswa,
-        nilai_angka: parseFloat(nilai_angka),
-        nilai_huruf,
-        nilai_indeks,
-        id_kelas_kuliah: kelasKuliahId,
-        id_registrasi_mahasiswa,
+      let detailNilai = await DetailNilaiPerkuliahanKelas.findOne({
+        where: {
+          id_kelas_kuliah: kelasKuliahId,
+          id_registrasi_mahasiswa,
+        },
       });
 
-      createdDetails.push(detailNilai);
+      if (detailNilai) {
+        detailNilai.jurusan = prodi.nama_program_studi;
+        detailNilai.angkatan = angkatan_mahasiswa;
+        detailNilai.nilai_angka = parseFloat(nilai_angka);
+        detailNilai.nilai_huruf = nilai_huruf;
+        detailNilai.nilai_indeks = nilai_indeks;
+        await detailNilai.save();
+      } else {
+        detailNilai = await DetailNilaiPerkuliahanKelas.create({
+          jurusan: prodi.nama_program_studi,
+          angkatan: angkatan_mahasiswa,
+          nilai_angka: parseFloat(nilai_angka),
+          nilai_huruf,
+          nilai_indeks,
+          id_kelas_kuliah: kelasKuliahId,
+          id_registrasi_mahasiswa,
+        });
+      }
+
+      createdOrUpdatedDetails.push(detailNilai);
     }
 
     res.status(201).json({
-      message: "Penilaian created successfully",
-      dataJumlah: createdDetails.length,
-      data: createdDetails,
+      message: "Penilaian created or updated successfully",
+      dataJumlah: createdOrUpdatedDetails.length,
+      data: createdOrUpdatedDetails,
     });
   } catch (error) {
     next(error);
@@ -166,5 +200,5 @@ const createPenilaianByKelasKuliahId = async (req, res, next) => {
 
 module.exports = {
   getPesertaKelasKuliahByKelasKuliahId,
-  createPenilaianByKelasKuliahId,
+  createOrUpdatePenilaianByKelasKuliahId,
 };

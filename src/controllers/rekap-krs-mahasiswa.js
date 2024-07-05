@@ -57,7 +57,6 @@ const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
   try {
     // memperoleh id
     const prodiId = req.params.id_prodi;
-    const periodeId = req.params.id_periode;
     const semesterId = req.params.id_semester;
     const mataKuliahId = req.params.id_matkul;
     const mahasiswaId = req.params.id_registrasi_mahasiswa;
@@ -66,11 +65,6 @@ const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
     if (!prodiId) {
       return res.status(400).json({
         message: "Prodi ID is required",
-      });
-    }
-    if (!periodeId) {
-      return res.status(400).json({
-        message: "Periode ID is required",
       });
     }
     if (!semesterId) {
@@ -89,23 +83,13 @@ const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
       });
     }
 
-    // ambil data
-    const periode = await Periode.findByPk(periodeId);
-
-    // jika data tidak ditemukan
-    if (!periode) {
-      return res.status(404).json({
-        message: `<===== Periode With ID ${periodeId} Not Found:`,
-      });
-    }
-
     // Mendapatkan token
     const token = await getToken();
 
     const requestBody = {
       act: "GetRekapKRSMahasiswa",
       token: `${token}`,
-      filter: `id_prodi='${prodiId}' and id_periode='${periode.periode_pelaporan}' and id_semester='${semesterId}' and id_matkul='${mataKuliahId}' and id_registrasi_mahasiswa='${mahasiswaId}'`,
+      filter: `id_prodi='${prodiId}' and id_semester='${semesterId}' and id_matkul='${mataKuliahId}' and id_registrasi_mahasiswa='${mahasiswaId}'`,
     };
 
     // Menggunakan token untuk mengambil data

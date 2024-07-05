@@ -1,4 +1,4 @@
-const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Periode, Sequelize } = require("../../models");
+const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Semester, Sequelize } = require("../../models");
 
 const getAllPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
   try {
@@ -380,22 +380,22 @@ const getAllPertemuanPerkuliahanActiveByMahasiswa = async (req, res, next) => {
     // Ekstrak tahun awal dari nama_tahun_ajaran
     const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
 
-    // Ambil semua periode yang sesuai dengan tahun awal
-    const periodes = await Periode.findAll({
+    // Ambil semua semester yang sesuai dengan tahun awal
+    const semesters = await Semester.findAll({
       where: {
-        periode_pelaporan: {
+        id_semester: {
           [Sequelize.Op.like]: `${tahunAwal}%`,
         },
       },
     });
 
-    // Ambil semua id_periode dari hasil query periode
-    const idPeriodes = periodes.map((periode) => periode.id_periode);
+    // Ambil semua id_semester dari hasil query semester
+    const idSemester = semesters.map((semester) => semester.id_semester);
 
-    // Ambil data KRS mahasiswa berdasarkan id_periode yang didapatkan
+    // Ambil data KRS mahasiswa berdasarkan id_semester yang didapatkan
     const krs_mahasiswas = await KRSMahasiswa.findAll({
       where: {
-        id_periode: idPeriodes,
+        id_semester: idSemester,
         id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
       },
     });

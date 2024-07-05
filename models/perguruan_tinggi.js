@@ -35,14 +35,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: false,
         validate: {
-          len: { args: [1, 100], msg: "nama_perguruan_tinggi must be between 1 and 100 characters" },
+          len: { args: [0, 100], msg: "nama_perguruan_tinggi must be between 0 and 100 characters" },
         },
       },
       nama_singkat: {
         type: DataTypes.STRING(20),
         allowNull: true,
         validate: {
-          len: { args: [1, 20], msg: "nama_singkat must be between 1 and 20 characters" },
+          len: { args: [0, 20], msg: "nama_singkat must be between 0 and 20 characters" },
         },
       },
     },

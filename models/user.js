@@ -28,10 +28,10 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       username: {
-        type: DataTypes.STRING(12),
+        type: DataTypes.STRING(13),
         allowNull: false,
         validate: {
-          len: { args: [1, 12], msg: "username must be between 1 and 12 characters" },
+          len: { args: [1, 13], msg: "username must be between 1 and 13 characters" },
         },
       },
       password: {

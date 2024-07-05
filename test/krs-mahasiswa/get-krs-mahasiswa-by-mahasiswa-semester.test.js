@@ -1,10 +1,10 @@
 const httpMocks = require("node-mocks-http");
-const { GetKRSMahasiswaByMahasiswaPeriode } = require("../../src/controllers/krs-mahasiswa");
-const { TahunAjaran, Periode, KRSMahasiswa } = require("../../models");
+const { GetKRSMahasiswaByMahasiswaSemester } = require("../../src/controllers/krs-mahasiswa");
+const { TahunAjaran, Semester, KRSMahasiswa } = require("../../models");
 
 jest.mock("../../models");
 
-describe("GetKRSMahasiswaByMahasiswaPeriode", () => {
+describe("GetKRSMahasiswaByMahasiswaSemester", () => {
   let req, res, next;
 
   beforeEach(() => {
@@ -13,21 +13,21 @@ describe("GetKRSMahasiswaByMahasiswaPeriode", () => {
     next = jest.fn();
   });
 
-  it("should return all KRS Mahasiswa by Mahasiswa Periode with status 200 if successful", async () => {
+  it("should return all KRS Mahasiswa by Mahasiswa Semester with status 200 if successful", async () => {
     const mockMahasiswaId = 1;
     const mockKRSMahasiswas = [{ id: 1 }, { id: 2 }];
 
     TahunAjaran.findOne.mockResolvedValue({ id_tahun_ajaran: 1, nama_tahun_ajaran: "2023/2024" });
-    Periode.findAll.mockResolvedValue([{ id_periode: 1 }, { id_periode: 2 }]);
+    Semester.findAll.mockResolvedValue([{ id_semester: 1 }, { id_semester: 2 }]);
     KRSMahasiswa.findAll.mockResolvedValue(mockKRSMahasiswas);
 
     req.params.id_registrasi_mahasiswa = mockMahasiswaId;
 
-    await GetKRSMahasiswaByMahasiswaPeriode(req, res, next);
+    await GetKRSMahasiswaByMahasiswaSemester(req, res, next);
 
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
-      message: "<===== GET All KRS Mahasiswa By Mahasiswa Periode Success",
+      message: "<===== GET All KRS Mahasiswa By Mahasiswa Semester Success",
       jumlahData: mockKRSMahasiswas.length,
       data: mockKRSMahasiswas,
     });
@@ -37,7 +37,7 @@ describe("GetKRSMahasiswaByMahasiswaPeriode", () => {
   it("should return 400 if ID Registrasi Mahasiswa is not provided", async () => {
     req.params.id_registrasi_mahasiswa = undefined;
 
-    await GetKRSMahasiswaByMahasiswaPeriode(req, res, next);
+    await GetKRSMahasiswaByMahasiswaSemester(req, res, next);
 
     expect(res.statusCode).toEqual(400);
     expect(res._getJSONData()).toEqual({
@@ -52,7 +52,7 @@ describe("GetKRSMahasiswaByMahasiswaPeriode", () => {
 
     req.params.id_registrasi_mahasiswa = 1;
 
-    await GetKRSMahasiswaByMahasiswaPeriode(req, res, next);
+    await GetKRSMahasiswaByMahasiswaSemester(req, res, next);
 
     expect(next).toHaveBeenCalledWith(new Error(errorMessage));
   });

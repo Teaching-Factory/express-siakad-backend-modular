@@ -47,7 +47,7 @@ describe("getAnggotaAktivitasMahasiswaByAktivitasId", () => {
 
     expect(AnggotaAktivitasMahasiswa.findAll).toHaveBeenCalledWith({
       where: { id_aktivitas: AktivitasId },
-      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Prodi }] }],
     });
 
     expect(res.statusCode).toEqual(200);
@@ -70,7 +70,7 @@ describe("getAnggotaAktivitasMahasiswaByAktivitasId", () => {
 
     expect(AnggotaAktivitasMahasiswa.findAll).toHaveBeenCalledWith({
       where: { id_aktivitas: AktivitasId },
-      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Prodi }] }],
     });
 
     expect(res.statusCode).toEqual(404);
@@ -92,7 +92,7 @@ describe("getAnggotaAktivitasMahasiswaByAktivitasId", () => {
 
     expect(AnggotaAktivitasMahasiswa.findAll).toHaveBeenCalledWith({
       where: { id_aktivitas: AktivitasId },
-      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Periode, include: [{ model: Prodi }] }] }],
+      include: [{ model: AktivitasMahasiswa }, { model: Mahasiswa, include: [{ model: Prodi }] }],
     });
 
     expect(next).toHaveBeenCalledWith(new Error(errorMessage));

@@ -55,8 +55,8 @@ const doLogin = async (req, res, next) => {
   }
 
   // validasi input
-  if (!validator.isLength(username, { min: 1, max: 12 })) {
-    return res.status(400).json({ message: "username must be between 1 and 12 characters" });
+  if (!validator.isLength(username, { min: 1, max: 13 })) {
+    return res.status(400).json({ message: "username must be between 1 and 13 characters" });
   }
   if (!validator.isLength(password, { min: 8, max: 8 })) {
     return res.status(400).json({ message: "password must be 8 characters" });

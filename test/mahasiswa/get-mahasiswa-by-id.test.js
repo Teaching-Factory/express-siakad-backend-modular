@@ -1,5 +1,5 @@
 const { getMahasiswaById } = require("../../src/controllers/mahasiswa");
-const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode, Prodi } = require("../../models");
+const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode, Prodi, Semester } = require("../../models");
 const httpMocks = require("node-mocks-http");
 
 jest.mock("../../models", () => ({
@@ -38,7 +38,7 @@ describe("getMahasiswaById", () => {
     await getMahasiswaById(req, res, next);
 
     expect(Mahasiswa.findByPk).toHaveBeenCalledWith(MahasiswaId, {
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -61,7 +61,7 @@ describe("getMahasiswaById", () => {
     await getMahasiswaById(req, res, next);
 
     expect(Mahasiswa.findByPk).toHaveBeenCalledWith(MahasiswaId, {
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Periode, include: [{ model: Prodi }] }],
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
