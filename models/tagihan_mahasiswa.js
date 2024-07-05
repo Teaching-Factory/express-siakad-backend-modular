@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi tabel parent
+      TagihanMahasiswa.belongsTo(models.JenisTagihan, { foreignKey: "id_jenis_tagihan" });
       TagihanMahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
       TagihanMahasiswa.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
 
@@ -34,10 +35,6 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      jenis_tagihan: {
-        type: DataTypes.ENUM("SPP", "KRS", "Yudisium", "Wisuda"),
-        allowNull: false,
-      },
       tanggal_tagihan: {
         type: DataTypes.DATEONLY,
         allowNull: false,
@@ -49,6 +46,16 @@ module.exports = (sequelize, DataTypes) => {
       status_tagihan: {
         type: DataTypes.ENUM("Lunas", "Belum Bayar", "Belum Lunas"),
         allowNull: false,
+      },
+      id_jenis_tagihan: {
+        type: DataTypes.INTEGER(10),
+        allowNull: false,
+        validate: {
+          isInt: {
+            args: true,
+            msg: "id_jenis_tagihan must be an integer",
+          },
+        },
       },
       id_periode: {
         type: DataTypes.INTEGER(10),

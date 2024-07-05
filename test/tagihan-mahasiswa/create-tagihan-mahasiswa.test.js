@@ -17,12 +17,12 @@ describe("createTagihanMahasiswa", () => {
   it("should create tagihan mahasiswa and return 201", async () => {
     const mockRequestBody = {
       jumlah_tagihan: 500000,
-      jenis_tagihan: "SPP",
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
       id_periode: 1,
       id_registrasi_mahasiswa: 1,
+      id_jenis_tagihan: 1,
     };
 
     req.body = mockRequestBody;
@@ -62,12 +62,12 @@ describe("createTagihanMahasiswa", () => {
   it("should handle errors", async () => {
     const mockRequestBody = {
       jumlah_tagihan: 500000,
-      jenis_tagihan: "SPP",
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
       id_periode: 1,
       id_registrasi_mahasiswa: 1,
+      id_jenis_tagihan: 1,
     };
 
     req.body = mockRequestBody;
@@ -80,12 +80,12 @@ describe("createTagihanMahasiswa", () => {
 
     expect(TagihanMahasiswa.create).toHaveBeenCalledWith({
       jumlah_tagihan: mockRequestBody.jumlah_tagihan,
-      jenis_tagihan: mockRequestBody.jenis_tagihan,
       tanggal_tagihan: mockRequestBody.tanggal_tagihan,
       deadline_tagihan: mockRequestBody.deadline_tagihan,
       status_tagihan: mockRequestBody.status_tagihan,
       id_periode: mockRequestBody.id_periode,
       id_registrasi_mahasiswa: mockRequestBody.id_registrasi_mahasiswa,
+      id_jenis_tagihan: mockRequestBody.id_jenis_tagihan,
     });
     expect(next).toHaveBeenCalledWith(error);
   });

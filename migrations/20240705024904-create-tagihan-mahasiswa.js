@@ -13,10 +13,6 @@ module.exports = {
         type: Sequelize.INTEGER(10),
         allowNull: false,
       },
-      jenis_tagihan: {
-        type: Sequelize.ENUM("SPP", "KRS", "Yudisium", "Wisuda"),
-        allowNull: false,
-      },
       tanggal_tagihan: {
         type: Sequelize.DATEONLY,
         allowNull: false,
@@ -28,6 +24,18 @@ module.exports = {
       status_tagihan: {
         type: Sequelize.ENUM("Lunas", "Belum Bayar", "Belum Lunas"),
         allowNull: false,
+      },
+      id_jenis_tagihan: {
+        type: Sequelize.INTEGER(10),
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "jenis_tagihans",
+          },
+          key: "id_jenis_tagihan",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       id_periode: {
         type: Sequelize.INTEGER(10),
