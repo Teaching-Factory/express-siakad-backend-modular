@@ -292,6 +292,71 @@ const createDosenWaliKolektif = async (req, res, next) => {
   }
 };
 
+const getMahasiswaWaliByProdiAndAngkatanId = async (req, res, next) => {
+  try {
+    // Dapatkan ID prodi dan ID angkatan dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+    const angkatanId = req.params.id_angkatan;
+
+    // Periksa apakah ID disediakan
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
+
+    // Ambil data angkatan berdasarkan id_angkatan
+    const angkatan = await Angkatan.findOne({ where: { id: angkatanId } });
+
+    // Jika data angkatan tidak ditemukan, kirim respons 404
+    if (!angkatan) {
+      return res.status(404).json({ message: `Angkatan dengan ID ${angkatanId} tidak ditemukan` });
+    }
+
+    // Ekstrak tahun dari data angkatan
+    const tahunAngkatan = angkatan.tahun;
+
+    // Cari data mahasiswa berdasarkan id_prodi dan tahun angkatan
+    let mahasiswas = await Mahasiswa.findAll({
+      where: {
+        id_prodi: prodiId,
+        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
+      },
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
+    });
+
+    // Ambil id_registrasi_mahasiswa dari DosenWali
+    const dosenWaliIds = await DosenWali.findAll({
+      attributes: ["id_registrasi_mahasiswa"],
+    });
+    const dosenWaliIdList = dosenWaliIds.map((dw) => dw.id_registrasi_mahasiswa);
+
+    // Filter mahasiswa yang ada di DosenWali
+    mahasiswas = mahasiswas.filter((mahasiswa) => !dosenWaliIdList.includes(mahasiswa.id_registrasi_mahasiswa));
+
+    // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
+    if (mahasiswas.length === 0) {
+      return res.status(404).json({
+        message: `Mahasiswa Wali dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `GET Mahasiswa Wali By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
+      jumlahData: mahasiswas.length,
+      data: mahasiswas,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllDosenWaliByDosenAndTahunAjaranId,
   getDosenWaliByTahunAjaranId,
@@ -300,4 +365,5 @@ module.exports = {
   createDosenWaliSingle,
   deleteDosenWaliById,
   createDosenWaliKolektif,
+  getMahasiswaWaliByProdiAndAngkatanId,
 };

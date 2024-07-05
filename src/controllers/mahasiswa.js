@@ -1,7 +1,7 @@
 const ExcelJS = require("exceljs");
 const { Op } = require("sequelize");
 const fs = require("fs").promises;
-const { Mahasiswa, Periode, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah, Agama, PerguruanTinggi, Prodi, RiwayatPendidikanMahasiswa, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester } = require("../../models");
+const { Mahasiswa, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah, Agama, PerguruanTinggi, Prodi, RiwayatPendidikanMahasiswa, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester } = require("../../models");
 
 const getAllMahasiswa = async (req, res, next) => {
   try {
