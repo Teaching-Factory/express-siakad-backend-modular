@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getAllDosenWaliByDosenAndTahunAjaranId } = require("../../src/controllers/dosen-wali");
-const { DosenWali, Dosen, Mahasiswa, TahunAjaran } = require("../../models");
+const { DosenWali, Dosen, Mahasiswa, TahunAjaran, Semester, Prodi } = require("../../models");
 
 jest.mock("../../models");
 
@@ -49,7 +49,7 @@ describe("getAllDosenWaliByDosenAndTahunAjaranId", () => {
         id_dosen: dosenId,
         id_tahun_ajaran: tahunAjaranId,
       },
-      include: [{ model: Dosen }, { model: Mahasiswa }, { model: TahunAjaran }],
+      include: [{ model: Dosen }, { model: Mahasiswa, include: [{ model: Semester }, { model: Prodi }] }, { model: TahunAjaran }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -101,7 +101,7 @@ describe("getAllDosenWaliByDosenAndTahunAjaranId", () => {
         id_dosen: dosenId,
         id_tahun_ajaran: tahunAjaranId,
       },
-      include: [{ model: Dosen }, { model: Mahasiswa }, { model: TahunAjaran }],
+      include: [{ model: Dosen }, { model: Mahasiswa, include: [{ model: Semester }, { model: Prodi }] }, { model: TahunAjaran }],
     });
     expect(next).toHaveBeenCalledWith(error);
   });

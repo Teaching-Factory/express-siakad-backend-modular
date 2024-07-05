@@ -18,12 +18,12 @@ describe("updateTagihanMahasiswaById", () => {
     const mockTagihanMahasiswaId = 1;
     const mockRequestBody = {
       jumlah_tagihan: 600000,
-      jenis_tagihan: "UKT",
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
       id_periode: 2,
       id_registrasi_mahasiswa: 2,
+      id_jenis_tagihan: 1,
     };
 
     req.params.id = mockTagihanMahasiswaId;
@@ -32,12 +32,12 @@ describe("updateTagihanMahasiswaById", () => {
     const mockTagihanMahasiswa = {
       id: mockTagihanMahasiswaId,
       jumlah_tagihan: 500000,
-      jenis_tagihan: "SPP",
       tanggal_tagihan: "2024-06-10",
       deadline_tagihan: "2024-07-10",
       status_tagihan: "Lunas",
       id_periode: 1,
       id_registrasi_mahasiswa: 1,
+      id_jenis_tagihan: 1,
       save: jest.fn(),
     };
 
@@ -76,12 +76,12 @@ describe("updateTagihanMahasiswaById", () => {
     const mockTagihanMahasiswaId = 999; // Non-existent ID
     const mockRequestBody = {
       jumlah_tagihan: 600000,
-      jenis_tagihan: "UKT",
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
       id_periode: 2,
       id_registrasi_mahasiswa: 2,
+      id_jenis_tagihan: 1,
     };
 
     req.params.id = mockTagihanMahasiswaId;
@@ -102,12 +102,12 @@ describe("updateTagihanMahasiswaById", () => {
     const mockTagihanMahasiswaId = 1;
     const mockRequestBody = {
       jumlah_tagihan: 600000,
-      jenis_tagihan: "UKT",
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
       id_periode: 2,
       id_registrasi_mahasiswa: 2,
+      id_jenis_tagihan: 1,
     };
 
     req.params.id = mockTagihanMahasiswaId;

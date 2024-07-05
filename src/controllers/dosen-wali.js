@@ -24,7 +24,7 @@ const getAllDosenWaliByDosenAndTahunAjaranId = async (req, res, next) => {
         id_dosen: dosenId,
         id_tahun_ajaran: tahunAjaranId,
       },
-      include: [{ model: Dosen }, { model: Mahasiswa }, { model: TahunAjaran }],
+      include: [{ model: Dosen }, { model: Mahasiswa, include: [{ model: Semester }, { model: Prodi }] }, { model: TahunAjaran }],
     });
 
     // Kirim respons JSON jika berhasil

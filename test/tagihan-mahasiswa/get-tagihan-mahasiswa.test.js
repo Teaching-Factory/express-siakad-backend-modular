@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getTagihanMahasiswaById } = require("../../src/controllers/tagihan-mahasiswa");
-const { TagihanMahasiswa, Periode, Mahasiswa } = require("../../models");
+const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan } = require("../../models");
 
 jest.mock("../../models");
 
@@ -32,7 +32,7 @@ describe("getTagihanMahasiswaById", () => {
     await getTagihanMahasiswaById(req, res, next);
 
     expect(TagihanMahasiswa.findByPk).toHaveBeenCalledWith(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -61,7 +61,7 @@ describe("getTagihanMahasiswaById", () => {
     await getTagihanMahasiswaById(req, res, next);
 
     expect(TagihanMahasiswa.findByPk).toHaveBeenCalledWith(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
@@ -80,7 +80,7 @@ describe("getTagihanMahasiswaById", () => {
     await getTagihanMahasiswaById(req, res, next);
 
     expect(TagihanMahasiswa.findByPk).toHaveBeenCalledWith(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
     expect(next).toHaveBeenCalledWith(error);
   });

@@ -1,9 +1,9 @@
-const { TagihanMahasiswa, Periode, Mahasiswa } = require("../../models");
+const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan } = require("../../models");
 
 const getAllTagihanMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data tagihan_mahasiswa dari database
-    const tagihan_mahasiswa = await TagihanMahasiswa.findAll({ include: [{ model: Periode }, { model: Mahasiswa }] });
+    const tagihan_mahasiswa = await TagihanMahasiswa.findAll({ include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -29,7 +29,7 @@ const getTagihanMahasiswaById = async (req, res, next) => {
 
     // Cari data tagihan_mahasiswa berdasarkan ID di database
     const tagihan_mahasiswa = await TagihanMahasiswa.findByPk(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -50,13 +50,13 @@ const getTagihanMahasiswaById = async (req, res, next) => {
 };
 
 const createTagihanMahasiswa = async (req, res, next) => {
-  const { jumlah_tagihan, jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode, id_registrasi_mahasiswa } = req.body;
+  const { jumlah_tagihan, id_jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode, id_registrasi_mahasiswa } = req.body;
 
   if (!jumlah_tagihan) {
     return res.status(400).json({ message: "jumlah_tagihan is required" });
   }
-  if (!jenis_tagihan) {
-    return res.status(400).json({ message: "jenis_tagihan is required" });
+  if (!id_jenis_tagihan) {
+    return res.status(400).json({ message: "id_jenis_tagihan is required" });
   }
   if (!tanggal_tagihan) {
     return res.status(400).json({ message: "tanggal_tagihan is required" });
@@ -76,7 +76,7 @@ const createTagihanMahasiswa = async (req, res, next) => {
 
   try {
     // Gunakan metode create untuk membuat data tagihan_mahasiswa baru
-    const newTagihanMahasiswa = await TagihanMahasiswa.create({ jumlah_tagihan, jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode, id_registrasi_mahasiswa });
+    const newTagihanMahasiswa = await TagihanMahasiswa.create({ jumlah_tagihan, id_jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode, id_registrasi_mahasiswa });
 
     // Kirim respons JSON jika berhasil
     res.status(201).json({
@@ -90,13 +90,13 @@ const createTagihanMahasiswa = async (req, res, next) => {
 
 const updateTagihanMahasiswaById = async (req, res, next) => {
   // Ambil data untuk update dari body permintaan
-  const { jumlah_tagihan, jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode, id_registrasi_mahasiswa } = req.body;
+  const { jumlah_tagihan, id_jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode, id_registrasi_mahasiswa } = req.body;
 
   if (!jumlah_tagihan) {
     return res.status(400).json({ message: "jumlah_tagihan is required" });
   }
-  if (!jenis_tagihan) {
-    return res.status(400).json({ message: "jenis_tagihan is required" });
+  if (!id_jenis_tagihan) {
+    return res.status(400).json({ message: "id_jenis_tagihan is required" });
   }
   if (!tanggal_tagihan) {
     return res.status(400).json({ message: "tanggal_tagihan is required" });
@@ -133,7 +133,7 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
 
     // Update data tagihan_mahasiswa
     tagihan_mahasiswa.jumlah_tagihan = jumlah_tagihan || tagihan_mahasiswa.jumlah_tagihan;
-    tagihan_mahasiswa.jenis_tagihan = jenis_tagihan || tagihan_mahasiswa.jenis_tagihan;
+    tagihan_mahasiswa.id_jenis_tagihan = id_jenis_tagihan || tagihan_mahasiswa.id_jenis_tagihan;
     tagihan_mahasiswa.tanggal_tagihan = tanggal_tagihan || tagihan_mahasiswa.tanggal_tagihan;
     tagihan_mahasiswa.deadline_tagihan = deadline_tagihan || tagihan_mahasiswa.deadline_tagihan;
     tagihan_mahasiswa.status_tagihan = status_tagihan || tagihan_mahasiswa.status_tagihan;
@@ -200,7 +200,7 @@ const getTagihanMahasiswaByMahasiswaId = async (req, res, next) => {
       where: {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
       },
-      include: [{ model: Periode }, { model: Mahasiswa }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404

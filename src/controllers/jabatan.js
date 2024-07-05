@@ -86,12 +86,6 @@ const updateJabatanById = async (req, res, next) => {
       });
     }
 
-    if (!jabatanId) {
-      return res.status(400).json({
-        message: "Jabatan ID is required",
-      });
-    }
-
     // Cari data jabatan berdasarkan ID di database
     let jabatan = await Jabatan.findByPk(jabatanId);
 
