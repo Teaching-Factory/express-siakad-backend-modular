@@ -1,4 +1,4 @@
-const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, PesertaKelasKuliah } = require("../../models");
+const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, PesertaKelasKuliah, Prodi } = require("../../models");
 const { Op, fn, col } = require("sequelize");
 
 const getAllDetailKelasKuliah = async (req, res, next) => {
@@ -156,8 +156,53 @@ const getDetailKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
   }
 };
 
+const getAllDetailKelasKuliahBySemesterAndDosenActive = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+    const user = req.user;
+
+    const dosen = await Dosen.findOne({
+      where: {
+        nidn: user.username,
+      },
+    });
+
+    if (!dosen) {
+      return res.status(404).json({
+        message: "Dosen not found",
+      });
+    }
+
+    // Ambil semua data detail kelas kuliah dari database
+    const detail_kelas_kuliah = await DetailKelasKuliah.findAll({
+      include: [
+        {
+          model: KelasKuliah,
+          where: {
+            id_semester: semesterId,
+            id_dosen: dosen.id_dosen,
+          },
+          include: [{ model: Semester }, { model: Prodi }, { model: MataKuliah }],
+        },
+        { model: RuangPerkuliahan },
+      ],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Detail Kelas Kuliah By Semester And Dosen Active Success",
+      jumlahData: detail_kelas_kuliah.length,
+      data: detail_kelas_kuliah,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllDetailKelasKuliah,
   getDetailKelasKuliahById,
   getDetailKelasKuliahByProdiAndSemesterId,
+  getAllDetailKelasKuliahBySemesterAndDosenActive,
 };

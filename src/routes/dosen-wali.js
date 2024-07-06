@@ -14,5 +14,6 @@ router.get("/:id_prodi/:id_angkatan/get-mahasiswa", checkRole(["admin", "admin-p
 router.post("/:id_dosen/:id_tahun_ajaran/tambah-mahasiswa-wali", checkRole(["admin", "admin-prodi"]), DosenWaliController.createDosenWaliSingle);
 router.delete("/:id/delete", checkRole(["admin", "admin-prodi"]), DosenWaliController.deleteDosenWaliById);
 router.post("/:id_dosen/tambah-mahasiswa-wali-kolektif", checkRole(["admin", "admin-prodi"]), DosenWaliController.createDosenWaliKolektif);
+router.get("/:id_prodi/:id_angkatan/get-mahasiswa-dont-have-dosen", checkRole(["admin", "admin-prodi"]), DosenWaliController.getMahasiswaWaliByProdiAndAngkatanId);
 
 module.exports = router;

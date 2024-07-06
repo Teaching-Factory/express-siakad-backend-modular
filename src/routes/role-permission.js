@@ -17,6 +17,7 @@ router.delete("/:id/delete-role", checkRole(["admin"]), RolePermissionController
 // permission
 router.get("/permissions", checkRole(["admin"]), RolePermissionController.getAllPermissions);
 router.post("/create-permission", checkRole(["admin"]), RolePermissionController.createPermission);
+router.post("/create-multiple-permission", checkRole(["admin"]), RolePermissionController.createMultiplePermission);
 router.get("/:id/get-permission", checkRole(["admin"]), RolePermissionController.getPermissionById);
 router.put("/:id/update-permission", checkRole(["admin"]), RolePermissionController.updatePermissionById);
 router.delete("/:id/delete-permission", checkRole(["admin"]), RolePermissionController.deletePermissionById);

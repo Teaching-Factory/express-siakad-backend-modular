@@ -218,6 +218,26 @@ const createPermission = async (req, res, next) => {
   }
 };
 
+const createMultiplePermission = async (req, res, next) => {
+  const { permissions } = req.body;
+
+  if (!permissions || !Array.isArray(permissions)) {
+    return res.status(400).json({ message: "permissions array is required" });
+  }
+
+  try {
+    const newPermissions = await Permission.bulkCreate(permissions);
+
+    // Kirim respons JSON jika berhasil
+    res.status(201).json({
+      message: "<===== CREATE Multiple Permissions Success",
+      data: newPermissions,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updatePermissionById = async (req, res, next) => {
   // Dapatkan data yang akan diupdate dari body permintaan
   const { nama_permission } = req.body;
@@ -374,6 +394,7 @@ module.exports = {
   deleteRoleById,
   getAllPermissions,
   createPermission,
+  createMultiplePermission,
   getPermissionById,
   updatePermissionById,
   deletePermissionById,
