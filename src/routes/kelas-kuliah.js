@@ -8,7 +8,7 @@ const checkRole = require("../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "admin-prodi"]), KelasKuliahController.getAllKelasKuliah);
-router.get("/:id/get", checkRole(["admin", "admin-prodi"]), KelasKuliahController.getKelasKuliahById);
+router.get("/:id/get", checkRole(["admin", "admin-prodi", "dosen"]), KelasKuliahController.getKelasKuliahById);
 router.get("/filter/:id_prodi/:id_semester/get", checkRole(["admin", "admin-prodi"]), KelasKuliahController.GetAllKelasKuliahByProdiAndSemesterId);
 router.post("/:id_prodi/:id_semester/:id_matkul/create", checkRole(["admin", "admin-prodi"]), KelasKuliahController.createKelasKuliah);
 router.put("/:id_kelas_kuliah/update", checkRole(["admin", "admin-prodi"]), KelasKuliahController.updateKelasKuliahById);

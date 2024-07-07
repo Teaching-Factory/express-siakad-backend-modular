@@ -1,4 +1,4 @@
-const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Semester, Sequelize } = require("../../models");
+const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Semester, Sequelize, Prodi, MataKuliah } = require("../../models");
 
 const getAllPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
   try {
@@ -10,7 +10,7 @@ const getAllPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
       where: {
         id_kelas_kuliah: kelasKuliahId,
       },
-      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah }],
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
     });
 
     // Kirim respons JSON jika berhasil
@@ -30,7 +30,9 @@ const getPertemuanPerkuliahanById = async (req, res, next) => {
     const pertemuanPerkuliahanId = req.params.id;
 
     // Cari data pertemuan_perkuliahan berdasarkan ID di database
-    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findByPk(pertemuanPerkuliahanId);
+    const pertemuan_perkuliahan = await PertemuanPerkuliahan.findByPk(pertemuanPerkuliahanId, {
+      include: [{ model: KelasKuliah, include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!pertemuan_perkuliahan) {
@@ -343,6 +345,7 @@ const getAllPertemuanPerkuliahanActiveByDosen = async (req, res, next) => {
         kunci_pertemuan: false,
         id_kelas_kuliah: kelas_kuliahs.map((kelas) => kelas.id_kelas_kuliah), // Ambil id_kelas_kuliah dari kelas_kuliahs
       },
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: MataKuliah }, { model: Prodi }, { model: Semester }, { model: Dosen }] }],
     });
 
     // Kirim respons JSON jika berhasil
