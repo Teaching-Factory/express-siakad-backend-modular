@@ -1,5 +1,6 @@
 const { PesertaKelasKuliah, Mahasiswa, KelasKuliah, Prodi, Semester, MataKuliah, Dosen, DetailKelasKuliah, RuangPerkuliahan, DetailNilaiPerkuliahanKelas, BobotPenilaian, JenjangPendidikan } = require("../../models");
 const ExcelJS = require("exceljs");
+const fs = require("fs").promises;
 
 const getPesertaKelasKuliahByKelasKuliahId = async (req, res, next) => {
   try {
@@ -320,6 +321,8 @@ const importNilaiPerkuliahan = async (req, res, next) => {
 
     // Execute all async functions to save detail nilai perkuliahan to database
     await Promise.all(detailNilaiPerkuliahanKelas.map((fn) => fn()));
+
+    await fs.unlink(filePath);
 
     res.status(201).json({
       message: "Nilai Perkuliahan imported successfully",
