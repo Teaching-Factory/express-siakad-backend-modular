@@ -279,41 +279,35 @@ const deleteKRSMahasiswaById = async (req, res, next) => {
 
 const ValidasiKRSMahasiswa = async (req, res, next) => {
   try {
+    // Dapatkan ID dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+    const semesterId = req.params.id_semester;
+
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+
     // Dapatkan array mahasiswa dari body permintaan
     const mahasiswas = req.body.mahasiswas;
     let krs_mahasiswas = [];
-
-    // Ambil tahun ajaran yang sesuai dengan kondisi
-    const tahunAjaran = await TahunAjaran.findOne({
-      where: {
-        a_periode: 1,
-      },
-    });
-
-    // Ekstrak tahun awal dari nama_tahun_ajaran
-    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
-
-    // Ambil semua semester yang sesuai dengan tahun awal
-    const semesters = await Semester.findAll({
-      where: {
-        id_semester: {
-          [Sequelize.Op.like]: `${tahunAwal}%`,
-        },
-      },
-    });
-
-    // Ambil semua id_semester dari hasil query semester
-    const idSemesters = semesters.map((semester) => semester.id_semester);
 
     // Lakukan iterasi melalui setiap objek mahasiswa
     for (const mahasiswa of mahasiswas) {
       // Ambil ID registrasi mahasiswa dari objek mahasiswa saat ini
       const id_registrasi_mahasiswa = mahasiswa.id_registrasi_mahasiswa;
 
-      // Ambil data KRS mahasiswa berdasarkan id_semester dan id_registrasi_mahasiswa
+      // Ambil data KRS mahasiswa berdasarkan id_semester, id_prodi dan id_registrasi_mahasiswa
       const krs_mahasiswa = await KRSMahasiswa.findAll({
         where: {
-          id_semester: idSemesters,
+          id_prodi: prodiId,
+          id_semester: semesterId,
           id_registrasi_mahasiswa: id_registrasi_mahasiswa,
         },
       });
@@ -331,19 +325,28 @@ const ValidasiKRSMahasiswa = async (req, res, next) => {
         },
       });
 
+      let mahasiswa = await Mahasiswa.findOne({
+        where: {
+          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+        },
+      });
+
+      let tahunAwal = null;
+      tahunAwal = mahasiswa.nama_periode_masuk.substring(0, 4);
+
       // Pastikan kelas_kuliah ditemukan sebelum melanjutkan
       if (!kelas_kuliah) {
         continue;
       }
+
+      // Ubah nilai validasi_krs menjadi true
+      await krs_mahasiswa.update({ validasi_krs: true });
 
       let jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
         where: { id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah },
       });
 
       if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
-        // Ubah nilai validasi_krs menjadi true
-        await krs_mahasiswa.update({ validasi_krs: true });
-
         // proses penambahan data peserta kelas kuliah dari data krs milik mahasiswa
         await PesertaKelasKuliah.create({
           angkatan: tahunAwal,
@@ -368,33 +371,30 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
     const mahasiswaId = req.params.id_registrasi_mahasiswa;
+    const prodiId = req.params.id_prodi;
+    const semesterId = req.params.id_semester;
 
-    // Ambil tahun ajaran yang sesuai dengan kondisi
-    const tahunAjaran = await TahunAjaran.findOne({
-      where: {
-        a_periode: 1,
-      },
-    });
-
-    // Ekstrak tahun awal dari nama_tahun_ajaran
-    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
-
-    // Ambil semua semester yang sesuai dengan tahun awal
-    const semesters = await Semester.findAll({
-      where: {
-        id_semester: {
-          [Sequelize.Op.like]: `${tahunAwal}%`,
-        },
-      },
-    });
-
-    // Ambil semua id_semester dari hasil query semester
-    const idSemesters = semesters.map((semester) => semester.id_semester);
+    if (!mahasiswaId) {
+      return res.status(400).json({
+        message: "Mahasiswa ID is required",
+      });
+    }
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
 
     // Ambil data KRS mahasiswa berdasarkan id_semester yang didapatkan
     const krs_mahasiswas = await KRSMahasiswa.findAll({
       where: {
-        id_semester: idSemesters,
+        id_prodi: prodiId,
+        id_semester: semesterId,
         id_registrasi_mahasiswa: mahasiswaId,
       },
     });
@@ -404,6 +404,9 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
 
     // Ambil data peserta kelas kuliah yang sesuai dengan setiap KRS mahasiswa
     for (const krs_mahasiswa of krs_mahasiswas) {
+      // Update validasi_krs menjadi false
+      await krs_mahasiswa.update({ validasi_krs: false });
+
       const peserta_kelas = await PesertaKelasKuliah.findOne({
         where: {
           id_registrasi_mahasiswa: mahasiswaId,
@@ -414,17 +417,14 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
       if (peserta_kelas) {
         pesertaKelasIds.push(peserta_kelas.id_peserta_kuliah);
       }
-
-      // Update validasi_krs menjadi false
-      await krs_mahasiswa.update({ validasi_krs: false });
     }
 
-    // // Hapus seluruh peserta_kelas_kuliah yang ditemukan
-    // await PesertaKelasKuliah.destroy({
-    //   where: {
-    //     id_peserta_kuliah: pesertaKelasIds,
-    //   },
-    // });
+    // Hapus seluruh peserta_kelas_kuliah yang ditemukan
+    await PesertaKelasKuliah.destroy({
+      where: {
+        id_peserta_kuliah: pesertaKelasIds,
+      },
+    });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -439,34 +439,15 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
 
 const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
   try {
-    // Ambil tahun ajaran yang sesuai dengan kondisi
-    const tahunAjaran = await TahunAjaran.findOne({
-      where: {
-        a_periode: 1,
-      },
-    });
-
-    // Ekstrak tahun awal dari nama_tahun_ajaran
-    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
-
-    // Ambil semua semester yang sesuai dengan tahun awal
-    const semesters = await Semester.findAll({
-      where: {
-        id_semester: {
-          [Sequelize.Op.like]: `${tahunAwal}%`,
-        },
-      },
-    });
-
-    // Ambil semua id_semester dari hasil query semester
-    const idSemesters = semesters.map((semester) => semester.id_semester);
+    // Dapatkan ID dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+    const semesterId = req.params.id_semester;
 
     // Ambil semua data KRS mahasiswa berdasarkan id_semester yang didapatkan
     const allKrsMahasiswas = await KRSMahasiswa.findAll({
       where: {
-        id_semester: {
-          [Sequelize.Op.in]: idSemesters,
-        },
+        id_semester: semesterId,
+        id_prodi: prodiId,
       },
     });
 
@@ -507,34 +488,15 @@ const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
 
 const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
   try {
-    // Ambil tahun ajaran yang sesuai dengan kondisi
-    const tahunAjaran = await TahunAjaran.findOne({
-      where: {
-        a_periode: 1,
-      },
-    });
-
-    // Ekstrak tahun awal dari nama_tahun_ajaran
-    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
-
-    // Ambil semua periode yang sesuai dengan tahun awal
-    const semesters = await Semester.findAll({
-      where: {
-        id_semester: {
-          [Sequelize.Op.like]: `${tahunAwal}%`,
-        },
-      },
-    });
-
-    // Ambil semua id_semester dari hasil query periode
-    const idSemesters = semesters.map((periode) => periode.id_semester);
+    // Dapatkan ID dari parameter permintaan
+    const prodiId = req.params.id_prodi;
+    const semesterId = req.params.id_semester;
 
     // Ambil semua data KRS mahasiswa berdasarkan id_semester yang didapatkan
     const allKrsMahasiswas = await KRSMahasiswa.findAll({
       where: {
-        id_semester: {
-          [Sequelize.Op.in]: idSemesters,
-        },
+        id_semester: semesterId,
+        id_prodi: prodiId,
       },
     });
 
@@ -558,6 +520,8 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
         id_registrasi_mahasiswa: {
           [Sequelize.Op.in]: mahasiswaIdsWithAllKRSFalse,
         },
+        id_prodi: prodiId,
+        id_semester: semesterId,
       },
       include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });

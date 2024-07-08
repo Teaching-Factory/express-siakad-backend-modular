@@ -2,7 +2,6 @@ const { ProfilPT, PerguruanTinggi } = require("../../models");
 
 const getProfilPTActive = async (req, res, next) => {
   try {
-    console.log("fungsi diakses");
     // Ambil data profil pt dengan id 1
     const profil_pt = await ProfilPT.findOne({
       where: {

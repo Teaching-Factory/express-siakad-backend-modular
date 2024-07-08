@@ -17,12 +17,12 @@ router.get("/mahasiswa/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin
 router.get("/semester", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaKRSBySemester);
 router.get("/mahasiswa/semester/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetKRSMahasiswaByMahasiswaSemester);
 router.delete("/:id/delete", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.deleteKRSMahasiswaById);
-router.put("/validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.ValidasiKRSMahasiswa);
-router.put("/:id_registrasi_mahasiswa/batalkan-validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.BatalkanValidasiKRSMahasiswa);
+router.put("/:id_prodi/:id_semester/validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.ValidasiKRSMahasiswa);
+router.put("/:id_prodi/:id_semester/:id_registrasi_mahasiswa/batalkan-validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.BatalkanValidasiKRSMahasiswa);
 
 // filter krs
-router.get("/get-mahasiswa-krs-tervalidasi", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetAllMahasiswaKRSTervalidasi);
-router.get("/get-mahasiswa-krs-belum-tervalidasi", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetAllMahasiswaKRSBelumTervalidasi);
+router.get("/:id_prodi/:id_semester/get-mahasiswa-krs-tervalidasi", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetAllMahasiswaKRSTervalidasi);
+router.get("/:id_prodi/:id_semester/get-mahasiswa-krs-belum-tervalidasi", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetAllMahasiswaKRSBelumTervalidasi);
 
 // mahasiswa belum krs
 router.get("/mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaBelumKRS);

@@ -1,4 +1,6 @@
-const { PesertaKelasKuliah, Mahasiswa, KelasKuliah, Prodi, Semester, MataKuliah, Dosen, DetailKelasKuliah, RuangPerkuliahan, DetailNilaiPerkuliahanKelas, BobotPenilaian } = require("../../models");
+const { PesertaKelasKuliah, Mahasiswa, KelasKuliah, Prodi, Semester, MataKuliah, Dosen, DetailKelasKuliah, RuangPerkuliahan, DetailNilaiPerkuliahanKelas, BobotPenilaian, JenjangPendidikan } = require("../../models");
+const ExcelJS = require("exceljs");
+const fs = require("fs").promises;
 
 const getPesertaKelasKuliahByKelasKuliahId = async (req, res, next) => {
   try {
@@ -92,6 +94,16 @@ const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
       return res.status(404).json({ message: "Prodi not found" });
     }
 
+    const jenjang_pendidikan = await JenjangPendidikan.findOne({
+      where: {
+        id_jenjang_didik: prodi.id_jenjang_pendidikan,
+      },
+    });
+
+    if (!jenjang_pendidikan) {
+      return res.status(404).json({ message: "Jenjang Pendidikan not found" });
+    }
+
     const bobotPenilaians = await BobotPenilaian.findAll({
       where: {
         id_prodi: prodi.id_prodi,
@@ -125,6 +137,7 @@ const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
         return res.status(400).json({ message: "Total bobot penilaian does not equal 100" });
       }
 
+      let nilai_angka_awal = totalNilai;
       let nilai_angka = (totalNilai / 25).toFixed(2);
 
       let nilai_huruf;
@@ -167,17 +180,17 @@ const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
       });
 
       if (detailNilai) {
-        detailNilai.jurusan = prodi.nama_program_studi;
+        detailNilai.jurusan = jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi;
         detailNilai.angkatan = angkatan_mahasiswa;
-        detailNilai.nilai_angka = parseFloat(nilai_angka);
+        detailNilai.nilai_angka = parseFloat(nilai_angka_awal);
         detailNilai.nilai_huruf = nilai_huruf;
         detailNilai.nilai_indeks = nilai_indeks;
         await detailNilai.save();
       } else {
         detailNilai = await DetailNilaiPerkuliahanKelas.create({
-          jurusan: prodi.nama_program_studi,
+          jurusan: jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi,
           angkatan: angkatan_mahasiswa,
-          nilai_angka: parseFloat(nilai_angka),
+          nilai_angka: parseFloat(nilai_angka_awal),
           nilai_huruf,
           nilai_indeks,
           id_kelas_kuliah: kelasKuliahId,
@@ -198,7 +211,130 @@ const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
   }
 };
 
+const importNilaiPerkuliahan = async (req, res, next) => {
+  try {
+    const kelasKuliahId = req.params.id_kelas_kuliah;
+
+    if (!kelasKuliahId) {
+      return res.status(400).json({ message: "Kelas Kuliah ID is required" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    if (req.file.mimetype !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+      return res.status(400).json({ message: "File type not supported" });
+    }
+
+    const filePath = req.file.path;
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
+
+    const worksheet = workbook.worksheets[0];
+    if (!worksheet) {
+      throw new Error("Worksheet not found in the Excel file");
+    }
+
+    let detailNilaiPerkuliahanKelas = [];
+
+    // Read grading criteria
+    const gradingCriteria = [];
+    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+      if (rowNumber <= 6) {
+        const nilai_min = row.getCell(1).value;
+        const nilai_max = row.getCell(2).value;
+        const nilai_indeks = row.getCell(3).value;
+        const nilai_huruf = row.getCell(4).value;
+        gradingCriteria.push({ nilai_min, nilai_max, nilai_indeks, nilai_huruf });
+      }
+    });
+    let count_data_nilai = 0;
+
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1) {
+        const nim = row.getCell(6).value;
+        const nilai_presensi = row.getCell(8).value;
+        const nilai_tugas = row.getCell(9).value;
+        const nilai_uas = row.getCell(10).value;
+        const nilai_uts = row.getCell(11).value;
+
+        detailNilaiPerkuliahanKelas.push(async () => {
+          let id_registrasi_mahasiswa = null;
+          let angkatan_mahasiswa = null;
+          let jurusan = null;
+
+          if (nim) {
+            const mahasiswa = await Mahasiswa.findOne({ where: { nim: nim } });
+            if (mahasiswa) {
+              id_registrasi_mahasiswa = mahasiswa.id_registrasi_mahasiswa;
+              angkatan_mahasiswa = mahasiswa.nama_periode_masuk.substring(0, 4);
+            } else {
+              // console.error(`Mahasiswa with NIM ${nim} not found`);
+              return; // Skip this student if not found
+            }
+          }
+
+          const nilai_angka = (nilai_presensi + nilai_tugas + nilai_uas + nilai_uts) / 4;
+
+          // Determine grade
+          let huruf = "E";
+          let indeks = 0;
+          for (const criteria of gradingCriteria) {
+            if (nilai_angka >= criteria.nilai_min && nilai_angka <= criteria.nilai_max) {
+              huruf = criteria.nilai_huruf;
+              indeks = criteria.nilai_indeks;
+              break;
+            }
+          }
+
+          const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
+          if (kelas_kuliah) {
+            const prodi = await Prodi.findOne({ where: { id_prodi: kelas_kuliah.id_prodi } });
+            if (prodi) {
+              const jenjang_pendidikan = await JenjangPendidikan.findOne({ where: { id_jenjang_didik: prodi.id_jenjang_pendidikan } });
+              if (jenjang_pendidikan) {
+                jurusan = jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi;
+              }
+            }
+          }
+
+          const detail_nilai_perkuliahan = {
+            angkatan: angkatan_mahasiswa,
+            jurusan: jurusan,
+            nilai_angka: nilai_angka,
+            nilai_indeks: indeks,
+            nilai_huruf: huruf,
+            id_kelas_kuliah: kelasKuliahId,
+            id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+          };
+
+          if (id_registrasi_mahasiswa && angkatan_mahasiswa) {
+            await DetailNilaiPerkuliahanKelas.create(detail_nilai_perkuliahan);
+            count_data_nilai++;
+          } else {
+            // console.error(`Data for NIM ${nim} is incomplete and will be skipped`);
+          }
+        });
+      }
+    });
+
+    // Execute all async functions to save detail nilai perkuliahan to database
+    await Promise.all(detailNilaiPerkuliahanKelas.map((fn) => fn()));
+
+    await fs.unlink(filePath);
+
+    res.status(201).json({
+      message: "Nilai Perkuliahan imported successfully",
+      dataJumlah: count_data_nilai,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getPesertaKelasKuliahByKelasKuliahId,
   createOrUpdatePenilaianByKelasKuliahId,
+  importNilaiPerkuliahan,
 };
