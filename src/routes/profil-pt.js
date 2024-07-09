@@ -10,5 +10,7 @@ const checkRole = require("../middlewares/check-role");
 router.get("/", checkRole(["admin"]), ProfilPTController.getAllProfilPT);
 router.get("/:id/get", checkRole(["admin"]), ProfilPTController.getProfilPTById);
 router.put("/:id/update", checkRole(["admin"]), ProfilPTController.updateProfilPTById);
+router.get("/get-profile-pt-active", checkRole(["admin"]), ProfilPTController.getProfilPTActive);
+router.put("/update-profil-pt-active", checkRole(["admin"]), ProfilPTController.updateProfilPTActive);
 
 module.exports = router;

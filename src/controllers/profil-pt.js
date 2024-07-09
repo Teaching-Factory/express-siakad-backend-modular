@@ -149,8 +149,96 @@ const updateProfilPTById = async (req, res, next) => {
   }
 };
 
+const getProfilPTActive = async (req, res, next) => {
+  try {
+    // Ambil semua data profil_pt dari database
+    const profil_pt = await ProfilPT.findOne({
+      where: {
+        id_profil_pt: 1,
+      },
+      include: [{ model: PerguruanTinggi }, { model: Wilayah }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET Profil PT Active Success",
+      data: profil_pt,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateProfilPTActive = async (req, res, next) => {
+  // Ambil data untuk update dari body permintaan
+  const { nama_perguruan_tinggi, jalan, telepon, email, kode_pos, faximile, website } = req.body;
+
+  // validasi
+  if (!nama_perguruan_tinggi) {
+    return res.status(400).json({ message: "nama_perguruan_tinggi is required" });
+  }
+  if (!jalan) {
+    return res.status(400).json({ message: "jalan is required" });
+  }
+  if (!telepon) {
+    return res.status(400).json({ message: "telepon is required" });
+  }
+  if (!email) {
+    return res.status(400).json({ message: "email is required" });
+  }
+  if (!kode_pos) {
+    return res.status(400).json({ message: "kode_pos is required" });
+  }
+  if (!faximile) {
+    return res.status(400).json({ message: "faximile is required" });
+  }
+  if (!website) {
+    return res.status(400).json({ message: "website is required" });
+  }
+
+  try {
+    // Ambil semua data profil_pt dari database
+    const profil_pt = await ProfilPT.findOne({
+      where: {
+        id_profil_pt: 1,
+      },
+    });
+
+    const perguruan_tinggi = await PerguruanTinggi.findOne({
+      where: {
+        id_perguruan_tinggi: profil_pt.id_perguruan_tinggi,
+      },
+    });
+
+    // update perguruan tinggi
+    perguruan_tinggi.nama_perguruan_tinggi = nama_perguruan_tinggi || perguruan_tinggi.nama_perguruan_tinggi;
+
+    await perguruan_tinggi.save();
+
+    // update profil pt
+    profil_pt.jalan = jalan || profil_pt.jalan;
+    profil_pt.telepon = telepon || profil_pt.telepon;
+    profil_pt.email = email || profil_pt.email;
+    profil_pt.kode_pos = kode_pos || profil_pt.kode_pos;
+    profil_pt.faximile = faximile || profil_pt.faximile;
+    profil_pt.website = website || profil_pt.website;
+
+    await profil_pt.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== UPDATE Profil PT Active Success",
+      data: profil_pt,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllProfilPT,
   getProfilPTById,
   updateProfilPTById,
+  getProfilPTActive,
+  updateProfilPTActive,
 };
