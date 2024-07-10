@@ -164,7 +164,6 @@ const doLogout = (req, res, next) => {
     res.clearCookie("token");
 
     res.json({
-      message: "Berhasil mengakses do logout",
       message: "Anda baru saja logout",
     });
   } catch (error) {
