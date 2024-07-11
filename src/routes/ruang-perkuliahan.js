@@ -7,7 +7,7 @@ const RuangPerkuliahanController = require("../controllers/ruang-perkuliahan");
 const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", checkRole(["admin", "admin-prodi"]), RuangPerkuliahanController.getAllRuangPerkuliahan);
+router.get("/", checkRole(["admin", "admin-prodi", "dosen"]), RuangPerkuliahanController.getAllRuangPerkuliahan);
 router.get("/:id/get", checkRole(["admin", "admin-prodi"]), RuangPerkuliahanController.getRuangPerkuliahanById);
 router.post("/create", checkRole(["admin", "admin-prodi"]), RuangPerkuliahanController.createRuangPerkuliahan);
 router.put("/:id/update", checkRole(["admin", "admin-prodi"]), RuangPerkuliahanController.updateRuangPerkuliahanById);
