@@ -101,6 +101,7 @@ const nilaiPerkuliahanRoutes = require("./routes/nilai-perkuliahan");
 const settingGlobalRoutes = require("./routes/setting-global");
 const perguruanTinggiGuestRoutes = require("./routes/perguruan-tinggi-guest");
 const jenisTagihanRoutes = require("./routes/jenis-tagihan");
+const semesterAktifRoutes = require("./routes/semester-aktif");
 
 // route api local not done yet
 const settingWSRoutes = require("./routes/setting-ws");
@@ -248,6 +249,7 @@ app.use("/nilai-perkuliahan", checkToken, nilaiPerkuliahanRoutes);
 app.use("/setting-global", checkToken, settingGlobalRoutes);
 app.use("/perguruan-tinggi-guest", perguruanTinggiGuestRoutes);
 app.use("/jenis-tagihan", checkToken, jenisTagihanRoutes);
+app.use("/semester-aktif", checkToken, semesterAktifRoutes);
 
 // route api local not done yet
 app.use("/setting/ws", settingWSRoutes);

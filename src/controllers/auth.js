@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-const { User, UserRole, Role, BlacklistedToken, RolePermission, Permission } = require("../../models");
+const { User, UserRole, Role, BlacklistedToken, RolePermission, Permission, SettingGlobal, Mahasiswa, Prodi } = require("../../models");
 
 // Fungsi untuk membuat token JWT
 const generateToken = async (user) => {
@@ -110,6 +110,25 @@ const doLogin = async (req, res, next) => {
     // Format permissions untuk hanya mengembalikan nama_permission
     const formattedPermissions = permissions.map((permission) => permission.Permission.nama_permission);
 
+    // get setting global by prodi if mahasiswa user
+    let setting_global_prodi = null;
+
+    if (role.nama_role == "mahasiswa") {
+      // get data mahasiswa
+      const mahasiswa = await Mahasiswa.findOne({
+        where: {
+          nim: user.username,
+        },
+      });
+
+      setting_global_prodi = await SettingGlobal.findOne({
+        where: {
+          id_prodi: mahasiswa.id_prodi,
+        },
+        include: [{ model: Prodi }],
+      });
+    }
+
     // Kirim token sebagai respons
     res.json({
       message: "Login berhasil",
@@ -117,6 +136,7 @@ const doLogin = async (req, res, next) => {
       user: user.nama,
       role: role.nama_role,
       permissions: formattedPermissions,
+      setting_global_prodi: setting_global_prodi,
     });
   } catch (error) {
     next(error);
@@ -164,8 +184,97 @@ const doLogout = (req, res, next) => {
     res.clearCookie("token");
 
     res.json({
-      message: "Berhasil mengakses do logout",
       message: "Anda baru saja logout",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const doLoginAs = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
+    // Dapatkan data user berdasarkan parameter
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Melakukan logout dengan menghapus token
+    res.clearCookie("token");
+
+    // Kemudian lakukan proses login dengan user yang dimiliki
+
+    // Buat token JWT
+    const token = await generateToken(user);
+
+    // Mengambil data user role pengguna yang telah melakukan login
+    const userRole = await UserRole.findOne({
+      where: {
+        id_user: user.id,
+      },
+    });
+
+    // Mengambil data role pengguna yang telah melakukan login
+    const role = await Role.findOne({
+      where: {
+        id: userRole.id_role,
+      },
+    });
+
+    // Mengambil data permission berdasarkan role yang telah diperoleh
+    const permissions = await RolePermission.findAll({
+      where: {
+        id_role: role.id,
+      },
+      include: [
+        {
+          model: Permission,
+          attributes: ["nama_permission"],
+        },
+      ],
+    });
+
+    // Format permissions untuk hanya mengembalikan nama_permission
+    const formattedPermissions = permissions.map((permission) => permission.Permission.nama_permission);
+
+    // get setting global by prodi if mahasiswa user
+    let setting_global_prodi = null;
+
+    if (role.nama_role == "mahasiswa") {
+      // get data mahasiswa
+      const mahasiswa = await Mahasiswa.findOne({
+        where: {
+          nim: user.username,
+        },
+      });
+
+      setting_global_prodi = await SettingGlobal.findOne({
+        where: {
+          id_prodi: mahasiswa.id_prodi,
+        },
+        include: [{ model: Prodi }],
+      });
+    }
+
+    // Kirim token dan informasi login sebagai respons
+    res.json({
+      message: `Berhasil melakukan login sebagai user ${user.nama}`,
+      token,
+      user: user.nama,
+      role: role.nama_role,
+      permissions: formattedPermissions,
+      setting_global_prodi: setting_global_prodi,
     });
   } catch (error) {
     next(error);
@@ -176,4 +285,5 @@ module.exports = {
   generateToken,
   doLogin,
   doLogout,
+  doLoginAs,
 };
