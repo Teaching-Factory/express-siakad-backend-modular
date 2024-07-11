@@ -171,8 +171,79 @@ const doLogout = (req, res, next) => {
   }
 };
 
+const doLoginAs = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
+    // Dapatkan data user berdasarkan parameter
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Melakukan logout dengan menghapus token
+    res.clearCookie("token");
+
+    // Kemudian lakukan proses login dengan user yang dimiliki
+
+    // Buat token JWT
+    const token = await generateToken(user);
+
+    // Mengambil data user role pengguna yang telah melakukan login
+    const userRole = await UserRole.findOne({
+      where: {
+        id_user: user.id,
+      },
+    });
+
+    // Mengambil data role pengguna yang telah melakukan login
+    const role = await Role.findOne({
+      where: {
+        id: userRole.id_role,
+      },
+    });
+
+    // Mengambil data permission berdasarkan role yang telah diperoleh
+    const permissions = await RolePermission.findAll({
+      where: {
+        id_role: role.id,
+      },
+      include: [
+        {
+          model: Permission,
+          attributes: ["nama_permission"],
+        },
+      ],
+    });
+
+    // Format permissions untuk hanya mengembalikan nama_permission
+    const formattedPermissions = permissions.map((permission) => permission.Permission.nama_permission);
+
+    // Kirim token dan informasi login sebagai respons
+    res.json({
+      message: `Berhasil melakukan login sebagai user ${user.nama}`,
+      token,
+      user: user.nama,
+      role: role.nama_role,
+      permissions: formattedPermissions,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   generateToken,
   doLogin,
   doLogout,
+  doLoginAs,
 };
