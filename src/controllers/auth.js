@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-const { User, UserRole, Role, BlacklistedToken, RolePermission, Permission } = require("../../models");
+const { User, UserRole, Role, BlacklistedToken, RolePermission, Permission, SettingGlobal, Mahasiswa, Prodi } = require("../../models");
 
 // Fungsi untuk membuat token JWT
 const generateToken = async (user) => {
@@ -110,6 +110,25 @@ const doLogin = async (req, res, next) => {
     // Format permissions untuk hanya mengembalikan nama_permission
     const formattedPermissions = permissions.map((permission) => permission.Permission.nama_permission);
 
+    // get setting global by prodi if mahasiswa user
+    let setting_global_prodi = null;
+
+    if (role.nama_role == "mahasiswa") {
+      // get data mahasiswa
+      const mahasiswa = await Mahasiswa.findOne({
+        where: {
+          nim: user.username,
+        },
+      });
+
+      setting_global_prodi = await SettingGlobal.findOne({
+        where: {
+          id_prodi: mahasiswa.id_prodi,
+        },
+        include: [{ model: Prodi }],
+      });
+    }
+
     // Kirim token sebagai respons
     res.json({
       message: "Login berhasil",
@@ -117,6 +136,7 @@ const doLogin = async (req, res, next) => {
       user: user.nama,
       role: role.nama_role,
       permissions: formattedPermissions,
+      setting_global_prodi: setting_global_prodi,
     });
   } catch (error) {
     next(error);
@@ -228,6 +248,25 @@ const doLoginAs = async (req, res, next) => {
     // Format permissions untuk hanya mengembalikan nama_permission
     const formattedPermissions = permissions.map((permission) => permission.Permission.nama_permission);
 
+    // get setting global by prodi if mahasiswa user
+    let setting_global_prodi = null;
+
+    if (role.nama_role == "mahasiswa") {
+      // get data mahasiswa
+      const mahasiswa = await Mahasiswa.findOne({
+        where: {
+          nim: user.username,
+        },
+      });
+
+      setting_global_prodi = await SettingGlobal.findOne({
+        where: {
+          id_prodi: mahasiswa.id_prodi,
+        },
+        include: [{ model: Prodi }],
+      });
+    }
+
     // Kirim token dan informasi login sebagai respons
     res.json({
       message: `Berhasil melakukan login sebagai user ${user.nama}`,
@@ -235,6 +274,7 @@ const doLoginAs = async (req, res, next) => {
       user: user.nama,
       role: role.nama_role,
       permissions: formattedPermissions,
+      setting_global_prodi: setting_global_prodi,
     });
   } catch (error) {
     next(error);
