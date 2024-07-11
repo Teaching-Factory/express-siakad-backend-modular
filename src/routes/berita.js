@@ -8,7 +8,7 @@ const router = express.Router();
 const BeritaController = require("../controllers/berita");
 const checkRole = require("../middlewares/check-role");
 
-// fungsi untuk menyimpan upload file ke dalam penyimpanan local project
+// fungsi untuk menyimpan upload file ke dalam penyimpanan lokal project
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "../storage/berita"));
@@ -18,7 +18,23 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+// filter untuk memastikan hanya file jpg atau png yang bisa diupload
+const fileFilter = (req, file, cb) => {
+  const fileTypes = /jpeg|jpg|png/;
+  const mimeType = fileTypes.test(file.mimetype);
+  const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+
+  if (mimeType && extName) {
+    return cb(null, true);
+  } else {
+    cb(new Error("Only .jpg and .png files are allowed!"), true);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+});
 
 // all routes
 router.get("/", checkRole(["admin", "admin-prodi"]), BeritaController.getAllBerita);

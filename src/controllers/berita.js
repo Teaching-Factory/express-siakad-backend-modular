@@ -73,9 +73,16 @@ const createBerita = async (req, res, next) => {
     // Deklarasi variabel thumbnail
     let thumbnail = null;
 
-    // Jika file di-upload, set path file ke variabel thumbnail
+    // Jika file di-upload, cek tipe MIME
     if (req.file) {
-      thumbnail = req.file.path; // Path file yang di-upload
+      if (req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
+        return res.status(400).json({ message: "File type not supported" });
+      } else {
+        // Jika tipe file valid, set path file ke variabel thumbnail
+        thumbnail = req.file.path;
+      }
+    } else {
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
     // Buat data berita baru
@@ -149,14 +156,23 @@ const updateBeritaById = async (req, res, next) => {
     if (req.file) {
       berita.thumbnail = req.file.path;
 
-      // Hapus file gambar lama jika ada
-      if (oldThumbnailPath) {
-        fs.unlink(path.resolve(oldThumbnailPath), (err) => {
-          if (err) {
-            console.error(`Gagal menghapus gambar: ${err.message}`);
+      // Jika file di-upload, cek tipe MIME
+      if (req.file) {
+        if (req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
+          return res.status(400).json({ message: "File type not supported" });
+        } else {
+          // Hapus file gambar lama jika ada
+          if (oldThumbnailPath) {
+            fs.unlink(path.resolve(oldThumbnailPath), (err) => {
+              if (err) {
+                console.error(`Gagal menghapus gambar: ${err.message}`);
+              }
+            });
           }
-        });
+        }
       }
+    } else {
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
     // Simpan perubahan berita
