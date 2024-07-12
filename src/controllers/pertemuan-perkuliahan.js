@@ -420,6 +420,7 @@ const getAllPertemuanPerkuliahanActiveByMahasiswa = async (req, res, next) => {
         kunci_pertemuan: false,
         id_kelas_kuliah: kelas_kuliahs.map((kelas) => kelas.id_kelas_kuliah), // Ambil id_kelas_kuliah dari kelas_kuliahs
       },
+      include: [{ model: KelasKuliah, include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
     });
 
     // Kirim respons JSON jika berhasil

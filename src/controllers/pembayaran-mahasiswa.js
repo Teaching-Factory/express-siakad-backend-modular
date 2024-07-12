@@ -1,4 +1,4 @@
-const { PembayaranMahasiswa, TagihanMahasiswa } = require("../../models");
+const { PembayaranMahasiswa, TagihanMahasiswa, StatusMahasiswa, SemesterAktif, Mahasiswa } = require("../../models");
 const fs = require("fs"); // untuk menghapus file
 
 const getAllPembayaranMahasiswaByTagihanId = async (req, res, next) => {
@@ -23,6 +23,27 @@ const getAllPembayaranMahasiswaByTagihanId = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET All Pembayaran Mahasiswa By Id ${tagihanMahasiswaId} Success`,
+      jumlahData: pembayaran_mahasiswa.length,
+      data: pembayaran_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllPembayaranMahasiswaDikonfirmasi = async (req, res, next) => {
+  try {
+    // Ambil semua data pembayaran_mahasiswa dari database
+    const pembayaran_mahasiswa = await PembayaranMahasiswa.findAll({
+      where: {
+        status_pembayaran: "Dikonfirmasi",
+      },
+      include: [{ model: TagihanMahasiswa }],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Pembayaran Mahasiswa Dikonfirmasi Success`,
       jumlahData: pembayaran_mahasiswa.length,
       data: pembayaran_mahasiswa,
     });
@@ -137,6 +158,89 @@ const updatePembayaranMahasiswaById = async (req, res, next) => {
   }
 };
 
+const updateStatusPembayaranMahasiswaById = async (req, res, next) => {
+  // Ambil data untuk update dari body permintaan
+  const { status_pembayaran } = req.body;
+
+  if (!status_pembayaran) {
+    return res.status(400).json({ message: "status_pembayaran is required" });
+  }
+
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const pembayaranMahasiswaId = req.params.id;
+
+    if (!pembayaranMahasiswaId) {
+      return res.status(400).json({
+        message: "Pembayaran Mahasiswa ID is required",
+      });
+    }
+
+    // Temukan pembayaran_mahasiswa yang akan diperbarui berdasarkan ID
+    const pembayaran_mahasiswa = await PembayaranMahasiswa.findByPk(pembayaranMahasiswaId);
+
+    if (!pembayaran_mahasiswa) {
+      return res.status(404).json({ message: "Pembayaran Mahasiswa tidak ditemukan" });
+    }
+
+    // Update data pembayaran_mahasiswa
+    pembayaran_mahasiswa.status_pembayaran = status_pembayaran || pembayaran_mahasiswa.status_pembayaran;
+
+    await pembayaran_mahasiswa.save();
+
+    if (pembayaran_mahasiswa.status_pembayaran === "Dikonfirmasi") {
+      // update tagihan mahasiswa
+      const tagihan_mahasiswa = await TagihanMahasiswa.findOne({
+        where: {
+          id_tagihan_mahasiswa: pembayaran_mahasiswa.id_tagihan_mahasiswa,
+        },
+      });
+
+      // Update data tagihan mahasiswa
+      tagihan_mahasiswa.status_tagihan = "Lunas";
+      await tagihan_mahasiswa.save();
+
+      // get data status mahasiswa A
+      const status_mahasiswa_a = await StatusMahasiswa.findOne({
+        id_status_mahasiswa: "A",
+      });
+
+      if (!status_mahasiswa_a) {
+        return res.status(404).json({ message: "Status Mahasiswa A tidak ditemukan" });
+      }
+
+      // get data semester aktif sekarang
+      const semester_aktif = await SemesterAktif.findOne({
+        where: {
+          status: true,
+        },
+      });
+
+      if (!semester_aktif) {
+        return res.status(404).json({ message: "Semester Aktif tidak ditemukan" });
+      }
+
+      const mahasiswa = await Mahasiswa.findByPk(tagihan_mahasiswa.id_registrasi_mahasiswa);
+
+      if (!mahasiswa) {
+        return res.status(404).json({ message: "Mahasiswa tidak ditemukan" });
+      }
+
+      // update dan simpan status mahasiswa menjadi 'Aktif' dan ambil semester aktif baru
+      mahasiswa.nama_status_mahasiswa = status_mahasiswa_a.nama_status_mahasiswa;
+      mahasiswa.id_semester = semester_aktif.id_semester;
+      await mahasiswa.save();
+    }
+
+    res.json({
+      message: "UPDATE Pembayaran Mahasiswa Success",
+      dataPembayaranMahasiswa: pembayaran_mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deletePembayaranMahasiswaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
@@ -224,9 +328,11 @@ const getPembayaranMahasiswaByMahasiswaId = async (req, res, next) => {
 
 module.exports = {
   getAllPembayaranMahasiswaByTagihanId,
+  getAllPembayaranMahasiswaDikonfirmasi,
   getPembayaranMahasiswaById,
   createPembayaranMahasiswaByTagihanId,
   updatePembayaranMahasiswaById,
+  updateStatusPembayaranMahasiswaById,
   deletePembayaranMahasiswaById,
   getPembayaranMahasiswaByMahasiswaId,
 };

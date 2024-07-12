@@ -1,7 +1,6 @@
 const {
   KRSMahasiswa,
   TahunAjaran,
-  Periode,
   Mahasiswa,
   Prodi,
   KelasKuliah,
@@ -15,6 +14,7 @@ const {
   DetailKelasKuliah,
   RuangPerkuliahan,
   Semester,
+  SemesterAktif,
 } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res, next) => {
@@ -520,8 +520,6 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
         id_registrasi_mahasiswa: {
           [Sequelize.Op.in]: mahasiswaIdsWithAllKRSFalse,
         },
-        id_prodi: prodiId,
-        id_semester: semesterId,
       },
       include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
@@ -539,32 +537,17 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
 
 const getAllMahasiswaBelumKRS = async (req, res, next) => {
   try {
-    // Ambil tahun ajaran yang sesuai dengan kondisi
-    const tahunAjaran = await TahunAjaran.findOne({
+    // ambil data semester aktif
+    const semester_aktif = await SemesterAktif.findOne({
       where: {
-        a_periode: 1,
+        status: true,
       },
     });
-
-    // Ekstrak tahun awal dari nama_tahun_ajaran
-    const [tahunAwal] = tahunAjaran.nama_tahun_ajaran.split("/");
-
-    // Ambil semua semester yang sesuai dengan tahun awal
-    const semesters = await Semester.findAll({
-      where: {
-        id_semester: {
-          [Sequelize.Op.like]: `${tahunAwal}%`,
-        },
-      },
-    });
-
-    // Ambil semua id_semester dari hasil query semester
-    const idSemester = semesters.map((semester) => semester.id_semester);
 
     // Ambil data KRS mahasiswa berdasarkan id_semester yang didapatkan
     const krs_mahasiswas = await KRSMahasiswa.findAll({
       where: {
-        id_semester: idSemester,
+        id_semester: semester_aktif.id_semester,
       },
     });
 
@@ -657,6 +640,22 @@ const createKRSMahasiswa = async (req, res, next) => {
       return res.status(404).json({ message: "Mahasiswa not found" });
     }
 
+    // mengecek apakah status mahasiswa aktif atau tidak
+    if (mahasiswa.nama_status_mahasiswa !== "Aktif" && mahasiswa.nama_status_mahasiswa !== "AKTIF") {
+      return res.status(404).json({ message: "Status Mahasiswa Tidak Aktif" });
+    }
+
+    // mengambil data semester aktif
+    const semester_aktif = await SemesterAktif.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    if (!semester_aktif) {
+      return res.status(404).json({ message: "Semester Aktif not found" });
+    }
+
     // Mengambil tahun ajaran yang sesuai dengan kondisi
     const tahunAjaran = await TahunAjaran.findOne({
       where: {
@@ -695,7 +694,7 @@ const createKRSMahasiswa = async (req, res, next) => {
             angkatan: tahunAjaran.id_tahun_ajaran,
             validasi_krs: false,
             id_registrasi_mahasiswa,
-            id_semester: mahasiswa.id_semester,
+            id_semester: semester_aktif.id_semester,
             id_prodi: mahasiswa.id_prodi,
             id_matkul: kelas_kuliah.id_matkul,
             id_kelas: kelas_kuliah.id_kelas_kuliah,
@@ -739,6 +738,22 @@ const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
       return res.status(404).json({ message: "Mahasiswa not found" });
     }
 
+    // mengecek apakah status mahasiswa aktif atau tidak
+    if (mahasiswa.nama_status_mahasiswa !== "Aktif" && mahasiswa.nama_status_mahasiswa !== "AKTIF") {
+      return res.status(404).json({ message: "Status Mahasiswa Tidak Aktif" });
+    }
+
+    // mengambil data semester aktif
+    const semester_aktif = await SemesterAktif.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    if (!semester_aktif) {
+      return res.status(404).json({ message: "Semester Aktif not found" });
+    }
+
     // Mengambil tahun ajaran yang sesuai dengan kondisi
     const tahunAjaran = await TahunAjaran.findOne({
       where: {
@@ -777,7 +792,7 @@ const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
             angkatan: tahunAjaran.id_tahun_ajaran,
             validasi_krs: false,
             id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
-            id_semester: mahasiswa.id_semester,
+            id_semester: semester_aktif.id_semester,
             id_prodi: mahasiswa.id_prodi,
             id_matkul: kelas_kuliah.id_matkul,
             id_kelas: kelas_kuliah.id_kelas_kuliah,

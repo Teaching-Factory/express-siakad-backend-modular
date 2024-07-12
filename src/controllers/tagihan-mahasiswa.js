@@ -1,4 +1,4 @@
-const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan, StatusMahasiswa } = require("../../models");
+const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan, StatusMahasiswa, SemesterAktif } = require("../../models");
 
 const getAllTagihanMahasiswa = async (req, res, next) => {
   try {
@@ -153,14 +153,26 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
         return res.status(404).json({ message: "Status Mahasiswa A tidak ditemukan" });
       }
 
+      // get data semester aktif sekarang
+      const semester_aktif = await SemesterAktif.findOne({
+        where: {
+          status: true,
+        },
+      });
+
+      if (!semester_aktif) {
+        return res.status(404).json({ message: "Semester Aktif tidak ditemukan" });
+      }
+
       const mahasiswa = await Mahasiswa.findByPk(tagihan_mahasiswa.id_registrasi_mahasiswa);
 
       if (!mahasiswa) {
         return res.status(404).json({ message: "Mahasiswa tidak ditemukan" });
       }
 
-      // update dan simpan status mahasiswa menjadi 'Aktif'
+      // update dan simpan status mahasiswa menjadi 'Aktif' dan ambil semester aktif baru
       mahasiswa.nama_status_mahasiswa = status_mahasiswa_a.nama_status_mahasiswa;
+      mahasiswa.id_semester = semester_aktif.id_semester;
       await mahasiswa.save();
     }
 
