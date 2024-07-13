@@ -17,15 +17,20 @@ describe("createPembayaranMahasiswaByTagihanId", () => {
   it("should create pembayaran mahasiswa and return 201", async () => {
     const mockTagihanMahasiswaId = 1;
     const mockFile = {
-      path: "/uploads/bukti_tf.jpg",
+      filename: "bukti_tf.jpg",
     };
 
     req.params.id_tagihan_mahasiswa = mockTagihanMahasiswaId;
     req.file = mockFile;
 
+    const protocol = process.env.PROTOCOL || "http";
+    const host = process.env.HOST || "localhost";
+    const port = process.env.PORT || 4000;
+    const fileUrl = `${protocol}://${host}:${port}/src/storage/bukti-tagihan-pembayaran/${mockFile.filename}`;
+
     const mockNewPembayaranMahasiswa = {
       id: 1,
-      upload_bukti_tf: mockFile.path,
+      upload_bukti_tf: fileUrl,
       status_pembayaran: "Menunggu Konfirmasi",
       id_tagihan_mahasiswa: mockTagihanMahasiswaId,
     };
@@ -35,7 +40,7 @@ describe("createPembayaranMahasiswaByTagihanId", () => {
     await createPembayaranMahasiswaByTagihanId(req, res, next);
 
     expect(PembayaranMahasiswa.create).toHaveBeenCalledWith({
-      upload_bukti_tf: mockFile.path,
+      upload_bukti_tf: fileUrl,
       status_pembayaran: "Menunggu Konfirmasi",
       id_tagihan_mahasiswa: mockTagihanMahasiswaId,
     });
@@ -61,11 +66,16 @@ describe("createPembayaranMahasiswaByTagihanId", () => {
   it("should handle errors", async () => {
     const mockTagihanMahasiswaId = 1;
     const mockFile = {
-      path: "/uploads/bukti_tf.jpg",
+      filename: "bukti_tf.jpg",
     };
 
     req.params.id_tagihan_mahasiswa = mockTagihanMahasiswaId;
     req.file = mockFile;
+
+    const protocol = process.env.PROTOCOL || "http";
+    const host = process.env.HOST || "localhost";
+    const port = process.env.PORT || 4000;
+    const fileUrl = `${protocol}://${host}:${port}/src/storage/bukti-tagihan-pembayaran/${mockFile.filename}`;
 
     const errorMessage = "Database error";
     const error = new Error(errorMessage);
@@ -75,7 +85,7 @@ describe("createPembayaranMahasiswaByTagihanId", () => {
     await createPembayaranMahasiswaByTagihanId(req, res, next);
 
     expect(PembayaranMahasiswa.create).toHaveBeenCalledWith({
-      upload_bukti_tf: mockFile.path,
+      upload_bukti_tf: fileUrl,
       status_pembayaran: "Menunggu Konfirmasi",
       id_tagihan_mahasiswa: mockTagihanMahasiswaId,
     });
