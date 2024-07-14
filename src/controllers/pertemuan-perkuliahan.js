@@ -1,4 +1,4 @@
-const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Semester, Sequelize, Prodi, MataKuliah } = require("../../models");
+const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Semester, Sequelize, Prodi, MataKuliah, PresensiMahasiswa } = require("../../models");
 
 const getAllPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
   try {
@@ -423,11 +423,27 @@ const getAllPertemuanPerkuliahanActiveByMahasiswa = async (req, res, next) => {
       include: [{ model: KelasKuliah, include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
     });
 
+    // Filter pertemuan_perkuliahan_aktifs yang belum ada presensi untuk mahasiswa ini
+    const filteredPertemuanPerkuliahan = [];
+
+    for (const pertemuan of pertemuan_perkuliahan_aktifs) {
+      const presensi = await PresensiMahasiswa.findOne({
+        where: {
+          id_pertemuan_perkuliahan: pertemuan.id,
+          id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        },
+      });
+
+      if (!presensi) {
+        filteredPertemuanPerkuliahan.push(pertemuan);
+      }
+    }
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Pertemuan Perkuliahan Aktif By Mahasiswa Success",
-      jumlahData: pertemuan_perkuliahan_aktifs.length,
-      data: pertemuan_perkuliahan_aktifs,
+      jumlahData: filteredPertemuanPerkuliahan.length,
+      data: filteredPertemuanPerkuliahan,
     });
   } catch (error) {
     next(error);
