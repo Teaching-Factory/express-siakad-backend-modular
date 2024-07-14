@@ -4,12 +4,10 @@ const router = express.Router();
 
 // import controller
 const KurikulumController = require("../controllers/kurikulum");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", KurikulumController.getAllKurikulum);
-router.get("/:id/get", KurikulumController.getKurikulumById);
-// router.post("/create", KurikulumController.createKurikulum);
-// router.put("/:id/update", KurikulumController.updateKurikulumById);
-// router.delete("/:id/delete", KurikulumController.deleteKurikulumById);
+router.get("/", checkRole(["admin"]), KurikulumController.getAllKurikulum);
+router.get("/:id/get", checkRole(["admin"]), KurikulumController.getKurikulumById);
 
 module.exports = router;
