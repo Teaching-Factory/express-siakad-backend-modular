@@ -1,4 +1,4 @@
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
 
@@ -157,104 +157,150 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
   }
 };
 
-// belum selesai
-// const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
-//   const { jenis_cetak, nim, id_prodi, id_angkatan, id_semester, tanggal_penandatanganan, format } = req.body;
+const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
+  const { jenis_cetak, nim, id_prodi, id_angkatan, id_semester, tanggal_penandatanganan, format } = req.body;
 
-//   if (jenis_cetak === "Mahasiswa") {
-//     if (!nim) {
-//       return res.status(400).json({ message: "nim is required" });
-//     }
-//     if (!id_semester) {
-//       return res.status(400).json({ message: "id_semester is required" });
-//     }
-//     if (!format) {
-//       return res.status(400).json({ message: "format is required" });
-//     }
-//     if (!tanggal_penandatanganan) {
-//       return res.status(400).json({ message: "tanggal_penandatanganan is required" });
-//     }
-//   } else if (jenis_cetak === "Angkatan") {
-//     if (!id_prodi) {
-//       return res.status(400).json({ message: "id_prodi is required" });
-//     }
-//     if (!id_angkatan) {
-//       return res.status(400).json({ message: "id_angkatan is required" });
-//     }
-//     if (!id_semester) {
-//       return res.status(400).json({ message: "id_semester is required" });
-//     }
-//     if (!tanggal_penandatanganan) {
-//       return res.status(400).json({ message: "tanggal_penandatanganan is required" });
-//     }
-//   } else {
-//     return res.status(400).json({ message: "jenis_cetak is invalid" });
-//   }
+  // Validasi input berdasarkan jenis_cetak
+  if (jenis_cetak === "Mahasiswa") {
+    if (!nim) {
+      return res.status(400).json({ message: "nim is required" });
+    }
+    if (!id_semester) {
+      return res.status(400).json({ message: "id_semester is required" });
+    }
+    if (!format) {
+      return res.status(400).json({ message: "format is required" });
+    }
+    if (!tanggal_penandatanganan) {
+      return res.status(400).json({ message: "tanggal_penandatanganan is required" });
+    }
+  } else if (jenis_cetak === "Angkatan") {
+    if (!id_prodi) {
+      return res.status(400).json({ message: "id_prodi is required" });
+    }
+    if (!id_angkatan) {
+      return res.status(400).json({ message: "id_angkatan is required" });
+    }
+    if (!id_semester) {
+      return res.status(400).json({ message: "id_semester is required" });
+    }
+    if (!tanggal_penandatanganan) {
+      return res.status(400).json({ message: "tanggal_penandatanganan is required" });
+    }
+  } else {
+    return res.status(400).json({ message: "jenis_cetak is invalid" });
+  }
 
-//   try {
-//     if (jenis_cetak === "Mahasiswa") {
-//       const mahasiswa = await Mahasiswa.findOne({
-//         where: {
-//           nim: nim,
-//         },
-//       });
+  try {
+    if (jenis_cetak === "Mahasiswa") {
+      const mahasiswa = await Mahasiswa.findOne({
+        where: {
+          nim: nim,
+        },
+      });
 
-//       if (!mahasiswa) {
-//         return res.status(404).json({ message: `<===== Mahasiswa With NIM ${nim} Not Found:` });
-//       }
+      if (!mahasiswa) {
+        return res.status(404).json({ message: `<===== Mahasiswa With NIM ${nim} Not Found:` });
+      }
 
-//       const token = await getToken();
+      // Mengambil data unit jabatan berdasarkan prodi mahasiswa
+      let unit_jabatan = null;
+      unit_jabatan = await UnitJabatan.findOne({
+        where: {
+          id_prodi: mahasiswa.id_prodi,
+        },
+        include: [
+          {
+            model: Jabatan,
+            where: {
+              nama_jabatan: "Dekan",
+            },
+          },
+          { model: Dosen },
+        ],
+      });
 
-//       const requestBody = {
-//         act: "GetRekapKHSMahasiswa",
-//         token: token,
-//         filter: `nim='${nim}' AND id_periode='${id_semester}'`,
-//       };
+      const token = await getToken();
 
-//       const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
-//       const dataRekapKHSMahasiswa = response.data.data;
+      const requestBody = {
+        act: "GetRekapKHSMahasiswa",
+        token: token,
+        filter: `nim='${nim}' AND id_periode='${id_semester}'`,
+      };
 
-//       res.status(200).json({
-//         message: "Get Rekap KHS Mahasiswa By Mahasiswa from Feeder Success",
-//         totalData: dataRekapKHSMahasiswa.length,
-//         tanggalPenandatanganan: tanggal_penandatanganan,
-//         format: format,
-//         dataRekapKHSMahasiswaMahasiswa: dataRekapKHSMahasiswa,
-//       });
-//     } else if (jenis_cetak === "Angkatan") {
-//       const angkatan = await Angkatan.findByPk(id_angkatan);
+      const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+      const dataRekapKHSMahasiswa = response.data.data;
 
-//       if (!angkatan) {
-//         return res.status(404).json({ message: `<===== Angkatan With ID ${id_angkatan} Not Found:` });
-//       }
+      res.status(200).json({
+        message: "Get Rekap KHS Mahasiswa By Mahasiswa from Feeder Success",
+        totalData: dataRekapKHSMahasiswa.length,
+        tanggalPenandatanganan: tanggal_penandatanganan,
+        format: format,
+        unitJabatan: unit_jabatan,
+        dataRekapKHSMahasiswaMahasiswa: dataRekapKHSMahasiswa,
+      });
+    } else if (jenis_cetak === "Angkatan") {
+      const angkatan = await Angkatan.findByPk(id_angkatan);
 
-//       const token = await getToken();
+      if (!angkatan) {
+        return res.status(404).json({ message: `<===== Angkatan With ID ${id_angkatan} Not Found:` });
+      }
 
-//       const requestBody = {
-//         act: "GetRekapKHSMahasiswa",
-//         token: token,
-//         filter: `id_prodi='${id_prodi}' AND angkatan='${angkatan.tahun}' AND id_periode='${id_semester}'`,
-//       };
+      // Mengambil data unit jabatan berdasarkan prodi mahasiswa
+      let unit_jabatan = null;
+      unit_jabatan = await UnitJabatan.findOne({
+        where: {
+          id_prodi: id_prodi,
+        },
+        include: [
+          {
+            model: Jabatan,
+            where: {
+              nama_jabatan: "Dekan",
+            },
+          },
+          { model: Dosen },
+        ],
+      });
 
-//       const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
-//       const dataRekapKHSMahasiswa = response.data.data;
+      const token = await getToken();
 
-//       res.status(200).json({
-//         message: "Get Rekap KHS Mahasiswa By Angkatan from Feeder Success",
-//         totalData: dataRekapKHSMahasiswa.length,
-//         tanggalPenandatanganan: tanggal_penandatanganan,
-//         dataRekapKHSMahasiswaAngkatan: dataRekapKHSMahasiswa,
-//       });
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+      const requestBody = {
+        act: "GetRekapKHSMahasiswa",
+        token: token,
+        filter: `id_prodi='${id_prodi}' AND angkatan='${angkatan.tahun}' AND id_periode='${id_semester}'`,
+      };
+
+      const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+      const dataRekapKHSMahasiswa = response.data.data;
+
+      // Mengelompokkan data berdasarkan id_registrasi_mahasiswa
+      const groupedData = dataRekapKHSMahasiswa.reduce((acc, item) => {
+        const id = item.id_registrasi_mahasiswa;
+        if (!acc[id]) {
+          acc[id] = [];
+        }
+        acc[id].push(item);
+        return acc;
+      }, {});
+
+      res.status(200).json({
+        message: "Get Rekap KHS Mahasiswa By Angkatan from Feeder Success",
+        totalData: dataRekapKHSMahasiswa.length,
+        tanggalPenandatanganan: tanggal_penandatanganan,
+        unitJabatan: unit_jabatan,
+        dataRekapKHSMahasiswaAngkatan: groupedData,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllRekapKHSMahasiswa,
   getRekapKHSMahasiswaById,
   getRekapKHSMahasiswaByMahasiswaId,
   getRekapKHSMahasiswaByFilter,
-  // getRekapKHSMahasiswaByFilterReqBody,
+  getRekapKHSMahasiswaByFilterReqBody,
 };
