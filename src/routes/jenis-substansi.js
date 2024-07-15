@@ -4,9 +4,10 @@ const router = express.Router();
 
 // import controller
 const JenisSubstansiController = require("../controllers/jenis-substansi");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", JenisSubstansiController.getAllJenisSubstansi);
-router.get("/:id/get", JenisSubstansiController.getJenisSubstansiById);
+router.get("/", checkRole(["admin"]), JenisSubstansiController.getAllJenisSubstansi);
+router.get("/:id/get", checkRole(["admin"]), JenisSubstansiController.getJenisSubstansiById);
 
 module.exports = router;

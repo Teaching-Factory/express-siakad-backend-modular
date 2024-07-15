@@ -23,10 +23,10 @@ describe("createBerita", () => {
       konten_berita: "Konten Berita",
     };
 
-    const createdBerita = { id: 1, ...newBeritaData, thumbnail: "path/to/thumbnail.jpg" };
+    const createdBerita = { id: 1, ...newBeritaData, thumbnail: "http://localhost:4000/src/storage/berita/file.jpg" };
 
     req.body = newBeritaData;
-    req.file = { path: "path/to/thumbnail.jpg", mimetype: "image/jpeg" }; // Mocking file upload
+    req.file = { filename: "file.jpg", mimetype: "image/jpeg" }; // Mocking file upload
 
     Berita.create.mockResolvedValue(createdBerita);
 
@@ -34,7 +34,7 @@ describe("createBerita", () => {
 
     expect(Berita.create).toHaveBeenCalledWith({
       ...newBeritaData,
-      thumbnail: "path/to/thumbnail.jpg",
+      thumbnail: "http://localhost:4000/src/storage/berita/file.jpg",
     });
     expect(res.statusCode).toEqual(201);
     expect(res._getJSONData()).toEqual({
@@ -52,7 +52,7 @@ describe("createBerita", () => {
       konten_berita: "Konten Berita",
     };
 
-    req.file = { path: "path/to/file.txt", mimetype: "text/plain" }; // Mocking unsupported file upload
+    req.file = { filename: "file.txt", mimetype: "text/plain" }; // Mocking unsupported file upload
 
     await createBerita(req, res, next);
 
@@ -72,7 +72,7 @@ describe("createBerita", () => {
     };
 
     req.body = newBeritaData;
-    req.file = { path: "path/to/thumbnail.jpg", mimetype: "image/jpeg" }; // Mocking file upload
+    req.file = { filename: "file.jpg", mimetype: "image/jpeg" }; // Mocking file upload
 
     const errorMessage = "Database error";
     const error = new Error(errorMessage);

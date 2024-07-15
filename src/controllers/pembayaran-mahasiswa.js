@@ -1,5 +1,6 @@
 const { PembayaranMahasiswa, TagihanMahasiswa, StatusMahasiswa, SemesterAktif, Mahasiswa } = require("../../models");
 const fs = require("fs"); // untuk menghapus file
+const path = require("path");
 
 const getAllPembayaranMahasiswaByTagihanId = async (req, res, next) => {
   try {
@@ -99,7 +100,14 @@ const createPembayaranMahasiswaByTagihanId = async (req, res, next) => {
     let upload_bukti_tf = null;
 
     if (req.file) {
-      upload_bukti_tf = req.file.path; // Path file yang di-upload
+      const protocol = process.env.PROTOCOL || "http";
+      const host = process.env.HOST || "localhost";
+      const port = process.env.PORT || 4000;
+
+      // Path file yang di-upload
+      const fileName = req.file.filename;
+      const fileUrl = `${protocol}://${host}:${port}/src/storage/bukti-tagihan-pembayaran/${fileName}`;
+      upload_bukti_tf = fileUrl; // Simpan URL dalam database
     }
 
     // Gunakan metode create untuk membuat data pembayaran_mahasiswa baru
@@ -264,7 +272,13 @@ const deletePembayaranMahasiswaById = async (req, res, next) => {
 
     // Hapus foto yang telah disimpan
     if (pembayaran_mahasiswa.upload_bukti_tf) {
-      fs.unlinkSync(pembayaran_mahasiswa.upload_bukti_tf); // Hapus foto dari sistem file
+      // Extract the file path from the URL
+      const filePath = pembayaran_mahasiswa.upload_bukti_tf.replace(`${process.env.PROTOCOL || "http"}://${process.env.HOST || "localhost"}:${process.env.PORT || "4000"}`, "");
+      const absoluteFilePath = path.join(__dirname, "../..", filePath);
+
+      if (fs.existsSync(absoluteFilePath)) {
+        fs.unlinkSync(absoluteFilePath); // Hapus foto dari sistem file
+      }
     }
 
     // Hapus data pembayaran_mahasiswa dari database

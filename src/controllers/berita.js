@@ -78,8 +78,14 @@ const createBerita = async (req, res, next) => {
       if (req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
         return res.status(400).json({ message: "File type not supported" });
       } else {
-        // Jika tipe file valid, set path file ke variabel thumbnail
-        thumbnail = req.file.path;
+        // Jika tipe file valid, bentuk URL file dan set ke variabel thumbnail
+        const protocol = process.env.PROTOCOL || "http";
+        const host = process.env.HOST || "localhost";
+        const port = process.env.PORT || 4000;
+
+        const fileName = req.file.filename;
+        const fileUrl = `${protocol}://${host}:${port}/src/storage/berita/${fileName}`;
+        thumbnail = fileUrl;
       }
     } else {
       return res.status(400).json({ message: "No file uploaded" });
@@ -154,25 +160,29 @@ const updateBeritaById = async (req, res, next) => {
 
     // Jika ada file gambar baru di-upload, update path thumbnail dan hapus gambar lama
     if (req.file) {
-      berita.thumbnail = req.file.path;
+      // Cek tipe MIME file yang di-upload
+      if (req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
+        return res.status(400).json({ message: "File type not supported" });
+      } else {
+        const protocol = process.env.PROTOCOL || "http";
+        const host = process.env.HOST || "localhost";
+        const port = process.env.PORT || 4000;
 
-      // Jika file di-upload, cek tipe MIME
-      if (req.file) {
-        if (req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
-          return res.status(400).json({ message: "File type not supported" });
-        } else {
-          // Hapus file gambar lama jika ada
-          if (oldThumbnailPath) {
-            fs.unlink(path.resolve(oldThumbnailPath), (err) => {
-              if (err) {
-                console.error(`Gagal menghapus gambar: ${err.message}`);
-              }
-            });
-          }
+        const fileName = req.file.filename;
+        const fileUrl = `${protocol}://${host}:${port}/src/storage/berita/${fileName}`;
+
+        berita.thumbnail = fileUrl;
+
+        // Hapus file gambar lama jika ada
+        if (oldThumbnailPath) {
+          const oldFilePath = path.resolve(__dirname, `../storage/berita/${path.basename(oldThumbnailPath)}`);
+          fs.unlink(oldFilePath, (err) => {
+            if (err) {
+              console.error(`Gagal menghapus gambar: ${err.message}`);
+            }
+          });
         }
       }
-    } else {
-      return res.status(400).json({ message: "No file uploaded" });
     }
 
     // Simpan perubahan berita
@@ -210,7 +220,16 @@ const deleteBeritaById = async (req, res, next) => {
 
     // Hapus foto yang telah disimpan
     if (berita.thumbnail) {
-      fs.unlinkSync(berita.thumbnail); // Hapus foto dari sistem file
+      const fileUrl = berita.thumbnail;
+      const fileName = path.basename(fileUrl);
+      const filePath = path.resolve(__dirname, `../storage/berita/${fileName}`);
+
+      // Hapus foto dari sistem file
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error(`Gagal menghapus gambar: ${err.message}`);
+        }
+      });
     }
 
     // Hapus data berita dari database

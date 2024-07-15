@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getUnitJabatanById } = require("../../src/controllers/unit-jabatan");
-const { UnitJabatan, Jabatan, Dosen } = require("../../models");
+const { UnitJabatan, Jabatan, Dosen, Prodi } = require("../../models");
 
 jest.mock("../../models");
 
@@ -21,6 +21,7 @@ describe("getUnitJabatanById", () => {
       nama_unit: "Unit Jabatan A",
       Jabatan: { nama_jabatan: "Jabatan A" },
       Dosen: { nama_dosen: "Dosen A" },
+      Prodi: { nama_prodi: "Prodi A" },
     };
 
     req.params.id = unitJabatanId;
@@ -29,7 +30,7 @@ describe("getUnitJabatanById", () => {
     await getUnitJabatanById(req, res, next);
 
     expect(UnitJabatan.findByPk).toHaveBeenCalledWith(unitJabatanId, {
-      include: [{ model: Jabatan }, { model: Dosen }],
+      include: [{ model: Jabatan }, { model: Dosen }, { model: Prodi }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -59,7 +60,7 @@ describe("getUnitJabatanById", () => {
     await getUnitJabatanById(req, res, next);
 
     expect(UnitJabatan.findByPk).toHaveBeenCalledWith(unitJabatanId, {
-      include: [{ model: Jabatan }, { model: Dosen }],
+      include: [{ model: Jabatan }, { model: Dosen }, { model: Prodi }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
@@ -78,7 +79,7 @@ describe("getUnitJabatanById", () => {
     await getUnitJabatanById(req, res, next);
 
     expect(UnitJabatan.findByPk).toHaveBeenCalledWith(unitJabatanId, {
-      include: [{ model: Jabatan }, { model: Dosen }],
+      include: [{ model: Jabatan }, { model: Dosen }, { model: Prodi }],
     });
     expect(next).toHaveBeenCalledWith(error);
   });

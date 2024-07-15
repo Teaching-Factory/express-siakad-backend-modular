@@ -4,9 +4,10 @@ const router = express.Router();
 
 // import controller
 const MatkulKurikulumController = require("../controllers/matkul-kurikulum");
+const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", MatkulKurikulumController.getAllMatkulKurikulum);
-router.get("/:id/get", MatkulKurikulumController.getMatkulKurikulumById);
+router.get("/", checkRole(["admin"]), MatkulKurikulumController.getAllMatkulKurikulum);
+router.get("/:id/get", checkRole(["admin"]), MatkulKurikulumController.getMatkulKurikulumById);
 
 module.exports = router;

@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // relasi tabel parent
       UnitJabatan.belongsTo(models.Dosen, { foreignKey: "id_dosen" });
       UnitJabatan.belongsTo(models.Jabatan, { foreignKey: "id_jabatan" });
+      UnitJabatan.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
     }
   }
   UnitJabatan.init(
@@ -20,6 +21,18 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER(10),
+      },
+      nama_penandatanganan: {
+        type: DataTypes.STRING(200),
+        allowNull: false,
+        validate: {
+          len: { args: [1, 200], msg: "nama_penandatanganan must be between 1 and 200 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("nama_penandatanganan must be a string");
+          }
+        },
       },
       id_jabatan: {
         type: DataTypes.INTEGER(10),
@@ -40,6 +53,18 @@ module.exports = (sequelize, DataTypes) => {
         isString(value) {
           if (typeof value !== "string") {
             throw new Error("id_dosen must be a string");
+          }
+        },
+      },
+      id_prodi: {
+        type: DataTypes.STRING(36),
+        allowNull: false,
+        validate: {
+          len: { args: [1, 36], msg: "id_prodi must be between 1 and 36 characters" },
+        },
+        isString(value) {
+          if (typeof value !== "string") {
+            throw new Error("id_prodi must be a string");
           }
         },
       },
