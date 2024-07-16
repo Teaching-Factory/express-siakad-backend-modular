@@ -110,7 +110,7 @@ const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
 };
 
 const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
-  const { jenis_cetak, nim, id_semester, id_prodi, id_angkatan, tanggal_penandatanganan, format } = req.body;
+  const { jenis_cetak, nim, id_semester, id_prodi, id_angkatan, tanggal_penandatanganan, format } = req.query;
 
   // Validasi input berdasarkan jenis_cetak
   if (jenis_cetak === "Mahasiswa") {
