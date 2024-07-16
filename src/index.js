@@ -102,11 +102,11 @@ const settingGlobalRoutes = require("./routes/setting-global");
 const perguruanTinggiGuestRoutes = require("./routes/perguruan-tinggi-guest");
 const jenisTagihanRoutes = require("./routes/jenis-tagihan");
 const semesterAktifRoutes = require("./routes/semester-aktif");
+const rekapTranskripNilaiRoutes = require("./routes/rekap-transkrip-nilai");
+const rekapMahasiswaBelumKRSRoutes = require("./routes/rekap-mahasiswa-belum-krs");
 
 // route api local not done yet
 const settingWSRoutes = require("./routes/setting-ws");
-const khsMahasiswaRoutes = require("./routes/khs-mahasiswa");
-const transkripNilaiRoutes = require("./routes/transkrip-nilai");
 
 // import middleware
 const middlewareLogRequest = require("./middlewares/logs");
@@ -250,11 +250,11 @@ app.use("/setting-global", checkToken, settingGlobalRoutes);
 app.use("/perguruan-tinggi-guest", perguruanTinggiGuestRoutes);
 app.use("/jenis-tagihan", checkToken, jenisTagihanRoutes);
 app.use("/semester-aktif", checkToken, semesterAktifRoutes);
+app.use("/rekap-transkrip-nilai", checkToken, rekapTranskripNilaiRoutes);
+app.use("/rekap-mahasiswa-belum-krs", checkToken, rekapMahasiswaBelumKRSRoutes);
 
 // route api local not done yet
 app.use("/setting/ws", settingWSRoutes);
-app.use("/khs-mahasiswa", khsMahasiswaRoutes);
-app.use("/transkrip-nilai", transkripNilaiRoutes);
 
 app.use(errHandler);
 
