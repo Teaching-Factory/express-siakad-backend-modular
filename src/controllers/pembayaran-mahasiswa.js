@@ -1,4 +1,4 @@
-const { PembayaranMahasiswa, TagihanMahasiswa, StatusMahasiswa, SemesterAktif, Mahasiswa } = require("../../models");
+const { PembayaranMahasiswa, TagihanMahasiswa, StatusMahasiswa, SemesterAktif, Mahasiswa, JenisTagihan, Periode } = require("../../models");
 const fs = require("fs"); // untuk menghapus file
 const path = require("path");
 
@@ -39,7 +39,7 @@ const getAllPembayaranMahasiswaDikonfirmasi = async (req, res, next) => {
       where: {
         status_pembayaran: "Dikonfirmasi",
       },
-      include: [{ model: TagihanMahasiswa }],
+      include: [{ model: TagihanMahasiswa, include: [{ model: JenisTagihan }, { model: Periode }, { model: Mahasiswa }] }],
     });
 
     // Kirim respons JSON jika berhasil
