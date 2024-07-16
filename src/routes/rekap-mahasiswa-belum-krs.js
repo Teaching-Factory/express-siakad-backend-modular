@@ -7,6 +7,6 @@ const RekapMahasiswaBelumKRSController = require("../controllers/rekap-mahasiswa
 const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/get-rekap-mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), RekapMahasiswaBelumKRSController.getRekapMahasiswaBelumKRS);
+router.post("/get-rekap-mahasiswa-belum-krs", checkRole(["admin", "admin-prodi"]), RekapMahasiswaBelumKRSController.getRekapMahasiswaBelumKRS);
 
 module.exports = router;
