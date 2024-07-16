@@ -1,4 +1,4 @@
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen, Semester } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
 
@@ -197,6 +197,7 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         where: {
           nim: nim,
         },
+        include: [{ model: Semester }, { model: Prodi }],
       });
 
       if (!mahasiswa) {
@@ -233,10 +234,11 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
 
       res.status(200).json({
         message: "Get Rekap KHS Mahasiswa By Mahasiswa from Feeder Success",
-        totalData: dataRekapKHSMahasiswa.length,
+        mahasiswa: mahasiswa,
+        unitJabatan: unit_jabatan,
         tanggalPenandatanganan: tanggal_penandatanganan,
         format: format,
-        unitJabatan: unit_jabatan,
+        totalData: dataRekapKHSMahasiswa.length,
         dataRekapKHSMahasiswaMahasiswa: dataRekapKHSMahasiswa,
       });
     } else if (jenis_cetak === "Angkatan") {
@@ -246,7 +248,7 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         return res.status(404).json({ message: `<===== Angkatan With ID ${id_angkatan} Not Found:` });
       }
 
-      // Mengambil data unit jabatan berdasarkan prodi mahasiswa
+      // Mengambil data unit jabatan berdasarkan parameter id_prodi
       let unit_jabatan = null;
       unit_jabatan = await UnitJabatan.findOne({
         where: {
@@ -286,9 +288,10 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
 
       res.status(200).json({
         message: "Get Rekap KHS Mahasiswa By Angkatan from Feeder Success",
-        totalData: dataRekapKHSMahasiswa.length,
-        tanggalPenandatanganan: tanggal_penandatanganan,
         unitJabatan: unit_jabatan,
+        tanggalPenandatanganan: tanggal_penandatanganan,
+        format: format,
+        totalData: Object.keys(groupedData).length,
         dataRekapKHSMahasiswaAngkatan: groupedData,
       });
     }
