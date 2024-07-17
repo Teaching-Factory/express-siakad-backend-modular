@@ -7,6 +7,6 @@ const RekapTranskripNilaiController = require("../controllers/rekap-transkrip-ni
 const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.post("/get-rekap-transkrip-nilai", checkRole(["admin", "admin-prodi", "mahasiswa"]), RekapTranskripNilaiController.getRekapTranskripNilaiByFilterReqBody);
+router.get("/get-rekap-transkrip-nilai", checkRole(["admin", "admin-prodi", "mahasiswa"]), RekapTranskripNilaiController.getRekapTranskripNilaiByFilterReqBody);
 
 module.exports = router;

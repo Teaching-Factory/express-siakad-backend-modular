@@ -7,7 +7,7 @@ const convertTahunToNamaPeriodeMasuk = (tahun) => {
 };
 
 const getRekapMahasiswaBelumKRS = async (req, res, next) => {
-  const { id_angkatan, id_prodi, format, tanggal_penandatanganan } = req.body;
+  const { id_angkatan, id_prodi, format, tanggal_penandatanganan } = req.query;
 
   if (!id_angkatan) {
     return res.status(400).json({ message: "id_angkatan is required" });

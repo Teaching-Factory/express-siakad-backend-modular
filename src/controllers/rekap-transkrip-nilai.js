@@ -3,7 +3,7 @@ const { Mahasiswa, Prodi, UnitJabatan, Jabatan, Dosen } = require("../../models"
 const { getToken } = require("././api-feeder/get-token");
 
 const getRekapTranskripNilaiByFilterReqBody = async (req, res, next) => {
-  const { nim, tanggal_penandatanganan, format } = req.body;
+  const { nim, tanggal_penandatanganan, format } = req.query;
 
   if (!nim) {
     return res.status(400).json({ message: "nim is required" });

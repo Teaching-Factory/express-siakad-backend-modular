@@ -1,8 +1,6 @@
 const httpMocks = require("node-mocks-http");
-const axios = require("axios");
 const { getRekapTranskripNilaiByFilterReqBody } = require("../../src/controllers/rekap-transkrip-nilai");
-const { Mahasiswa, Prodi, UnitJabatan, Jabatan, Dosen } = require("../../models");
-const { getToken } = require("../../src/controllers/api-feeder/get-token");
+const { Mahasiswa } = require("../../models");
 
 jest.mock("../../models");
 jest.mock("../../src/controllers/api-feeder/get-token");
@@ -19,7 +17,7 @@ describe("getRekapTranskripNilaiByFilterReqBody", () => {
   });
 
   it("should return 400 if nim is not provided", async () => {
-    req.body = {
+    req.query = {
       tanggal_penandatanganan: "2024-01-01",
       format: "pdf",
     };
@@ -31,7 +29,7 @@ describe("getRekapTranskripNilaiByFilterReqBody", () => {
   });
 
   it("should return 400 if tanggal_penandatanganan is not provided", async () => {
-    req.body = {
+    req.query = {
       nim: "123456",
       format: "pdf",
     };
@@ -43,7 +41,7 @@ describe("getRekapTranskripNilaiByFilterReqBody", () => {
   });
 
   it("should return 400 if format is not provided", async () => {
-    req.body = {
+    req.query = {
       nim: "123456",
       tanggal_penandatanganan: "2024-01-01",
     };
@@ -58,7 +56,7 @@ describe("getRekapTranskripNilaiByFilterReqBody", () => {
     const mockError = new Error("Test error");
     Mahasiswa.findOne.mockRejectedValue(mockError);
 
-    req.body = {
+    req.query = {
       nim: "123456",
       tanggal_penandatanganan: "2024-01-01",
       format: "pdf",
