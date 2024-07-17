@@ -1,4 +1,22 @@
-const { RekapKRSMahasiswa, Prodi, Periode, Mahasiswa, MataKuliah, Semester, UnitJabatan, Dosen, KRSMahasiswa, KelasKuliah, DetailKelasKuliah, Angkatan, Jabatan, RuangPerkuliahan } = require("../../models");
+const {
+  RekapKRSMahasiswa,
+  Prodi,
+  Periode,
+  Mahasiswa,
+  MataKuliah,
+  Semester,
+  UnitJabatan,
+  Dosen,
+  KRSMahasiswa,
+  KelasKuliah,
+  DetailKelasKuliah,
+  Angkatan,
+  Jabatan,
+  RuangPerkuliahan,
+  DosenWali,
+  SemesterAktif,
+  TahunAjaran,
+} = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
 
@@ -157,6 +175,26 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
         return res.status(404).json({ message: `<===== Mahasiswa With NIM ${nim} Not Found:` });
       }
 
+      // get data semester aktif
+      const semester_aktif = await SemesterAktif.findOne({
+        status: true,
+        include: [{ model: Semester, include: [{ model: TahunAjaran }] }],
+      });
+
+      if (!semester_aktif) {
+        return res.status(404).json({ message: "Semester Aktif Not Found" });
+      }
+
+      // mengambil data dosen wali mahasiswa sesuai angkatan
+      let dosen_wali = null;
+      dosen_wali = await DosenWali.findOne({
+        where: {
+          id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+          id_tahun_ajaran: semester_aktif.Semester.TahunAjaran.id_tahun_ajaran,
+        },
+        include: [{ model: Dosen }],
+      });
+
       // mengambil data unit jabatan dekan berdasarkan prodi mahasiswa
       let unit_jabatan = null;
       unit_jabatan = await UnitJabatan.findOne({
@@ -180,12 +218,13 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
           id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
           id_semester: id_semester,
         },
-        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah, include: [{model: RuangPerkuliahan}] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
       });
 
       res.status(200).json({
         message: "Get Rekap KRS Mahasiswa By Mahasiswa from Local Success",
         mahasiswa: mahasiswa,
+        dosen_wali: dosen_wali,
         unitJabatan: unit_jabatan,
         tanggalPenandatanganan: tanggal_penandatanganan,
         format: format,
@@ -216,32 +255,68 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
         ],
       });
 
+      // get data semester aktif
+      const semester_aktif = await SemesterAktif.findOne({
+        where: { status: true },
+        include: [{ model: Semester, include: [{ model: TahunAjaran }] }],
+      });
+
+      if (!semester_aktif) {
+        return res.status(404).json({ message: "Semester Aktif Not Found" });
+      }
+
       const krs_mahasiswa_by_angkatan = await KRSMahasiswa.findAll({
         where: {
           id_prodi: id_prodi,
           angkatan: angkatan.tahun,
           id_semester: id_semester,
         },
-        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah, include: [{model: RuangPerkuliahan}] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+        include: [
+          { model: Mahasiswa },
+          {
+            model: KelasKuliah,
+            include: [{ model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
+          },
+        ],
       });
 
-      // Mengelompokkan data berdasarkan id_registrasi_mahasiswa
-      const groupedData = krs_mahasiswa_by_angkatan.reduce((acc, item) => {
+      // Mengelompokkan data berdasarkan id_registrasi_mahasiswa dan menambahkan data DosenWali
+      const groupedData = {};
+
+      for (const item of krs_mahasiswa_by_angkatan) {
         const id = item.id_registrasi_mahasiswa;
-        if (!acc[id]) {
-          acc[id] = [];
+        if (!groupedData[id]) {
+          groupedData[id] = [];
         }
-        acc[id].push(item);
-        return acc;
-      }, {});
+        groupedData[id].push(item);
+      }
+
+      const finalGroupedData = {};
+
+      for (const id in groupedData) {
+        // Mengambil data dosen wali mahasiswa sesuai angkatan
+        const dosen_wali = await DosenWali.findOne({
+          where: {
+            id_registrasi_mahasiswa: id,
+            id_tahun_ajaran: semester_aktif.Semester.TahunAjaran.id_tahun_ajaran,
+          },
+          include: [{ model: Dosen }],
+        });
+
+        // Menambahkan data mahasiswa yang sudah digrup dan DosenWali
+        finalGroupedData[id] = {
+          krs_mahasiswas: groupedData[id],
+          DosenWali: dosen_wali ? dosen_wali : null,
+        };
+      }
 
       res.status(200).json({
         message: "Get Rekap KRS Mahasiswa By Angkatan from Local Success",
         unitJabatan: unit_jabatan,
         tanggalPenandatanganan: tanggal_penandatanganan,
         format: format,
-        totalData: Object.keys(groupedData).length,
-        dataRekapKRSByMahasiswa: groupedData,
+        totalData: Object.keys(finalGroupedData).length,
+        dataRekapKRSByMahasiswa: finalGroupedData,
       });
     }
   } catch (error) {
