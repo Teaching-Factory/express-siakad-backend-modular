@@ -19,7 +19,7 @@ describe("getRekapKHSMahasiswaByFilterReqBody", () => {
   });
 
   it("should return 400 if nim is not provided when jenis_cetak is 'Mahasiswa'", async () => {
-    req.body = { jenis_cetak: "Mahasiswa", id_semester: 1, format: "pdf", tanggal_penandatanganan: "2024-01-01" };
+    req.query = { jenis_cetak: "Mahasiswa", id_semester: 1, format: "pdf", tanggal_penandatanganan: "2024-01-01" };
 
     await getRekapKHSMahasiswaByFilterReqBody(req, res, next);
 
@@ -28,18 +28,18 @@ describe("getRekapKHSMahasiswaByFilterReqBody", () => {
   });
 
   it("should return 404 if mahasiswa is not found when jenis_cetak is 'Mahasiswa'", async () => {
-    req.body = { jenis_cetak: "Mahasiswa", nim: "123456", id_semester: 1, format: "pdf", tanggal_penandatanganan: "2024-01-01" };
+    req.query = { jenis_cetak: "Mahasiswa", nim: "123456", id_semester: 1, format: "pdf", tanggal_penandatanganan: "2024-01-01" };
 
     Mahasiswa.findOne.mockResolvedValue(null);
 
     await getRekapKHSMahasiswaByFilterReqBody(req, res, next);
 
     expect(res.statusCode).toEqual(404);
-    expect(res._getJSONData()).toEqual({ message: `<===== Mahasiswa With NIM 123456 Not Found:` });
+    expect(res._getJSONData()).toEqual({ message: "<===== Mahasiswa With NIM 123456 Not Found:" });
   });
 
   it("should return 400 if id_prodi is not provided when jenis_cetak is 'Angkatan'", async () => {
-    req.body = { jenis_cetak: "Angkatan", id_angkatan: 1, id_semester: 1, tanggal_penandatanganan: "2024-01-01" };
+    req.query = { jenis_cetak: "Angkatan", id_angkatan: 1, id_semester: 1, tanggal_penandatanganan: "2024-01-01" };
 
     await getRekapKHSMahasiswaByFilterReqBody(req, res, next);
 
@@ -48,49 +48,18 @@ describe("getRekapKHSMahasiswaByFilterReqBody", () => {
   });
 
   it("should return 404 if angkatan is not found when jenis_cetak is 'Angkatan'", async () => {
-    req.body = { jenis_cetak: "Angkatan", id_prodi: 1, id_angkatan: 1, id_semester: 1, tanggal_penandatanganan: "2024-01-01" };
+    req.query = { jenis_cetak: "Angkatan", id_prodi: 1, id_angkatan: 1, id_semester: 1, tanggal_penandatanganan: "2024-01-01" };
 
     Angkatan.findByPk.mockResolvedValue(null);
 
     await getRekapKHSMahasiswaByFilterReqBody(req, res, next);
 
     expect(res.statusCode).toEqual(404);
-    expect(res._getJSONData()).toEqual({ message: `<===== Angkatan With ID 1 Not Found:` });
+    expect(res._getJSONData()).toEqual({ message: "<===== Angkatan With ID 1 Not Found:" });
   });
 
-  // belum fix
-  // it("should return 200 and rekap KHS mahasiswa data on success when jenis_cetak is 'Mahasiswa'", async () => {
-  //   req.body = { jenis_cetak: "Mahasiswa", nim: "123456", id_semester: 1, format: "pdf", tanggal_penandatanganan: "2024-01-01" };
-
-  //   Mahasiswa.findOne.mockResolvedValue({ nim: "123456", id_prodi: 1, id_semester: "20231" });
-  //   UnitJabatan.findOne.mockResolvedValue({ id: 1, Jabatan: { nama_jabatan: "Dekan" }, Dosen: { id: 1, nama: "Dosen 1" } });
-  //   const token = "mockToken";
-  //   const responseData = {
-  //     data: [
-  //       { id: 1, nama: "Mahasiswa 1" },
-  //       { id: 2, nama: "Mahasiswa 2" },
-  //     ],
-  //   };
-
-  //   getToken.mockResolvedValue(token);
-  //   axios.post.mockResolvedValue({ data: responseData });
-
-  //   await getRekapKHSMahasiswaByFilterReqBody(req, res, next);
-
-  //   expect(res.statusCode).toEqual(200);
-  //   expect(res._getJSONData()).toEqual({
-  //     message: "Get Rekap KHS Mahasiswa By Mahasiswa from Feeder Success",
-  //     mahasiswa: null,
-  //     totalData: responseData.data.length,
-  //     tanggalPenandatanganan: "2024-01-01",
-  //     format: "pdf",
-  //     unitJabatan: { id: 1, Jabatan: { nama_jabatan: "Dekan" }, Dosen: { id: 1, nama: "Dosen 1" } },
-  //     dataRekapKHSMahasiswaMahasiswa: responseData.data,
-  //   });
-  // });
-
   it("should return 200 and rekap KHS mahasiswa data on success when jenis_cetak is 'Angkatan'", async () => {
-    req.body = { jenis_cetak: "Angkatan", id_prodi: 1, id_angkatan: 1, id_semester: 1, tanggal_penandatanganan: "2024-01-01" };
+    req.query = { jenis_cetak: "Angkatan", id_prodi: 1, id_angkatan: 1, id_semester: 1, tanggal_penandatanganan: "2024-01-01" };
 
     Angkatan.findByPk.mockResolvedValue({ tahun: 2020 });
     UnitJabatan.findOne.mockResolvedValue({ id: 1, Jabatan: { nama_jabatan: "Dekan" }, Dosen: { id: 1, nama: "Dosen 1" } });
@@ -126,7 +95,7 @@ describe("getRekapKHSMahasiswaByFilterReqBody", () => {
     const mockError = new Error("Something went wrong");
     Mahasiswa.findOne.mockRejectedValue(mockError);
 
-    req.body = { jenis_cetak: "Mahasiswa", nim: "123456", id_semester: 1, format: "pdf", tanggal_penandatanganan: "2024-01-01" };
+    req.query = { jenis_cetak: "Mahasiswa", nim: "123456", id_semester: 1, format: "pdf", tanggal_penandatanganan: "2024-01-01" };
 
     await getRekapKHSMahasiswaByFilterReqBody(req, res, next);
 

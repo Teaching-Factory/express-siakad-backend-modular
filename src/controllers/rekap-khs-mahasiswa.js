@@ -158,7 +158,7 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
 };
 
 const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
-  const { jenis_cetak, nim, id_prodi, id_angkatan, id_semester, tanggal_penandatanganan, format } = req.body;
+  const { jenis_cetak, nim, id_prodi, id_angkatan, id_semester, tanggal_penandatanganan, format } = req.query;
 
   // Validasi input berdasarkan jenis_cetak
   if (jenis_cetak === "Mahasiswa") {
