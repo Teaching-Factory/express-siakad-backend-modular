@@ -2,8 +2,11 @@ const { Semester, TahunAjaran } = require("../../models");
 
 const getAllSemester = async (req, res, next) => {
   try {
-    // Ambil semua data semester dari database
-    const semester = await Semester.findAll({ include: [{ model: TahunAjaran }] });
+    // Ambil semua data semester dari database dan urutkan berdasarkan descending
+    const semester = await Semester.findAll({
+      include: [{ model: TahunAjaran }],
+      order: [["id_semester", "DESC"]],
+    });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({

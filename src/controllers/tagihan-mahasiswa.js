@@ -3,7 +3,7 @@ const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan, StatusMahasiswa, Sem
 const getAllTagihanMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data tagihan_mahasiswa dari database
-    const tagihan_mahasiswa = await TagihanMahasiswa.findAll({ include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }] });
+    const tagihan_mahasiswa = await TagihanMahasiswa.findAll({ include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }], order: [["createdAt", "DESC"]] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
