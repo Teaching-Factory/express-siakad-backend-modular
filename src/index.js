@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 5000;
 // define express server
 const cors = require("cors");
 const express = require("express");
+const path = require("path");
 
 // import routes
 // route api feeder dikti
@@ -117,6 +118,9 @@ const checkToken = require("./middlewares/check-token");
 
 // running express server
 const app = express();
+
+// Middleware untuk melayani file statis
+app.use("/src/storage", express.static(path.join(__dirname, "storage")));
 
 // Import cronjob blacklisted token
 const schedule = require("node-schedule");

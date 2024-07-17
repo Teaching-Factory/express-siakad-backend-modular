@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getAllPembayaranMahasiswaDikonfirmasi } = require("../../src/controllers/pembayaran-mahasiswa");
-const { PembayaranMahasiswa, TagihanMahasiswa } = require("../../models");
+const { PembayaranMahasiswa, TagihanMahasiswa, JenisTagihan, Mahasiswa, Periode } = require("../../models");
 
 jest.mock("../../models");
 
@@ -49,7 +49,7 @@ describe("getAllPembayaranMahasiswaDikonfirmasi", () => {
       where: {
         status_pembayaran: "Dikonfirmasi",
       },
-      include: [{ model: TagihanMahasiswa }],
+      include: [{ model: TagihanMahasiswa, include: [{ model: JenisTagihan }, { model: Periode }, { model: Mahasiswa }] }],
     });
   });
 
