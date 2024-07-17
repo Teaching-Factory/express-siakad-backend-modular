@@ -180,7 +180,7 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
           id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
           id_semester: id_semester,
         },
-        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah }] }],
+        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
       });
 
       res.status(200).json({
@@ -222,7 +222,7 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
           angkatan: angkatan.tahun,
           id_semester: id_semester,
         },
-        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah }] }],
+        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
       });
 
       // Mengelompokkan data berdasarkan id_registrasi_mahasiswa
