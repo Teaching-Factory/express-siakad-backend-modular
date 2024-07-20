@@ -14,5 +14,6 @@ router.get("/:id/get", checkRole(["admin", "admin-prodi"]), RekapKRSMahasiswaCon
 router.get("/:id_prodi/:id_semester/:id_matkul/:id_registrasi_mahasiswa/get-rekap-krs-mahasiswa", checkRole(["admin", "admin-prodi", "mahasiswa"]), RekapKRSMahasiswaController.getRekapKRSMahasiswaByFilter);
 router.get("/get-rekap-krs-mahasiswa", checkRole(["admin", "admin-prodi", "mahasiswa"]), RekapKRSMahasiswaController.getRekapKRSMahasiswaByFilterReqBody);
 router.get("/:id_periode/get-krs-mahasiswa", checkRole(["mahasiswa"]), RekapKRSMahasiswaController.getKRSMahasiswaByPeriodeId);
+router.get("/:id_semester/cetak-krs-mahasiswa", checkRole(["mahasiswa"]), RekapKRSMahasiswaController.cetakKRSMahasiswaActiveBySemesterId);
 
 module.exports = router;

@@ -1,8 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getKHSMahasiswaByPeriodeId } = require("../../src/controllers/rekap-khs-mahasiswa");
 const { Mahasiswa } = require("../../models");
-const axios = require("axios");
-const getToken = require("../../src/controllers/api-feeder/get-token");
 
 jest.mock("axios");
 jest.mock("../../models");

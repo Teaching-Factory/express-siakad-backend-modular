@@ -399,12 +399,153 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   const ipk = validIpsArray.length > 0 ? (totalIps / validIpsArray.length).toFixed(2) : null;
 
   res.json({
-    message: "Get Rekap Transkrip Nilai from Feeder Success",
+    message: `Get KHS Mahasiswa By Periode ID ${periodeId} from Feeder Success`,
     mahasiswa: mahasiswa,
     total_sks: total_sks,
     total_sks_indeks: formattedTotalSksIndeks,
     ips: ips,
     ipk: ipk,
+    dataRekapKHSMahasiswa: dataRekapKHSMahasiswa,
+  });
+};
+
+const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
+  const semesterId = req.params.id_semester;
+
+  // pengecekan parameter id
+  if (!semesterId) {
+    return res.status(400).json({
+      message: "Semester ID is required",
+    });
+  }
+
+  const user = req.user;
+
+  const mahasiswa = await Mahasiswa.findOne({
+    where: {
+      nim: user.username,
+    },
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }],
+  });
+
+  if (!mahasiswa) {
+    return res.status(404).json({
+      message: "Mahasiswa not found",
+    });
+  }
+
+  // get data semester
+  const semester = await Semester.findByPk(semesterId);
+
+  if (!semester) {
+    return res.status(404).json({
+      message: "Semester not found",
+    });
+  }
+
+  // Mengambil data unit jabatan berdasarkan prodi mahasiswa
+  let unit_jabatan = null;
+  unit_jabatan = await UnitJabatan.findOne({
+    where: {
+      id_prodi: mahasiswa.id_prodi,
+    },
+    include: [
+      {
+        model: Jabatan,
+        where: {
+          nama_jabatan: "Dekan",
+        },
+      },
+      { model: Dosen },
+    ],
+  });
+
+  // Mendapatkan token
+  const token = await getToken();
+
+  const requestBody = {
+    act: "GetRekapKHSMahasiswa",
+    token: `${token}`,
+    filter: `id_periode='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  };
+
+  // Menggunakan token untuk mengambil data
+  const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+
+  // Tanggapan dari API
+  const dataRekapKHSMahasiswa = response.data.data;
+
+  // Hitung total_sks dan total_sks_indeks untuk periode tertentu
+  let total_sks = 0;
+  let total_sks_indeks = 0;
+
+  dataRekapKHSMahasiswa.forEach((nilai) => {
+    nilai.total_sks_indeks = parseFloat(nilai.sks_mata_kuliah) * parseFloat(nilai.nilai_indeks);
+    total_sks += parseFloat(nilai.sks_mata_kuliah);
+    total_sks_indeks += nilai.total_sks_indeks;
+  });
+
+  // Hitung IPS untuk periode tertentu
+  const ips = (total_sks_indeks / total_sks).toFixed(2);
+  const formattedTotalSksIndeks = total_sks_indeks.toFixed(2);
+
+  // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK
+  const requestBodyTwo = {
+    act: "GetRekapKHSMahasiswa",
+    token: `${token}`,
+    filter: `id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  };
+
+  // Menggunakan token untuk mengambil data
+  const responseTwo = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBodyTwo);
+
+  // Tanggapan dari API
+  const dataRekapKHSMahasiswaAll = responseTwo.data.data;
+
+  // Mengelompokkan data KHS berdasarkan id_periode
+  const groupedData = dataRekapKHSMahasiswaAll.reduce((acc, curr) => {
+    const periode = curr.id_periode;
+    if (!acc[periode]) {
+      acc[periode] = [];
+    }
+    acc[periode].push(curr);
+    return acc;
+  }, {});
+
+  // Hitung dan simpan nilai IPS masing-masing periode ke dalam array ips
+  const ipsArray = [];
+  for (const periode in groupedData) {
+    let totalSksPeriode = 0;
+    let totalSksIndeksPeriode = 0;
+    groupedData[periode].forEach((nilai) => {
+      totalSksPeriode += parseFloat(nilai.sks_mata_kuliah);
+      totalSksIndeksPeriode += parseFloat(nilai.sks_mata_kuliah) * parseFloat(nilai.nilai_indeks);
+    });
+    const ipsPeriode = (totalSksIndeksPeriode / totalSksPeriode).toFixed(2);
+    ipsArray.push(parseFloat(ipsPeriode));
+  }
+
+  // Hitung IPK
+  // Menghapus nilai null dari array ipsArray
+  const validIpsArray = ipsArray.filter((ips) => ips !== null && !isNaN(Number(ips)));
+
+  // Menghitung total dan rata-rata IPS
+  const totalIps = validIpsArray.reduce((acc, curr) => acc + curr, 0);
+  const ipk = validIpsArray.length > 0 ? (totalIps / validIpsArray.length).toFixed(2) : null;
+
+  // Mendapatkan tanggal saat ini
+  const tanggalPenandatanganan = new Date().toISOString().split("T")[0];
+
+  res.json({
+    message: `Get Cetak KHS Mahasiswa By Semester ID ${semesterId} from Feeder Success`,
+    mahasiswa: mahasiswa,
+    semester: semester,
+    total_sks: total_sks,
+    total_sks_indeks: formattedTotalSksIndeks,
+    ips: ips,
+    ipk: ipk,
+    unit_jabatan: unit_jabatan,
+    tanggal_penandatanganan: tanggalPenandatanganan,
     dataRekapKHSMahasiswa: dataRekapKHSMahasiswa,
   });
 };
@@ -416,4 +557,5 @@ module.exports = {
   getRekapKHSMahasiswaByFilter,
   getRekapKHSMahasiswaByFilterReqBody,
   getKHSMahasiswaByPeriodeId,
+  cetakKHSMahasiswaActiveBySemesterId,
 };

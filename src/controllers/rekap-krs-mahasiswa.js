@@ -336,13 +336,22 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
     });
   }
 
+  // get data semester dari periode id
+  const semester = await Semester.findByPk(periodeId);
+
+  if (!semester) {
+    return res.status(404).json({
+      message: "Semester not found",
+    });
+  }
+
   const user = req.user;
 
   const mahasiswa = await Mahasiswa.findOne({
     where: {
       nim: user.username,
     },
-    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: DosenWali }],
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
   });
 
   if (!mahasiswa) {
@@ -350,6 +359,15 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
       message: "Mahasiswa not found",
     });
   }
+
+  // get dosen wali
+  let dosen_wali = null;
+  dosen_wali = await DosenWali.findOne({
+    where: {
+      id_tahun_ajaran: semester.id_tahun_ajaran,
+      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+    },
+  });
 
   // Mendapatkan token
   const token = await getToken();
@@ -375,9 +393,109 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
 
   // Kirim data sebagai respons
   res.status(200).json({
-    message: `Get Rekap KRS Mahasiswa By Periode ID ${periodeId} from Feeder Success`,
+    message: `Get KRS Mahasiswa By Periode ID ${periodeId} from Feeder Success`,
     total_sks: total_sks,
     mahasiswa: mahasiswa,
+    dosen_wali: dosen_wali,
+    totalData: dataRekapKRSMahasiswa.length,
+    dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
+  });
+};
+
+const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
+  // memperoleh id
+  const semesterId = req.params.id_semester;
+
+  // pengecekan parameter id
+  if (!semesterId) {
+    return res.status(400).json({
+      message: "Periode ID is required",
+    });
+  }
+
+  // get data semester dari periode id
+  const semester = await Semester.findByPk(semesterId);
+
+  if (!semester) {
+    return res.status(404).json({
+      message: "Semester not found",
+    });
+  }
+
+  const user = req.user;
+
+  const mahasiswa = await Mahasiswa.findOne({
+    where: {
+      nim: user.username,
+    },
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
+  });
+
+  if (!mahasiswa) {
+    return res.status(404).json({
+      message: "Mahasiswa not found",
+    });
+  }
+
+  // Mengambil data unit jabatan berdasarkan prodi mahasiswa
+  let unit_jabatan = null;
+  unit_jabatan = await UnitJabatan.findOne({
+    where: {
+      id_prodi: mahasiswa.id_prodi,
+    },
+    include: [
+      {
+        model: Jabatan,
+        where: {
+          nama_jabatan: "Dekan",
+        },
+      },
+      { model: Dosen },
+    ],
+  });
+
+  // get dosen wali
+  let dosen_wali = null;
+  dosen_wali = await DosenWali.findOne({
+    where: {
+      id_tahun_ajaran: semester.id_tahun_ajaran,
+      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+    },
+  });
+
+  // Mendapatkan token
+  const token = await getToken();
+
+  const requestBody = {
+    act: "GetRekapKRSMahasiswa",
+    token: `${token}`,
+    filter: `id_periode='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  };
+
+  // Menggunakan token untuk mengambil data
+  const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+
+  // Tanggapan dari API
+  const dataRekapKRSMahasiswa = response.data.data;
+
+  // Hitung total SKS dari seluruh mata kuliah
+  const total_sks = dataRekapKRSMahasiswa
+    .reduce((total, mataKuliah) => {
+      return total + parseFloat(mataKuliah.sks_mata_kuliah);
+    }, 0)
+    .toFixed(2); // Format dengan dua desimal
+
+  // Mendapatkan tanggal saat ini
+  const tanggalPenandatanganan = new Date().toISOString().split("T")[0];
+
+  // Kirim data sebagai respons
+  res.status(200).json({
+    message: `Get Cetak KRS Mahasiswa By Semester ID ${semesterId} from Feeder Success`,
+    total_sks: total_sks,
+    mahasiswa: mahasiswa,
+    dosen_wali: dosen_wali,
+    tanggal_penandatanganan: tanggalPenandatanganan,
+    unit_jabatan: unit_jabatan,
     totalData: dataRekapKRSMahasiswa.length,
     dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
   });
@@ -389,4 +507,5 @@ module.exports = {
   getRekapKRSMahasiswaByFilter,
   getRekapKRSMahasiswaByFilterReqBody,
   getKRSMahasiswaByPeriodeId,
+  cetakKRSMahasiswaActiveBySemesterId,
 };
