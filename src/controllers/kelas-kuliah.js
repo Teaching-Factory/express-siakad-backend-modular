@@ -1,4 +1,4 @@
-const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah, RuangPerkuliahan } = require("../../models");
 
 const getAllKelasKuliah = async (req, res, next) => {
   try {
@@ -405,7 +405,7 @@ const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
       where: {
         id_prodi: mahasiswa.id_prodi,
       },
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }],
     });
 
     // Periksa apakah data kelas_kuliah ditemukan

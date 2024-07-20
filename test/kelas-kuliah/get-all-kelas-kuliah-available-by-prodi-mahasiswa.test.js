@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getAllKelasKuliahAvailableByProdiMahasiswa } = require("../../src/controllers/kelas-kuliah");
-const { Mahasiswa, KelasKuliah, PesertaKelasKuliah, Prodi, Semester, MataKuliah, Dosen } = require("../../models");
+const { Mahasiswa, KelasKuliah, PesertaKelasKuliah, Prodi, Semester, MataKuliah, Dosen, DetailKelasKuliah, RuangPerkuliahan } = require("../../models");
 
 jest.mock("../../models");
 
@@ -15,6 +15,7 @@ describe("getAllKelasKuliahAvailableByProdiMahasiswa", () => {
     });
     res = httpMocks.createResponse();
     next = jest.fn();
+    jest.clearAllMocks();
   });
 
   it("should return 404 if mahasiswa not found", async () => {
@@ -44,7 +45,7 @@ describe("getAllKelasKuliahAvailableByProdiMahasiswa", () => {
     });
     expect(KelasKuliah.findAll).toHaveBeenCalledWith({
       where: { id_prodi: mockMahasiswa.id_prodi },
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
@@ -59,11 +60,12 @@ describe("getAllKelasKuliahAvailableByProdiMahasiswa", () => {
       { id_kelas_kuliah: 1, jumlah_mahasiswa: 30 },
       { id_kelas_kuliah: 2, jumlah_mahasiswa: 25 },
     ];
-    const mockFilteredKelasKuliah = [{ id_kelas_kuliah: 1, jumlah_mahasiswa: 30 }];
 
     Mahasiswa.findOne.mockResolvedValue(mockMahasiswa);
     KelasKuliah.findAll.mockResolvedValue(mockKelasKuliah);
-    PesertaKelasKuliah.count.mockResolvedValueOnce(20).mockResolvedValueOnce(30);
+    PesertaKelasKuliah.count
+      .mockResolvedValueOnce(20) // For kelas with id 1
+      .mockResolvedValueOnce(30); // For kelas with id 2
 
     await getAllKelasKuliahAvailableByProdiMahasiswa(req, res, next);
 
@@ -72,7 +74,7 @@ describe("getAllKelasKuliahAvailableByProdiMahasiswa", () => {
     });
     expect(KelasKuliah.findAll).toHaveBeenCalledWith({
       where: { id_prodi: mockMahasiswa.id_prodi },
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }],
     });
     expect(PesertaKelasKuliah.count).toHaveBeenCalledWith({
       where: { id_kelas_kuliah: 1 },

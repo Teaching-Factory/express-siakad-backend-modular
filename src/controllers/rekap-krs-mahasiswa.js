@@ -16,6 +16,7 @@ const {
   DosenWali,
   SemesterAktif,
   TahunAjaran,
+  JenjangPendidikan,
 } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
@@ -324,9 +325,68 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
   }
 };
 
+const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
+  // memperoleh id
+  const periodeId = req.params.id_periode;
+
+  // pengecekan parameter id
+  if (!periodeId) {
+    return res.status(400).json({
+      message: "Periode ID is required",
+    });
+  }
+
+  const user = req.user;
+
+  const mahasiswa = await Mahasiswa.findOne({
+    where: {
+      nim: user.username,
+    },
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: DosenWali }],
+  });
+
+  if (!mahasiswa) {
+    return res.status(404).json({
+      message: "Mahasiswa not found",
+    });
+  }
+
+  // Mendapatkan token
+  const token = await getToken();
+
+  const requestBody = {
+    act: "GetRekapKRSMahasiswa",
+    token: `${token}`,
+    filter: `id_periode='${periodeId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  };
+
+  // Menggunakan token untuk mengambil data
+  const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+
+  // Tanggapan dari API
+  const dataRekapKRSMahasiswa = response.data.data;
+
+  // Hitung total SKS dari seluruh mata kuliah
+  const total_sks = dataRekapKRSMahasiswa
+    .reduce((total, mataKuliah) => {
+      return total + parseFloat(mataKuliah.sks_mata_kuliah);
+    }, 0)
+    .toFixed(2); // Format dengan dua desimal
+
+  // Kirim data sebagai respons
+  res.status(200).json({
+    message: `Get Rekap KRS Mahasiswa By Periode ID ${periodeId} from Feeder Success`,
+    total_sks: total_sks,
+    mahasiswa: mahasiswa,
+    totalData: dataRekapKRSMahasiswa.length,
+    dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
+  });
+};
+
 module.exports = {
   getAllRekapKRSMahasiswa,
   getRekapKRSMahasiswaById,
   getRekapKRSMahasiswaByFilter,
   getRekapKRSMahasiswaByFilterReqBody,
+  getKRSMahasiswaByPeriodeId,
 };
