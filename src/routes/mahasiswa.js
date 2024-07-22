@@ -17,6 +17,8 @@ router.get("/prodi/:id_prodi/get", checkRole(["admin", "admin-prodi"]), Mahasisw
 router.get("/angkatan/:id_angkatan/get", checkRole(["admin", "admin-prodi"]), MahasiswaController.getMahasiswaByAngkatanId);
 router.get("/status_mahasiswa/:id_status_mahasiswa/get", checkRole(["admin", "admin-prodi"]), MahasiswaController.getMahasiswaByStatusMahasiswaId);
 router.get("/:id_prodi/:id_angkatan/get", checkRole(["admin", "admin-prodi", "dosen"]), MahasiswaController.getMahasiswaByProdiAndAngkatanId);
+router.get("/get-mahasiswa-active", checkRole(["mahasiswa"]), MahasiswaController.getMahasiswaActive);
+router.get("/get-ips-mahasiswa-active", checkRole(["mahasiswa"]), MahasiswaController.getIpsMahasiswaActive);
 
 // import routes
 router.post("/import-data-mahasiswa", checkRole(["admin", "admin-prodi"]), upload.single("file"), MahasiswaController.importMahasiswas);

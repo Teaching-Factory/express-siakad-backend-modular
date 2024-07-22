@@ -1,7 +1,26 @@
 const ExcelJS = require("exceljs");
 const { Op } = require("sequelize");
 const fs = require("fs").promises;
-const { Mahasiswa, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah, Agama, PerguruanTinggi, Prodi, RiwayatPendidikanMahasiswa, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester } = require("../../models");
+const {
+  Mahasiswa,
+  Angkatan,
+  StatusMahasiswa,
+  BiodataMahasiswa,
+  Wilayah,
+  Agama,
+  PerguruanTinggi,
+  Prodi,
+  RiwayatPendidikanMahasiswa,
+  JenisPendaftaran,
+  JalurMasuk,
+  Pembiayaan,
+  Semester,
+  SemesterAktif,
+  DosenWali,
+  JenjangPendidikan,
+} = require("../../models");
+const axios = require("axios");
+const { getToken } = require("././api-feeder/get-token");
 
 const getAllMahasiswa = async (req, res, next) => {
   try {
@@ -477,6 +496,121 @@ const importMahasiswas = async (req, res, next) => {
   }
 };
 
+const getMahasiswaActive = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: user.username,
+      },
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }],
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({
+        message: "Mahasiswa not found",
+      });
+    }
+
+    // get data semester aktif
+    const semester_aktif = await SemesterAktif.findOne({
+      where: {
+        status: true,
+      },
+      include: [{ model: Semester }],
+    });
+
+    if (!semester_aktif) {
+      return res.status(404).json({
+        message: "Status Aktif not found",
+      });
+    }
+
+    // get data dosen wali sekarang
+    let dosen_wali = null;
+    dosen_wali = await DosenWali.findOne({
+      where: {
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        id_tahun_ajaran: semester_aktif.Semester.id_tahun_ajaran,
+      },
+    });
+
+    res.status(200).json({
+      message: "Get Mahasiswa Active Success",
+      dosenWali: dosen_wali,
+      data: mahasiswa,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getIpsMahasiswaActive = async (req, res, next) => {
+  const user = req.user;
+
+  const mahasiswa = await Mahasiswa.findOne({
+    where: {
+      nim: user.username,
+    },
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }],
+  });
+
+  if (!mahasiswa) {
+    return res.status(404).json({
+      message: "Mahasiswa not found",
+    });
+  }
+
+  // Mendapatkan token
+  const token = await getToken();
+
+  // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK
+  const requestBody = {
+    act: "GetRekapKHSMahasiswa",
+    token: `${token}`,
+    filter: `id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  };
+
+  // Menggunakan token untuk mengambil data
+  const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+
+  // Tanggapan dari API
+  const dataRekapKHSMahasiswaAll = response.data.data;
+
+  // Mengelompokkan data KHS berdasarkan id_periode
+  const groupedData = dataRekapKHSMahasiswaAll.reduce((acc, curr) => {
+    const periode = curr.id_periode;
+    if (!acc[periode]) {
+      acc[periode] = [];
+    }
+    acc[periode].push(curr);
+    return acc;
+  }, {});
+
+  // Hitung dan simpan nilai IPS masing-masing periode ke dalam array ips
+  const ipsArray = [];
+  for (const periode in groupedData) {
+    let totalSksPeriode = 0;
+    let totalSksIndeksPeriode = 0;
+    groupedData[periode].forEach((nilai) => {
+      totalSksPeriode += parseFloat(nilai.sks_mata_kuliah);
+      totalSksIndeksPeriode += parseFloat(nilai.sks_mata_kuliah) * parseFloat(nilai.nilai_indeks);
+    });
+    const ipsPeriode = (totalSksIndeksPeriode / totalSksPeriode).toFixed(2);
+    ipsArray.push(parseFloat(ipsPeriode));
+  }
+
+  // Menghapus nilai null dari array ipsArray
+  const validIpsArray = ipsArray.filter((ips) => ips !== null && !isNaN(Number(ips)));
+
+  res.json({
+    message: `Get IPS Mahasiswa Active Success`,
+    mahasiswa: mahasiswa,
+    daftar_ips: validIpsArray,
+  });
+};
+
 module.exports = {
   getAllMahasiswa,
   getMahasiswaById,
@@ -485,4 +619,6 @@ module.exports = {
   getMahasiswaByStatusMahasiswaId,
   getMahasiswaByProdiAndAngkatanId,
   importMahasiswas,
+  getMahasiswaActive,
+  getIpsMahasiswaActive,
 };
