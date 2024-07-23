@@ -293,7 +293,7 @@ const getAllTagihanMahasiswaByMahasiswaActive = async (req, res, next) => {
 const getAllTagihanMahasiswaByFilter = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
-    const { id_periode, id_prodi, id_jenis_tagihan, status_tagihan } = req.body;
+    const { id_periode, id_prodi, id_jenis_tagihan, status_tagihan } = req.query;
 
     // Ambil semua data tagihan_mahasiswa dari database
     const tagihan_mahasiswa = await TagihanMahasiswa.findAll({

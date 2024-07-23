@@ -105,6 +105,7 @@ const jenisTagihanRoutes = require("./routes/jenis-tagihan");
 const semesterAktifRoutes = require("./routes/semester-aktif");
 const rekapTranskripNilaiRoutes = require("./routes/rekap-transkrip-nilai");
 const rekapMahasiswaBelumKRSRoutes = require("./routes/rekap-mahasiswa-belum-krs");
+const rekapJadwalKuliahRoutes = require("./routes/rekap-jadwal-kuliah");
 
 // route api local not done yet
 const settingWSRoutes = require("./routes/setting-ws");
@@ -256,6 +257,7 @@ app.use("/jenis-tagihan", checkToken, jenisTagihanRoutes);
 app.use("/semester-aktif", checkToken, semesterAktifRoutes);
 app.use("/rekap-transkrip-nilai", checkToken, rekapTranskripNilaiRoutes);
 app.use("/rekap-mahasiswa-belum-krs", checkToken, rekapMahasiswaBelumKRSRoutes);
+app.use("/rekap-jadwal-kuliah", checkToken, rekapJadwalKuliahRoutes);
 
 // route api local not done yet
 app.use("/setting/ws", settingWSRoutes);

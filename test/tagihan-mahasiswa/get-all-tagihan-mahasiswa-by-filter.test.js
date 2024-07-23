@@ -29,7 +29,7 @@ describe("getAllTagihanMahasiswaByFilter", () => {
 
     TagihanMahasiswa.findAll.mockResolvedValue(mockTagihanMahasiswa);
 
-    req.body = {
+    req.query = {
       id_periode: "2021",
       id_prodi: "1",
       id_jenis_tagihan: "1",
@@ -70,7 +70,7 @@ describe("getAllTagihanMahasiswaByFilter", () => {
 
     TagihanMahasiswa.findAll.mockRejectedValue(error);
 
-    req.body = {
+    req.query = {
       id_periode: "2021",
       id_prodi: "1",
       id_jenis_tagihan: "1",
