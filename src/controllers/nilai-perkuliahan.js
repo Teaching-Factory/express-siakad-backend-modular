@@ -1,4 +1,19 @@
-const { PesertaKelasKuliah, Mahasiswa, KelasKuliah, Prodi, Semester, MataKuliah, Dosen, DetailKelasKuliah, RuangPerkuliahan, DetailNilaiPerkuliahanKelas, BobotPenilaian, JenjangPendidikan } = require("../../models");
+const {
+  PesertaKelasKuliah,
+  Mahasiswa,
+  KelasKuliah,
+  Prodi,
+  Semester,
+  MataKuliah,
+  Dosen,
+  DetailKelasKuliah,
+  RuangPerkuliahan,
+  DetailNilaiPerkuliahanKelas,
+  BobotPenilaian,
+  JenjangPendidikan,
+  NilaiPerkuliahan,
+  UnsurPenilaian,
+} = require("../../models");
 const ExcelJS = require("exceljs");
 const fs = require("fs").promises;
 
@@ -201,6 +216,46 @@ const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
       createdOrUpdatedDetails.push(detailNilai);
     }
 
+    let dataNilaiId = createdOrUpdatedDetails[0].id_detail_nilai_perkuliahan_kelas;
+
+    for (const penilaian of penilaians) {
+      const { nilai_bobot } = penilaian;
+
+      for (const bobot of nilai_bobot) {
+        // Temukan Bobot Penilaian berdasarkan ID
+        const bobotPenilaian = await BobotPenilaian.findByPk(bobot.id_bobot, {
+          include: [{ model: UnsurPenilaian }],
+        });
+
+        if (!bobotPenilaian) {
+          return res.status(404).json({ message: `Bobot Penilaian with ID ${bobot.id_bobot} not found` });
+        }
+
+        // Temukan Nilai Perkuliahan berdasarkan ID Detail dan ID Unsur Penilaian
+        let nilai_perkuliahan = null;
+        nilai_perkuliahan = await NilaiPerkuliahan.findOne({
+          where: {
+            id_detail_nilai_perkuliahan_kelas: dataNilaiId,
+            id_unsur_penilaian: bobotPenilaian.UnsurPenilaian.id_unsur_penilaian,
+          },
+        });
+
+        if (nilai_perkuliahan) {
+          // Jika sudah ada, lakukan pembaruan
+          await nilai_perkuliahan.update({
+            nilai: bobot.nilai,
+          });
+        } else {
+          // Jika belum ada, buat yang baru
+          nilai_perkuliahan = await NilaiPerkuliahan.create({
+            id_detail_nilai_perkuliahan_kelas: dataNilaiId,
+            id_unsur_penilaian: bobotPenilaian.UnsurPenilaian.id_unsur_penilaian,
+            nilai: bobot.nilai,
+          });
+        }
+      }
+    }
+
     res.status(201).json({
       message: "Penilaian created or updated successfully",
       dataJumlah: createdOrUpdatedDetails.length,
@@ -249,6 +304,21 @@ const importNilaiPerkuliahan = async (req, res, next) => {
         gradingCriteria.push({ nilai_min, nilai_max, nilai_indeks, nilai_huruf });
       }
     });
+
+    // Map nama kolom to UnsurPenilaian
+    const unsurPenilaianMap = {};
+    const headerRow = worksheet.getRow(1);
+    const startColumn = 8; // Column H
+    const endColumn = 11; // Column K
+    for (let colNumber = startColumn; colNumber <= endColumn; colNumber++) {
+      const cellValue = headerRow.getCell(colNumber).value;
+      const unsurPenilaian = await UnsurPenilaian.findOne({ where: { nama_unsur_penilaian: cellValue } });
+      if (!unsurPenilaian) {
+        return res.status(400).json({ message: `Unsur Penilaian with name '${cellValue}' not found` });
+      }
+      unsurPenilaianMap[colNumber] = unsurPenilaian;
+    }
+
     let count_data_nilai = 0;
 
     worksheet.eachRow((row, rowNumber) => {
@@ -270,8 +340,7 @@ const importNilaiPerkuliahan = async (req, res, next) => {
               id_registrasi_mahasiswa = mahasiswa.id_registrasi_mahasiswa;
               angkatan_mahasiswa = mahasiswa.nama_periode_masuk.substring(0, 4);
             } else {
-              // console.error(`Mahasiswa with NIM ${nim} not found`);
-              return; // Skip this student if not found
+              return;
             }
           }
 
@@ -310,10 +379,27 @@ const importNilaiPerkuliahan = async (req, res, next) => {
           };
 
           if (id_registrasi_mahasiswa && angkatan_mahasiswa) {
-            await DetailNilaiPerkuliahanKelas.create(detail_nilai_perkuliahan);
+            const createdDetail = await DetailNilaiPerkuliahanKelas.create(detail_nilai_perkuliahan);
             count_data_nilai++;
-          } else {
-            // console.error(`Data for NIM ${nim} is incomplete and will be skipped`);
+
+            // Create Nilai Perkuliahan based on the map unsur penilaian and column values
+            const nilaiPerkuliahanValues = [
+              { nilai: nilai_presensi, colNumber: 8 },
+              { nilai: nilai_tugas, colNumber: 9 },
+              { nilai: nilai_uas, colNumber: 10 },
+              { nilai: nilai_uts, colNumber: 11 },
+            ];
+
+            for (const { nilai, colNumber } of nilaiPerkuliahanValues) {
+              const unsurPenilaian = unsurPenilaianMap[colNumber];
+              if (unsurPenilaian && nilai != null) {
+                await NilaiPerkuliahan.create({
+                  nilai: nilai,
+                  id_unsur_penilaian: unsurPenilaian.id_unsur_penilaian,
+                  id_detail_nilai_perkuliahan_kelas: createdDetail.id_detail_nilai_perkuliahan_kelas,
+                });
+              }
+            }
           }
         });
       }
