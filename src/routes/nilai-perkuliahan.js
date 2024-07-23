@@ -14,5 +14,6 @@ const upload = multer({ dest: "uploads/" });
 router.get("/:id_kelas_kuliah/get-peserta-kelas", checkRole(["admin", "admin-prodi", "dosen"]), NilaiPerkuliahanController.getPesertaKelasKuliahByKelasKuliahId);
 router.post("/:id_kelas_kuliah/penilaian-detail-perkuliahan-kelas", checkRole(["admin", "admin-prodi", "dosen"]), NilaiPerkuliahanController.createOrUpdatePenilaianByKelasKuliahId);
 router.post("/:id_kelas_kuliah/import-nilai-perkuliahan", checkRole(["admin", "admin-prodi", "dosen"]), upload.single("file"), NilaiPerkuliahanController.importNilaiPerkuliahan);
+router.get("/get-nilai-perkuliahan-by-filter", checkRole(["admin", "admin-prodi", "dosen"]), NilaiPerkuliahanController.getRekapNilaiPerkuliahanByFilter);
 
 module.exports = router;

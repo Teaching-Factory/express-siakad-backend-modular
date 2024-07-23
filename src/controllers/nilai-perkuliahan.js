@@ -419,8 +419,77 @@ const importNilaiPerkuliahan = async (req, res, next) => {
   }
 };
 
+const getRekapNilaiPerkuliahanByFilter = async (req, res, next) => {
+  const { id_semester, id_prodi, nama_kelas_kuliah, format, tanggal_penandatanganan } = req.query;
+
+  // pengecekan parameter
+  if (!id_semester) {
+    return res.status(400).json({ message: "id_semester is required" });
+  }
+  if (!id_prodi) {
+    return res.status(400).json({ message: "id_prodi is required" });
+  }
+  if (!nama_kelas_kuliah) {
+    return res.status(400).json({ message: "nama_kelas_kuliah is required" });
+  }
+  if (!format) {
+    return res.status(400).json({ message: "format is required" });
+  }
+  if (!tanggal_penandatanganan) {
+    return res.status(400).json({ message: "tanggal_penandatanganan is required" });
+  }
+
+  try {
+    // get kelas kuliah
+    const kelas_kuliah = await KelasKuliah.findOne({
+      where: {
+        nama_kelas_kuliah: nama_kelas_kuliah,
+        id_semester: id_semester,
+        id_prodi: id_prodi,
+      },
+      include: [{ model: Dosen }, { model: MataKuliah }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: Semester }, { model: Prodi, include: [{ model: JenjangPendidikan }] }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!kelas_kuliah) {
+      return res.status(404).json({
+        message: `Kelas Kuliah Not Found`,
+      });
+    }
+
+    // get data bobot penilaian dengan relasi unsur penilaian
+    const bobot_penilaian_prodi = await BobotPenilaian.findAll({
+      where: {
+        id_prodi: kelas_kuliah.id_prodi,
+      },
+      include: [{ model: UnsurPenilaian }],
+    });
+
+    // get data detail nilai perkuliahan kelas dan dengan gabungan data nilai perkuliahan
+    const rekap_nilai_perkuliahan = await DetailNilaiPerkuliahanKelas.findAll({
+      where: {
+        id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah,
+      },
+      include: [{ model: Mahasiswa }, { model: NilaiPerkuliahan }],
+    });
+
+    res.status(200).json({
+      message: "Get Rekap Nilai Perkuliahan By Filter Success",
+      kelas_kuliah: kelas_kuliah,
+      bobot_penilaian_prodi: bobot_penilaian_prodi,
+      tanggalPenandatanganan: tanggal_penandatanganan,
+      format: format,
+      totalData: rekap_nilai_perkuliahan.length,
+      dataRekapNilaiPerkuliahan: rekap_nilai_perkuliahan,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getPesertaKelasKuliahByKelasKuliahId,
   createOrUpdatePenilaianByKelasKuliahId,
   importNilaiPerkuliahan,
+  getRekapNilaiPerkuliahanByFilter,
 };
