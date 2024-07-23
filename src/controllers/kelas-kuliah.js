@@ -1,4 +1,4 @@
-const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah, RuangPerkuliahan } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah, RuangPerkuliahan, SemesterAktif } = require("../../models");
 
 const getAllKelasKuliah = async (req, res, next) => {
   try {
@@ -400,10 +400,24 @@ const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
       });
     }
 
+    // get semester aktif
+    const semester_aktif = await SemesterAktif.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    if (!semester_aktif) {
+      return res.status(404).json({
+        message: "Semester Aktif not found",
+      });
+    }
+
     // Ambil semua data kelas_kuliah dari database
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
         id_prodi: mahasiswa.id_prodi,
+        id_semester: semester_aktif.id_semester,
       },
       include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }],
     });
@@ -455,10 +469,24 @@ const getAllKelasKuliahAvailableByProdiMahasiswaId = async (req, res, next) => {
       });
     }
 
+    // get semester aktif
+    const semester_aktif = await SemesterAktif.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    if (!semester_aktif) {
+      return res.status(404).json({
+        message: "Semester Aktif not found",
+      });
+    }
+
     // Ambil semua data kelas_kuliah dari database
     const kelas_kuliah = await KelasKuliah.findAll({
-      where: {
+      where: {  
         id_prodi: mahasiswa.id_prodi,
+        id_semester: semester_aktif.id_semester,
       },
       include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });

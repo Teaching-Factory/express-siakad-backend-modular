@@ -17,6 +17,7 @@ const {
   Semester,
   SemesterAktif,
   DosenWali,
+  Dosen,
   JenjangPendidikan,
 } = require("../../models");
 const axios = require("axios");
@@ -534,6 +535,7 @@ const getMahasiswaActive = async (req, res, next) => {
         id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
         id_tahun_ajaran: semester_aktif.Semester.id_tahun_ajaran,
       },
+      include: [{ model: Dosen }],
     });
 
     res.status(200).json({
