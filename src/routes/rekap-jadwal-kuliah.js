@@ -8,5 +8,6 @@ const checkRole = require("../middlewares/check-role");
 
 // all routes
 router.get("/get-rekap-jadwal-kuliah-by-filter", checkRole(["admin", "admin-prodi", "dosen", "mahasiswa"]), RekapJadwalKuliahController.getRekapJadwalKuliahByFilter);
+router.get("/:id_semester/get-rekap-jadwal-kuliah-by-semester", checkRole(["admin", "admin-prodi", "dosen", "mahasiswa"]), RekapJadwalKuliahController.getRekapJadwalKuliahBySemester);
 
 module.exports = router;
