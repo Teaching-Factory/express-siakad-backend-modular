@@ -1,4 +1,4 @@
-const { KelasKuliah, Prodi, JenjangPendidikan, Dosen, MataKuliah, PertemuanPerkuliahan, PesertaKelasKuliah, Mahasiswa, PresensiMahasiswa } = require("../../models");
+const { KelasKuliah, Prodi, JenjangPendidikan, Dosen, MataKuliah, PertemuanPerkuliahan, PesertaKelasKuliah, Mahasiswa, PresensiMahasiswa, Semester } = require("../../models");
 
 const getRekapPresensiKelasByFilter = async (req, res, next) => {
   const { id_semester, id_prodi, nama_kelas_kuliah, format, tanggal_penandatanganan } = req.query;
@@ -27,7 +27,7 @@ const getRekapPresensiKelasByFilter = async (req, res, next) => {
         id_prodi: id_prodi,
         nama_kelas_kuliah: nama_kelas_kuliah,
       },
-      include: [{ model: MataKuliah }, { model: Dosen }, { model: Prodi, include: [{ model: JenjangPendidikan }] }],
+      include: [{ model: MataKuliah }, { model: Semester }, { model: Dosen }, { model: Prodi, include: [{ model: JenjangPendidikan }] }],
     });
 
     if (!kelas_kuliah) {
@@ -89,6 +89,7 @@ const getRekapPresensiKelasByFilter = async (req, res, next) => {
       message: "<===== GET Rekap Presensi Kelas By Filter Success",
       format: format,
       tanggal_penandatanganan: tanggal_penandatanganan,
+      kelas_kuliah: kelas_kuliah,
       jumlah_peserta: peserta_kelas_kuliah.length,
       jumlah_pertemuan: pertemuan_perkuliahan_count,
       jumlahData: rekap_presensi_kehadiran.length,
