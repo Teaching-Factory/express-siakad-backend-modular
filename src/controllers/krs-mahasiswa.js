@@ -585,7 +585,7 @@ const getMahasiswaBelumKRSBySemesterAndProdiId = async (req, res, next) => {
       return res.status(400).json({ message: "Prodi ID is required" });
     }
 
-    // Ambil data KRS mahasiswa berdasarkan id_semester yang didapatkan
+    // Ambil data KRS mahasiswa berdasarkan id_semester dan id_prodi yang didapatkan
     const krs_mahasiswas = await KRSMahasiswa.findAll({
       where: {
         id_semester: semesterId,
@@ -594,19 +594,27 @@ const getMahasiswaBelumKRSBySemesterAndProdiId = async (req, res, next) => {
     });
 
     // Ekstrak id_registrasi_mahasiswa dari data KRS mahasiswa yang didapatkan
-    const idRegistrasiMahasiswas = new Set(krs_mahasiswas.map((krs) => krs.id_registrasi_mahasiswa));
+    const idRegistrasiMahasiswas = [];
+    krs_mahasiswas.forEach((krs) => {
+      if (!idRegistrasiMahasiswas.includes(krs.id_registrasi_mahasiswa)) {
+        idRegistrasiMahasiswas.push(krs.id_registrasi_mahasiswa);
+      }
+    });
 
-    // Ambil semua mahasiswa
+    // Ambil semua mahasiswa berdasarkan prodi
     const allMahasiswas = await Mahasiswa.findAll({
+      where: {
+        id_prodi: prodiId,
+      },
       include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
-    const mahasiswasBelumKRS = allMahasiswas.filter((mahasiswa) => !idRegistrasiMahasiswas.has(mahasiswa.id_registrasi_mahasiswa));
+    // Filter mahasiswa yang belum mengisi KRS
+    const mahasiswasBelumKRS = allMahasiswas.filter((mahasiswa) => !idRegistrasiMahasiswas.includes(mahasiswa.id_registrasi_mahasiswa));
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET All Mahasiswa Belum KRS By Semester ID ${semesterId} And Prodi ID ${prodiId} Success =====>`,
-      // idRegistrasiMahasiswas: Array.from(idRegistrasiMahasiswas).length,
       jumlahData: mahasiswasBelumKRS.length,
       data: mahasiswasBelumKRS,
     });
