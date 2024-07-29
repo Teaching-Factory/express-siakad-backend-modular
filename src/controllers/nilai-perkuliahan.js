@@ -59,6 +59,7 @@ const getPesertaKelasKuliahByKelasKuliahId = async (req, res, next) => {
             id_kelas_kuliah: peserta.id_kelas_kuliah,
             id_registrasi_mahasiswa: peserta.id_registrasi_mahasiswa,
           },
+          include: [{ model: NilaiPerkuliahan, include: [{ model: UnsurPenilaian }] }],
         });
 
         return {

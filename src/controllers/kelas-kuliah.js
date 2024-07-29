@@ -1,4 +1,4 @@
-const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah, RuangPerkuliahan, SemesterAktif } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah, RuangPerkuliahan, SemesterAktif, DosenPengajarKelasKuliah, PenugasanDosen } = require("../../models");
 
 const getAllKelasKuliah = async (req, res, next) => {
   try {
@@ -167,8 +167,37 @@ const createKelasKuliah = async (req, res, next) => {
       });
     }
 
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+    if (!matkulId) {
+      return res.status(400).json({
+        message: "Mata Kuliah ID is required",
+      });
+    }
+
     // get data matakuliah
     let mata_kuliah = await MataKuliah.findByPk(matkulId);
+
+    // get data penugasan dosen dari id_dosen
+    const penugasan_dosen = await PenugasanDosen.findOne({
+      where: {
+        id_dosen: id_dosen,
+      },
+    });
+
+    if (!penugasan_dosen) {
+      return res.status(404).json({
+        message: `<===== Penugasan Dosen With ID ${id_dosen} Not Found:`,
+      });
+    }
 
     // create data kelas kuliah
     let kelas_kuliah = await KelasKuliah.create({
@@ -200,11 +229,26 @@ const createKelasKuliah = async (req, res, next) => {
       id_ruang_perkuliahan: id_ruang_perkuliahan,
     });
 
+    // create dosen pengajar kelas kuliah
+    let dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.create({
+      sks_substansi_total: mata_kuliah.sks_mata_kuliah,
+      rencana_minggu_pertemuan: 16,
+      realisasi_minggu_pertemuan: 0,
+      id_registrasi_dosen: penugasan_dosen.id_registrasi_dosen,
+      id_dosen: id_dosen,
+      id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah,
+      id_substansi: null,
+      id_jenis_evaluasi: 1,
+      id_prodi: kelas_kuliah.id_prodi,
+      id_semester: kelas_kuliah.id_semester,
+    });
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== CREATE Kelas Kuliah Success",
       dataKelasKuliah: kelas_kuliah,
       dataDetailKelasKuliah: detail_kelas_kuliah,
+      dataDosenPengajarKelasKuliah: dosen_pengajar_kelas_kuliah,
     });
   } catch (error) {
     next(error);
@@ -484,7 +528,7 @@ const getAllKelasKuliahAvailableByProdiMahasiswaId = async (req, res, next) => {
 
     // Ambil semua data kelas_kuliah dari database
     const kelas_kuliah = await KelasKuliah.findAll({
-      where: {  
+      where: {
         id_prodi: mahasiswa.id_prodi,
         id_semester: semester_aktif.id_semester,
       },
