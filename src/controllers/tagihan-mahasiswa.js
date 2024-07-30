@@ -90,7 +90,7 @@ const createTagihanMahasiswa = async (req, res, next) => {
 
 const updateTagihanMahasiswaById = async (req, res, next) => {
   // Ambil data untuk update dari body permintaan
-  const { jumlah_tagihan, id_jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode, id_registrasi_mahasiswa } = req.body;
+  const { jumlah_tagihan, id_jenis_tagihan, tanggal_tagihan, deadline_tagihan, status_tagihan, id_periode } = req.body;
 
   if (!jumlah_tagihan) {
     return res.status(400).json({ message: "jumlah_tagihan is required" });
@@ -109,9 +109,6 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
   }
   if (!id_periode) {
     return res.status(400).json({ message: "id_periode is required" });
-  }
-  if (!id_registrasi_mahasiswa) {
-    return res.status(400).json({ message: "id_registrasi_mahasiswa is required" });
   }
 
   try {
@@ -138,7 +135,6 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
     tagihan_mahasiswa.deadline_tagihan = deadline_tagihan || tagihan_mahasiswa.deadline_tagihan;
     tagihan_mahasiswa.status_tagihan = status_tagihan || tagihan_mahasiswa.status_tagihan;
     tagihan_mahasiswa.id_periode = id_periode || tagihan_mahasiswa.id_periode;
-    tagihan_mahasiswa.id_registrasi_mahasiswa = id_registrasi_mahasiswa || tagihan_mahasiswa.id_registrasi_mahasiswa;
 
     await tagihan_mahasiswa.save();
 

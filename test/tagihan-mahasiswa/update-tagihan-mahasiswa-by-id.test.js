@@ -22,7 +22,6 @@ describe("updateTagihanMahasiswaById", () => {
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
       id_periode: 2,
-      id_registrasi_mahasiswa: 2,
       id_jenis_tagihan: 1,
     };
 
@@ -36,7 +35,6 @@ describe("updateTagihanMahasiswaById", () => {
       deadline_tagihan: "2024-07-10",
       status_tagihan: "Lunas",
       id_periode: 1,
-      id_registrasi_mahasiswa: 1,
       id_jenis_tagihan: 1,
       save: jest.fn(),
     };
