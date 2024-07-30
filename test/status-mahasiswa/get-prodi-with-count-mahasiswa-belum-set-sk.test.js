@@ -33,7 +33,22 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
       },
     ];
 
-    Prodi.findAll.mockResolvedValue(mockProdiData);
+    const mockProdiMahasiswas = [
+      {
+        id_prodi: "prodi1",
+        nama_program_studi: "Prodi 1",
+        status: "active",
+        Mahasiswas: [{ id_mahasiswa: "mhs1" }, { id_mahasiswa: "mhs2" }, { id_mahasiswa: "mhs3" }],
+      },
+      {
+        id_prodi: "prodi2",
+        nama_program_studi: "Prodi 2",
+        status: "inactive",
+        Mahasiswas: [{ id_mahasiswa: "mhs4" }],
+      },
+    ];
+
+    Prodi.findAll.mockResolvedValueOnce(mockProdiData).mockResolvedValueOnce(mockProdiMahasiswas);
 
     await getProdiWithCountMahasiswaBelumSetSK(req, res, next);
 
@@ -46,6 +61,11 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
         required: false,
       },
     });
+
+    expect(Prodi.findAll).toHaveBeenCalledWith({
+      include: [{ model: Mahasiswa }],
+    });
+
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
       message: "GET ALL Prodi With Count Mahasiswa Belum Set SK Success",
@@ -54,13 +74,15 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
           id_prodi: "prodi1",
           nama_prodi: "Prodi 1",
           status: "active",
-          jumlahMahasiswa: 2,
+          jumlahMahasiswa: 3,
+          jumlahMahasiswaBelumSetSK: 2,
         },
         {
           id_prodi: "prodi2",
           nama_prodi: "Prodi 2",
           status: "inactive",
           jumlahMahasiswa: 1,
+          jumlahMahasiswaBelumSetSK: 1,
         },
       ],
     });

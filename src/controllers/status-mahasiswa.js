@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
-const { StatusMahasiswa, Mahasiswa, Periode, Prodi, Angkatan } = require("../../models");
+const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize } = require("../../models");
+const { Op } = require("sequelize");
 
 const getAllStatusMahasiswa = async (req, res, next) => {
   try {
@@ -62,14 +63,22 @@ const getProdiWithCountMahasiswaBelumSetSK = async (req, res, next) => {
       },
     });
 
+    // ambil semua jumlah mahasiswa setiap prodi
+    const prodi_mahasiswas = await Prodi.findAll({
+      include: [{ model: Mahasiswa }],
+    });
+
     // Siapkan data untuk respons
     const result = prodiData.map((prodi) => {
-      const jumlahMahasiswa = prodi.Mahasiswas.length;
+      const prodiMahasiswa = prodi_mahasiswas.find((p) => p.id_prodi === prodi.id_prodi);
+      const jumlahMahasiswa = prodiMahasiswa ? prodiMahasiswa.Mahasiswas.length : 0;
+      const jumlahMahasiswaBelumSetSK = prodi.Mahasiswas.length;
       return {
         id_prodi: prodi.id_prodi,
         nama_prodi: prodi.nama_program_studi,
         status: prodi.status,
         jumlahMahasiswa,
+        jumlahMahasiswaBelumSetSK,
       };
     });
 
@@ -87,61 +96,58 @@ const getPeriodeByProdiIdWithCountMahasiswa = async (req, res, next) => {
   try {
     const prodiId = req.params.id_prodi;
 
-    // Ambil semua data periode dari database berdasarkan id_prodi
-    const periodeList = await Periode.findAll({
+    if (!prodiId) {
+      return res.status(400).json({
+        message: "Prodi ID is required",
+      });
+    }
+
+    // Ambil semua mahasiswa dan kelompokkan berdasarkan 4 digit pertama dari nama_periode_masuk
+    const mahasiswas = await Mahasiswa.findAll({
       where: {
         id_prodi: prodiId,
       },
+      attributes: [[sequelize.fn("LEFT", sequelize.col("nama_periode_masuk"), 4), "tahun_angkatan"], "id_mahasiswa", "nama_mahasiswa", "nama_periode_masuk", "nama_status_mahasiswa"],
+      order: [[sequelize.col("tahun_angkatan"), "ASC"]],
     });
 
-    // Konversi periode_pelaporan dari periodeList menjadi format tahun yang sesuai
-    const periodePelaporanList = periodeList.map((p) => p.periode_pelaporan.toString().substring(0, 4));
-
-    // Ambil semua data mahasiswa yang memiliki nama_periode_masuk sesuai dengan periodePelaporanList
-    const mahasiswaList = await Mahasiswa.findAll({
-      where: {
-        nama_periode_masuk: {
-          [Sequelize.Op.or]: periodePelaporanList.map((period) => ({
-            [Sequelize.Op.like]: `${period}%`,
-          })),
-        },
-      },
-    });
-
-    // Buat peta untuk menghitung jumlah mahasiswa per periode
-    const mahasiswaCountMap = mahasiswaList.reduce((acc, mahasiswa) => {
-      const periodeMasuk = mahasiswa.nama_periode_masuk.substring(0, 4);
-
-      if (periodePelaporanList.includes(periodeMasuk)) {
-        if (!acc[periodeMasuk]) {
-          acc[periodeMasuk] = { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
-        }
-        acc[periodeMasuk].jumlahMahasiswa += 1;
-        if (mahasiswa.nama_status_mahasiswa === "Aktif") {
-          acc[periodeMasuk].jumlahMahasiswaBelumSetSK += 1;
-        }
+    // Kelompokkan mahasiswa berdasarkan tahun_angkatan
+    const groupedMahasiswas = mahasiswas.reduce((acc, mahasiswa) => {
+      const tahunAngkatan = mahasiswa.getDataValue("tahun_angkatan");
+      if (!acc[tahunAngkatan]) {
+        acc[tahunAngkatan] = {
+          mahasiswa: [],
+          jumlahMahasiswaBelumSetSK: 0,
+        };
+      }
+      acc[tahunAngkatan].mahasiswa.push(mahasiswa);
+      if (mahasiswa.nama_status_mahasiswa === "Aktif") {
+        acc[tahunAngkatan].jumlahMahasiswaBelumSetSK++;
       }
       return acc;
     }, {});
 
-    // Ambil data angkatan yang sesuai dengan tahun periode_pelaporan
+    // Ambil data angkatan yang sesuai dengan grouped mahasiswa
+    const tahunAngkatanKeys = Object.keys(groupedMahasiswas);
     const angkatan = await Angkatan.findAll({
       where: {
         tahun: {
-          [Sequelize.Op.in]: periodePelaporanList,
+          [Op.in]: tahunAngkatanKeys,
         },
       },
     });
 
-    // Gabungkan data angkatan dengan jumlah mahasiswa
-    const result = angkatan.map((angkatanItem) => {
-      const counts = mahasiswaCountMap[angkatanItem.tahun] || { jumlahMahasiswa: 0, jumlahMahasiswaBelumSetSK: 0 };
+    // Siapkan data untuk respons
+    const result = tahunAngkatanKeys.map((tahunAngkatan) => {
+      const currentAngkatan = angkatan.find((a) => a.tahun === tahunAngkatan);
+      const jumlahMahasiswa = groupedMahasiswas[tahunAngkatan].mahasiswa.length;
+      const jumlahMahasiswaBelumSetSK = groupedMahasiswas[tahunAngkatan].jumlahMahasiswaBelumSetSK;
 
       return {
-        id_angkatan: angkatanItem.id,
-        tahun: angkatanItem.tahun,
-        jumlahMahasiswa: counts.jumlahMahasiswa,
-        jumlahMahasiswaBelumSetSK: counts.jumlahMahasiswaBelumSetSK,
+        id_angkatan: currentAngkatan ? currentAngkatan.id : null,
+        tahun: tahunAngkatan,
+        jumlahMahasiswa,
+        jumlahMahasiswaBelumSetSK,
       };
     });
 
