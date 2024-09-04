@@ -6,17 +6,23 @@ const { KelasKuliah } = require("../../../models");
 
 const getPerhitunganSKS = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetPerhitunganSKS",
       token: `${token}`,
-      order: "id_kelas_kuliah",
+      order: "id_kelas_kuliah"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataPerhitunganSKS = response.data.data;
@@ -29,8 +35,8 @@ const getPerhitunganSKS = async (req, res, next) => {
       // Periksa apakah id_registrasi_dosen ada di PenugasanDosen
       const penugasanDosen = await PenugasanDosen.findOne({
         where: {
-          id_registrasi_dosen: perhitungan_sks.id_registrasi_dosen,
-        },
+          id_registrasi_dosen: perhitungan_sks.id_registrasi_dosen
+        }
       });
 
       // Jika ditemukan, simpan nilainya
@@ -41,8 +47,8 @@ const getPerhitunganSKS = async (req, res, next) => {
       // Periksa apakah id_kelas_kuliah ada di KelasKuliah
       const kelasKuliah = await KelasKuliah.findOne({
         where: {
-          id_kelas_kuliah: perhitungan_sks.id_kelas_kuliah,
-        },
+          id_kelas_kuliah: perhitungan_sks.id_kelas_kuliah
+        }
       });
 
       // Jika ditemukan, simpan nilainya
@@ -56,7 +62,7 @@ const getPerhitunganSKS = async (req, res, next) => {
         perhitungan_sks: perhitungan_sks.perhitungan_sks,
         id_kelas_kuliah: id_kelas_kuliah, // Gunakan nilai yang telah disimpan, atau null jika tidak ditemukan
         id_registrasi_dosen: id_registrasi_dosen, // Gunakan nilai yang telah disimpan, atau null jika tidak ditemukan
-        id_substansi: perhitungan_sks.id_substansi,
+        id_substansi: perhitungan_sks.id_substansi
       });
     }
 
@@ -64,7 +70,7 @@ const getPerhitunganSKS = async (req, res, next) => {
     res.status(200).json({
       message: "Create Perhitungan SKS Success",
       totalData: dataPerhitunganSKS.length,
-      dataPerhitunganSKS: dataPerhitunganSKS,
+      dataPerhitunganSKS: dataPerhitunganSKS
     });
   } catch (error) {
     next(error);
@@ -72,5 +78,5 @@ const getPerhitunganSKS = async (req, res, next) => {
 };
 
 module.exports = {
-  getPerhitunganSKS,
+  getPerhitunganSKS
 };

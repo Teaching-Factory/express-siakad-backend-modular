@@ -4,16 +4,22 @@ const { JenisSubstansi } = require("../../../models");
 
 const getJenisSubstansi = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetJenisSubstansi",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataJenisSubstansi = response.data.data;
@@ -23,15 +29,15 @@ const getJenisSubstansi = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingJenisSubstansi = await JenisSubstansi.findOne({
         where: {
-          id_jenis_substansi: jenis_substansi.id_jenis_substansi,
-        },
+          id_jenis_substansi: jenis_substansi.id_jenis_substansi
+        }
       });
 
       if (!existingJenisSubstansi) {
         // Data belum ada, buat entri baru di database
         await JenisSubstansi.create({
           id_jenis_substansi: jenis_substansi.id_jenis_substansi,
-          nama_jenis_substansi: jenis_substansi.nama_jenis_substansi,
+          nama_jenis_substansi: jenis_substansi.nama_jenis_substansi
         });
       }
     }
@@ -40,7 +46,7 @@ const getJenisSubstansi = async (req, res, next) => {
     res.status(200).json({
       message: "Create Jenis Substansi Success",
       totalData: dataJenisSubstansi.length,
-      dataJenisSubstansi: dataJenisSubstansi,
+      dataJenisSubstansi: dataJenisSubstansi
     });
   } catch (error) {
     next(error);
@@ -48,5 +54,5 @@ const getJenisSubstansi = async (req, res, next) => {
 };
 
 module.exports = {
-  getJenisSubstansi,
+  getJenisSubstansi
 };

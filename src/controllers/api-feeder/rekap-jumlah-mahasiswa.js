@@ -5,17 +5,23 @@ const { Periode } = require("../../../models");
 
 const getRekapJumlahMahasiswa = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetRekapJumlahMahasiswa",
       token: `${token}`,
-      order: "id_periode",
+      order: "id_periode"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataRekapJumlahMahasiswa = response.data.data;
@@ -27,8 +33,8 @@ const getRekapJumlahMahasiswa = async (req, res, next) => {
       // Periksa apakah id_periode atau periode_pelaporan ada di Periode
       const periode = await Periode.findOne({
         where: {
-          periode_pelaporan: rekap_jumlah_mahasiswa.id_periode,
-        },
+          periode_pelaporan: rekap_jumlah_mahasiswa.id_periode
+        }
       });
 
       // Jika ditemukan, simpan nilainya
@@ -43,7 +49,7 @@ const getRekapJumlahMahasiswa = async (req, res, next) => {
         non_aktif: rekap_jumlah_mahasiswa.non_aktif,
         sedang_double: rekap_jumlah_mahasiswa.sedang_double,
         id_periode: id_periode,
-        id_prodi: rekap_jumlah_mahasiswa.id_prodi,
+        id_prodi: rekap_jumlah_mahasiswa.id_prodi
       });
     }
 
@@ -51,7 +57,7 @@ const getRekapJumlahMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Rekap Jumlah Mahasiswa Success",
       totalData: dataRekapJumlahMahasiswa.length,
-      dataRekapJumlahMahasiswa: dataRekapJumlahMahasiswa,
+      dataRekapJumlahMahasiswa: dataRekapJumlahMahasiswa
     });
   } catch (error) {
     next(error);
@@ -59,5 +65,5 @@ const getRekapJumlahMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getRekapJumlahMahasiswa,
+  getRekapJumlahMahasiswa
 };

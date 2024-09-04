@@ -4,16 +4,22 @@ const { KelasKuliah } = require("../../../models");
 
 const getKelasKuliah = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListKelasKuliah",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataKelasKuliah = response.data.data;
@@ -23,8 +29,8 @@ const getKelasKuliah = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingKelasKuliah = await KelasKuliah.findOne({
         where: {
-          id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah,
-        },
+          id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah
+        }
       });
 
       if (!existingKelasKuliah) {
@@ -40,7 +46,7 @@ const getKelasKuliah = async (req, res, next) => {
           id_prodi: kelas_kuliah.id_prodi,
           id_semester: kelas_kuliah.id_semester,
           id_matkul: kelas_kuliah.id_matkul,
-          id_dosen: kelas_kuliah.id_dosen,
+          id_dosen: kelas_kuliah.id_dosen
         });
       }
     }
@@ -49,7 +55,7 @@ const getKelasKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Kelas Kuliah Success",
       totalData: dataKelasKuliah.length,
-      dataKelasKuliah: dataKelasKuliah,
+      dataKelasKuliah: dataKelasKuliah
     });
   } catch (error) {
     next(error);
@@ -57,5 +63,5 @@ const getKelasKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getKelasKuliah,
+  getKelasKuliah
 };

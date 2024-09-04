@@ -4,18 +4,24 @@ const { DetailNilaiPerkuliahanKelas } = require("../../../models");
 
 const getDetailNilaiPerkuliahanKelas = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetDetailNilaiPerkuliahanKelas",
       token: `${token}`,
       filter: `angkatan = '2023'`,
-      order: "id_registrasi_mahasiswa",
+      order: "id_registrasi_mahasiswa"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataDetailNilaiPerkuliahanKelas = response.data.data;
@@ -29,7 +35,7 @@ const getDetailNilaiPerkuliahanKelas = async (req, res, next) => {
         nilai_indeks: detail_nilai_perkuliahan_kelas.nilai_indeks,
         nilai_huruf: detail_nilai_perkuliahan_kelas.nilai_huruf,
         id_kelas_kuliah: detail_nilai_perkuliahan_kelas.id_kelas_kuliah,
-        id_registrasi_mahasiswa: detail_nilai_perkuliahan_kelas.id_registrasi_mahasiswa,
+        id_registrasi_mahasiswa: detail_nilai_perkuliahan_kelas.id_registrasi_mahasiswa
       });
     }
 
@@ -37,7 +43,7 @@ const getDetailNilaiPerkuliahanKelas = async (req, res, next) => {
     res.status(200).json({
       message: "Create Detail Nilai Perkuliahan Kelas Success",
       totalData: dataDetailNilaiPerkuliahanKelas.length,
-      dataDetailNilaiPerkuliahanKelas: dataDetailNilaiPerkuliahanKelas,
+      dataDetailNilaiPerkuliahanKelas: dataDetailNilaiPerkuliahanKelas
     });
   } catch (error) {
     next(error);
@@ -45,5 +51,5 @@ const getDetailNilaiPerkuliahanKelas = async (req, res, next) => {
 };
 
 module.exports = {
-  getDetailNilaiPerkuliahanKelas,
+  getDetailNilaiPerkuliahanKelas
 };

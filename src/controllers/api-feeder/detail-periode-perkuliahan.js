@@ -4,16 +4,22 @@ const { DetailPeriodePerkuliahan } = require("../../../models");
 
 const getDetailPeriodePerkuliahan = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetDetailPeriodePerkuliahan",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataDetailPeriodePerkuliahan = response.data.data;
@@ -44,7 +50,7 @@ const getDetailPeriodePerkuliahan = async (req, res, next) => {
         tanggal_akhir_perkuliahan: tanggal_akhir,
         jumlah_minggu_pertemuan: detail_periode_perkuliahan.jumlah_minggu_pertemuan,
         id_prodi: detail_periode_perkuliahan.id_prodi,
-        id_semester: detail_periode_perkuliahan.id_semester,
+        id_semester: detail_periode_perkuliahan.id_semester
       });
     }
 
@@ -52,7 +58,7 @@ const getDetailPeriodePerkuliahan = async (req, res, next) => {
     res.status(200).json({
       message: "Create Detail Periode Perkuliahan Success",
       totalData: dataDetailPeriodePerkuliahan.length,
-      dataDetailPeriodePerkuliahan: dataDetailPeriodePerkuliahan,
+      dataDetailPeriodePerkuliahan: dataDetailPeriodePerkuliahan
     });
   } catch (error) {
     next(error);
@@ -60,5 +66,5 @@ const getDetailPeriodePerkuliahan = async (req, res, next) => {
 };
 
 module.exports = {
-  getDetailPeriodePerkuliahan,
+  getDetailPeriodePerkuliahan
 };

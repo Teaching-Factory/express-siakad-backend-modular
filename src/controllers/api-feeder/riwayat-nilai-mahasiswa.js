@@ -5,18 +5,24 @@ const { Periode } = require("../../../models");
 
 const getRiwayatNilaiMahasiswa = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetRiwayatNilaiMahasiswa",
       token: `${token}`,
       filter: `angkatan = '2023'`,
-      order: "id_registrasi_mahasiswa",
+      order: "id_registrasi_mahasiswa"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataRiwayatNilaiMahasiswa = response.data.data;
@@ -28,8 +34,8 @@ const getRiwayatNilaiMahasiswa = async (req, res, next) => {
       // Periksa apakah id_periode atau periode_pelaporan ada di Periode
       const periode = await Periode.findOne({
         where: {
-          periode_pelaporan: riwayat_nilai_mahasiswa.id_periode,
-        },
+          periode_pelaporan: riwayat_nilai_mahasiswa.id_periode
+        }
       });
 
       // Jika ditemukan, simpan nilainya
@@ -44,7 +50,7 @@ const getRiwayatNilaiMahasiswa = async (req, res, next) => {
         angkatan: riwayat_nilai_mahasiswa.angkatan,
         id_registrasi_mahasiswa: riwayat_nilai_mahasiswa.id_registrasi_mahasiswa,
         id_periode: id_periode,
-        id_kelas: riwayat_nilai_mahasiswa.id_kelas,
+        id_kelas: riwayat_nilai_mahasiswa.id_kelas
       });
     }
 
@@ -52,7 +58,7 @@ const getRiwayatNilaiMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Riwayat Nilai Mahasiswa Success",
       totalData: dataRiwayatNilaiMahasiswa.length,
-      dataRiwayatNilaiMahasiswa: dataRiwayatNilaiMahasiswa,
+      dataRiwayatNilaiMahasiswa: dataRiwayatNilaiMahasiswa
     });
   } catch (error) {
     next(error);
@@ -60,5 +66,5 @@ const getRiwayatNilaiMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getRiwayatNilaiMahasiswa,
+  getRiwayatNilaiMahasiswa
 };

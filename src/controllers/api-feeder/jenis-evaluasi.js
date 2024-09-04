@@ -4,16 +4,22 @@ const { JenisEvaluasi } = require("../../../models");
 
 const getJenisEvaluasi = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetJenisEvaluasi",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const jenisEvaluasi = response.data.data;
@@ -23,15 +29,15 @@ const getJenisEvaluasi = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingJenisEvaluasi = await JenisEvaluasi.findOne({
         where: {
-          id_jenis_evaluasi: jenis_evaluasi.id_jenis_evaluasi,
-        },
+          id_jenis_evaluasi: jenis_evaluasi.id_jenis_evaluasi
+        }
       });
 
       if (!existingJenisEvaluasi) {
         // Data belum ada, buat entri baru di database
         await JenisEvaluasi.create({
           id_jenis_evaluasi: jenis_evaluasi.id_jenis_evaluasi,
-          nama_jenis_evaluasi: jenis_evaluasi.nama_jenis_evaluasi,
+          nama_jenis_evaluasi: jenis_evaluasi.nama_jenis_evaluasi
         });
       }
     }
@@ -40,7 +46,7 @@ const getJenisEvaluasi = async (req, res, next) => {
     res.status(200).json({
       message: "Create Jenis Evaluasi Success",
       totalData: jenisEvaluasi.length,
-      jenisEvaluasi: jenisEvaluasi,
+      jenisEvaluasi: jenisEvaluasi
     });
   } catch (error) {
     next(error);
@@ -48,5 +54,5 @@ const getJenisEvaluasi = async (req, res, next) => {
 };
 
 module.exports = {
-  getJenisEvaluasi,
+  getJenisEvaluasi
 };

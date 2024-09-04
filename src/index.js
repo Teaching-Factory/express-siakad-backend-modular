@@ -108,9 +108,10 @@ const rekapMahasiswaBelumKRSRoutes = require("./routes/rekap-mahasiswa-belum-krs
 const rekapJadwalKuliahRoutes = require("./routes/rekap-jadwal-kuliah");
 const rekapPresensiKelasRoutes = require("./routes/rekap-presensi-kelas");
 const settingGlobalSemesterRoutes = require("./routes/setting-global-semester");
+const settingWSFeederRoutes = require("./routes/setting-ws-feeder");
 
 // route api local not done yet
-const settingWSRoutes = require("./routes/setting-ws");
+// -
 
 // import middleware
 const middlewareLogRequest = require("./middlewares/logs");
@@ -262,9 +263,10 @@ app.use("/rekap-mahasiswa-belum-krs", checkToken, rekapMahasiswaBelumKRSRoutes);
 app.use("/rekap-jadwal-kuliah", checkToken, rekapJadwalKuliahRoutes);
 app.use("/rekap-presensi-kelas", checkToken, rekapPresensiKelasRoutes);
 app.use("/setting-global-semester", checkToken, settingGlobalSemesterRoutes);
+app.use("/setting-ws-feeder", checkToken, settingWSFeederRoutes);
 
 // route api local not done yet
-app.use("/setting/ws", settingWSRoutes);
+// -
 
 app.use(errHandler);
 
@@ -272,5 +274,3 @@ app.use(errHandler);
 app.listen(PORT, () => {
   console.log(`Server berhasil running di port ${PORT}`);
 });
-
-// test ini push pakai akun akuutauf atau agung

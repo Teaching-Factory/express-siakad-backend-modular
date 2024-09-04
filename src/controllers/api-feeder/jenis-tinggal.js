@@ -4,16 +4,22 @@ const { JenisTinggal } = require("../../../models");
 
 const getJenisTinggal = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetJenisTinggal",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataJenisTinggal = response.data.data;
@@ -23,15 +29,15 @@ const getJenisTinggal = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingJenisTinggal = await JenisTinggal.findOne({
         where: {
-          id_jenis_tinggal: jenis_tinggal.id_jenis_tinggal,
-        },
+          id_jenis_tinggal: jenis_tinggal.id_jenis_tinggal
+        }
       });
 
       if (!existingJenisTinggal) {
         // Data belum ada, buat entri baru di database
         await JenisTinggal.create({
           id_jenis_tinggal: jenis_tinggal.id_jenis_tinggal,
-          nama_jenis_tinggal: jenis_tinggal.nama_jenis_tinggal,
+          nama_jenis_tinggal: jenis_tinggal.nama_jenis_tinggal
         });
       }
     }
@@ -40,7 +46,7 @@ const getJenisTinggal = async (req, res, next) => {
     res.status(200).json({
       message: "Create Jenis Tinggal Success",
       totalData: dataJenisTinggal.length,
-      dataJenisTinggal: dataJenisTinggal,
+      dataJenisTinggal: dataJenisTinggal
     });
   } catch (error) {
     next(error);
@@ -48,5 +54,5 @@ const getJenisTinggal = async (req, res, next) => {
 };
 
 module.exports = {
-  getJenisTinggal,
+  getJenisTinggal
 };

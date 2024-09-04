@@ -4,16 +4,22 @@ const { JenisSMS } = require("../../../models");
 
 const getJenisSms = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetJenisSMS",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataJenisSms = response.data.data;
@@ -23,15 +29,15 @@ const getJenisSms = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingJenisSms = await JenisSMS.findOne({
         where: {
-          id_jenis_sms: jenis_sms.id_jenis_sms,
-        },
+          id_jenis_sms: jenis_sms.id_jenis_sms
+        }
       });
 
       if (!existingJenisSms) {
         // Data belum ada, buat entri baru di database
         await JenisSMS.create({
           id_jenis_sms: jenis_sms.id_jenis_sms,
-          nama_jenis_sms: jenis_sms.nama_jenis_sms,
+          nama_jenis_sms: jenis_sms.nama_jenis_sms
         });
       }
     }
@@ -40,7 +46,7 @@ const getJenisSms = async (req, res, next) => {
     res.status(200).json({
       message: "Create Jenis SMS Success",
       totalData: dataJenisSms.length,
-      dataJenisSms: dataJenisSms,
+      dataJenisSms: dataJenisSms
     });
   } catch (error) {
     next(error);
@@ -48,5 +54,5 @@ const getJenisSms = async (req, res, next) => {
 };
 
 module.exports = {
-  getJenisSms,
+  getJenisSms
 };

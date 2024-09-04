@@ -5,17 +5,23 @@ const { KelasKuliah } = require("../../../models");
 
 const getTranskripMahasiswa = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetTranskripMahasiswa",
       token: `${token}`,
-      order: "id_registrasi_mahasiswa",
+      order: "id_registrasi_mahasiswa"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataTranskripMahasiswa = response.data.data;
@@ -27,8 +33,8 @@ const getTranskripMahasiswa = async (req, res, next) => {
       // Periksa apakah id_kelas_kuliah ada di tabel Kelas Kuliah
       const kelas_kuliah = await KelasKuliah.findOne({
         where: {
-          id_kelas_kuliah: transkrip_mahasiswa.id_kelas_kuliah,
-        },
+          id_kelas_kuliah: transkrip_mahasiswa.id_kelas_kuliah
+        }
       });
 
       // Jika ditemukan, simpan nilainya
@@ -42,7 +48,7 @@ const getTranskripMahasiswa = async (req, res, next) => {
         id_registrasi_mahasiswa: transkrip_mahasiswa.id_registrasi_mahasiswa,
         id_matkul: transkrip_mahasiswa.id_matkul,
         id_kelas_kuliah: id_kelas_kuliah,
-        id_konversi_aktivitas: transkrip_mahasiswa.id_konversi_aktivitas,
+        id_konversi_aktivitas: transkrip_mahasiswa.id_konversi_aktivitas
       });
     }
 
@@ -50,7 +56,7 @@ const getTranskripMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Transkrip Mahasiswa Success",
       totalData: dataTranskripMahasiswa.length,
-      dataTranskripMahasiswa: dataTranskripMahasiswa,
+      dataTranskripMahasiswa: dataTranskripMahasiswa
     });
   } catch (error) {
     next(error);
@@ -58,5 +64,5 @@ const getTranskripMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getTranskripMahasiswa,
+  getTranskripMahasiswa
 };

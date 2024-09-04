@@ -4,16 +4,22 @@ const { DetailKurikulum } = require("../../../models");
 
 const getDetailKurikulum = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetDetailKurikulum",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataDetailKurikulum = response.data.data;
@@ -24,7 +30,7 @@ const getDetailKurikulum = async (req, res, next) => {
         id_detail_kurikulum: detail_kurikulum.id_detail_kurikulum,
         sks_wajib: detail_kurikulum.jumlah_sks_wajib,
         sks_pilihan: detail_kurikulum.jumlah_sks_pilihan,
-        id_kurikulum: detail_kurikulum.id_kurikulum,
+        id_kurikulum: detail_kurikulum.id_kurikulum
       });
     }
 
@@ -32,7 +38,7 @@ const getDetailKurikulum = async (req, res, next) => {
     res.status(200).json({
       message: "Create Detail Kurikulum Success",
       totalData: dataDetailKurikulum.length,
-      dataDetailKurikulum: dataDetailKurikulum,
+      dataDetailKurikulum: dataDetailKurikulum
     });
   } catch (error) {
     next(error);
@@ -40,5 +46,5 @@ const getDetailKurikulum = async (req, res, next) => {
 };
 
 module.exports = {
-  getDetailKurikulum,
+  getDetailKurikulum
 };

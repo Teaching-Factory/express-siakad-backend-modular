@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   SettingGlobalSemester.init(
     {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+      },
       batas_sks_krs: {
         type: DataTypes.INTEGER(4),
         allowNull: false

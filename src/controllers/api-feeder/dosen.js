@@ -4,16 +4,22 @@ const { Dosen } = require("../../../models");
 
 const getDosen = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListDosen",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataDosen = response.data.data;
@@ -23,8 +29,8 @@ const getDosen = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingDosen = await Dosen.findOne({
         where: {
-          id_dosen: data_dosen.id_dosen,
-        },
+          id_dosen: data_dosen.id_dosen
+        }
       });
 
       if (!existingDosen) {
@@ -40,7 +46,7 @@ const getDosen = async (req, res, next) => {
           jenis_kelamin: data_dosen.jenis_kelamin,
           tanggal_lahir: tanggal_lahir,
           id_agama: data_dosen.id_agama,
-          id_status_aktif: data_dosen.id_status_aktif,
+          id_status_aktif: data_dosen.id_status_aktif
         });
       }
     }
@@ -49,7 +55,7 @@ const getDosen = async (req, res, next) => {
     res.status(200).json({
       message: "Create Dosen Success",
       totalData: dataDosen.length,
-      dataDosen: dataDosen,
+      dataDosen: dataDosen
     });
   } catch (error) {
     next(error);
@@ -57,5 +63,5 @@ const getDosen = async (req, res, next) => {
 };
 
 module.exports = {
-  getDosen,
+  getDosen
 };

@@ -4,16 +4,22 @@ const { AlatTransportasi } = require("../../../models");
 
 const getAlatTransportasi = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetAlatTransportasi",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataAlatTransportasi = response.data.data;
@@ -23,15 +29,15 @@ const getAlatTransportasi = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingAlatTransportasi = await AlatTransportasi.findOne({
         where: {
-          id_alat_transportasi: alat_transportasi.id_alat_transportasi,
-        },
+          id_alat_transportasi: alat_transportasi.id_alat_transportasi
+        }
       });
 
       if (!existingAlatTransportasi) {
         // Data belum ada, buat entri baru di database
         await AlatTransportasi.create({
           id_alat_transportasi: alat_transportasi.id_alat_transportasi,
-          nama_alat_transportasi: alat_transportasi.nama_alat_transportasi,
+          nama_alat_transportasi: alat_transportasi.nama_alat_transportasi
         });
       }
     }
@@ -40,7 +46,7 @@ const getAlatTransportasi = async (req, res, next) => {
     res.status(200).json({
       message: "Create Alat Transportasi Success",
       totalData: dataAlatTransportasi.length,
-      dataAlatTransportasi: dataAlatTransportasi,
+      dataAlatTransportasi: dataAlatTransportasi
     });
   } catch (error) {
     next(error);
@@ -48,5 +54,5 @@ const getAlatTransportasi = async (req, res, next) => {
 };
 
 module.exports = {
-  getAlatTransportasi,
+  getAlatTransportasi
 };

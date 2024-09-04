@@ -4,16 +4,22 @@ const { PenugasanDosen } = require("../../../models");
 
 const getPenugasanDosen = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListPenugasanDosen",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataPenugasanDosen = response.data.data;
@@ -23,8 +29,8 @@ const getPenugasanDosen = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingPenugasanDosen = await PenugasanDosen.findOne({
         where: {
-          id_registrasi_dosen: penugasan_dosen.id_registrasi_dosen,
-        },
+          id_registrasi_dosen: penugasan_dosen.id_registrasi_dosen
+        }
       });
 
       let tanggal_surat_tugas, mulai_surat_tugas;
@@ -53,7 +59,7 @@ const getPenugasanDosen = async (req, res, next) => {
           id_dosen: penugasan_dosen.id_dosen,
           id_tahun_ajaran: penugasan_dosen.id_tahun_ajaran,
           id_perguruan_tinggi: penugasan_dosen.id_perguruan_tinggi,
-          id_prodi: penugasan_dosen.id_prodi,
+          id_prodi: penugasan_dosen.id_prodi
         });
       }
     }
@@ -62,7 +68,7 @@ const getPenugasanDosen = async (req, res, next) => {
     res.status(200).json({
       message: "Create Penugasan Dosen Success",
       totalData: dataPenugasanDosen.length,
-      dataPenugasanDosen: dataPenugasanDosen,
+      dataPenugasanDosen: dataPenugasanDosen
     });
   } catch (error) {
     next(error);
@@ -70,5 +76,5 @@ const getPenugasanDosen = async (req, res, next) => {
 };
 
 module.exports = {
-  getPenugasanDosen,
+  getPenugasanDosen
 };

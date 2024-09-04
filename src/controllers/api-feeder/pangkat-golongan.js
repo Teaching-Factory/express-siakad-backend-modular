@@ -4,16 +4,22 @@ const { PangkatGolongan } = require("../../../models");
 
 const getPangkatGolongan = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetPangkatGolongan",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataPangkatGolongan = response.data.data;
@@ -23,8 +29,8 @@ const getPangkatGolongan = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingPangkatGolongan = await PangkatGolongan.findOne({
         where: {
-          id_pangkat_golongan: pangkat_golongan.id_pangkat_golongan,
-        },
+          id_pangkat_golongan: pangkat_golongan.id_pangkat_golongan
+        }
       });
 
       if (!existingPangkatGolongan) {
@@ -32,7 +38,7 @@ const getPangkatGolongan = async (req, res, next) => {
         await PangkatGolongan.create({
           id_pangkat_golongan: pangkat_golongan.id_pangkat_golongan,
           kode_golongan: pangkat_golongan.kode_golongan,
-          nama_pangkat: pangkat_golongan.nama_pangkat,
+          nama_pangkat: pangkat_golongan.nama_pangkat
         });
       }
     }
@@ -41,7 +47,7 @@ const getPangkatGolongan = async (req, res, next) => {
     res.status(200).json({
       message: "Create Pangkat Golongan Success",
       totalData: dataPangkatGolongan.length,
-      dataPangkatGolongan: dataPangkatGolongan,
+      dataPangkatGolongan: dataPangkatGolongan
     });
   } catch (error) {
     next(error);
@@ -49,5 +55,5 @@ const getPangkatGolongan = async (req, res, next) => {
 };
 
 module.exports = {
-  getPangkatGolongan,
+  getPangkatGolongan
 };

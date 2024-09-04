@@ -4,16 +4,22 @@ const { DetailKelasKuliah } = require("../../../models");
 
 const getDetailKelasKuliah = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetDetailKelasKuliah",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataDetailKelasKuliah = response.data.data;
@@ -42,7 +48,7 @@ const getDetailKelasKuliah = async (req, res, next) => {
         tanggal_tutup_daftar: detail_kelas_kuliah.tanggal_tutup_daftar,
         prodi_penyelenggara: detail_kelas_kuliah.prodi_penyelenggara,
         perguruan_tinggi_penyelenggara: detail_kelas_kuliah.perguruan_tinggi_penyelenggara,
-        id_kelas_kuliah: detail_kelas_kuliah.id_kelas_kuliah,
+        id_kelas_kuliah: detail_kelas_kuliah.id_kelas_kuliah
       });
     }
 
@@ -50,7 +56,7 @@ const getDetailKelasKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Detail Kelas Kuliah Success",
       totalData: dataDetailKelasKuliah.length,
-      dataDetailKelasKuliah: dataDetailKelasKuliah,
+      dataDetailKelasKuliah: dataDetailKelasKuliah
     });
   } catch (error) {
     next(error);
@@ -58,5 +64,5 @@ const getDetailKelasKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getDetailKelasKuliah,
+  getDetailKelasKuliah
 };

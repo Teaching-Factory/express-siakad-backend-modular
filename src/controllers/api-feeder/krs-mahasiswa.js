@@ -4,18 +4,24 @@ const { KRSMahasiswa } = require("../../../models");
 
 const getKRSMahasiswa = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetKRSMahasiswa",
       token: `${token}`,
       filter: `angkatan = '2023'`,
-      order: "id_registrasi_mahasiswa",
+      order: "id_registrasi_mahasiswa"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataKRSMahasiswa = response.data.data;
@@ -28,7 +34,7 @@ const getKRSMahasiswa = async (req, res, next) => {
         id_semester: krs_mahasiswa.id_periode,
         id_prodi: krs_mahasiswa.id_prodi,
         id_matkul: krs_mahasiswa.id_matkul,
-        id_kelas: krs_mahasiswa.id_kelas,
+        id_kelas: krs_mahasiswa.id_kelas
       });
     }
 
@@ -36,7 +42,7 @@ const getKRSMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create KRS Mahasiswa Success",
       totalData: dataKRSMahasiswa.length,
-      dataKRSMahasiswa: dataKRSMahasiswa,
+      dataKRSMahasiswa: dataKRSMahasiswa
     });
   } catch (error) {
     next(error);
@@ -44,5 +50,5 @@ const getKRSMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getKRSMahasiswa,
+  getKRSMahasiswa
 };

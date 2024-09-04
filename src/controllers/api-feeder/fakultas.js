@@ -4,16 +4,22 @@ const { Fakultas } = require("../../../models");
 
 const getFakultas = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetFakultas",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataFakultas = response.data.data;
@@ -23,8 +29,8 @@ const getFakultas = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingFakultas = await Fakultas.findOne({
         where: {
-          id_fakultas: data_fakultas.id_fakultas,
-        },
+          id_fakultas: data_fakultas.id_fakultas
+        }
       });
 
       if (!existingFakultas) {
@@ -33,7 +39,7 @@ const getFakultas = async (req, res, next) => {
           id_fakultas: data_fakultas.id_fakultas,
           nama_fakultas: data_fakultas.nama_fakultas,
           status: data_fakultas.status,
-          id_jenjang_pendidikan: data_fakultas.id_jenjang_pendidikan,
+          id_jenjang_pendidikan: data_fakultas.id_jenjang_pendidikan
         });
       }
     }
@@ -42,7 +48,7 @@ const getFakultas = async (req, res, next) => {
     res.status(200).json({
       message: "Create Fakultas Success",
       totalData: dataFakultas.length,
-      dataFakultas: dataFakultas,
+      dataFakultas: dataFakultas
     });
   } catch (error) {
     next(error);
@@ -50,5 +56,5 @@ const getFakultas = async (req, res, next) => {
 };
 
 module.exports = {
-  getFakultas,
+  getFakultas
 };

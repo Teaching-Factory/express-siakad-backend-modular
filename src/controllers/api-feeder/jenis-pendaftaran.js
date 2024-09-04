@@ -4,16 +4,22 @@ const { JenisPendaftaran } = require("../../../models");
 
 const getJenisPendaftaran = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetJenisPendaftaran",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataJenisPendaftaran = response.data.data;
@@ -23,8 +29,8 @@ const getJenisPendaftaran = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingJenisPendaftaran = await JenisPendaftaran.findOne({
         where: {
-          id_jenis_daftar: jenis_pendaftaran.id_jenis_daftar,
-        },
+          id_jenis_daftar: jenis_pendaftaran.id_jenis_daftar
+        }
       });
 
       if (!existingJenisPendaftaran) {
@@ -32,7 +38,7 @@ const getJenisPendaftaran = async (req, res, next) => {
         await JenisPendaftaran.create({
           id_jenis_daftar: jenis_pendaftaran.id_jenis_daftar,
           nama_jenis_daftar: jenis_pendaftaran.nama_jenis_daftar,
-          untuk_daftar_sekolah: jenis_pendaftaran.untuk_daftar_sekolah,
+          untuk_daftar_sekolah: jenis_pendaftaran.untuk_daftar_sekolah
         });
       }
     }
@@ -41,7 +47,7 @@ const getJenisPendaftaran = async (req, res, next) => {
     res.status(200).json({
       message: "Create Jenis Pendaftaran Success",
       totalData: dataJenisPendaftaran.length,
-      dataJenisPendaftaran: dataJenisPendaftaran,
+      dataJenisPendaftaran: dataJenisPendaftaran
     });
   } catch (error) {
     next(error);
@@ -49,5 +55,5 @@ const getJenisPendaftaran = async (req, res, next) => {
 };
 
 module.exports = {
-  getJenisPendaftaran,
+  getJenisPendaftaran
 };

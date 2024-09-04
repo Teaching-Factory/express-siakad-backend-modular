@@ -4,16 +4,22 @@ const { Prodi } = require("../../../models");
 
 const getProdi = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetProdi",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataProdi = response.data.data;
@@ -23,8 +29,8 @@ const getProdi = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingProdi = await Prodi.findOne({
         where: {
-          id_prodi: data_prodi.id_prodi,
-        },
+          id_prodi: data_prodi.id_prodi
+        }
       });
 
       if (!existingProdi) {
@@ -34,7 +40,7 @@ const getProdi = async (req, res, next) => {
           kode_program_studi: data_prodi.kode_program_studi,
           nama_program_studi: data_prodi.nama_program_studi,
           status: data_prodi.status,
-          id_jenjang_pendidikan: data_prodi.id_jenjang_pendidikan,
+          id_jenjang_pendidikan: data_prodi.id_jenjang_pendidikan
         });
       }
     }
@@ -43,7 +49,7 @@ const getProdi = async (req, res, next) => {
     res.status(200).json({
       message: "Create Prodi Success",
       totalData: dataProdi.length,
-      dataProdi: dataProdi,
+      dataProdi: dataProdi
     });
   } catch (error) {
     next(error);
@@ -51,5 +57,5 @@ const getProdi = async (req, res, next) => {
 };
 
 module.exports = {
-  getProdi,
+  getProdi
 };

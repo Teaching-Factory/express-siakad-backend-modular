@@ -4,17 +4,23 @@ const { ProfilPT } = require("../../../models");
 
 const getProfilPT = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetProfilPT",
       token: `${token}`,
-      filter: "id_perguruan_tinggi='0f893db4-cb60-488d-9629-405c729096ae'",
+      filter: "id_perguruan_tinggi='0f893db4-cb60-488d-9629-405c729096ae'"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataProfilPT = response.data.data;
@@ -46,7 +52,7 @@ const getProfilPT = async (req, res, next) => {
         sk_izin_operasional: profil_perguruan_tinggi.sk_izin_operasional,
         tanggal_izin_operasional: profil_perguruan_tinggi.tanggal_izin_operasional,
         id_perguruan_tinggi: profil_perguruan_tinggi.id_perguruan_tinggi,
-        id_wilayah: profil_perguruan_tinggi.id_wilayah,
+        id_wilayah: profil_perguruan_tinggi.id_wilayah
       });
     }
 
@@ -54,7 +60,7 @@ const getProfilPT = async (req, res, next) => {
     res.status(200).json({
       message: "Create Profil PT Success",
       totalData: dataProfilPT.length,
-      dataProfilPT: dataProfilPT,
+      dataProfilPT: dataProfilPT
     });
   } catch (error) {
     next(error);
@@ -62,5 +68,5 @@ const getProfilPT = async (req, res, next) => {
 };
 
 module.exports = {
-  getProfilPT,
+  getProfilPT
 };

@@ -4,17 +4,23 @@ const { AktivitasMahasiswa } = require("../../../models");
 
 const getAktivitasMahasiswa = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListAktivitasMahasiswa",
       token: `${token}`,
-      order: "id_aktivitas",
+      order: "id_aktivitas"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataAktivitasMahasiswa = response.data.data;
@@ -24,8 +30,8 @@ const getAktivitasMahasiswa = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingAktivitasMahasiswa = await AktivitasMahasiswa.findOne({
         where: {
-          id_aktivitas: aktivitas_mahasiswa.id_aktivitas,
-        },
+          id_aktivitas: aktivitas_mahasiswa.id_aktivitas
+        }
       });
 
       if (!existingAktivitasMahasiswa) {
@@ -49,7 +55,7 @@ const getAktivitasMahasiswa = async (req, res, next) => {
           untuk_kampus_merdeka: aktivitas_mahasiswa.untuk_kampus_merdeka,
           id_jenis_aktivitas: aktivitas_mahasiswa.id_jenis_aktivitas,
           id_prodi: aktivitas_mahasiswa.id_prodi,
-          id_semester: aktivitas_mahasiswa.id_semester,
+          id_semester: aktivitas_mahasiswa.id_semester
         });
       }
     }
@@ -58,7 +64,7 @@ const getAktivitasMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Aktivitas Mahasiswa Success",
       totalData: dataAktivitasMahasiswa.length,
-      dataAktivitasMahasiswa: dataAktivitasMahasiswa,
+      dataAktivitasMahasiswa: dataAktivitasMahasiswa
     });
   } catch (error) {
     next(error);
@@ -66,5 +72,5 @@ const getAktivitasMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getAktivitasMahasiswa,
+  getAktivitasMahasiswa
 };

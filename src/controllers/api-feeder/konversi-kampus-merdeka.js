@@ -4,17 +4,23 @@ const { KonversiKampusMerdeka } = require("../../../models");
 
 const getKonversiKampusMerdeka = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListKonversiKampusMerdeka",
       token: `${token}`,
-      order: "id_konversi_aktivitas",
+      order: "id_konversi_aktivitas"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataKonversiKampusMerdeka = response.data.data;
@@ -24,8 +30,8 @@ const getKonversiKampusMerdeka = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingKonversiKampusMerdeka = await KonversiKampusMerdeka.findOne({
         where: {
-          id_konversi_aktivitas: konversi_kampus_merdeka.id_konversi_aktivitas,
-        },
+          id_konversi_aktivitas: konversi_kampus_merdeka.id_konversi_aktivitas
+        }
       });
 
       if (!existingKonversiKampusMerdeka) {
@@ -36,7 +42,7 @@ const getKonversiKampusMerdeka = async (req, res, next) => {
           nilai_indeks: konversi_kampus_merdeka.nilai_indeks,
           nilai_huruf: konversi_kampus_merdeka.nilai_huruf,
           id_matkul: konversi_kampus_merdeka.id_matkul,
-          id_anggota: konversi_kampus_merdeka.id_anggota,
+          id_anggota: konversi_kampus_merdeka.id_anggota
         });
       }
     }
@@ -44,7 +50,7 @@ const getKonversiKampusMerdeka = async (req, res, next) => {
     res.status(200).json({
       message: "Create Konversi Kampus Merdeka Success",
       totalData: dataKonversiKampusMerdeka.length,
-      dataKonversiKampusMerdeka: dataKonversiKampusMerdeka,
+      dataKonversiKampusMerdeka: dataKonversiKampusMerdeka
     });
   } catch (error) {
     next(error);
@@ -52,5 +58,5 @@ const getKonversiKampusMerdeka = async (req, res, next) => {
 };
 
 module.exports = {
-  getKonversiKampusMerdeka,
+  getKonversiKampusMerdeka
 };

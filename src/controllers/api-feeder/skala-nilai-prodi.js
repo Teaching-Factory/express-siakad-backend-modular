@@ -4,16 +4,22 @@ const { SkalaNilaiProdi } = require("../../../models");
 
 const getSkalaNilaiProdi = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListSkalaNilaiProdi",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataSkalaNilaiProdi = response.data.data;
@@ -23,8 +29,8 @@ const getSkalaNilaiProdi = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingSkalaNilaiProdi = await SkalaNilaiProdi.findOne({
         where: {
-          id_bobot_nilai: skala_nilai_prodi.id_bobot_nilai,
-        },
+          id_bobot_nilai: skala_nilai_prodi.id_bobot_nilai
+        }
       });
 
       let tanggal_mulai, tanggal_akhir; // Deklarasikan variabel di luar blok if
@@ -51,7 +57,7 @@ const getSkalaNilaiProdi = async (req, res, next) => {
           bobot_maksimum: skala_nilai_prodi.bobot_maksimum,
           tanggal_mulai_efektif: tanggal_mulai,
           tanggal_akhir_efektif: tanggal_akhir,
-          id_prodi: skala_nilai_prodi.id_prodi,
+          id_prodi: skala_nilai_prodi.id_prodi
         });
       }
     }
@@ -60,7 +66,7 @@ const getSkalaNilaiProdi = async (req, res, next) => {
     res.status(200).json({
       message: "Create Skala Nilai Prodi Success",
       totalData: dataSkalaNilaiProdi.length,
-      dataSkalaNilaiProdi: dataSkalaNilaiProdi,
+      dataSkalaNilaiProdi: dataSkalaNilaiProdi
     });
   } catch (error) {
     next(error);
@@ -68,5 +74,5 @@ const getSkalaNilaiProdi = async (req, res, next) => {
 };
 
 module.exports = {
-  getSkalaNilaiProdi,
+  getSkalaNilaiProdi
 };

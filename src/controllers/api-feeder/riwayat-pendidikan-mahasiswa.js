@@ -5,17 +5,23 @@ const { Prodi } = require("../../../models");
 
 const getRiwayatPendidikanMahasiswa = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListRiwayatPendidikanMahasiswa",
       token: `${token}`,
-      order: "id_registrasi_mahasiswa",
+      order: "id_registrasi_mahasiswa"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataRiwayatPendidikanMahasiswa = response.data.data;
@@ -27,8 +33,8 @@ const getRiwayatPendidikanMahasiswa = async (req, res, next) => {
 
       const prodi = await Prodi.findOne({
         where: {
-          id_prodi: riwayat_pendidikan_mahasiswa.id_prodi_asal,
-        },
+          id_prodi: riwayat_pendidikan_mahasiswa.id_prodi_asal
+        }
       });
 
       // Jika ditemukan, simpan nilainya
@@ -57,7 +63,7 @@ const getRiwayatPendidikanMahasiswa = async (req, res, next) => {
         id_pembiayaan: riwayat_pendidikan_mahasiswa.id_pembiayaan,
         id_bidang_minat: riwayat_pendidikan_mahasiswa.id_bidang_minat,
         id_perguruan_tinggi_asal: riwayat_pendidikan_mahasiswa.id_perguruan_tinggi_asal,
-        id_prodi_asal: id_prodi_asal,
+        id_prodi_asal: id_prodi_asal
       });
     }
 
@@ -65,7 +71,7 @@ const getRiwayatPendidikanMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Riwayat Pendidikan Mahasiswa Success",
       totalData: dataRiwayatPendidikanMahasiswa.length,
-      dataRiwayatPendidikanMahasiswa: dataRiwayatPendidikanMahasiswa,
+      dataRiwayatPendidikanMahasiswa: dataRiwayatPendidikanMahasiswa
     });
   } catch (error) {
     next(error);
@@ -73,5 +79,5 @@ const getRiwayatPendidikanMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getRiwayatPendidikanMahasiswa,
+  getRiwayatPendidikanMahasiswa
 };

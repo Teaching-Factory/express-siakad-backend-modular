@@ -4,18 +4,24 @@ const { Mahasiswa } = require("../../../models");
 
 const getMahasiswa = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetListMahasiswa",
       token: `${token}`,
       order: "id_registrasi_mahasiswa",
-      filter: "id_registrasi_mahasiswa is not null",
+      filter: "id_registrasi_mahasiswa is not null"
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataMahasiswa = response.data.data;
@@ -25,8 +31,8 @@ const getMahasiswa = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingMahasiswa = await Mahasiswa.findOne({
         where: {
-          id_registrasi_mahasiswa: data_mahasiswa.id_registrasi_mahasiswa,
-        },
+          id_registrasi_mahasiswa: data_mahasiswa.id_registrasi_mahasiswa
+        }
       });
 
       if (!existingMahasiswa) {
@@ -50,7 +56,7 @@ const getMahasiswa = async (req, res, next) => {
           id_perguruan_tinggi: data_mahasiswa.id_perguruan_tinggi,
           id_agama: data_mahasiswa.id_agama,
           id_semester: data_mahasiswa.id_periode,
-          id_prodi: data_mahasiswa.id_prodi,
+          id_prodi: data_mahasiswa.id_prodi
         });
       }
     }
@@ -59,7 +65,7 @@ const getMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Mahasiswa Success",
       totalData: dataMahasiswa.length,
-      dataMahasiswa: dataMahasiswa,
+      dataMahasiswa: dataMahasiswa
     });
   } catch (error) {
     next(error);
@@ -67,5 +73,5 @@ const getMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getMahasiswa,
+  getMahasiswa
 };

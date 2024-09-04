@@ -4,16 +4,22 @@ const { MatkulKurikulum } = require("../../../models");
 
 const getMatkulKurikulum = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "GetMatkulKurikulum",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataMatkulKurikulum = response.data.data;
@@ -26,7 +32,7 @@ const getMatkulKurikulum = async (req, res, next) => {
         apakah_wajib: matkul_kurikulum.apakah_wajib,
         tgl_create: matkul_kurikulum.tgl_create,
         id_kurikulum: matkul_kurikulum.id_kurikulum,
-        id_matkul: matkul_kurikulum.id_matkul,
+        id_matkul: matkul_kurikulum.id_matkul
       });
     }
 
@@ -34,7 +40,7 @@ const getMatkulKurikulum = async (req, res, next) => {
     res.status(200).json({
       message: "Create Matkul Kurikulum Success",
       totalData: dataMatkulKurikulum.length,
-      dataMatkulKurikulum: dataMatkulKurikulum,
+      dataMatkulKurikulum: dataMatkulKurikulum
     });
   } catch (error) {
     next(error);
@@ -42,5 +48,5 @@ const getMatkulKurikulum = async (req, res, next) => {
 };
 
 module.exports = {
-  getMatkulKurikulum,
+  getMatkulKurikulum
 };

@@ -4,16 +4,22 @@ const { BiodataDosen } = require("../../../models");
 
 const getBiodataDosen = async (req, res, next) => {
   try {
-    // Mendapatkan token
-    const token = await getToken();
+    // Mendapatkan token dan url_feeder
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      return res.status(500).json({
+        message: "Failed to obtain token or URL feeder"
+      });
+    }
 
     const requestBody = {
       act: "DetailBiodataDosen",
-      token: `${token}`,
+      token: `${token}`
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataBiodataDosen = response.data.data;
@@ -50,7 +56,7 @@ const getBiodataDosen = async (req, res, next) => {
         id_lembaga_pengangkatan: biodata_dosen.id_lembaga_pengangkatan,
         id_pangkat_golongan: biodata_dosen.id_pangkat_golongan,
         id_wilayah: biodata_dosen.id_wilayah,
-        id_pekerjaan_suami_istri: biodata_dosen.id_pekerjaan_suami_istri,
+        id_pekerjaan_suami_istri: biodata_dosen.id_pekerjaan_suami_istri
       });
     }
 
@@ -58,7 +64,7 @@ const getBiodataDosen = async (req, res, next) => {
     res.status(200).json({
       message: "Create Biodata Dosen Success",
       totalData: dataBiodataDosen.length,
-      dataBiodataDosen: dataBiodataDosen,
+      dataBiodataDosen: dataBiodataDosen
     });
   } catch (error) {
     next(error);
@@ -66,5 +72,5 @@ const getBiodataDosen = async (req, res, next) => {
 };
 
 module.exports = {
-  getBiodataDosen,
+  getBiodataDosen
 };
