@@ -13,5 +13,4 @@ router.post("/create-setting-global", checkRole(["admin"]), SettingGlobalControl
 router.put("/update-all-setting", checkRole(["admin"]), SettingGlobalController.updateSettingGlobal);
 router.delete("/:id/delete", checkRole(["admin"]), SettingGlobalController.deleteSettingGlobalById);
 
-
 module.exports = router;

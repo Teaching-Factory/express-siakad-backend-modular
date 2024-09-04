@@ -107,6 +107,7 @@ const rekapTranskripNilaiRoutes = require("./routes/rekap-transkrip-nilai");
 const rekapMahasiswaBelumKRSRoutes = require("./routes/rekap-mahasiswa-belum-krs");
 const rekapJadwalKuliahRoutes = require("./routes/rekap-jadwal-kuliah");
 const rekapPresensiKelasRoutes = require("./routes/rekap-presensi-kelas");
+const settingGlobalSemesterRoutes = require("./routes/setting-global-semester");
 
 // route api local not done yet
 const settingWSRoutes = require("./routes/setting-ws");
@@ -141,7 +142,7 @@ schedule.scheduleJob(rule, function () {
 const corsOptions = {
   origin: ["http://localhost:5173", "http://127.0.0.1:5173"], // Sesuaikan dengan domain frontend Anda
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // Mengaktifkan cookies dan kredensial lainnya
+  credentials: true // Mengaktifkan cookies dan kredensial lainnya
 };
 
 app.use(cors(corsOptions));
@@ -260,6 +261,7 @@ app.use("/rekap-transkrip-nilai", checkToken, rekapTranskripNilaiRoutes);
 app.use("/rekap-mahasiswa-belum-krs", checkToken, rekapMahasiswaBelumKRSRoutes);
 app.use("/rekap-jadwal-kuliah", checkToken, rekapJadwalKuliahRoutes);
 app.use("/rekap-presensi-kelas", checkToken, rekapPresensiKelasRoutes);
+app.use("/setting-global-semester", checkToken, settingGlobalSemesterRoutes);
 
 // route api local not done yet
 app.use("/setting/ws", settingWSRoutes);

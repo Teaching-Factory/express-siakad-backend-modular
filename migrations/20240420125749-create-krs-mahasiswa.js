@@ -31,7 +31,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       id_semester: {
-        type: Sequelize.char(5),
+        type: Sequelize.CHAR(5),
         allowNull: true,
         references: {
           model: {
