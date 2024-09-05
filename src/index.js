@@ -109,6 +109,8 @@ const rekapJadwalKuliahRoutes = require("./routes/rekap-jadwal-kuliah");
 const rekapPresensiKelasRoutes = require("./routes/rekap-presensi-kelas");
 const settingGlobalSemesterRoutes = require("./routes/setting-global-semester");
 const settingWSFeederRoutes = require("./routes/setting-ws-feeder");
+const jenisTesRoutes = require("./routes/jenis-tes");
+const jenisBerkasRoutes = require("./routes/jenis-berkas");
 
 // route api local not done yet
 // -
@@ -264,6 +266,8 @@ app.use("/rekap-jadwal-kuliah", checkToken, rekapJadwalKuliahRoutes);
 app.use("/rekap-presensi-kelas", checkToken, rekapPresensiKelasRoutes);
 app.use("/setting-global-semester", checkToken, settingGlobalSemesterRoutes);
 app.use("/setting-ws-feeder", checkToken, settingWSFeederRoutes);
+app.use("/jenis-tes", checkToken, jenisTesRoutes);
+app.use("/jenis-berkas", checkToken, jenisBerkasRoutes);
 
 // route api local not done yet
 // -
