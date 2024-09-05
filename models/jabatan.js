@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel child
       Jabatan.hasMany(models.UnitJabatan, { foreignKey: "id_jabatan" });
+      Jabatan.hasMany(models.LaporanPMB, { foreignKey: "id_jabatan" });
     }
   }
   Jabatan.init(
@@ -18,25 +19,25 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER(10),
+        type: DataTypes.INTEGER(10)
       },
       nama_jabatan: {
         type: DataTypes.STRING(100),
         allowNull: false,
         validate: {
-          len: { args: [1, 100], msg: "nama_jabatan must be between 1 and 100 characters" },
+          len: { args: [1, 100], msg: "nama_jabatan must be between 1 and 100 characters" }
         },
         isString(value) {
           if (typeof value !== "string") {
             throw new Error("nama_jabatan must be a string");
           }
-        },
-      },
+        }
+      }
     },
     {
       sequelize,
       modelName: "Jabatan",
-      tableName: "jabatans",
+      tableName: "jabatans"
     }
   );
   return Jabatan;

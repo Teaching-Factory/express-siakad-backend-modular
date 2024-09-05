@@ -111,6 +111,8 @@ const settingGlobalSemesterRoutes = require("./routes/setting-global-semester");
 const settingWSFeederRoutes = require("./routes/setting-ws-feeder");
 const jenisTesRoutes = require("./routes/jenis-tes");
 const jenisBerkasRoutes = require("./routes/jenis-berkas");
+const laporanPMBRoutes = require("./routes/laporan-pmb");
+const contactPersonPMBRoutes = require("./routes/contact-person-pmb");
 
 // route api local not done yet
 // -
@@ -268,6 +270,8 @@ app.use("/setting-global-semester", checkToken, settingGlobalSemesterRoutes);
 app.use("/setting-ws-feeder", checkToken, settingWSFeederRoutes);
 app.use("/jenis-tes", checkToken, jenisTesRoutes);
 app.use("/jenis-berkas", checkToken, jenisBerkasRoutes);
+app.use("/laporan-pmb", checkToken, laporanPMBRoutes);
+app.use("/contact-person-pmb", checkToken, contactPersonPMBRoutes);
 
 // route api local not done yet
 // -

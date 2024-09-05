@@ -3,40 +3,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert("roles", [
+    return queryInterface.bulkInsert("jabatans", [
       {
         id: 1,
-        nama_role: "admin",
+        nama_jabatan: "Rektor",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: 2,
-        nama_role: "dosen",
+        nama_jabatan: "Dekan",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: 3,
-        nama_role: "mahasiswa",
+        nama_jabatan: "Kepala Program Studi",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: 4,
-        nama_role: "admin-prodi",
+        nama_jabatan: "Sekertaris Program Studi",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: 5,
-        nama_role: "admin-keuangan",
+        nama_jabatan: "Direktur",
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: 6,
-        nama_role: "admin-pmb",
+        nama_jabatan: "Dekan Fakultas Ekonomi",
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -44,6 +44,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.bulkDelete("roles", null, {});
+    return queryInterface.bulkDelete("jabatans", null, {});
   }
 };
