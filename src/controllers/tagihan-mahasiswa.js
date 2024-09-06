@@ -1,4 +1,4 @@
-const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan, StatusMahasiswa, SemesterAktif } = require("../../models");
+const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan, StatusMahasiswa, SettingGlobalSemester } = require("../../models");
 
 const getAllTagihanMahasiswa = async (req, res, next) => {
   try {
@@ -9,7 +9,7 @@ const getAllTagihanMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Tagihan Mahasiswa Success",
       jumlahData: tagihan_mahasiswa.length,
-      data: tagihan_mahasiswa,
+      data: tagihan_mahasiswa
     });
   } catch (error) {
     next(error);
@@ -23,26 +23,26 @@ const getTagihanMahasiswaById = async (req, res, next) => {
 
     if (!tagihanMahasiswaId) {
       return res.status(400).json({
-        message: "Tagihan Mahasiswa ID is required",
+        message: "Tagihan Mahasiswa ID is required"
       });
     }
 
     // Cari data tagihan_mahasiswa berdasarkan ID di database
     const tagihan_mahasiswa = await TagihanMahasiswa.findByPk(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }]
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!tagihan_mahasiswa) {
       return res.status(404).json({
-        message: `<===== Tagihan Mahasiswa With ID ${tagihanMahasiswaId} Not Found:`,
+        message: `<===== Tagihan Mahasiswa With ID ${tagihanMahasiswaId} Not Found:`
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Tagihan Mahasiswa By ID ${tagihanMahasiswaId} Success:`,
-      data: tagihan_mahasiswa,
+      data: tagihan_mahasiswa
     });
   } catch (error) {
     next(error);
@@ -81,7 +81,7 @@ const createTagihanMahasiswa = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(201).json({
       message: "<===== CREATE Tagihan Mahasiswa Success",
-      data: newTagihanMahasiswa,
+      data: newTagihanMahasiswa
     });
   } catch (error) {
     next(error);
@@ -117,7 +117,7 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
 
     if (!tagihanMahasiswaId) {
       return res.status(400).json({
-        message: "Tagihan Mahasiswa ID is required",
+        message: "Tagihan Mahasiswa ID is required"
       });
     }
 
@@ -142,24 +142,25 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
     if (tagihan_mahasiswa.status_tagihan === "Lunas") {
       // get data status mahasiswa A
       const status_mahasiswa_a = await StatusMahasiswa.findOne({
-        id_status_mahasiswa: "A",
+        id_status_mahasiswa: "A"
       });
 
       if (!status_mahasiswa_a) {
         return res.status(404).json({ message: "Status Mahasiswa A tidak ditemukan" });
       }
 
-      // get data semester aktif sekarang
-      const semester_aktif = await SemesterAktif.findOne({
+      // get data setting global semester
+      const setting_global_semester = await SettingGlobalSemester.findOne({
         where: {
-          status: true,
-        },
+          status: true
+        }
       });
 
-      if (!semester_aktif) {
-        return res.status(404).json({ message: "Semester Aktif tidak ditemukan" });
+      if (!setting_global_semester) {
+        return res.status(404).json({
+          message: "Setting Global Semester Aktif not found"
+        });
       }
-
       const mahasiswa = await Mahasiswa.findByPk(tagihan_mahasiswa.id_registrasi_mahasiswa);
 
       if (!mahasiswa) {
@@ -168,13 +169,13 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
 
       // update dan simpan status mahasiswa menjadi 'Aktif' dan ambil semester aktif baru
       mahasiswa.nama_status_mahasiswa = status_mahasiswa_a.nama_status_mahasiswa;
-      mahasiswa.id_semester = semester_aktif.id_semester;
+      mahasiswa.id_semester = setting_global_semester.id_semester_krs;
       await mahasiswa.save();
     }
 
     res.json({
       message: "UPDATE Tagihan Mahasiswa Success",
-      dataTagihanMahasiswa: tagihan_mahasiswa,
+      dataTagihanMahasiswa: tagihan_mahasiswa
     });
   } catch (error) {
     next(error);
@@ -188,7 +189,7 @@ const deleteTagihanMahasiswaById = async (req, res, next) => {
 
     if (!tagihanMahasiswaId) {
       return res.status(400).json({
-        message: "Tagihan Mahasiswa ID is required",
+        message: "Tagihan Mahasiswa ID is required"
       });
     }
 
@@ -198,7 +199,7 @@ const deleteTagihanMahasiswaById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!tagihan_mahasiswa) {
       return res.status(404).json({
-        message: `<===== Tagihan Mahasiswa With ID ${tagihanMahasiswaId} Not Found:`,
+        message: `<===== Tagihan Mahasiswa With ID ${tagihanMahasiswaId} Not Found:`
       });
     }
 
@@ -207,7 +208,7 @@ const deleteTagihanMahasiswaById = async (req, res, next) => {
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: `<===== DELETE Tagihan Mahasiswa With ID ${tagihanMahasiswaId} Success:`,
+      message: `<===== DELETE Tagihan Mahasiswa With ID ${tagihanMahasiswaId} Success:`
     });
   } catch (error) {
     next(error);
@@ -221,22 +222,22 @@ const getTagihanMahasiswaByMahasiswaId = async (req, res, next) => {
 
     if (!idRegistrasiMahasiswa) {
       return res.status(400).json({
-        message: "ID Registrasi Mahasiswa is required",
+        message: "ID Registrasi Mahasiswa is required"
       });
     }
 
     // Cari data tagihan_mahasiswa berdasarkan id_registrasi_mahasiswa di database
     const tagihanMahasiswaId = await TagihanMahasiswa.findAll({
       where: {
-        id_registrasi_mahasiswa: idRegistrasiMahasiswa,
+        id_registrasi_mahasiswa: idRegistrasiMahasiswa
       },
-      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }]
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!tagihanMahasiswaId || tagihanMahasiswaId.length === 0) {
       return res.status(404).json({
-        message: `<===== Tagihan Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`,
+        message: `<===== Tagihan Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`
       });
     }
 
@@ -244,7 +245,7 @@ const getTagihanMahasiswaByMahasiswaId = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Tagihan Mahasiswa By ID ${idRegistrasiMahasiswa} Success:`,
       jumlahData: tagihanMahasiswaId.length,
-      data: tagihanMahasiswaId,
+      data: tagihanMahasiswaId
     });
   } catch (error) {
     next(error);
@@ -257,29 +258,29 @@ const getAllTagihanMahasiswaByMahasiswaActive = async (req, res, next) => {
 
     const mahasiswa = await Mahasiswa.findOne({
       where: {
-        nim: user.username,
-      },
+        nim: user.username
+      }
     });
 
     if (!mahasiswa) {
       return res.status(404).json({
-        message: "Mahasiswa not found",
+        message: "Mahasiswa not found"
       });
     }
 
     // Ambil semua data tagihan_mahasiswa_active dari database
     const tagihan_mahasiswa_active = await TagihanMahasiswa.findAll({
       where: {
-        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa
       },
-      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
+      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }]
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Tagihan Mahasiswa By Mahasiswa Active Success",
       jumlahData: tagihan_mahasiswa_active.length,
-      data: tagihan_mahasiswa_active,
+      data: tagihan_mahasiswa_active
     });
   } catch (error) {
     next(error);
@@ -296,25 +297,25 @@ const getAllTagihanMahasiswaByFilter = async (req, res, next) => {
       where: {
         id_periode: id_periode,
         id_jenis_tagihan: id_jenis_tagihan,
-        status_tagihan: status_tagihan,
+        status_tagihan: status_tagihan
       },
       include: [
         { model: Periode },
         {
           model: Mahasiswa,
           where: {
-            id_prodi: id_prodi,
-          },
+            id_prodi: id_prodi
+          }
         },
-        { model: JenisTagihan },
-      ],
+        { model: JenisTagihan }
+      ]
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Tagihan Mahasiswa By Filter Success",
       jumlahData: tagihan_mahasiswa.length,
-      data: tagihan_mahasiswa,
+      data: tagihan_mahasiswa
     });
   } catch (error) {
     next(error);
@@ -363,7 +364,7 @@ const createTagihanMahasiswaKolektif = async (req, res, next) => {
     res.status(201).json({
       message: "<===== CREATE Tagihan Mahasiswa Kolektif Success",
       jumlahData: newTagihanMahasiswas.length,
-      data: newTagihanMahasiswas,
+      data: newTagihanMahasiswas
     });
   } catch (error) {
     next(error);
@@ -379,5 +380,5 @@ module.exports = {
   getTagihanMahasiswaByMahasiswaId,
   getAllTagihanMahasiswaByMahasiswaActive,
   getAllTagihanMahasiswaByFilter,
-  createTagihanMahasiswaKolektif,
+  createTagihanMahasiswaKolektif
 };

@@ -1,23 +1,4 @@
-const {
-  RekapKRSMahasiswa,
-  Prodi,
-  Periode,
-  Mahasiswa,
-  MataKuliah,
-  Semester,
-  UnitJabatan,
-  Dosen,
-  KRSMahasiswa,
-  KelasKuliah,
-  DetailKelasKuliah,
-  Angkatan,
-  Jabatan,
-  RuangPerkuliahan,
-  DosenWali,
-  SemesterAktif,
-  TahunAjaran,
-  JenjangPendidikan,
-} = require("../../models");
+const { RekapKRSMahasiswa, Prodi, Periode, Mahasiswa, MataKuliah, Semester, UnitJabatan, Dosen, KRSMahasiswa, KelasKuliah, DetailKelasKuliah, Angkatan, Jabatan, RuangPerkuliahan, DosenWali, SettingGlobalSemester, TahunAjaran, JenjangPendidikan } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
 
@@ -30,7 +11,7 @@ const getAllRekapKRSMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Rekap KRS Mahasiswa Success",
       jumlahData: rekap_krs_mahasiswa.length,
-      data: rekap_krs_mahasiswa,
+      data: rekap_krs_mahasiswa
     });
   } catch (error) {
     next(error);
@@ -45,26 +26,26 @@ const getRekapKRSMahasiswaById = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!RekapKRSMahasiswaId) {
       return res.status(400).json({
-        message: "Rekap KRS Mahasiswa ID is required",
+        message: "Rekap KRS Mahasiswa ID is required"
       });
     }
 
     // Cari data rekap_krs_mahasiswa berdasarkan ID di database
     const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findByPk(RekapKRSMahasiswaId, {
-      include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }],
+      include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }]
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!rekap_krs_mahasiswa) {
       return res.status(404).json({
-        message: `<===== Rekap KRS Mahasiswa With ID ${RekapKRSMahasiswaId} Not Found:`,
+        message: `<===== Rekap KRS Mahasiswa With ID ${RekapKRSMahasiswaId} Not Found:`
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Rekap KRS Mahasiswa By ID ${RekapKRSMahasiswaId} Success:`,
-      data: rekap_krs_mahasiswa,
+      data: rekap_krs_mahasiswa
     });
   } catch (error) {
     next(error);
@@ -83,22 +64,22 @@ const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
     // pengecekan parameter id
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required",
+        message: "Prodi ID is required"
       });
     }
     if (!semesterId) {
       return res.status(400).json({
-        message: "Semester ID is required",
+        message: "Semester ID is required"
       });
     }
     if (!mataKuliahId) {
       return res.status(400).json({
-        message: "Mata Kuliah ID is required",
+        message: "Mata Kuliah ID is required"
       });
     }
     if (!mahasiswaId) {
       return res.status(400).json({
-        message: "Mahasiswa ID is required",
+        message: "Mahasiswa ID is required"
       });
     }
 
@@ -108,7 +89,7 @@ const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
     const requestBody = {
       act: "GetRekapKRSMahasiswa",
       token: `${token}`,
-      filter: `id_prodi='${prodiId}' and id_semester='${semesterId}' and id_matkul='${mataKuliahId}' and id_registrasi_mahasiswa='${mahasiswaId}'`,
+      filter: `id_prodi='${prodiId}' and id_semester='${semesterId}' and id_matkul='${mataKuliahId}' and id_registrasi_mahasiswa='${mahasiswaId}'`
     };
 
     // Menggunakan token untuk mengambil data
@@ -121,7 +102,7 @@ const getRekapKRSMahasiswaByFilter = async (req, res, next) => {
     res.status(200).json({
       message: "Get Rekap KRS Mahasiswa from Feeder Success",
       totalData: dataRekapKRSMahasiswa.length,
-      dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
+      dataRekapKRSMahasiswa: dataRekapKRSMahasiswa
     });
   } catch (error) {
     next(error);
@@ -167,23 +148,27 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
     if (jenis_cetak === "Mahasiswa") {
       const mahasiswa = await Mahasiswa.findOne({
         where: {
-          nim: nim,
+          nim: nim
         },
-        include: [{ model: Semester }, { model: Prodi }],
+        include: [{ model: Semester }, { model: Prodi }]
       });
 
       if (!mahasiswa) {
         return res.status(404).json({ message: `<===== Mahasiswa With NIM ${nim} Not Found:` });
       }
 
-      // get data semester aktif
-      const semester_aktif = await SemesterAktif.findOne({
-        status: true,
-        include: [{ model: Semester, include: [{ model: TahunAjaran }] }],
+      // get data setting global semester
+      const setting_global_semester = await SettingGlobalSemester.findOne({
+        where: {
+          status: true
+        },
+        include: [{ model: Semester, as: "SemesterAktif" }]
       });
 
-      if (!semester_aktif) {
-        return res.status(404).json({ message: "Semester Aktif Not Found" });
+      if (!setting_global_semester) {
+        return res.status(404).json({
+          message: "Setting Global Semester Aktif not found"
+        });
       }
 
       // mengambil data dosen wali mahasiswa sesuai angkatan
@@ -191,35 +176,35 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
       dosen_wali = await DosenWali.findOne({
         where: {
           id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
-          id_tahun_ajaran: semester_aktif.Semester.TahunAjaran.id_tahun_ajaran,
+          id_tahun_ajaran: setting_global_semester.SemesterAktif.id_tahun_ajaran
         },
-        include: [{ model: Dosen }],
+        include: [{ model: Dosen }]
       });
 
       // mengambil data unit jabatan dekan berdasarkan prodi mahasiswa
       let unit_jabatan = null;
       unit_jabatan = await UnitJabatan.findOne({
         where: {
-          id_prodi: mahasiswa.id_prodi,
+          id_prodi: mahasiswa.id_prodi
         },
         include: [
           {
             model: Jabatan,
             where: {
-              nama_jabatan: "Dekan",
-            },
+              nama_jabatan: "Dekan"
+            }
           },
-          { model: Dosen },
-        ],
+          { model: Dosen }
+        ]
       });
 
       // get data krs from local
       const krs_mahasiswa_by_mahasiswa = await KRSMahasiswa.findAll({
         where: {
           id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
-          id_semester: id_semester,
+          id_semester: id_semester
         },
-        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+        include: [{ model: KelasKuliah, include: [{ model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }] }]
       });
 
       res.status(200).json({
@@ -230,7 +215,7 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
         tanggalPenandatanganan: tanggal_penandatanganan,
         format: format,
         totalData: krs_mahasiswa_by_mahasiswa.length,
-        dataRekapKRSByMahasiswa: krs_mahasiswa_by_mahasiswa,
+        dataRekapKRSByMahasiswa: krs_mahasiswa_by_mahasiswa
       });
     } else if (jenis_cetak === "Angkatan") {
       const angkatan = await Angkatan.findByPk(id_angkatan);
@@ -243,42 +228,46 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
       let unit_jabatan = null;
       unit_jabatan = await UnitJabatan.findOne({
         where: {
-          id_prodi: id_prodi,
+          id_prodi: id_prodi
         },
         include: [
           {
             model: Jabatan,
             where: {
-              nama_jabatan: "Dekan",
-            },
+              nama_jabatan: "Dekan"
+            }
           },
-          { model: Dosen },
-        ],
+          { model: Dosen }
+        ]
       });
 
-      // get data semester aktif
-      const semester_aktif = await SemesterAktif.findOne({
-        where: { status: true },
-        include: [{ model: Semester, include: [{ model: TahunAjaran }] }],
+      // get data setting global semester
+      const setting_global_semester = await SettingGlobalSemester.findOne({
+        where: {
+          status: true
+        },
+        include: [{ model: Semester, as: "SemesterAktif" }]
       });
 
-      if (!semester_aktif) {
-        return res.status(404).json({ message: "Semester Aktif Not Found" });
+      if (!setting_global_semester) {
+        return res.status(404).json({
+          message: "Setting Global Semester Aktif not found"
+        });
       }
 
       const krs_mahasiswa_by_angkatan = await KRSMahasiswa.findAll({
         where: {
           id_prodi: id_prodi,
           angkatan: angkatan.tahun,
-          id_semester: id_semester,
+          id_semester: id_semester
         },
         include: [
           { model: Mahasiswa },
           {
             model: KelasKuliah,
-            include: [{ model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
-          },
-        ],
+            include: [{ model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }]
+          }
+        ]
       });
 
       // Mengelompokkan data berdasarkan id_registrasi_mahasiswa dan menambahkan data DosenWali
@@ -299,15 +288,15 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
         const dosen_wali = await DosenWali.findOne({
           where: {
             id_registrasi_mahasiswa: id,
-            id_tahun_ajaran: semester_aktif.Semester.TahunAjaran.id_tahun_ajaran,
+            id_tahun_ajaran: setting_global_semester.SemesterAktif.id_tahun_ajaran
           },
-          include: [{ model: Dosen }],
+          include: [{ model: Dosen }]
         });
 
         // Menambahkan data mahasiswa yang sudah digrup dan DosenWali
         finalGroupedData[id] = {
           krs_mahasiswas: groupedData[id],
-          DosenWali: dosen_wali ? dosen_wali : null,
+          DosenWali: dosen_wali ? dosen_wali : null
         };
       }
 
@@ -317,7 +306,7 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
         tanggalPenandatanganan: tanggal_penandatanganan,
         format: format,
         totalData: Object.keys(finalGroupedData).length,
-        dataRekapKRSByMahasiswa: finalGroupedData,
+        dataRekapKRSByMahasiswa: finalGroupedData
       });
     }
   } catch (error) {
@@ -332,7 +321,7 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
   // pengecekan parameter id
   if (!periodeId) {
     return res.status(400).json({
-      message: "Periode ID is required",
+      message: "Periode ID is required"
     });
   }
 
@@ -341,7 +330,7 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
 
   if (!semester) {
     return res.status(404).json({
-      message: "Semester not found",
+      message: "Semester not found"
     });
   }
 
@@ -349,14 +338,14 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
 
   const mahasiswa = await Mahasiswa.findOne({
     where: {
-      nim: user.username,
+      nim: user.username
     },
-    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
   });
 
   if (!mahasiswa) {
     return res.status(404).json({
-      message: "Mahasiswa not found",
+      message: "Mahasiswa not found"
     });
   }
 
@@ -365,8 +354,8 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
   dosen_wali = await DosenWali.findOne({
     where: {
       id_tahun_ajaran: semester.id_tahun_ajaran,
-      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
-    },
+      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa
+    }
   });
 
   // Mendapatkan token
@@ -375,7 +364,7 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
   const requestBody = {
     act: "GetRekapKRSMahasiswa",
     token: `${token}`,
-    filter: `id_periode='${periodeId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+    filter: `id_periode='${periodeId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`
   };
 
   // Menggunakan token untuk mengambil data
@@ -398,7 +387,7 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
     mahasiswa: mahasiswa,
     dosen_wali: dosen_wali,
     totalData: dataRekapKRSMahasiswa.length,
-    dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
+    dataRekapKRSMahasiswa: dataRekapKRSMahasiswa
   });
 };
 
@@ -409,7 +398,7 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
   // pengecekan parameter id
   if (!semesterId) {
     return res.status(400).json({
-      message: "Periode ID is required",
+      message: "Periode ID is required"
     });
   }
 
@@ -418,7 +407,7 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
 
   if (!semester) {
     return res.status(404).json({
-      message: "Semester not found",
+      message: "Semester not found"
     });
   }
 
@@ -426,14 +415,14 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
 
   const mahasiswa = await Mahasiswa.findOne({
     where: {
-      nim: user.username,
+      nim: user.username
     },
-    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
   });
 
   if (!mahasiswa) {
     return res.status(404).json({
-      message: "Mahasiswa not found",
+      message: "Mahasiswa not found"
     });
   }
 
@@ -441,17 +430,17 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
   let unit_jabatan = null;
   unit_jabatan = await UnitJabatan.findOne({
     where: {
-      id_prodi: mahasiswa.id_prodi,
+      id_prodi: mahasiswa.id_prodi
     },
     include: [
       {
         model: Jabatan,
         where: {
-          nama_jabatan: "Dekan",
-        },
+          nama_jabatan: "Dekan"
+        }
       },
-      { model: Dosen },
-    ],
+      { model: Dosen }
+    ]
   });
 
   // get dosen wali
@@ -459,8 +448,8 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
   dosen_wali = await DosenWali.findOne({
     where: {
       id_tahun_ajaran: semester.id_tahun_ajaran,
-      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
-    },
+      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa
+    }
   });
 
   // Mendapatkan token
@@ -469,7 +458,7 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
   const requestBody = {
     act: "GetRekapKRSMahasiswa",
     token: `${token}`,
-    filter: `id_periode='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+    filter: `id_periode='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`
   };
 
   // Menggunakan token untuk mengambil data
@@ -497,7 +486,7 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
     tanggal_penandatanganan: tanggalPenandatanganan,
     unit_jabatan: unit_jabatan,
     totalData: dataRekapKRSMahasiswa.length,
-    dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
+    dataRekapKRSMahasiswa: dataRekapKRSMahasiswa
   });
 };
 
@@ -507,5 +496,5 @@ module.exports = {
   getRekapKRSMahasiswaByFilter,
   getRekapKRSMahasiswaByFilterReqBody,
   getKRSMahasiswaByPeriodeId,
-  cetakKRSMahasiswaActiveBySemesterId,
+  cetakKRSMahasiswaActiveBySemesterId
 };
