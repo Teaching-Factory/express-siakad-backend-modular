@@ -112,6 +112,12 @@ const jenisTesRoutes = require("./routes/jenis-tes");
 const jenisBerkasRoutes = require("./routes/jenis-berkas");
 const laporanPMBRoutes = require("./routes/laporan-pmb");
 const contactPersonPMBRoutes = require("./routes/contact-person-pmb");
+const sumberRoutes = require("./routes/sumber");
+const periodePendaftaranRoutes = require("./routes/periode-pendaftaran");
+const sumberPeriodePendaftaranRoutes = require("./routes/sumber-periode-pendaftaran");
+const prodiPeriodePendaftaranRoutes = require("./routes/prodi-periode-pendaftaran");
+const berkasPeriodePendaftaranRoutes = require("./routes/berkas-periode-pendaftaran");
+const tahapTesPeriodePendaftaranRoutes = require("./routes/tahap-tes-periode-pendaftaran");
 
 // route api local not done yet
 // -
@@ -270,6 +276,12 @@ app.use("/jenis-tes", checkToken, jenisTesRoutes);
 app.use("/jenis-berkas", checkToken, jenisBerkasRoutes);
 app.use("/laporan-pmb", checkToken, laporanPMBRoutes);
 app.use("/contact-person-pmb", checkToken, contactPersonPMBRoutes);
+app.use("/sumber", checkToken, sumberRoutes);
+app.use("/periode-pendaftaran", checkToken, periodePendaftaranRoutes);
+app.use("/sumber-periode-pendaftaran", checkToken, sumberPeriodePendaftaranRoutes);
+app.use("/prodi-periode-pendaftaran", checkToken, prodiPeriodePendaftaranRoutes);
+app.use("/berkas-periode-pendaftaran", checkToken, berkasPeriodePendaftaranRoutes);
+app.use("/tahap-tes-periode-pendaftaran", checkToken, tahapTesPeriodePendaftaranRoutes);
 
 // route api local not done yet
 // -

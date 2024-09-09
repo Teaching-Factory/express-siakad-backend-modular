@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       Semester.hasMany(models.SettingGlobalSemester, { foreignKey: "id_semester_aktif" });
       Semester.hasMany(models.SettingGlobalSemester, { foreignKey: "id_semester_nilai" });
       Semester.hasMany(models.SettingGlobalSemester, { foreignKey: "id_semester_krs" });
+      Semester.hasMany(models.PeriodePendaftaran, { foreignKey: "id_semester" });
     }
   }
   Semester.init(
@@ -36,25 +37,25 @@ module.exports = (sequelize, DataTypes) => {
       id_semester: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.CHAR(5),
+        type: DataTypes.CHAR(5)
       },
       nama_semester: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: false
       },
       semester: {
         type: DataTypes.INTEGER(1),
-        allowNull: false,
+        allowNull: false
       },
       id_tahun_ajaran: {
         type: DataTypes.INTEGER(4),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       sequelize,
       modelName: "Semester",
-      tableName: "semesters",
+      tableName: "semesters"
     }
   );
   return Semester;
