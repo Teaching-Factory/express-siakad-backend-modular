@@ -10,8 +10,8 @@ const checkRole = require("../middlewares/check-role");
 router.get("/", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.getAllPeriodePendaftaran);
 router.get("/:id/get", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.getPeriodePendaftaranById);
 router.get("/:id_semester/:id_jalur_masuk/:id_sistem_kuliah/get", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.getPeriodePendaftaranByFilter);
-// router.post("/create", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.createJabatan);
-// router.put("/:id/update", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.updateJabatanById);
+router.post("/create", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.createPeriodePendaftaran);
+router.put("/:id/update", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.updatePeriodePerkuliahanById);
 router.delete("/:id/delete", checkRole(["admin", "admin-pmb"]), PeriodePendaftaranController.deletePeriodePendaftaranById);
 
 module.exports = router;
