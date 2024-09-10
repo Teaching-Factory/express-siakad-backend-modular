@@ -118,6 +118,7 @@ const sumberPeriodePendaftaranRoutes = require("./routes/sumber-periode-pendafta
 const prodiPeriodePendaftaranRoutes = require("./routes/prodi-periode-pendaftaran");
 const berkasPeriodePendaftaranRoutes = require("./routes/berkas-periode-pendaftaran");
 const tahapTesPeriodePendaftaranRoutes = require("./routes/tahap-tes-periode-pendaftaran");
+const userGuidePMBRoutes = require("./routes/user-guide-pmb");
 
 // route api local not done yet
 // -
@@ -282,6 +283,7 @@ app.use("/sumber-periode-pendaftaran", checkToken, sumberPeriodePendaftaranRoute
 app.use("/prodi-periode-pendaftaran", checkToken, prodiPeriodePendaftaranRoutes);
 app.use("/berkas-periode-pendaftaran", checkToken, berkasPeriodePendaftaranRoutes);
 app.use("/tahap-tes-periode-pendaftaran", checkToken, tahapTesPeriodePendaftaranRoutes);
+app.use("/user-guide-pmb", checkToken, userGuidePMBRoutes);
 
 // route api local not done yet
 // -
