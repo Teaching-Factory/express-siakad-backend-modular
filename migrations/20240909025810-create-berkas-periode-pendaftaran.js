@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       id_periode_pendaftaran: {
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {

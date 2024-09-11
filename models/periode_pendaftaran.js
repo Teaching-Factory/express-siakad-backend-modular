@@ -18,15 +18,16 @@ module.exports = (sequelize, DataTypes) => {
       PeriodePendaftaran.hasMany(models.ProdiPeriodePendaftaran, { foreignKey: "id_periode_pendaftaran" });
       PeriodePendaftaran.hasMany(models.BerkasPeriodePendaftaran, { foreignKey: "id_periode_pendaftaran" });
       PeriodePendaftaran.hasMany(models.TahapTesPeriodePendaftaran, { foreignKey: "id_periode_pendaftaran" });
+      PeriodePendaftaran.hasMany(models.Camaba, { foreignKey: "id_periode_pendaftaran" });
     }
   }
   PeriodePendaftaran.init(
     {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER(10)
+        type: DataTypes.STRING(36),
+        defaultValue: DataTypes.UUIDV4
       },
       nama_periode_pendaftaran: {
         type: DataTypes.STRING(50),

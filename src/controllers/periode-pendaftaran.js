@@ -62,6 +62,36 @@ const getPeriodePendaftaranByFilter = async (req, res, next) => {
   }
 };
 
+const getPeriodePendaftaranBySemesterId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required"
+      });
+    }
+
+    // Ambil semua data periode_pendaftarans dari database
+    const periode_pendaftarans = await PeriodePendaftaran.findAll({
+      where: {
+        id_semester: semesterId
+      },
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }]
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Periode Pendaftaran By Semester ID ${semesterId} Success`,
+      jumlahData: periode_pendaftarans.length,
+      data: periode_pendaftarans
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getPeriodePendaftaranById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
@@ -89,6 +119,34 @@ const getPeriodePendaftaranById = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Periode Pendaftaran By ID ${periodePendaftaranId} Success:`,
       data: periode_pendaftaran
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPeriodePendaftaranDibuka = async (req, res, next) => {
+  try {
+    // Cari data periode_pendaftaran_dibuka berdasarkan ID di database
+    const periode_pendaftaran_dibuka = await PeriodePendaftaran.findAll({
+      where: {
+        dibuka: true
+      },
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }]
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!periode_pendaftaran_dibuka) {
+      return res.status(404).json({
+        message: `<===== Periode Pendaftaran Dibuka Not Found:`
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Periode Pendaftaran Dibuka Success:`,
+      jumlahData: periode_pendaftaran_dibuka.length,
+      data: periode_pendaftaran_dibuka
     });
   } catch (error) {
     next(error);
@@ -473,7 +531,9 @@ const deletePeriodePendaftaranById = async (req, res, next) => {
 module.exports = {
   getAllPeriodePendaftaran,
   getPeriodePendaftaranByFilter,
+  getPeriodePendaftaranBySemesterId,
   getPeriodePendaftaranById,
+  getPeriodePendaftaranDibuka,
   createPeriodePendaftaran,
   updatePeriodePerkuliahanById,
   deletePeriodePendaftaranById

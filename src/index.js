@@ -114,11 +114,14 @@ const laporanPMBRoutes = require("./routes/laporan-pmb");
 const contactPersonPMBRoutes = require("./routes/contact-person-pmb");
 const sumberRoutes = require("./routes/sumber");
 const periodePendaftaranRoutes = require("./routes/periode-pendaftaran");
+const periodePendaftaranGuestRoutes = require("./routes/periode-pendaftaran-guest");
 const sumberPeriodePendaftaranRoutes = require("./routes/sumber-periode-pendaftaran");
 const prodiPeriodePendaftaranRoutes = require("./routes/prodi-periode-pendaftaran");
 const berkasPeriodePendaftaranRoutes = require("./routes/berkas-periode-pendaftaran");
 const tahapTesPeriodePendaftaranRoutes = require("./routes/tahap-tes-periode-pendaftaran");
 const userGuidePMBRoutes = require("./routes/user-guide-pmb");
+const camabaRoutes = require("./routes/camaba");
+const camabaGuestRoutes = require("./routes/camaba-guest");
 
 // route api local not done yet
 // -
@@ -279,11 +282,14 @@ app.use("/laporan-pmb", checkToken, laporanPMBRoutes);
 app.use("/contact-person-pmb", checkToken, contactPersonPMBRoutes);
 app.use("/sumber", checkToken, sumberRoutes);
 app.use("/periode-pendaftaran", checkToken, periodePendaftaranRoutes);
+app.use("/periode-pendaftaran-guest", periodePendaftaranGuestRoutes);
 app.use("/sumber-periode-pendaftaran", checkToken, sumberPeriodePendaftaranRoutes);
 app.use("/prodi-periode-pendaftaran", checkToken, prodiPeriodePendaftaranRoutes);
 app.use("/berkas-periode-pendaftaran", checkToken, berkasPeriodePendaftaranRoutes);
 app.use("/tahap-tes-periode-pendaftaran", checkToken, tahapTesPeriodePendaftaranRoutes);
 app.use("/user-guide-pmb", checkToken, userGuidePMBRoutes);
+app.use("/camaba", checkToken, camabaRoutes);
+app.use("/camaba-guest", camabaGuestRoutes);
 
 // route api local not done yet
 // -

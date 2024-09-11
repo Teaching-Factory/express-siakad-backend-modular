@@ -2,43 +2,31 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("tahap_tes_periode_pendaftarans", {
+    await queryInterface.createTable("prodi_camabas", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      urutan_tes: {
-        type: Sequelize.ENUM(["1", "2", "3", "4", "5"]),
-        allowNull: false
-      },
-      tanggal_awal_tes: {
-        type: Sequelize.DATEONLY,
-        allowNull: false
-      },
-      tanggal_akhir_tes: {
-        type: Sequelize.DATEONLY,
-        allowNull: false
-      },
-      id_jenis_tes: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: {
-            tableName: "jenis_tes"
-          },
-          key: "id"
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE"
-      },
-      id_periode_pendaftaran: {
+      id_prodi: {
         type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
-            tableName: "periode_pendaftarans"
+            tableName: "prodis"
+          },
+          key: "id_prodi"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+      id_camaba: {
+        type: Sequelize.STRING(36),
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "camabas"
           },
           key: "id"
         },
@@ -56,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("tahap_tes_periode_pendaftarans");
+    await queryInterface.dropTable("prodi_camabas");
   }
 };

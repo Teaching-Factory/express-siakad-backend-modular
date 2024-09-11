@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER
       },
       id_periode_pendaftaran: {
-        type: DataTypes.INTEGER(10),
+        type: DataTypes.STRING(36),
         allowNull: false
       },
       id_jenis_berkas: {

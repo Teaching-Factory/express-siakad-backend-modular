@@ -5,9 +5,9 @@ module.exports = {
     await queryInterface.createTable("periode_pendaftarans", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(10)
+        type: Sequelize.STRING(36),
+        defaultValue: Sequelize.UUIDV4
       },
       nama_periode_pendaftaran: {
         type: Sequelize.STRING(50),

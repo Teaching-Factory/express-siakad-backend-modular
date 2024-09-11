@@ -39,6 +39,12 @@ module.exports = {
         nama_role: "admin-pmb",
         createdAt: new Date(),
         updatedAt: new Date()
+      },
+      {
+        id: 7,
+        nama_role: "camaba",
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ]);
   },
