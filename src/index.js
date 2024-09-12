@@ -10,6 +10,7 @@ const path = require("path");
 // import routes
 // route api feeder dikti
 const apiFeederRoutes = require("./routes/api-feeder");
+const apiExternalRoutes = require("./routes/api-external");
 
 // route endpoint pengujian performa
 const pengujianPerformaRoutes = require("./routes/pengujian-performa");
@@ -122,6 +123,7 @@ const tahapTesPeriodePendaftaranRoutes = require("./routes/tahap-tes-periode-pen
 const userGuidePMBRoutes = require("./routes/user-guide-pmb");
 const camabaRoutes = require("./routes/camaba");
 const camabaGuestRoutes = require("./routes/camaba-guest");
+const sekolahRoutes = require("./routes/sekolah");
 
 // route api local not done yet
 // -
@@ -179,6 +181,7 @@ app.use(express.json());
 
 // route api feeder dikti
 app.use("/api-feeder", checkToken, apiFeederRoutes);
+app.use("/api-external", checkToken, apiExternalRoutes);
 
 app.use("/pengujian-performa", checkToken, pengujianPerformaRoutes);
 
@@ -290,6 +293,7 @@ app.use("/tahap-tes-periode-pendaftaran", checkToken, tahapTesPeriodePendaftaran
 app.use("/user-guide-pmb", checkToken, userGuidePMBRoutes);
 app.use("/camaba", checkToken, camabaRoutes);
 app.use("/camaba-guest", camabaGuestRoutes);
+app.use("/sekolah", checkToken, sekolahRoutes);
 
 // route api local not done yet
 // -

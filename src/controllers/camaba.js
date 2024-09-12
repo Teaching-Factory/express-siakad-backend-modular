@@ -1,5 +1,7 @@
-const { Camaba, User, SettingWSFeeder, PeriodePendaftaran, Prodi, ProdiCamaba, JenjangPendidikan, Semester, Role, UserRole } = require("../../models");
+const { Camaba, User, SettingWSFeeder, PeriodePendaftaran, Prodi, ProdiCamaba, JenjangPendidikan, Semester, Role, UserRole, BiodataCamaba } = require("../../models");
 const bcrypt = require("bcrypt");
+const fs = require("fs"); // untuk menghapus file
+const path = require("path");
 
 // admin, admin-pmb
 const getAllCamaba = async (req, res, next) => {
@@ -199,6 +201,14 @@ const createCamaba = async (req, res, next) => {
       id_user: newUser.id
     });
 
+    // Buat data Biodata Camaba
+    await BiodataCamaba.create({
+      telepon: newCamaba.nomor_hp,
+      handphone: newCamaba.nomor_hp,
+      email: newCamaba.email,
+      id_camaba: newCamaba.id
+    });
+
     // Variabel untuk menyimpan prodi yang berhasil ditambahkan
     let prodiCamaba = [];
 
@@ -237,6 +247,158 @@ const createCamaba = async (req, res, next) => {
   }
 };
 
+// camaba
+const getCamabaActiveByUser = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // get role user active
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" }
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found"
+      });
+    }
+
+    // mengecek apakah user saat ini memiliki role camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id }
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba"
+      });
+    }
+
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username
+      },
+      include: [
+        { model: PeriodePendaftaran, include: [{ model: Semester }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] }
+      ]
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found"
+      });
+    }
+
+    // get data Prodi Camaba
+    const prodiCamaba = await ProdiCamaba.findAll({
+      where: { id_camaba: camaba.id },
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!prodiCamaba) {
+      return res.status(404).json({
+        message: `<===== Prodi Camaba Not Found:`
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Camaba Active Success:`,
+      data: camaba,
+      prodiCamaba: prodiCamaba
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// camaba
+const updateProfileCamabaActive = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // get role user active
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" }
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found"
+      });
+    }
+
+    // mengecek apakah user saat ini memiliki role camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id }
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba"
+      });
+    }
+
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username
+      },
+      include: [
+        { model: PeriodePendaftaran, include: [{ model: Semester }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] }
+      ]
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found"
+      });
+    }
+
+    // Simpan path file lama jika ada
+    const originalProfilePath = camaba.foto_profil;
+
+    // Jika ada file baru di-upload, update path profile dan hapus file lama
+    if (req.file) {
+      // Cek tipe MIME file yang di-upload
+      if (req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
+        return res.status(400).json({ message: "File type not supported" });
+      } else {
+        const protocol = process.env.PROTOCOL || "http";
+        const host = process.env.HOST || "localhost";
+        const port = process.env.PORT || 4000;
+
+        const fileName = req.file.filename;
+        const fileUrl = `${protocol}://${host}:${port}/src/storage/camaba/profile/${fileName}`;
+
+        camaba.foto_profil = fileUrl;
+
+        // Hapus file lama jika ada
+        if (originalProfilePath) {
+          const oldFilePath = path.resolve(__dirname, `../storage/camaba/profile/${path.basename(originalProfilePath)}`);
+          fs.unlink(oldFilePath, (err) => {
+            if (err) {
+              console.error(`Gagal menghapus gambar: ${err.message}`);
+            }
+          });
+        }
+      }
+    }
+
+    // Simpan perubahan camaba
+    await camaba.save();
+
+    res.json({
+      message: "UPDATE Profile Camaba Success",
+      data: camaba
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -249,5 +411,7 @@ const convertTanggal = (tanggal_lahir) => {
 module.exports = {
   getAllCamaba,
   getCamabaById,
-  createCamaba
+  createCamaba,
+  getCamabaActiveByUser,
+  updateProfileCamabaActive
 };

@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 
       // relasi tabel child
       Camaba.hasMany(models.ProdiCamaba, { foreignKey: "id_camaba" });
+      Camaba.hasMany(models.BiodataCamaba, { foreignKey: "id_camaba" });
     }
   }
   Camaba.init(
