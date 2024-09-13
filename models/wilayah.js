@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       Wilayah.hasMany(models.BiodataDosen, { foreignKey: "id_wilayah" });
       Wilayah.hasMany(models.BiodataMahasiswa, { foreignKey: "id_wilayah" });
       Wilayah.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_wilayah" });
+      Wilayah.hasMany(models.BiodataCamaba, { foreignKey: "id_wilayah" });
     }
   }
   Wilayah.init(
@@ -23,21 +24,21 @@ module.exports = (sequelize, DataTypes) => {
       id_wilayah: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.CHAR(8),
+        type: DataTypes.CHAR(8)
       },
       nama_wilayah: {
         type: DataTypes.STRING(60),
-        allowNull: false,
+        allowNull: false
       },
       id_negara: {
         type: DataTypes.CHAR(2),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       sequelize,
       modelName: "Wilayah",
-      tableName: "wilayahs",
+      tableName: "wilayahs"
     }
   );
   return Wilayah;

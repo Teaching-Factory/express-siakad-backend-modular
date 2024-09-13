@@ -124,6 +124,7 @@ const userGuidePMBRoutes = require("./routes/user-guide-pmb");
 const camabaRoutes = require("./routes/camaba");
 const camabaGuestRoutes = require("./routes/camaba-guest");
 const sekolahRoutes = require("./routes/sekolah");
+const biodataCamabaRoutes = require("./routes/biodata-camaba");
 
 // route api local not done yet
 // -
@@ -294,6 +295,7 @@ app.use("/user-guide-pmb", checkToken, userGuidePMBRoutes);
 app.use("/camaba", checkToken, camabaRoutes);
 app.use("/camaba-guest", camabaGuestRoutes);
 app.use("/sekolah", checkToken, sekolahRoutes);
+app.use("/biodata-camaba", checkToken, biodataCamabaRoutes);
 
 // route api local not done yet
 // -

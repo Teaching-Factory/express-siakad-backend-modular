@@ -10,17 +10,18 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       BiodataCamaba.belongsTo(models.Camaba, { foreignKey: "id_camaba" });
       BiodataCamaba.belongsTo(models.Sekolah, { foreignKey: "id_sekolah" });
+      BiodataCamaba.belongsTo(models.Agama, { foreignKey: "id_agama" });
       BiodataCamaba.belongsTo(models.Wilayah, { foreignKey: "id_wilayah" });
       BiodataCamaba.belongsTo(models.JenisTinggal, { foreignKey: "id_jenis_tinggal" });
-      BiodataCamaba.belongsTo(models.JenjangPendidikan, { foreignKey: "id_pendidikan_ayah" });
-      BiodataCamaba.belongsTo(models.Pekerjaan, { foreignKey: "id_pekerjaan_ayah" });
-      BiodataCamaba.belongsTo(models.Penghasilan, { foreignKey: "id_penghasilan_ayah" });
-      BiodataCamaba.belongsTo(models.JenjangPendidikan, { foreignKey: "id_pendidikan_ibu" });
-      BiodataCamaba.belongsTo(models.Pekerjaan, { foreignKey: "id_pekerjaan_ibu" });
-      BiodataCamaba.belongsTo(models.Penghasilan, { foreignKey: "id_penghasilan_ibu" });
-      BiodataCamaba.belongsTo(models.JenjangPendidikan, { foreignKey: "id_pendidikan_wali" });
-      BiodataCamaba.belongsTo(models.Pekerjaan, { foreignKey: "id_pekerjaan_wali" });
-      BiodataCamaba.belongsTo(models.Penghasilan, { foreignKey: "id_penghasilan_wali" });
+      BiodataCamaba.belongsTo(models.Penghasilan, { as: "PenghasilanAyah", foreignKey: "id_penghasilan_ayah" });
+      BiodataCamaba.belongsTo(models.Penghasilan, { as: "PenghasilanIbu", foreignKey: "id_penghasilan_ibu" });
+      BiodataCamaba.belongsTo(models.Penghasilan, { as: "PenghasilanWali", foreignKey: "id_penghasilan_wali" });
+      BiodataCamaba.belongsTo(models.Pekerjaan, { as: "PekerjaanAyah", foreignKey: "id_pekerjaan_ayah" });
+      BiodataCamaba.belongsTo(models.Pekerjaan, { as: "PekerjaanIbu", foreignKey: "id_pekerjaan_ibu" });
+      BiodataCamaba.belongsTo(models.Pekerjaan, { as: "PekerjaanWali", foreignKey: "id_pekerjaan_wali" });
+      BiodataCamaba.belongsTo(models.JenjangPendidikan, { as: "PendidikanAyah", foreignKey: "id_pendidikan_ayah" });
+      BiodataCamaba.belongsTo(models.JenjangPendidikan, { as: "PendidikanIbu", foreignKey: "id_pendidikan_ibu" });
+      BiodataCamaba.belongsTo(models.JenjangPendidikan, { as: "PendidikanWali", foreignKey: "id_pendidikan_wali" });
     }
   }
   BiodataCamaba.init(
@@ -121,6 +122,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_sekolah: {
         type: DataTypes.STRING(36),
+        allowNull: true
+      },
+      id_agama: {
+        type: DataTypes.SMALLINT(5),
         allowNull: true
       },
       id_wilayah: {

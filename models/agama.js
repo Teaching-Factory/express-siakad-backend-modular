@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Agama.hasMany(models.Dosen, { foreignKey: "id_agama" });
       Agama.hasMany(models.Mahasiswa, { foreignKey: "id_agama" });
       Agama.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_agama" });
+      Agama.hasMany(models.BiodataCamaba, { foreignKey: "id_agama" });
     }
   }
   Agama.init(
@@ -20,17 +21,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.SMALLINT(5),
+        type: DataTypes.SMALLINT(5)
       },
       nama_agama: {
         type: DataTypes.STRING(50),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       sequelize,
       modelName: "Agama",
-      tableName: "agamas",
+      tableName: "agamas"
     }
   );
   return Agama;

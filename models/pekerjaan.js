@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       Pekerjaan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pekerjaan_ayah" });
       Pekerjaan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pekerjaan_ibu" });
       Pekerjaan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pekerjaan_wali" });
+      Pekerjaan.hasMany(models.BiodataCamaba, { foreignKey: "id_pekerjaan_ayah" });
+      Pekerjaan.hasMany(models.BiodataCamaba, { foreignKey: "id_pekerjaan_ibu" });
+      Pekerjaan.hasMany(models.BiodataCamaba, { foreignKey: "id_pekerjaan_wali" });
     }
   }
   Pekerjaan.init(
@@ -24,17 +27,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER(10),
+        type: DataTypes.INTEGER(10)
       },
       nama_pekerjaan: {
         type: DataTypes.STRING(50),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       sequelize,
       modelName: "Pekerjaan",
-      tableName: "pekerjaans",
+      tableName: "pekerjaans"
     }
   );
   return Pekerjaan;

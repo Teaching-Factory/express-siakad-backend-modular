@@ -106,12 +106,24 @@ module.exports = {
       },
       id_sekolah: {
         type: Sequelize.STRING(36),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "sekolahs"
           },
           key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+      id_agama: {
+        type: Sequelize.SMALLINT(5),
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "agamas"
+          },
+          key: "id_agama"
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE"

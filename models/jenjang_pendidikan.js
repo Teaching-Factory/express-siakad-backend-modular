@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pendidikan_ayah" });
       JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pendidikan_ibu" });
       JenjangPendidikan.hasMany(models.DataLengkapMahasiswaProdi, { foreignKey: "id_pendidikan_wali" });
+      JenjangPendidikan.hasMany(models.BiodataCamaba, { foreignKey: "id_pendidikan_ayah" });
+      JenjangPendidikan.hasMany(models.BiodataCamaba, { foreignKey: "id_pendidikan_ibu" });
+      JenjangPendidikan.hasMany(models.BiodataCamaba, { foreignKey: "id_pendidikan_wali" });
     }
   }
   JenjangPendidikan.init(
@@ -24,17 +27,17 @@ module.exports = (sequelize, DataTypes) => {
       id_jenjang_didik: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.DECIMAL(2, 0),
+        type: DataTypes.DECIMAL(2, 0)
       },
       nama_jenjang_didik: {
         type: DataTypes.STRING(50),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       sequelize,
       modelName: "JenjangPendidikan",
-      tableName: "jenjang_pendidikans",
+      tableName: "jenjang_pendidikans"
     }
   );
   return JenjangPendidikan;
