@@ -1,4 +1,4 @@
-const { Camaba, User, SettingWSFeeder, PeriodePendaftaran, Prodi, ProdiCamaba, JenjangPendidikan, Semester, Role, UserRole, BiodataCamaba } = require("../../models");
+const { Camaba, User, SettingWSFeeder, PeriodePendaftaran, Prodi, ProdiCamaba, JenjangPendidikan, Semester, Role, UserRole, BiodataCamaba, PemberkasanCamaba, BerkasPeriodePendaftaran } = require("../../models");
 const bcrypt = require("bcrypt");
 const fs = require("fs"); // untuk menghapus file
 const path = require("path");
@@ -208,6 +208,29 @@ const createCamaba = async (req, res, next) => {
       email: newCamaba.email,
       id_camaba: newCamaba.id
     });
+
+    // Get data berkas periode pendaftaran
+    const berkas_periode_pendaftaran = await BerkasPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId
+      }
+    });
+
+    // Periksa apakah data ditemukan
+    if (!berkas_periode_pendaftaran || berkas_periode_pendaftaran.length === 0) {
+      return res.status(404).json({
+        message: `<===== Berkas Periode Pendaftaran Not Found:`
+      });
+    }
+
+    // Loop untuk setiap berkas yang ditemukan dan buat data pemberkasan camaba
+    for (const berkas of berkas_periode_pendaftaran) {
+      await PemberkasanCamaba.create({
+        file_berkas: null,
+        id_berkas_periode_pendaftaran: berkas.id,
+        id_camaba: newCamaba.id
+      });
+    }
 
     // Variabel untuk menyimpan prodi yang berhasil ditambahkan
     let prodiCamaba = [];
