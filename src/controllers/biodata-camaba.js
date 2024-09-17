@@ -1,4 +1,4 @@
-const { BiodataCamaba, Camaba, Sekolah, Wilayah, JenisTinggal, JenjangPendidikan, Pekerjaan, Penghasilan, Agama, Role, UserRole } = require("../../models");
+const { BiodataCamaba, Camaba, Sekolah, Wilayah, JenisTinggal, JenjangPendidikan, Pekerjaan, Penghasilan, Agama, Role, UserRole, JalurMasuk, SistemKuliah, Prodi, ProdiCamaba, PeriodePendaftaran, Semester } = require("../../models");
 
 const getAllBiodataCamaba = async (req, res, next) => {
   try {
@@ -518,10 +518,143 @@ const updateDataOrtuCamabaByCamabaActive = async (req, res, next) => {
   }
 };
 
+// camaba
+const cetakBiodataByCamabaActive = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // get role user active
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" }
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found"
+      });
+    }
+
+    // mengecek apakah user saat ini memiliki role camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id }
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba"
+      });
+    }
+
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username
+      },
+      include: [
+        { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] }
+      ]
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found"
+      });
+    }
+
+    // get biodata camaba
+    const biodata_camaba = await BiodataCamaba.findOne({
+      where: {
+        id_camaba: camaba.id
+      },
+      include: [
+        { model: Sekolah },
+        { model: Agama },
+        { model: Wilayah },
+        { model: JenisTinggal },
+        {
+          model: Penghasilan,
+          as: "PenghasilanAyah", // Alias untuk penghasilan ayah
+          foreignKey: "id_penghasilan_ayah"
+        },
+        {
+          model: Penghasilan,
+          as: "PenghasilanIbu", // Alias untuk penghasilan ibu
+          foreignKey: "id_penghasilan_ibu"
+        },
+        {
+          model: Penghasilan,
+          as: "PenghasilanWali", // Alias untuk penghasilan wali
+          foreignKey: "id_penghasilan_wali"
+        },
+        {
+          model: Pekerjaan,
+          as: "PekerjaanAyah", // Alias untuk pekerjaan ayah
+          foreignKey: "id_pekerjaan_ayah"
+        },
+        {
+          model: Pekerjaan,
+          as: "PekerjaanIbu", // Alias untuk pekerjaan ibu
+          foreignKey: "id_pekerjaan_ibu"
+        },
+        {
+          model: Pekerjaan,
+          as: "PekerjaanWali", // Alias untuk pekerjaan wali
+          foreignKey: "id_pekerjaan_wali"
+        },
+        {
+          model: JenjangPendidikan,
+          as: "PendidikanAyah", // Alias untuk pendidikan ayah
+          foreignKey: "id_pendidikan_ayah"
+        },
+        {
+          model: JenjangPendidikan,
+          as: "PendidikanIbu", // Alias untuk pendidikan ibu
+          foreignKey: "id_pendidikan_ibu"
+        },
+        {
+          model: JenjangPendidikan,
+          as: "PendidikanWali", // Alias untuk pendidikan wali
+          foreignKey: "id_pendidikan_wali"
+        }
+      ]
+    });
+
+    if (!biodata_camaba) {
+      return res.status(404).json({
+        message: "Biodata Camaba not found"
+      });
+    }
+
+    // get data Prodi Camaba
+    const prodiCamaba = await ProdiCamaba.findAll({
+      where: { id_camaba: camaba.id },
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!prodiCamaba) {
+      return res.status(404).json({
+        message: `<===== Prodi Camaba Not Found:`
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== Cetak Camaba Active Success:`,
+      dataCamaba: camaba,
+      dataBiodataCamaba: biodata_camaba,
+      dataProdiCamaba: prodiCamaba
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllBiodataCamaba,
   getBiodataCamabaById,
   getBiodataCamabaByActiveUser,
   updateDataDiriCamabaByCamabaActive,
-  updateDataOrtuCamabaByCamabaActive
+  updateDataOrtuCamabaByCamabaActive,
+  cetakBiodataByCamabaActive
 };
