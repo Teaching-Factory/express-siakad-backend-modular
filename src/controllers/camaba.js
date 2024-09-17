@@ -422,6 +422,65 @@ const updateProfileCamabaActive = async (req, res, next) => {
   }
 };
 
+// camaba
+const finalisasiByCamabaActive = async (req, res, next) => {
+  const { finalisasi } = req.body;
+
+  if (!finalisasi) {
+    return res.status(400).json({ message: "finalisasi is required" });
+  }
+
+  try {
+    const user = req.user;
+
+    // get role user active
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" }
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found"
+      });
+    }
+
+    // mengecek apakah user saat ini memiliki role camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id }
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba"
+      });
+    }
+
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username
+      }
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found"
+      });
+    }
+
+    // update data finalisasi pada camaba aktif
+    camaba.finalisasi = finalisasi;
+    await camaba.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== Finalisasi Camaba Active Success:`,
+      data: camaba
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -436,5 +495,6 @@ module.exports = {
   getCamabaById,
   createCamaba,
   getCamabaActiveByUser,
-  updateProfileCamabaActive
+  updateProfileCamabaActive,
+  finalisasiByCamabaActive
 };

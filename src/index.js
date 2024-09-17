@@ -126,6 +126,7 @@ const camabaGuestRoutes = require("./routes/camaba-guest");
 const sekolahRoutes = require("./routes/sekolah");
 const biodataCamabaRoutes = require("./routes/biodata-camaba");
 const pemberkasanCamabaRoutes = require("./routes/pemberkasan-camaba");
+const prodiCamabaRoutes = require("./routes/prodi-camaba");
 
 // route api local not done yet
 // -
@@ -298,6 +299,7 @@ app.use("/camaba-guest", camabaGuestRoutes);
 app.use("/sekolah", checkToken, sekolahRoutes);
 app.use("/biodata-camaba", checkToken, biodataCamabaRoutes);
 app.use("/pemberkasan-camaba", checkToken, pemberkasanCamabaRoutes);
+app.use("/prodi-camaba", checkToken, prodiCamabaRoutes);
 
 // route api local not done yet
 // -
