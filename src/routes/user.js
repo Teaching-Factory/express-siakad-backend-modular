@@ -8,6 +8,7 @@ const checkRole = require("../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin"]), UserController.getAllUser);
+router.get("/role/:id_role/get", checkRole(["admin"]), UserController.getAllUserByRoleId);
 router.get("/:id/get", checkRole(["admin"]), UserController.getUserById);
 router.post("/create", checkRole(["admin"]), UserController.createUser);
 router.put("/:id/update", checkRole(["admin"]), UserController.updateUserById);

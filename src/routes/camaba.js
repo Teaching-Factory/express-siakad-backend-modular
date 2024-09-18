@@ -38,6 +38,7 @@ const upload = multer({
 
 // all routes
 router.get("/", checkRole(["admin", "admin-pmb"]), CamabaController.getAllCamaba);
+router.get("/get-camaba-by-filter", checkRole(["admin", "admin-pmb"]), CamabaController.getAllCamabaByFilter);
 router.get("/:id/get", checkRole(["admin", "admin-pmb"]), CamabaController.getCamabaById);
 router.get("/get-camaba-aktif", checkRole(["camaba"]), CamabaController.getCamabaActiveByUser);
 router.put("/camaba-aktif/update-profile", checkRole(["camaba"]), upload.single("profile"), CamabaController.updateProfileCamabaActive);

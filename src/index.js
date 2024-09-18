@@ -127,6 +127,7 @@ const sekolahRoutes = require("./routes/sekolah");
 const biodataCamabaRoutes = require("./routes/biodata-camaba");
 const pemberkasanCamabaRoutes = require("./routes/pemberkasan-camaba");
 const prodiCamabaRoutes = require("./routes/prodi-camaba");
+const periodeYudisiumRoutes = require("./routes/periode-yudisium");
 
 // route api local not done yet
 // -
@@ -300,6 +301,7 @@ app.use("/sekolah", checkToken, sekolahRoutes);
 app.use("/biodata-camaba", checkToken, biodataCamabaRoutes);
 app.use("/pemberkasan-camaba", checkToken, pemberkasanCamabaRoutes);
 app.use("/prodi-camaba", checkToken, prodiCamabaRoutes);
+app.use("/periode-yudisium", checkToken, periodeYudisiumRoutes);
 
 // route api local not done yet
 // -

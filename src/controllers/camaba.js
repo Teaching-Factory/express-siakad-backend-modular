@@ -25,6 +25,70 @@ const getAllCamaba = async (req, res, next) => {
   }
 };
 
+// admin, admin-pmb
+const getAllCamabaByFilter = async (req, res, next) => {
+  const { id_periode_pendaftaran, status_berkas, status_tes } = req.query;
+
+  if (!id_periode_pendaftaran) {
+    return res.status(400).json({ message: "id_periode_pendaftaran is required" });
+  }
+  if (!status_berkas) {
+    return res.status(400).json({ message: "status_berkas is required" });
+  }
+  if (!status_tes) {
+    return res.status(400).json({ message: "status_tes is required" });
+  }
+
+  try {
+    // Ambil semua data camabas dari database
+    const camabas = await Camaba.findAll({
+      include: [
+        { model: PeriodePendaftaran, include: [{ model: Semester }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] }
+      ],
+      where: {
+        id_periode_pendaftaran: id_periode_pendaftaran,
+        status_berkas: status_berkas,
+        status_tes: status_tes
+      }
+    });
+
+    if (!camabas || camabas.length === 0) {
+      return res.status(404).json({
+        message: `<===== Camaba Not Found`
+      });
+    }
+
+    // Loop melalui setiap camaba untuk mendapatkan prodi pertama mereka
+    const camabaWithProdi = await Promise.all(
+      camabas.map(async (camaba) => {
+        // Ambil prodi pertama berdasarkan id_camaba
+        const prodi_camaba = await ProdiCamaba.findOne({
+          where: {
+            id_camaba: camaba.id
+          },
+          order: [["createdAt", "ASC"]] // Mengambil berdasarkan urutan (prodi pertama)
+        });
+
+        // Jika prodi_camaba ditemukan, tambahkan ke data camaba
+        return {
+          ...camaba.toJSON(), // Konversi instance Sequelize menjadi JSON
+          ProdiCamaba: prodi_camaba || null // Tambahkan ProdiCamaba atau null jika tidak ditemukan
+        };
+      })
+    );
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Camaba By Filter Success",
+      jumlahData: camabaWithProdi.length,
+      data: camabaWithProdi
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // admin, admin-pmb, guest
 const getCamabaById = async (req, res, next) => {
   try {
@@ -693,6 +757,7 @@ const convertTanggal = (tanggal_lahir) => {
 
 module.exports = {
   getAllCamaba,
+  getAllCamabaByFilter,
   getCamabaById,
   createCamaba,
   getCamabaActiveByUser,
