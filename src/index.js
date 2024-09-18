@@ -128,6 +128,8 @@ const biodataCamabaRoutes = require("./routes/biodata-camaba");
 const pemberkasanCamabaRoutes = require("./routes/pemberkasan-camaba");
 const prodiCamabaRoutes = require("./routes/prodi-camaba");
 const periodeYudisiumRoutes = require("./routes/periode-yudisium");
+const aspekPenilaianDosenRoutes = require("./routes/aspek-penilaian-dosen");
+const skalaPenilaianDosenRoutes = require("./routes/skala-penilaian-dosen");
 
 // route api local not done yet
 // -
@@ -302,6 +304,8 @@ app.use("/biodata-camaba", checkToken, biodataCamabaRoutes);
 app.use("/pemberkasan-camaba", checkToken, pemberkasanCamabaRoutes);
 app.use("/prodi-camaba", checkToken, prodiCamabaRoutes);
 app.use("/periode-yudisium", checkToken, periodeYudisiumRoutes);
+app.use("/aspek-penilaian-dosen", checkToken, aspekPenilaianDosenRoutes);
+app.use("/skala-penilaian-dosen", checkToken, skalaPenilaianDosenRoutes);
 
 // route api local not done yet
 // -
