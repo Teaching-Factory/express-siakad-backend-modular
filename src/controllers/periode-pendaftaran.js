@@ -1,4 +1,4 @@
-const { PeriodePendaftaran, Semester, JalurMasuk, SistemKuliah, ProdiPeriodePendaftaran, BerkasPeriodePendaftaran, TahapTesPeriodePendaftaran, SumberPeriodePendaftaran, Prodi, JenisTes, JenisBerkas, Sumber } = require("../../models");
+const { PeriodePendaftaran, Semester, JalurMasuk, SistemKuliah, ProdiPeriodePendaftaran, BerkasPeriodePendaftaran, TahapTesPeriodePendaftaran, SumberPeriodePendaftaran, Prodi, JenisTes, JenisBerkas, Sumber, TagihanCamaba } = require("../../models");
 
 const getAllPeriodePendaftaran = async (req, res, next) => {
   try {
@@ -483,6 +483,24 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
           }
         })
       );
+    }
+
+    // update seluruh data tagihan camaba untuk kolom jumlah_tagihan, dan tanggal_tagihan
+    const all_tagihan_camaba = await TagihanCamaba.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId
+      }
+    });
+
+    if (all_tagihan_camaba.length > 0) {
+      // Proses update setiap data tagihan camaba
+      for (const tagihan of all_tagihan_camaba) {
+        tagihan.jumlah_tagihan = periode_pendaftaran.biaya_pendaftaran;
+        tagihan.tanggal_tagihan = periode_pendaftaran.batas_akhir_pembayaran;
+
+        // Simpan perubahan untuk setiap objek tagihan camaba
+        await tagihan.save();
+      }
     }
 
     // Kirim respons JSON jika berhasil

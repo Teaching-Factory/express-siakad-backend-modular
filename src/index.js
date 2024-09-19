@@ -130,6 +130,7 @@ const prodiCamabaRoutes = require("./routes/prodi-camaba");
 const periodeYudisiumRoutes = require("./routes/periode-yudisium");
 const aspekPenilaianDosenRoutes = require("./routes/aspek-penilaian-dosen");
 const skalaPenilaianDosenRoutes = require("./routes/skala-penilaian-dosen");
+const pengaturanPMBRoutes = require("./routes/pengaturan-pmb");
 
 // route api local not done yet
 // -
@@ -306,6 +307,7 @@ app.use("/prodi-camaba", checkToken, prodiCamabaRoutes);
 app.use("/periode-yudisium", checkToken, periodeYudisiumRoutes);
 app.use("/aspek-penilaian-dosen", checkToken, aspekPenilaianDosenRoutes);
 app.use("/skala-penilaian-dosen", checkToken, skalaPenilaianDosenRoutes);
+app.use("/pengaturan-pmb", checkToken, pengaturanPMBRoutes);
 
 // route api local not done yet
 // -

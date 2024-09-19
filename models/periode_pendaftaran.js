@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       PeriodePendaftaran.hasMany(models.BerkasPeriodePendaftaran, { foreignKey: "id_periode_pendaftaran" });
       PeriodePendaftaran.hasMany(models.TahapTesPeriodePendaftaran, { foreignKey: "id_periode_pendaftaran" });
       PeriodePendaftaran.hasMany(models.Camaba, { foreignKey: "id_periode_pendaftaran" });
+      PeriodePendaftaran.hasMany(models.TagihanCamaba, { foreignKey: "id_periode_pendaftaran" });
     }
   }
   PeriodePendaftaran.init(

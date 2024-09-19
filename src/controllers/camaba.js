@@ -1,4 +1,4 @@
-const { Camaba, User, SettingWSFeeder, PeriodePendaftaran, Prodi, ProdiCamaba, JenjangPendidikan, Semester, Role, UserRole, BiodataCamaba, PemberkasanCamaba, BerkasPeriodePendaftaran, JalurMasuk, SistemKuliah, TahapTesPeriodePendaftaran, JenisTes } = require("../../models");
+const { Camaba, User, SettingWSFeeder, PeriodePendaftaran, Prodi, ProdiCamaba, JenjangPendidikan, Semester, Role, UserRole, BiodataCamaba, PemberkasanCamaba, BerkasPeriodePendaftaran, JalurMasuk, SistemKuliah, TahapTesPeriodePendaftaran, JenisTes, TagihanCamaba } = require("../../models");
 const bcrypt = require("bcrypt");
 const fs = require("fs"); // untuk menghapus file
 const path = require("path");
@@ -323,6 +323,15 @@ const createCamaba = async (req, res, next) => {
 
     // Hanya tambahkan data prodi yang berhasil ditemukan
     prodiCamaba = prodiCamaba.filter((prodi) => prodi !== null);
+
+    // create data tagihan camaba
+    await TagihanCamaba.create({
+      jumlah_tagihan: periode_pendaftaran.biaya_pendaftaran,
+      tanggal_tagihan: periode_pendaftaran.batas_akhir_pembayaran,
+      id_semester: periode_pendaftaran.id_semester,
+      id_camaba: newCamaba.id,
+      id_periode_pendaftaran: periode_pendaftaran.id
+    });
 
     res.status(201).json({
       message: "<===== CREATE Camaba Success",
