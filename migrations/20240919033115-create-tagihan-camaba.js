@@ -9,11 +9,6 @@ module.exports = {
         type: Sequelize.STRING(36),
         defaultValue: Sequelize.UUIDV4
       },
-      jenis_tagihan: {
-        type: Sequelize.ENUM("PMB"),
-        allowNull: true,
-        defaultValue: "PMB"
-      },
       jumlah_tagihan: {
         type: Sequelize.DECIMAL(12, 0),
         allowNull: true,
@@ -40,6 +35,18 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: true,
         defaultValue: false
+      },
+      id_jenis_tagihan: {
+        type: Sequelize.INTEGER(10),
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "jenis_tagihans"
+          },
+          key: "id_jenis_tagihan"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
       },
       id_semester: {
         type: Sequelize.CHAR(5),

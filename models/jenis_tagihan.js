@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel child
       JenisTagihan.hasMany(models.TagihanMahasiswa, { foreignKey: "id_jenis_tagihan" });
+      JenisTagihan.hasMany(models.TagihanCamaba, { foreignKey: "id_jenis_tagihan" });
     }
   }
   JenisTagihan.init(
@@ -18,22 +19,22 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER(10),
+        type: DataTypes.INTEGER(10)
       },
       nama_jenis_tagihan: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: false
       },
       status: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false,
-      },
+        defaultValue: false
+      }
     },
     {
       sequelize,
       modelName: "JenisTagihan",
-      tableName: "jenis_tagihans",
+      tableName: "jenis_tagihans"
     }
   );
   return JenisTagihan;

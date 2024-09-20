@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi tabel parent
+      TagihanCamaba.belongsTo(models.JenisTagihan, { foreignKey: "id_jenis_tagihan" });
       TagihanCamaba.belongsTo(models.Semester, { foreignKey: "id_semester" });
       TagihanCamaba.belongsTo(models.Camaba, { foreignKey: "id_camaba" });
       TagihanCamaba.belongsTo(models.PeriodePendaftaran, { foreignKey: "id_periode_pendaftaran" });
@@ -21,11 +22,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.STRING(36),
         defaultValue: DataTypes.UUIDV4
-      },
-      jenis_tagihan: {
-        type: DataTypes.ENUM("PMB"),
-        allowNull: true,
-        defaultValue: "PMB"
       },
       jumlah_tagihan: {
         type: DataTypes.DECIMAL(12, 0),
@@ -53,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue: false
+      },
+      id_jenis_tagihan: {
+        type: DataTypes.INTEGER(10),
+        allowNull: false
       },
       id_semester: {
         type: DataTypes.CHAR(5),
