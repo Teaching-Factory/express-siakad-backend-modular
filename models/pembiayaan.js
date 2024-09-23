@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // relasi tabel child
       Pembiayaan.hasMany(models.RiwayatPendidikanMahasiswa, { foreignKey: "id_pembiayaan" });
       Pembiayaan.hasMany(models.PerkuliahanMahasiswa, { foreignKey: "id_pembiayaan" });
+      Pembiayaan.hasMany(models.Camaba, { foreignKey: "id_pembiayaan" });
     }
   }
   Pembiayaan.init(
@@ -19,17 +20,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER(10),
+        type: DataTypes.INTEGER(10)
       },
       nama_pembiayaan: {
         type: DataTypes.STRING(50),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       sequelize,
       modelName: "Pembiayaan",
-      tableName: "pembiayaans",
+      tableName: "pembiayaans"
     }
   );
   return Pembiayaan;

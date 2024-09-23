@@ -45,5 +45,6 @@ router.put("/camaba-aktif/update-profile", checkRole(["camaba"]), upload.single(
 router.put("/camaba-aktif/finalisasi", checkRole(["camaba"]), CamabaController.finalisasiByCamabaActive);
 router.get("/cetak-form-pendaftaran-camaba-aktif", checkRole(["camaba"]), CamabaController.cetakFormPendaftaranByCamabaActive);
 router.get("/cetak-kartu-ujian-camaba-aktif", checkRole(["camaba"]), CamabaController.cetakKartuUjianByCamabaActive);
+router.put("/detail-camaba/:id/update-status-kelulusan-pendaftar", checkRole(["admin", "admin-pmb"]), CamabaController.updateStatusKelulusanPendaftar);
 
 module.exports = router;

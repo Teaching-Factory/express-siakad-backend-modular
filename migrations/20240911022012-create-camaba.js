@@ -25,6 +25,10 @@ module.exports = {
         type: Sequelize.STRING(100),
         allowNull: false
       },
+      nim: {
+        type: Sequelize.STRING(24),
+        allowNull: true
+      },
       foto_profil: {
         type: Sequelize.STRING(255),
         allowNull: true
@@ -64,6 +68,11 @@ module.exports = {
         allowNull: true,
         defaultValue: false
       },
+      status_akun_pendaftar: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: true
+      },
       finalisasi: {
         type: Sequelize.BOOLEAN,
         allowNull: true,
@@ -89,6 +98,18 @@ module.exports = {
             tableName: "periode_pendaftarans"
           },
           key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+      id_pembiayaan: {
+        type: Sequelize.INTEGER(10),
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "pembiayaans"
+          },
+          key: "id_pembiayaan"
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE"

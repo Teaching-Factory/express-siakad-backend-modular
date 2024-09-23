@@ -586,6 +586,65 @@ const finalisasiByCamabaActive = async (req, res, next) => {
   }
 };
 
+// admin, admin pmb
+const updateStatusKelulusanPendaftar = async (req, res, next) => {
+  const { status_berkas, status_tes, nim, id_prodi_diterima, id_pembiayaan, finalisasi, status_akun_pendaftar } = req.body;
+
+  if (!status_berkas) {
+    return res.status(400).json({ message: "status_berkas is required" });
+  }
+  if (!status_tes) {
+    return res.status(400).json({ message: "status_tes is required" });
+  }
+  if (!nim) {
+    return res.status(400).json({ message: "nim is required" });
+  }
+  if (!id_prodi_diterima) {
+    return res.status(400).json({ message: "id_prodi_diterima is required" });
+  }
+  if (!id_pembiayaan) {
+    return res.status(400).json({ message: "id_pembiayaan is required" });
+  }
+  if (!finalisasi) {
+    return res.status(400).json({ message: "finalisasi is required" });
+  }
+  if (!status_akun_pendaftar) {
+    return res.status(400).json({ message: "status_akun_pendaftar is required" });
+  }
+
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const camabaId = req.params.id;
+
+    if (!camabaId) {
+      return res.status(400).json({
+        message: "Camaba ID is required"
+      });
+    }
+
+    // Cari data camaba berdasarkan ID di database
+    const camaba = await Camaba.findByPk(camabaId);
+
+    // update data camaba aktif
+    camaba.status_berkas = status_berkas;
+    camaba.status_tes = status_tes;
+    camaba.nim = nim;
+    camaba.id_prodi_diterima = id_prodi_diterima;
+    camaba.id_pembiayaan = id_pembiayaan;
+    camaba.finalisasi = finalisasi;
+    camaba.status_akun_pendaftar = status_akun_pendaftar;
+    await camaba.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== UPDATE Status Kelulusan Pendaftar By Camaba ID ${camabaId} Success:`,
+      data: camaba
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // camaba
 const cetakFormPendaftaranByCamabaActive = async (req, res, next) => {
   try {
@@ -804,6 +863,7 @@ module.exports = {
   getCamabaActiveByUser,
   updateProfileCamabaActive,
   finalisasiByCamabaActive,
+  updateStatusKelulusanPendaftar,
   cetakFormPendaftaranByCamabaActive,
   cetakKartuUjianByCamabaActive
 };

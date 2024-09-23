@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // relasi tabel parent
       Camaba.belongsTo(models.PeriodePendaftaran, { foreignKey: "id_periode_pendaftaran" });
       Camaba.belongsTo(models.Prodi, { foreignKey: "id_prodi_diterima" });
+      Camaba.belongsTo(models.Pembiayaan, { foreignKey: "id_pembiayaan" });
 
       // relasi tabel child
       Camaba.hasMany(models.ProdiCamaba, { foreignKey: "id_camaba" });
@@ -42,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
       nama_lengkap: {
         type: DataTypes.STRING(100),
         allowNull: false
+      },
+      nim: {
+        type: DataTypes.STRING(24),
+        allowNull: true
       },
       foto_profil: {
         type: DataTypes.STRING(255),
@@ -82,6 +87,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: false
       },
+      status_akun_pendaftar: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: true
+      },
       finalisasi: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
@@ -94,6 +104,10 @@ module.exports = (sequelize, DataTypes) => {
       id_periode_pendaftaran: {
         type: DataTypes.STRING(36),
         allowNull: false
+      },
+      id_pembiayaan: {
+        type: DataTypes.INTEGER(10),
+        allowNull: true
       }
     },
     {
