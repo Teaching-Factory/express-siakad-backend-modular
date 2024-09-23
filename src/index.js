@@ -132,6 +132,7 @@ const aspekPenilaianDosenRoutes = require("./routes/aspek-penilaian-dosen");
 const skalaPenilaianDosenRoutes = require("./routes/skala-penilaian-dosen");
 const pengaturanPMBRoutes = require("./routes/pengaturan-pmb");
 const tagihanCamabaRoutes = require("./routes/tagihan-camaba");
+const rekapLaporanPMBRoutes = require("./routes/rekap-laporan-pmb");
 
 // route api local not done yet
 // -
@@ -310,6 +311,7 @@ app.use("/aspek-penilaian-dosen", checkToken, aspekPenilaianDosenRoutes);
 app.use("/skala-penilaian-dosen", checkToken, skalaPenilaianDosenRoutes);
 app.use("/pengaturan-pmb", checkToken, pengaturanPMBRoutes);
 app.use("/tagihan-camaba", checkToken, tagihanCamabaRoutes);
+app.use("/rekap-laporan-pmb", checkToken, rekapLaporanPMBRoutes);
 
 // route api local not done yet
 // -

@@ -17,7 +17,10 @@ const {
   TahapTesPeriodePendaftaran,
   JenisTes,
   TagihanCamaba,
-  JenisTagihan
+  JenisTagihan,
+  SumberPeriodePendaftaran,
+  SumberInfoCamaba,
+  Sumber
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const fs = require("fs"); // untuk menghapus file
@@ -162,7 +165,7 @@ const getCamabaById = async (req, res, next) => {
 
 // guest
 const createCamaba = async (req, res, next) => {
-  const { nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin, nomor_hp, email, prodi = [] } = req.body;
+  const { nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin, nomor_hp, email, prodi = [], sumber_periode_pendaftaran = [] } = req.body;
 
   if (!nama_lengkap) {
     return res.status(400).json({ message: "nama_lengkap is required" });
@@ -186,6 +189,10 @@ const createCamaba = async (req, res, next) => {
   // validasi array prodis camaba (wajib)
   if (prodi.length === 0) {
     return res.status(400).json({ message: "Prodi is required" });
+  }
+  // validasi array sumber_periode_pendaftarans camaba (wajib)
+  if (sumber_periode_pendaftaran.length === 0) {
+    return res.status(400).json({ message: "Sumber Periode Pendaftaran is required" });
   }
 
   try {
@@ -365,10 +372,44 @@ const createCamaba = async (req, res, next) => {
       id_periode_pendaftaran: periode_pendaftaran.id
     });
 
+    // Variabel untuk menyimpan sumber_periode_pendaftaran yang berhasil ditambahkan
+    let sumberPeriodePendaftaran = [];
+
+    if (sumber_periode_pendaftaran.length > 0) {
+      sumberPeriodePendaftaran = await Promise.all(
+        sumber_periode_pendaftaran.map(async ({ id, nama_sumber: namaSumberRequest }) => {
+          // tambahkan nama_sumber dari request
+          const data_sumber_periode_pendaftaran = await SumberPeriodePendaftaran.findOne({
+            where: { id: id },
+            include: [{ model: Sumber }]
+          });
+
+          if (data_sumber_periode_pendaftaran) {
+            const namaSumber = data_sumber_periode_pendaftaran.Sumber.nama_sumber === "Lainnya" ? namaSumberRequest : data_sumber_periode_pendaftaran.Sumber.nama_sumber;
+
+            await SumberInfoCamaba.create({
+              nama_sumber: namaSumber, // menggunakan nama sumber sesuai kondisi
+              id_camaba: newCamaba.id,
+              id_sumber_periode_pendaftaran: data_sumber_periode_pendaftaran.id
+            });
+
+            return data_sumber_periode_pendaftaran;
+          } else {
+            console.error(`Sumber Periode Pendaftaran with id: ${id} not found`);
+            return null;
+          }
+        })
+      );
+    }
+
+    // Hanya tambahkan data sumber info camaba yang berhasil ditemukan
+    sumberPeriodePendaftaran = sumberPeriodePendaftaran.filter((sumber_periode_pendaftaran) => sumber_periode_pendaftaran !== null);
+
     res.status(201).json({
       message: "<===== CREATE Camaba Success",
       dataCamaba: newCamaba,
-      dataProdiCamaba: prodiCamaba
+      dataProdiCamaba: prodiCamaba,
+      dataSumberInfoCamaba: sumberPeriodePendaftaran
     });
   } catch (error) {
     next(error);
