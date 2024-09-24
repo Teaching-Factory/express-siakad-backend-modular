@@ -1,4 +1,5 @@
-const { Camaba, PeriodePendaftaran, Semester, JalurMasuk, SistemKuliah, Jabatan, UnitJabatan, Dosen, Prodi, JenjangPendidikan, BiodataCamaba, Sekolah, ProdiCamaba, Mahasiswa, SumberInfoCamaba, SumberPeriodePendaftaran } = require("../../models");
+const { Camaba, PeriodePendaftaran, Semester, JalurMasuk, SistemKuliah, Jabatan, UnitJabatan, Dosen, Prodi, JenjangPendidikan, BiodataCamaba, Sekolah, ProdiCamaba, Mahasiswa, SumberInfoCamaba, SumberPeriodePendaftaran, TagihanCamaba } = require("../../models");
+const { Op } = require("sequelize");
 
 const rekapPendaftarPMB = async (req, res, next) => {
   const { id_semester, id_periode_pendaftaran, id_prodi_diterima, tanggal_penandatanganan, format } = req.query;
@@ -188,7 +189,108 @@ const rekapSumberInformasiPMB = async (req, res, next) => {
   }
 };
 
+const rekapPembayaranPMB = async (req, res, next) => {
+  const { tanggal_awal, tanggal_akhir, id_prodi_diterima, tanggal_penandatanganan, format } = req.query;
+
+  // Validasi input tanggal
+  if (!tanggal_awal) {
+    return res.status(400).json({ message: "tanggal_awal (deadline pembayaran) is required" });
+  }
+  if (!tanggal_akhir) {
+    return res.status(400).json({ message: "tanggal_akhir (tanggal pembayaran) is required" });
+  }
+  if (!id_prodi_diterima) {
+    return res.status(400).json({ message: "id_prodi_diterima (tanggal pembayaran) is required" });
+  }
+  if (!tanggal_penandatanganan) {
+    return res.status(400).json({ message: "tanggal_penandatanganan is required" });
+  }
+  if (!format) {
+    return res.status(400).json({ message: "format is required" });
+  }
+
+  try {
+    // Konversi string tanggal ke objek Date
+    const deadlinePembayaran = new Date(tanggal_awal); // tanggal deadline pembayaran (tanggal_tagihan)
+    const tanggalPembayaran = new Date(tanggal_akhir); // tanggal pembayaran (tanggal_lunas)
+
+    // Pastikan tanggalPembayaran <= deadlinePembayaran
+    if (tanggalPembayaran >= deadlinePembayaran) {
+      return res.status(400).json({ message: "Tanggal awal tidak boleh melebihi tanggal akhir" });
+    }
+
+    // get data prodi yang diterima camaba
+    const prodiDiterima = await Prodi.findByPk(id_prodi_diterima);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!prodiDiterima) {
+      return res.status(404).json({
+        message: `<===== Prodi With ID ${id_prodi_diterima} Not Found:`
+      });
+    }
+
+    // get data unit jabatan
+    const unitJabatan = await UnitJabatan.findOne({
+      where: {
+        id_prodi: id_prodi_diterima
+      },
+      include: [
+        {
+          model: Jabatan,
+          where: {
+            nama_jabatan: "Rektor"
+          }
+        },
+        { model: Dosen }
+      ]
+    });
+
+    // Mendapatkan data rekap pembayaran PMB berdasarkan range tanggal_tagihan dan tanggal_lunas
+    const tagihan_camabas = await TagihanCamaba.findAll({
+      where: {
+        tanggal_tagihan: {
+          [Op.lte]: deadlinePembayaran
+        },
+        tanggal_lunas: {
+          [Op.gte]: tanggalPembayaran
+        }
+      },
+      include: [
+        {
+          model: Camaba,
+          where: {
+            id_prodi_diterima: id_prodi_diterima
+          },
+          include: [{ model: Prodi }]
+        }
+      ]
+    });
+
+    // Menghitung total tagihan camaba keseluruhan
+    let totalTagihanSemuaCamaba = 0;
+
+    if (tagihan_camabas && tagihan_camabas.length > 0) {
+      totalTagihanSemuaCamaba = tagihan_camabas.reduce((accumulator, tagihan) => {
+        return accumulator + (parseFloat(tagihan.jumlah_tagihan) || 0);
+      }, 0);
+    }
+
+    res.status(200).json({
+      message: "GET Rekap Pembayaran PMB By Request Query Success",
+      tanggalPenandatanganan: tanggal_penandatanganan,
+      format: format,
+      jumlahDataTagihanCamaba: tagihan_camabas.length,
+      totalTagihanSemuaCamaba: totalTagihanSemuaCamaba,
+      dataUnitJabatan: unitJabatan,
+      dataTagihanCamaba: tagihan_camabas
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   rekapPendaftarPMB,
-  rekapSumberInformasiPMB
+  rekapSumberInformasiPMB,
+  rekapPembayaranPMB
 };
