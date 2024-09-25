@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const axios = require("axios");
 const { User, UserRole, Role, BlacklistedToken, RolePermission, Permission, SettingGlobal, Mahasiswa, Prodi } = require("../../models");
 
 // Fungsi untuk membuat token JWT
@@ -9,7 +10,7 @@ const generateToken = async (user) => {
     // Dapatkan peran pengguna dari tabel UserRole
     const userRoles = await UserRole.findAll({
       where: { id_user: user.id },
-      include: [{ model: Role }],
+      include: [{ model: Role }]
     });
 
     // Ambil nama peran dari setiap objek userRole
@@ -24,7 +25,7 @@ const generateToken = async (user) => {
       {
         id: user.id,
         username: user.username,
-        data_roles: dataRoles,
+        data_roles: dataRoles
       },
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
@@ -36,7 +37,7 @@ const generateToken = async (user) => {
 
 const doLogin = async (req, res, next) => {
   // Di sini Anda dapat memverifikasi username dan password
-  const { username, password } = req.body;
+  const { username, password, captchaToken } = req.body;
 
   // validasi required
   if (!username) {
@@ -44,6 +45,34 @@ const doLogin = async (req, res, next) => {
   }
   if (!password) {
     return res.status(400).json({ message: "password is required" });
+  }
+
+  // Cek apakah permintaan berasal dari Postman
+  const isPostman = req.headers["user-agent"].includes("Postman");
+
+  // Verifikasi CAPTCHA hanya jika permintaan bukan dari Postman
+  if (!isPostman && !captchaToken) {
+    return res.status(400).json({ message: "Captcha is required" });
+  }
+
+  // Verifikasi CAPTCHA menggunakan reCAPTCHA API hanya jika bukan dari Postman
+  if (!isPostman) {
+    try {
+      const captchaResponse = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
+        params: {
+          secret: process.env.SECRET_KEY,
+          response: captchaToken
+        }
+      });
+
+      const { success } = captchaResponse.data;
+
+      if (!success) {
+        return res.status(400).json({ message: "Captcha verification failed" });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: "Error verifying captcha" });
+    }
   }
 
   // valiasi tipe data
@@ -83,28 +112,28 @@ const doLogin = async (req, res, next) => {
     // mengambil data user role pengguna yang telah melakukan login
     const userRole = await UserRole.findOne({
       where: {
-        id_user: user.id,
-      },
+        id_user: user.id
+      }
     });
 
     // mengambil data role pengguna yang telah melakukan login
     const role = await Role.findOne({
       where: {
-        id: userRole.id_role,
-      },
+        id: userRole.id_role
+      }
     });
 
     // mengambil data permission berdasarkan role yang telah diperoleh
     const permissions = await RolePermission.findAll({
       where: {
-        id_role: role.id,
+        id_role: role.id
       },
       include: [
         {
           model: Permission,
-          attributes: ["nama_permission"],
-        },
-      ],
+          attributes: ["nama_permission"]
+        }
+      ]
     });
 
     // Format permissions untuk hanya mengembalikan nama_permission
@@ -117,15 +146,15 @@ const doLogin = async (req, res, next) => {
       // get data mahasiswa
       const mahasiswa = await Mahasiswa.findOne({
         where: {
-          nim: user.username,
-        },
+          nim: user.username
+        }
       });
 
       setting_global_prodi = await SettingGlobal.findOne({
         where: {
-          id_prodi: mahasiswa.id_prodi,
+          id_prodi: mahasiswa.id_prodi
         },
-        include: [{ model: Prodi }],
+        include: [{ model: Prodi }]
       });
     }
 
@@ -136,7 +165,7 @@ const doLogin = async (req, res, next) => {
       user: user.nama,
       role: role.nama_role,
       permissions: formattedPermissions,
-      setting_global_prodi: setting_global_prodi,
+      setting_global_prodi: setting_global_prodi
     });
   } catch (error) {
     next(error);
@@ -184,7 +213,7 @@ const doLogout = (req, res, next) => {
     res.clearCookie("token");
 
     res.json({
-      message: "Anda baru saja logout",
+      message: "Anda baru saja logout"
     });
   } catch (error) {
     next(error);
@@ -198,7 +227,7 @@ const doLoginAs = async (req, res, next) => {
 
     if (!userId) {
       return res.status(400).json({
-        message: "User ID is required",
+        message: "User ID is required"
       });
     }
 
@@ -206,7 +235,7 @@ const doLoginAs = async (req, res, next) => {
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({
-        message: "User not found",
+        message: "User not found"
       });
     }
 
@@ -221,28 +250,28 @@ const doLoginAs = async (req, res, next) => {
     // Mengambil data user role pengguna yang telah melakukan login
     const userRole = await UserRole.findOne({
       where: {
-        id_user: user.id,
-      },
+        id_user: user.id
+      }
     });
 
     // Mengambil data role pengguna yang telah melakukan login
     const role = await Role.findOne({
       where: {
-        id: userRole.id_role,
-      },
+        id: userRole.id_role
+      }
     });
 
     // Mengambil data permission berdasarkan role yang telah diperoleh
     const permissions = await RolePermission.findAll({
       where: {
-        id_role: role.id,
+        id_role: role.id
       },
       include: [
         {
           model: Permission,
-          attributes: ["nama_permission"],
-        },
-      ],
+          attributes: ["nama_permission"]
+        }
+      ]
     });
 
     // Format permissions untuk hanya mengembalikan nama_permission
@@ -255,15 +284,15 @@ const doLoginAs = async (req, res, next) => {
       // get data mahasiswa
       const mahasiswa = await Mahasiswa.findOne({
         where: {
-          nim: user.username,
-        },
+          nim: user.username
+        }
       });
 
       setting_global_prodi = await SettingGlobal.findOne({
         where: {
-          id_prodi: mahasiswa.id_prodi,
+          id_prodi: mahasiswa.id_prodi
         },
-        include: [{ model: Prodi }],
+        include: [{ model: Prodi }]
       });
     }
 
@@ -274,7 +303,7 @@ const doLoginAs = async (req, res, next) => {
       user: user.nama,
       role: role.nama_role,
       permissions: formattedPermissions,
-      setting_global_prodi: setting_global_prodi,
+      setting_global_prodi: setting_global_prodi
     });
   } catch (error) {
     next(error);
@@ -285,5 +314,5 @@ module.exports = {
   generateToken,
   doLogin,
   doLogout,
-  doLoginAs,
+  doLoginAs
 };
