@@ -63,6 +63,22 @@ const getAllCamabaByFilter = async (req, res, next) => {
   }
 
   try {
+    let status_berkas_now = null;
+    let status_tes_now = null;
+
+    // pengecekan status request query
+    if (status_berkas === "true") {
+      status_berkas_now = 1;
+    } else {
+      status_berkas_now = 0;
+    }
+
+    if (status_tes === "true") {
+      status_tes_now = 1;
+    } else {
+      status_tes_now = 0;
+    }
+
     // Ambil semua data camabas dari database
     const camabas = await Camaba.findAll({
       include: [
@@ -71,8 +87,8 @@ const getAllCamabaByFilter = async (req, res, next) => {
       ],
       where: {
         id_periode_pendaftaran: id_periode_pendaftaran,
-        status_berkas: status_berkas,
-        status_tes: status_tes
+        status_berkas: status_berkas_now,
+        status_tes: status_tes_now
       }
     });
 
