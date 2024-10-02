@@ -11,6 +11,47 @@ Selamat Datang di aplikasi backend sistem informasi akademik. Project ini dikemb
 
 ```
 
+## Requirement Sebelum Install Aplikasi 📌
+
+- Download Aplikasi Node JS :
+
+```bash
+  https://nodejs.org/en/download/source-code
+
+```
+
+- Download Aplikasi Yarn :
+
+```bash
+  https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable
+
+```
+
+## Install Paket Otomatis 📌
+
+- Instal Plugin Yarn :
+
+```bash
+  yarn install
+
+```
+
+- Instal Plugin NPM :
+
+```bash
+  npm install
+
+```
+
+- Memperbaiki Plugin yang Error (opsional) :
+
+```bash
+  npm audit fix
+
+```
+
+## Install Paket Manual (Satu Persatu) 📌
+
 Install Paket :
 
 - Instal Plugin Yarn :
@@ -189,7 +230,7 @@ Install Paket :
 
 ```
 
-Perintah Migrasi Dan Seeder :
+## Perintah Migrasi Dan Seeder : 📌
 
 - Membuat Migrasi Baru :
 
