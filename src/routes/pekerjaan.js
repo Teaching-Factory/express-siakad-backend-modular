@@ -7,7 +7,7 @@ const PekerjaanController = require("../controllers/pekerjaan");
 const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen", "mahasiswa"]), PekerjaanController.getAllPekerjaan);
-router.get("/:id/get", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen", "mahasiswa"]), PekerjaanController.getPekerjaanById);
+router.get("/", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen", "mahasiswa", "camaba", "admin-pmb"]), PekerjaanController.getAllPekerjaan);
+router.get("/:id/get", checkRole(["admin", "admin-prodi", "admin-keuangan", "dosen", "mahasiswa", "camaba", "admin-pmb"]), PekerjaanController.getPekerjaanById);
 
 module.exports = router;
