@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       Mahasiswa.hasMany(models.SistemKuliahMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.DosenWali, { foreignKey: "id_registrasi_mahasiswa" });
       Mahasiswa.hasMany(models.PresensiMahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+      Mahasiswa.hasMany(models.Kuesioner, { foreignKey: "id_registrasi_mahasiswa" });
     }
   }
   Mahasiswa.init(
@@ -41,73 +42,73 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.STRING(36),
-        defaultValue: DataTypes.UUIDV4,
+        defaultValue: DataTypes.UUIDV4
       },
       nama_mahasiswa: {
         type: DataTypes.STRING(100),
-        allowNull: false,
+        allowNull: false
       },
       jenis_kelamin: {
         type: DataTypes.CHAR(1),
-        allowNull: false,
+        allowNull: false
       },
       tanggal_lahir: {
         type: DataTypes.DATEONLY,
-        allowNull: false,
+        allowNull: false
       },
       nipd: {
         type: DataTypes.INTEGER(10),
-        allowNull: true,
+        allowNull: true
       },
       ipk: {
         type: DataTypes.DOUBLE,
-        allowNull: true,
+        allowNull: true
       },
       total_sks: {
         type: DataTypes.DECIMAL(3, 0),
-        allowNull: true,
+        allowNull: true
       },
       nama_status_mahasiswa: {
         type: DataTypes.STRING(50),
-        allowNull: true,
+        allowNull: true
       },
       nim: {
         type: DataTypes.STRING(24),
-        allowNull: true,
+        allowNull: true
       },
       nama_periode_masuk: {
         type: DataTypes.STRING(50),
-        allowNull: true,
+        allowNull: true
       },
       id_sms: {
         type: DataTypes.STRING(36),
-        allowNull: true,
+        allowNull: true
       },
       id_mahasiswa: {
         type: DataTypes.STRING(36),
-        allowNull: true,
+        allowNull: true
       },
       id_perguruan_tinggi: {
         type: DataTypes.STRING(36),
-        allowNull: true,
+        allowNull: true
       },
       id_agama: {
         type: DataTypes.SMALLINT(5),
-        allowNull: false,
+        allowNull: false
       },
       id_semester: {
         type: DataTypes.CHAR(5),
-        allowNull: true,
+        allowNull: true
       },
       id_prodi: {
         type: DataTypes.STRING(36),
-        allowNull: true,
-      },
+        allowNull: true
+      }
     },
     {
       sequelize,
       modelName: "Mahasiswa",
-      tableName: "mahasiswas",
+      tableName: "mahasiswas"
     }
   );
   return Mahasiswa;

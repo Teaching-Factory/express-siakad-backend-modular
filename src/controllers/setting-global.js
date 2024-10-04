@@ -4,14 +4,14 @@ const getAllSettingGlobals = async (req, res, next) => {
   try {
     // Ambil semua data setting_global dari database
     const setting_global = await SettingGlobal.findAll({
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Setting Global Success",
       jumlahData: setting_global.length,
-      data: setting_global,
+      data: setting_global
     });
   } catch (error) {
     next(error);
@@ -25,26 +25,26 @@ const getSettingGlobalById = async (req, res, next) => {
 
     if (!settingGlobalId) {
       return res.status(400).json({
-        message: "Setting Global ID is required",
+        message: "Setting Global ID is required"
       });
     }
 
     // Cari data setting_global berdasarkan ID di database
     const setting_global = await SettingGlobal.findByPk(settingGlobalId, {
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!setting_global) {
       return res.status(404).json({
-        message: `<===== Setting Global With ID ${settingGlobalId} Not Found:`,
+        message: `<===== Setting Global With ID ${settingGlobalId} Not Found:`
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Setting Global By ID ${settingGlobalId} Success:`,
-      data: setting_global,
+      data: setting_global
     });
   } catch (error) {
     next(error);
@@ -65,7 +65,7 @@ const createSettingGlobal = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(201).json({
       message: "<===== CREATE Setting Global Success",
-      data: newSettingGlobal,
+      data: newSettingGlobal
     });
   } catch (error) {
     next(error);
@@ -78,7 +78,7 @@ const updateSettingGlobal = async (req, res, next) => {
 
     if (!setting_globals || !Array.isArray(setting_globals)) {
       return res.status(400).json({
-        message: "Invalid request body format. 'setting_globals' should be an array.",
+        message: "Invalid request body format. 'setting_globals' should be an array."
       });
     }
 
@@ -94,7 +94,7 @@ const updateSettingGlobal = async (req, res, next) => {
       }, {});
 
       const [updated] = await SettingGlobal.update(updatedFields, {
-        where: { id: id },
+        where: { id: id }
       });
 
       if (!updated) {
@@ -108,7 +108,7 @@ const updateSettingGlobal = async (req, res, next) => {
 
     res.status(200).json({
       message: "Global settings updated successfully",
-      data: updatedSettings,
+      data: updatedSettings
     });
   } catch (error) {
     next(error);
@@ -122,7 +122,7 @@ const deleteSettingGlobalById = async (req, res, next) => {
 
     if (!settingGlobalId) {
       return res.status(400).json({
-        message: "Setting Global ID is required",
+        message: "Setting Global ID is required"
       });
     }
 
@@ -132,7 +132,7 @@ const deleteSettingGlobalById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!setting_global) {
       return res.status(404).json({
-        message: `<===== Setting Global With ID ${settingGlobalId} Not Found:`,
+        message: `<===== Setting Global With ID ${settingGlobalId} Not Found:`
       });
     }
 
@@ -141,7 +141,7 @@ const deleteSettingGlobalById = async (req, res, next) => {
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: `<===== DELETE Setting Global With ID ${settingGlobalId} Success:`,
+      message: `<===== DELETE Setting Global With ID ${settingGlobalId} Success:`
     });
   } catch (error) {
     next(error);
@@ -153,5 +153,5 @@ module.exports = {
   getSettingGlobalById,
   createSettingGlobal,
   updateSettingGlobal,
-  deleteSettingGlobalById,
+  deleteSettingGlobalById
 };

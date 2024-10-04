@@ -1,7 +1,28 @@
 const ExcelJS = require("exceljs");
 const { Op } = require("sequelize");
 const fs = require("fs").promises;
-const { Mahasiswa, Angkatan, StatusMahasiswa, BiodataMahasiswa, Wilayah, Agama, PerguruanTinggi, Prodi, RiwayatPendidikanMahasiswa, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester, SettingGlobalSemester, DosenWali, Dosen, JenjangPendidikan } = require("../../models");
+const {
+  Mahasiswa,
+  Angkatan,
+  StatusMahasiswa,
+  BiodataMahasiswa,
+  Wilayah,
+  Agama,
+  PerguruanTinggi,
+  Prodi,
+  RiwayatPendidikanMahasiswa,
+  JenisPendaftaran,
+  JalurMasuk,
+  Pembiayaan,
+  Semester,
+  SettingGlobalSemester,
+  DosenWali,
+  Dosen,
+  JenjangPendidikan,
+  KRSMahasiswa,
+  KelasKuliah,
+  MataKuliah
+} = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
 
@@ -595,6 +616,69 @@ const getIpsMahasiswaActive = async (req, res, next) => {
   });
 };
 
+const getKRSMahasiswaBySemesterAktif = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const mahasiswa = await Mahasiswa.findOne({
+      where: {
+        nim: user.username
+      },
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }]
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({
+        message: "Mahasiswa not found"
+      });
+    }
+
+    // get data setting global semester
+    const setting_global_semester = await SettingGlobalSemester.findOne({
+      where: {
+        status: true
+      },
+      include: [{ model: Semester, as: "SemesterAktif" }]
+    });
+
+    if (!setting_global_semester) {
+      return res.status(404).json({
+        message: "Setting Global Semester Aktif not found"
+      });
+    }
+
+    // get data dosen wali sekarang
+    let dosen_wali = null;
+    dosen_wali = await DosenWali.findOne({
+      where: {
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        id_tahun_ajaran: setting_global_semester.SemesterAktif.id_tahun_ajaran
+      },
+      include: [{ model: Dosen }]
+    });
+
+    // get data krs mahasiswa berdasarka semester aktif pada setting global semester
+    const krs_mahasiswas = await KRSMahasiswa.findAll({
+      where: {
+        id_semester: setting_global_semester.SemesterAktif.id_semester,
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa
+      },
+      include: [{ model: KelasKuliah, include: [{ model: Dosen }, { model: MataKuliah }] }]
+    });
+
+    res.status(200).json({
+      message: "Get KRS Mahasiswa By Semester Active Success",
+      id_semester: setting_global_semester.SemesterAktif.id_semester,
+      jumlahDataKRSMahasiswa: krs_mahasiswas.length,
+      dosenWali: dosen_wali,
+      dataMahasiswa: mahasiswa,
+      dataKRSMahasiswa: krs_mahasiswas
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllMahasiswa,
   getMahasiswaById,
@@ -604,5 +688,6 @@ module.exports = {
   getMahasiswaByProdiAndAngkatanId,
   importMahasiswas,
   getMahasiswaActive,
-  getIpsMahasiswaActive
+  getIpsMahasiswaActive,
+  getKRSMahasiswaBySemesterAktif
 };
