@@ -135,6 +135,7 @@ const tagihanCamabaRoutes = require("./routes/tagihan-camaba");
 const rekapLaporanPMBRoutes = require("./routes/rekap-laporan-pmb");
 const kuesionerRoutes = require("./routes/kuesioner");
 const hasilKuesionerDosenRoutes = require("./routes/hasil-kuesioner-dosen");
+const hasilKuesionerPerKelasRoutes = require("./routes/hasil-kuesioner-per-kelas");
 
 // route api local not done yet
 // -
@@ -316,6 +317,7 @@ app.use("/tagihan-camaba", checkToken, tagihanCamabaRoutes);
 app.use("/rekap-laporan-pmb", checkToken, rekapLaporanPMBRoutes);
 app.use("/kuesioner", checkToken, kuesionerRoutes);
 app.use("/hasil-kuesioner-dosen", checkToken, hasilKuesionerDosenRoutes);
+app.use("/hasil-kuesioner-per-kelas", checkToken, hasilKuesionerPerKelasRoutes);
 
 // route api local not done yet
 // -
@@ -325,5 +327,5 @@ app.use(errHandler);
 // runnning at port 4000 on localhost
 app.listen(PORT, () => {
   const currentTime = new Date().toLocaleString();
-  console.log(`Server berhasil running di port ${PORT} pada ${currentTime}`);
+  console.log(`Server berhasil running di port ${PORT} [${currentTime}]`);
 });
