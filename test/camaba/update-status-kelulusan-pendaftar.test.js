@@ -15,7 +15,7 @@ describe("updateStatusKelulusanPendaftar", () => {
   });
 
   it("should return 400 if required fields are missing", async () => {
-    req.body = {}; // Tidak ada data dalam body
+    req.body = {}; // Empty body
 
     await updateStatusKelulusanPendaftar(req, res, next);
 
@@ -27,14 +27,13 @@ describe("updateStatusKelulusanPendaftar", () => {
     req.body = {
       status_berkas: "Complete",
       status_tes: "Passed",
-      nim: "12345678",
       id_prodi_diterima: 1,
       id_pembiayaan: 1,
       finalisasi: true,
       status_akun_pendaftar: "Active"
     };
 
-    req.params = {}; // Tidak ada camaba ID
+    req.params = {}; // No camaba ID
 
     await updateStatusKelulusanPendaftar(req, res, next);
 
@@ -46,7 +45,6 @@ describe("updateStatusKelulusanPendaftar", () => {
     req.body = {
       status_berkas: "Complete",
       status_tes: "Passed",
-      nim: "12345678",
       id_prodi_diterima: 1,
       id_pembiayaan: 1,
       finalisasi: true,
@@ -58,7 +56,6 @@ describe("updateStatusKelulusanPendaftar", () => {
       id: 1,
       status_berkas: "Incomplete",
       status_tes: "Failed",
-      nim: "00000000",
       id_prodi_diterima: null,
       id_pembiayaan: null,
       finalisasi: false,
@@ -72,20 +69,19 @@ describe("updateStatusKelulusanPendaftar", () => {
 
     expect(mockCamaba.status_berkas).toBe("Complete");
     expect(mockCamaba.status_tes).toBe("Passed");
-    expect(mockCamaba.nim).toBe("12345678");
     expect(mockCamaba.id_prodi_diterima).toBe(1);
     expect(mockCamaba.id_pembiayaan).toBe(1);
     expect(mockCamaba.finalisasi).toBe(true);
     expect(mockCamaba.status_akun_pendaftar).toBe("Active");
     expect(mockCamaba.save).toHaveBeenCalled();
 
-    // Salin mockCamaba tanpa properti 'save' untuk perbandingan dengan respons
+    // Clone mockCamaba without 'save' for comparison with response
     const { save, ...expectedCamabaData } = mockCamaba;
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual({
       message: `<===== UPDATE Status Kelulusan Pendaftar By Camaba ID 1 Success:`,
-      data: expectedCamabaData // Perbandingan dilakukan tanpa fungsi 'save'
+      data: expectedCamabaData // Compare without 'save'
     });
   });
 
@@ -93,7 +89,6 @@ describe("updateStatusKelulusanPendaftar", () => {
     req.body = {
       status_berkas: "Complete",
       status_tes: "Passed",
-      nim: "12345678",
       id_prodi_diterima: 1,
       id_pembiayaan: 1,
       finalisasi: true,

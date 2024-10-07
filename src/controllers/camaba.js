@@ -645,17 +645,21 @@ const finalisasiByCamabaActive = async (req, res, next) => {
 
 // admin, admin pmb
 const updateStatusKelulusanPendaftar = async (req, res, next) => {
-  const { status_berkas, status_tes, nim, id_prodi_diterima, id_pembiayaan, finalisasi, status_akun_pendaftar } = req.body;
+  const { status_berkas, status_tes, id_prodi_diterima, id_pembiayaan, finalisasi, status_akun_pendaftar } = req.body; // nim tidak dilampirkan
 
-  if (!status_berkas) {
+  // Mengecek jika variabel undefined atau null, tetapi tetap menerima nilai false
+  if (status_berkas === undefined || status_berkas === null) {
     return res.status(400).json({ message: "status_berkas is required" });
   }
-  if (!status_tes) {
+  if (status_tes === undefined || status_tes === null) {
     return res.status(400).json({ message: "status_tes is required" });
   }
-  if (!nim) {
-    return res.status(400).json({ message: "nim is required" });
+  if (status_akun_pendaftar === undefined || status_akun_pendaftar === null) {
+    return res.status(400).json({ message: "status_akun_pendaftar is required" });
   }
+  // if (!nim) {
+  //   return res.status(400).json({ message: "nim is required" });
+  // }
   if (!id_prodi_diterima) {
     return res.status(400).json({ message: "id_prodi_diterima is required" });
   }
@@ -664,9 +668,6 @@ const updateStatusKelulusanPendaftar = async (req, res, next) => {
   }
   if (!finalisasi) {
     return res.status(400).json({ message: "finalisasi is required" });
-  }
-  if (!status_akun_pendaftar) {
-    return res.status(400).json({ message: "status_akun_pendaftar is required" });
   }
 
   try {
@@ -685,7 +686,7 @@ const updateStatusKelulusanPendaftar = async (req, res, next) => {
     // update data camaba aktif
     camaba.status_berkas = status_berkas;
     camaba.status_tes = status_tes;
-    camaba.nim = nim;
+    // camaba.nim = nim;
     camaba.id_prodi_diterima = id_prodi_diterima;
     camaba.id_pembiayaan = id_pembiayaan;
     camaba.finalisasi = finalisasi;
