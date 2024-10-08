@@ -23,8 +23,9 @@ const {
   Sumber
 } = require("../../models");
 const bcrypt = require("bcrypt");
-const fs = require("fs"); // untuk menghapus file
+const fs = require("fs").promises;
 const path = require("path");
+const ExcelJS = require("exceljs");
 
 // admin, admin-pmb
 const getAllCamaba = async (req, res, next) => {
@@ -904,6 +905,167 @@ const cetakKartuUjianByCamabaActive = async (req, res, next) => {
   }
 };
 
+const exportCamabaByPeriodePendaftaranId = async (req, res, next) => {
+  try {
+    const periodePendaftaranId = req.params.id_periode_pendaftaran;
+
+    if (!periodePendaftaranId) {
+      return res.status(400).json({
+        message: "Periode Pendaftaran ID is required"
+      });
+    }
+
+    // Retrieve data based on Periode Pendaftaran ID
+    const camabas = await Camaba.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId,
+        finalisasi: true,
+        status_berkas: true,
+        status_tes: true,
+        status_pembayaran: true
+      },
+      include: [{ model: PeriodePendaftaran }, { model: Prodi, include: [{ model: JenjangPendidikan }] }]
+    });
+
+    if (!camabas || camabas.length === 0) {
+      return res.status(404).json({
+        message: `<===== Camaba With Periode Pendaftaran ID ${periodePendaftaranId} Not Found:`
+      });
+    }
+
+    // Create a new Excel workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Camaba Data");
+
+    // Add column headers
+    worksheet.columns = [
+      { header: "No", key: "no", width: 5 },
+      { header: "Nomor Pendaftaran", key: "nomor_daftar", width: 20 },
+      { header: "Nama", key: "nama", width: 20 },
+      { header: "Nim", key: "nim", width: 20 },
+      { header: "Nama Periode Pendaftaran", key: "nama_periode_pendaftaran", width: 20 },
+      { header: "Tanggal Pendaftaran", key: "tanggal_pendaftaran", width: 20 },
+      { header: "Nomor HP", key: "nomor_hp", width: 20 },
+      { header: "Email", key: "email", width: 20 },
+      { header: "Prodi Diterima", key: "prodi_diterima", width: 20 },
+      { header: "Kode Prodi Diterima", key: "kode_prodi_diterima", width: 20 },
+      { header: "Jenjang Pendidikan", key: "jenjang_pendidikan", width: 20 },
+      { header: "Status Berkas", key: "status_berkas", width: 20 },
+      { header: "Status Tes", key: "status_tes", width: 20 },
+      { header: "Status Pembayaran", key: "status_pembayaran", width: 20 },
+      { header: "Finalisasi Camaba", key: "finalisasi", width: 20 }
+    ];
+
+    // Add data rows
+    camabas.forEach((camaba, index) => {
+      worksheet.addRow({
+        no: index + 1,
+        nomor_daftar: camaba.nomor_daftar,
+        nama: camaba.nama_lengkap,
+        nim: "",
+        nama_periode_pendaftaran: camaba.PeriodePendaftaran.nama_periode_pendaftaran,
+        tanggal_pendaftaran: camaba.tanggal_pendaftaran,
+        nomor_hp: camaba.nomor_hp,
+        email: camaba.email,
+        prodi_diterima: camaba.Prodi.nama_program_studi,
+        kode_prodi_diterima: camaba.Prodi.kode_program_studi,
+        jenjang_pendidikan: camaba.Prodi.JenjangPendidikan.nama_jenjang_didik,
+        status_berkas: camaba.status_berkas ? "Lulus" : "Tidak Lulus",
+        status_tes: camaba.status_tes ? "Lulus" : "Tidak Lulus",
+        status_pembayaran: camaba.status_tes ? "Lunas" : "Belum Lunas",
+        finalisasi: camaba.status_tes ? "Sudah" : "Belum"
+      });
+    });
+
+    // Set headers for the response
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", `attachment; filename=camaba-periode-${periodePendaftaranId}.xlsx`);
+
+    // Write to the response
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const importCamabaForUpdateNimKolektif = async (req, res, next) => {
+  try {
+    const periodePendaftaranId = req.params.id_periode_pendaftaran;
+
+    if (!periodePendaftaranId) {
+      return res.status(400).json({
+        message: "Periode Pendaftaran ID is required"
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const filePath = req.file.path;
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
+
+    const worksheet = workbook.worksheets[0];
+    if (!worksheet) {
+      throw new Error("Worksheet not found in the Excel file");
+    }
+
+    let camabaDataNew = []; // Menyimpan hasil update untuk respon
+    let promises = []; // Menyimpan promise untuk update database
+
+    // Iterasi setiap baris di worksheet menggunakan for...of
+    for (let rowNumber = 2; rowNumber <= worksheet.rowCount; rowNumber++) {
+      const row = worksheet.getRow(rowNumber);
+      const nim = row.getCell(4).value; // Trim untuk menghilangkan spasi
+      const nomor_daftar = row.getCell(2).value; // Pastikan format sesuai (string/number)
+
+      // // Log the extracted data for debugging
+      // console.log(`Row ${rowNumber}:`, {
+      //   nim,
+      //   nomor_daftar
+      // });
+
+      // Mengambil data camaba
+      const camaba = await Camaba.findOne({
+        where: {
+          nomor_daftar: nomor_daftar,
+          id_periode_pendaftaran: periodePendaftaranId
+        }
+      });
+
+      if (camaba) {
+        // Update data nim camaba
+        camaba.nim = nim;
+
+        // Simpan perubahan ke dalam database
+        promises.push(
+          camaba.save().then((updatedCamaba) => {
+            camabaDataNew.push(updatedCamaba); // Tambahkan camaba yang diperbarui ke array
+          })
+        );
+      } else {
+        console.warn(`Camaba not found for Nomor Daftar: ${nomor_daftar}`);
+      }
+    }
+
+    // Tunggu semua promise selesai
+    await Promise.all(promises);
+
+    // Hapus file ketika berhasil melakukan import data
+    await fs.unlink(filePath);
+
+    res.status(200).json({
+      message: "Import and Update Data Nim Camaba Kolektif Success",
+      jumlahData: camabaDataNew.length,
+      data: camabaDataNew
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -923,5 +1085,7 @@ module.exports = {
   finalisasiByCamabaActive,
   updateStatusKelulusanPendaftar,
   cetakFormPendaftaranByCamabaActive,
-  cetakKartuUjianByCamabaActive
+  cetakKartuUjianByCamabaActive,
+  exportCamabaByPeriodePendaftaranId,
+  importCamabaForUpdateNimKolektif
 };

@@ -36,6 +36,8 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
+const importCamaba = multer({ dest: "uploads/" });
+
 // all routes
 router.get("/", checkRole(["admin", "admin-pmb"]), CamabaController.getAllCamaba);
 router.get("/get-camaba-by-filter", checkRole(["admin", "admin-pmb"]), CamabaController.getAllCamabaByFilter);
@@ -46,5 +48,7 @@ router.put("/camaba-aktif/finalisasi", checkRole(["camaba"]), CamabaController.f
 router.get("/cetak-form-pendaftaran-camaba-aktif", checkRole(["camaba"]), CamabaController.cetakFormPendaftaranByCamabaActive);
 router.get("/cetak-kartu-ujian-camaba-aktif", checkRole(["camaba"]), CamabaController.cetakKartuUjianByCamabaActive);
 router.put("/detail-camaba/:id/update-status-kelulusan-pendaftar", checkRole(["admin", "admin-pmb"]), CamabaController.updateStatusKelulusanPendaftar);
+router.get("/export/:id_periode_pendaftaran/get", checkRole(["admin", "admin-pmb"]), CamabaController.exportCamabaByPeriodePendaftaranId);
+router.post("/:id_periode_pendaftaran/import", checkRole(["admin", "admin-pmb"]), importCamaba.single("file"), CamabaController.importCamabaForUpdateNimKolektif);
 
 module.exports = router;

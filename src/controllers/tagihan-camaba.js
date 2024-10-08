@@ -268,12 +268,12 @@ const validasiTagihanCamabaKolektif = async (req, res, next) => {
     }
 
     // Lakukan iterasi melalui setiap objek tagihan_camaba
-    for (const tagihan_camaba of tagihan_camabas) {
+    for (let tagihan_camaba of tagihan_camabas) {
       // Ambil ID registrasi tagihan_camaba dari objek tagihan_mahasiswa saat ini
-      const tagihanCamabaId = tagihan_camaba.id;
+      let tagihanCamabaId = tagihan_camaba.id;
 
       // Ambil data Tagihan Camaba berdasarkan id
-      const dataTagihanCamaba = await TagihanCamaba.findOne({
+      let dataTagihanCamaba = await TagihanCamaba.findOne({
         where: {
           id: tagihanCamabaId
         }
@@ -293,6 +293,26 @@ const validasiTagihanCamabaKolektif = async (req, res, next) => {
 
       // Simpan perubahan ke dalam database
       await dataTagihanCamaba.save();
+
+      // update data status_pembayaran milik oleh camaba
+      let dataCamaba = await Camaba.findOne({
+        where: {
+          id: dataTagihanCamaba.id_camaba
+        }
+      });
+
+      // Periksa apakah data camaba ditemukan
+      if (!dataCamaba) {
+        return res.status(404).json({
+          message: `Camaba with ID ${dataCamaba.id_camaba} not found`
+        });
+      }
+
+      // update data camaba
+      dataCamaba.status_pembayaran = true;
+
+      // Simpan perubahan ke dalam database
+      await dataCamaba.save();
     }
 
     // Kirim respons JSON jika berhasil

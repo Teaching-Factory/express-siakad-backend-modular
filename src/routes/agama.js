@@ -7,7 +7,7 @@ const AgamaController = require("../controllers/agama");
 const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", checkRole(["admin"]), AgamaController.getAllAgamas);
-router.get("/:id/get", checkRole(["admin"]), AgamaController.getAgamaById);
+router.get("/", checkRole(["admin", "admin-prodi", "admin-keuangan", "admin-pmb", "dosen", "mahasiswa", "camaba"]), AgamaController.getAllAgamas);
+router.get("/:id/get", checkRole(["admin", "admin-prodi", "admin-keuangan", "admin-pmb", "dosen", "mahasiswa", "camaba"]), AgamaController.getAgamaById);
 
 module.exports = router;
