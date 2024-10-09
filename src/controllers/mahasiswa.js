@@ -21,7 +21,8 @@ const {
   JenjangPendidikan,
   KRSMahasiswa,
   KelasKuliah,
-  MataKuliah
+  MataKuliah,
+  SettingWSFeeder
 } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
@@ -288,11 +289,31 @@ const importMahasiswas = async (req, res, next) => {
       return res.status(400).json({ message: "File type not supported" });
     }
 
-    const perguruan_tinggi = await PerguruanTinggi.findOne({
+    // get data setting ws active
+    const setting_ws_active = await SettingWSFeeder.findOne({
       where: {
-        nama_singkat: "UBI"
+        status: true
       }
     });
+
+    if (!setting_ws_active) {
+      return res.status(400).json({
+        message: "Setting WS Feeder Active Not Found"
+      });
+    }
+
+    // get data perguruan tinggi
+    const perguruanTinggi = await PerguruanTinggi.findOne({
+      where: {
+        kode_perguruan_tinggi: setting_ws_active.username_feeder
+      }
+    });
+
+    if (!perguruanTinggi) {
+      return res.status(400).json({
+        message: "Perguruan Tinggi Not Found"
+      });
+    }
 
     const filePath = req.file.path;
     const workbook = new ExcelJS.Workbook();
@@ -305,34 +326,43 @@ const importMahasiswas = async (req, res, next) => {
 
     let mahasiswaData = [];
     const riwayatPendidikanPromises = [];
+    const rows = [];
 
     worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
       if (rowNumber > 1) {
-        const nim = row.getCell(2).value;
-        const nisn = row.getCell(3).value;
-        const nama = row.getCell(4).value;
-        const nik = row.getCell(5).value;
-        const tempat_lahir = row.getCell(6).value;
-        const tanggal_lahir = row.getCell(7).value;
-        const jenis_kelamin = row.getCell(8).value;
-        const no_handphone = row.getCell(9).value;
-        const email = row.getCell(10).value;
-        const kode_agama = row.getCell(11).value;
-        const desa_kelurahan = row.getCell(12).value;
-        const kode_wilayah = row.getCell(13).value;
-        const nama_ibu_kandung = row.getCell(14).value;
-        const kode_prodi = row.getCell(15).value;
-        const tanggal_masuk = row.getCell(16).value;
-        const jenis_pendaftaran = row.getCell(17).value;
-        const jalur_pendaftaran = row.getCell(18).value;
-        const kode_pt_asal = row.getCell(19).value;
-        const kode_prodi_asal = row.getCell(20).value;
-        const biaya_awal_masuk = row.getCell(21).value;
-        const jenis_pembiayaan = row.getCell(22).value;
+        rows.push(row);
+      }
+    });
 
-        // format data
-        const formattedNoHandphone = no_handphone ? `0${no_handphone.toString()}` : null;
+    for (const row of rows) {
+      const nim = row.getCell(2).value.startsWith("'") ? row.getCell(2).value.slice(1) : row.getCell(2).value;
+      const nisn = row.getCell(3).value.startsWith("'") ? row.getCell(3).value.slice(1) : row.getCell(3).value;
+      const nama = row.getCell(4).value; // Nama tidak perlu perubahan
+      const nik = row.getCell(5).value.startsWith("'") ? row.getCell(5).value.slice(1) : row.getCell(5).value;
+      const tempat_lahir = row.getCell(6).value;
+      const tanggal_lahir = row.getCell(7).value;
+      const jenis_kelamin = row.getCell(8).value;
+      const no_handphone = row.getCell(9).value;
+      const email = row.getCell(10).value;
+      const kode_agama = row.getCell(11).value;
+      const desa_kelurahan = row.getCell(12).value;
+      const kode_wilayah = row.getCell(13).value;
+      const nama_ibu_kandung = row.getCell(14).value;
+      const kode_prodi = row.getCell(15).value;
+      const tanggal_masuk = row.getCell(16).value;
+      const semester_masuk = row.getCell(17).value;
+      const jenis_pendaftaran = row.getCell(18).value;
+      const jalur_pendaftaran = row.getCell(19).value;
+      const biaya_awal_masuk = row.getCell(22).value;
+      const jenis_pembiayaan = row.getCell(23).value;
 
+      // Mengecek apakah data mahasiswa sudah ditambahkan di database dengan kolom nim
+      let mahasiswaChecking = await Mahasiswa.findOne({
+        where: { nim: nim }
+      });
+
+      if (!mahasiswaChecking) {
+        // mengecek apakah data mahasiswa sudah ditambahkan di database dengan kolom nim
         mahasiswaData.push(
           (async () => {
             let id_wilayah = null;
@@ -341,9 +371,6 @@ const importMahasiswas = async (req, res, next) => {
             let id_jalur_masuk = null;
             let id_prodi = null;
             let id_pembiayaan = null;
-            let id_perguruan_tinggi_asal = null;
-            let id_prodi_asal = null;
-            let id_periode = null;
 
             if (kode_wilayah) {
               const wilayah = await Wilayah.findOne({ where: { id_wilayah: kode_wilayah } });
@@ -375,20 +402,11 @@ const importMahasiswas = async (req, res, next) => {
               if (pembiayaan) id_pembiayaan = pembiayaan.id_pembiayaan;
             }
 
-            if (kode_pt_asal) {
-              const perguruan_tinggi_asal = await PerguruanTinggi.findOne({ where: { kode_perguruan_tinggi: kode_pt_asal } });
-              if (perguruan_tinggi_asal) id_perguruan_tinggi_asal = perguruan_tinggi_asal.id_perguruan_tinggi;
-            }
-
-            if (kode_prodi_asal) {
-              const prodi_asal = await Prodi.findOne({ where: { kode_program_studi: kode_prodi_asal } });
-              if (prodi_asal) id_prodi_asal = prodi_asal.id_prodi;
-            }
-
-            const currentYear = new Date().getFullYear().toString();
-            const id_semester = currentYear + "1";
-
-            const semester = await Semester.findOne({ where: { id_semester: id_semester } });
+            let semester = await Semester.findOne({
+              where: {
+                id_semester: semester_masuk
+              }
+            });
 
             const biodata_mahasiswa = {
               tempat_lahir: tempat_lahir,
@@ -403,7 +421,7 @@ const importMahasiswas = async (req, res, next) => {
               kelurahan: desa_kelurahan,
               kode_pos: null,
               telepon: null,
-              handphone: formattedNoHandphone,
+              handphone: no_handphone,
               email: email,
               penerima_kps: 0,
               nomor_kps: null,
@@ -448,10 +466,11 @@ const importMahasiswas = async (req, res, next) => {
                 nama_periode_masuk: null,
                 id_sms: null,
                 id_mahasiswa: createdBiodataMahasiswa.id_mahasiswa,
-                id_perguruan_tinggi: perguruan_tinggi.id_perguruan_tinggi,
                 id_agama: id_agama,
-                id_semester: id_semester,
-                id_prodi: id_prodi
+                id_semester: semester_masuk,
+                id_prodi: id_prodi,
+                id_perguruan_tinggi: perguruanTinggi.id_perguruan_tinggi,
+                nama_periode_masuk: semester.nama_semester
               });
               if (createdMahasiswa) {
                 mahasiswaData.push(createdMahasiswa);
@@ -468,13 +487,13 @@ const importMahasiswas = async (req, res, next) => {
                 id_registrasi_mahasiswa: createdMahasiswa.id_registrasi_mahasiswa,
                 id_jenis_daftar: id_jenis_daftar,
                 id_jalur_daftar: id_jalur_masuk,
-                id_periode_masuk: semester.id_semester,
+                id_periode_masuk: semester_masuk,
                 id_jenis_keluar: null,
                 id_prodi: id_prodi,
                 id_pembiayaan: id_pembiayaan,
                 id_bidang_minat: null,
-                id_perguruan_tinggi_asal: id_perguruan_tinggi_asal,
-                id_prodi_asal: id_prodi_asal
+                id_perguruan_tinggi_asal: null,
+                id_prodi_asal: null
               });
 
               riwayatPendidikanPromises.push(riwayatPendidikan);
@@ -482,12 +501,13 @@ const importMahasiswas = async (req, res, next) => {
           })()
         );
       }
-    });
+    }
 
     await Promise.all(mahasiswaData);
     await Promise.all(riwayatPendidikanPromises);
     mahasiswaData = mahasiswaData.filter((item) => Object.keys(item).length !== 0);
 
+    // Hapus file ketika berhasil melakukan import data
     await fs.unlink(filePath);
 
     res.status(200).json({

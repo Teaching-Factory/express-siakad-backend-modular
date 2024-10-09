@@ -24,7 +24,8 @@ const {
   Wilayah,
   Agama,
   SettingGlobalSemester,
-  JenisPendaftaran
+  JenisPendaftaran,
+  Pembiayaan
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const fs = require("fs").promises;
@@ -1139,7 +1140,7 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
         jenis_kelamin: { [Op.not]: null },
         id_prodi_diterima: { [Op.not]: null }
       },
-      include: [{ model: Prodi }, { model: BiodataCamaba, include: [{ model: Wilayah }, { model: Agama }] }]
+      include: [{ model: Prodi }, { model: Pembiayaan }, { model: BiodataCamaba, include: [{ model: Wilayah }, { model: Agama }] }]
     });
 
     if (!camabas || camabas.length === 0) {
@@ -1179,8 +1180,24 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
       { header: "Jenis Pembiayaan", key: "jenis_pembiayaan", width: 20 }
     ];
 
+    // Format tanggal masuk dengan toLocaleDateString
+    const formattedTanggalMasuk = new Date().toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric"
+    });
+
     // Add data rows
     camabas.forEach((camaba, index) => {
+      const formattedTanggalLahir = new Date(camaba.tanggal_lahir).toLocaleDateString("en-US", {
+        month: "numeric",
+        day: "numeric",
+        year: "numeric"
+      });
+
+      // Format biaya_awal_masuk tanpa desimal
+      const formattedBiayaAwalMasuk = parseInt(periodePendaftaran.biaya_pendaftaran, 10);
+
       worksheet.addRow({
         no: index + 1,
         nim: `'${camaba.nim}`,
@@ -1188,23 +1205,23 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
         nama_lengkap: camaba.nama_lengkap,
         nik: `'${camaba.BiodataCamaba?.nik || ""}`,
         tempat_lahir: camaba.tempat_lahir,
-        tanggal_lahir: `'${camaba.tanggal_lahir || ""}`,
+        tanggal_lahir: formattedTanggalLahir,
         jenis_kelamin: camaba.jenis_kelamin === "Laki-laki" ? "L" : camaba.jenis_kelamin === "Perempuan" ? "P" : "",
         nomor_hp: camaba.nomor_hp,
         email: camaba.email,
         kode_agama: camaba.BiodataCamaba?.Agama?.id_agama || "",
         kelurahan: camaba.BiodataCamaba?.Wilayah?.nama_wilayah || "",
-        kode_wilayah: `'${camaba.BiodataCamaba?.Wilayah?.id_wilayah || ""}`,
+        kode_wilayah: camaba.BiodataCamaba?.Wilayah?.id_wilayah || "",
         nama_ibu_kandung: camaba.BiodataCamaba?.nama_ibu_kandung || "",
-        kode_prodi: `'${camaba.Prodi?.kode_program_studi || ""}`,
-        tanggal_masuk: `'${new Date().toISOString().slice(0, 10)}`, // Format YYYY-MM-DD
+        kode_prodi: camaba.Prodi?.kode_program_studi || "",
+        tanggal_masuk: formattedTanggalMasuk,
         semester_masuk: setting_global_semester_aktif.SemesterAktif.id_semester,
-        jenis_pendaftaran: jenisPendaftaranPesertaDidikBaru.id_jenis_daftar,
-        jalur_pendaftaran: periodePendaftaran.id_jalur_masuk,
+        jenis_pendaftaran: jenisPendaftaranPesertaDidikBaru.nama_jenis_daftar,
+        jalur_pendaftaran: periodePendaftaran.JalurMasuk.nama_jalur_masuk,
         kode_pt_asal: "",
         kode_prodi_asal: "",
-        biaya_awal_masuk: periodePendaftaran.biaya_pendaftaran,
-        jenis_pembiayaan: camaba.id_pembiayaan
+        biaya_awal_masuk: formattedBiayaAwalMasuk,
+        jenis_pembiayaan: camaba.Pembiayaan?.nama_pembiayaan || ""
       });
     });
 
@@ -1228,12 +1245,6 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
     next(error);
   }
 };
-
-// res.status(200).json({
-//   message: "Import and Update Data Nim Camaba Kolektif Success",
-//   jumlahData: camabas.length,
-//   data: camabas
-// });
 
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
