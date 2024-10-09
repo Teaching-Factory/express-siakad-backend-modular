@@ -20,12 +20,17 @@ const {
   JenisTagihan,
   SumberPeriodePendaftaran,
   SumberInfoCamaba,
-  Sumber
+  Sumber,
+  Wilayah,
+  Agama,
+  SettingGlobalSemester,
+  JenisPendaftaran
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const fs = require("fs").promises;
 const path = require("path");
 const ExcelJS = require("exceljs");
+const { Op } = require("sequelize");
 
 // admin, admin-pmb
 const getAllCamaba = async (req, res, next) => {
@@ -1066,6 +1071,170 @@ const importCamabaForUpdateNimKolektif = async (req, res, next) => {
   }
 };
 
+const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) => {
+  try {
+    const periodePendaftaranId = req.params.id_periode_pendaftaran;
+
+    if (!periodePendaftaranId) {
+      return res.status(400).json({
+        message: "Periode Pendaftaran ID is required"
+      });
+    }
+
+    // get periode pendaftaran
+    const periodePendaftaran = await PeriodePendaftaran.findByPk(periodePendaftaranId, {
+      include: [{ model: JalurMasuk }]
+    });
+
+    if (!periodePendaftaran) {
+      return res.status(400).json({
+        message: "Periode Pendaftaran Not Found"
+      });
+    }
+
+    // get data setting global semester
+    const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
+      where: {
+        status: true
+      },
+      include: [{ model: Semester, as: "SemesterAktif" }]
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!setting_global_semester_aktif) {
+      return res.status(404).json({
+        message: `<===== Setting Global Semester Aktif Not Found:`
+      });
+    }
+
+    // get jenis pendaftaran Peserta Didik Baru
+    const jenisPendaftaranPesertaDidikBaru = await JenisPendaftaran.findOne({
+      where: {
+        nama_jenis_daftar: "Peserta didik baru"
+      }
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!jenisPendaftaranPesertaDidikBaru) {
+      return res.status(404).json({
+        message: `<===== Jenis Pendaftaran Peserta Didik Baru Not Found:`
+      });
+    }
+
+    // Retrieve data based on Periode Pendaftaran ID
+    const camabas = await Camaba.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId,
+        status_export_mahasiswa: false,
+        nim: {
+          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }]
+        },
+        nama_lengkap: {
+          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }]
+        },
+        tempat_lahir: {
+          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }]
+        },
+        tanggal_lahir: { [Op.not]: null },
+        jenis_kelamin: { [Op.not]: null },
+        id_prodi_diterima: { [Op.not]: null }
+      },
+      include: [{ model: Prodi }, { model: BiodataCamaba, include: [{ model: Wilayah }, { model: Agama }] }]
+    });
+
+    if (!camabas || camabas.length === 0) {
+      return res.status(404).json({
+        message: `<===== Camaba With Periode Pendaftaran ID ${periodePendaftaranId} Not Found:`
+      });
+    }
+
+    // Create a new Excel workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Data Calon Mahasiswa");
+
+    // Add column headers
+    worksheet.columns = [
+      { header: "No", key: "no", width: 5 },
+      { header: "NIM", key: "nim", width: 20 },
+      { header: "NISN", key: "nisn", width: 20 },
+      { header: "Nama Mahasiswa", key: "nama_lengkap", width: 20 },
+      { header: "NIK", key: "nik", width: 20 },
+      { header: "Tempat Lahir", key: "tempat_lahir", width: 20 },
+      { header: "Tanggal Lahir", key: "tanggal_lahir", width: 20 },
+      { header: "Jenis Kelamin", key: "jenis_kelamin", width: 20 },
+      { header: "No. Handphone", key: "nomor_hp", width: 20 },
+      { header: "Email", key: "email", width: 20 },
+      { header: "Kode Agama", key: "kode_agama", width: 20 },
+      { header: "Desa/Kelurahan", key: "kelurahan", width: 20 },
+      { header: "Kode Wilayah", key: "kode_wilayah", width: 20 },
+      { header: "Nama Ibu Kandung", key: "nama_ibu_kandung", width: 20 },
+      { header: "Kode Prodi", key: "kode_prodi", width: 20 },
+      { header: "Tanggal Masuk", key: "tanggal_masuk", width: 20 },
+      { header: "Semester Masuk", key: "semester_masuk", width: 20 },
+      { header: "Jenis Pendaftaran", key: "jenis_pendaftaran", width: 20 },
+      { header: "Jalur Pendaftaran", key: "jalur_pendaftaran", width: 20 },
+      { header: "Kode PT Asal", key: "kode_pt_asal", width: 20 },
+      { header: "Kode Prodi Asal", key: "kode_prodi_asal", width: 20 },
+      { header: "Biaya Awal Masuk", key: "biaya_awal_masuk", width: 20 },
+      { header: "Jenis Pembiayaan", key: "jenis_pembiayaan", width: 20 }
+    ];
+
+    // Add data rows
+    camabas.forEach((camaba, index) => {
+      worksheet.addRow({
+        no: index + 1,
+        nim: `'${camaba.nim}`,
+        nisn: `'${camaba.BiodataCamaba?.nisn || ""}`,
+        nama_lengkap: camaba.nama_lengkap,
+        nik: `'${camaba.BiodataCamaba?.nik || ""}`,
+        tempat_lahir: camaba.tempat_lahir,
+        tanggal_lahir: `'${camaba.tanggal_lahir || ""}`,
+        jenis_kelamin: camaba.jenis_kelamin === "Laki-laki" ? "L" : camaba.jenis_kelamin === "Perempuan" ? "P" : "",
+        nomor_hp: camaba.nomor_hp,
+        email: camaba.email,
+        kode_agama: camaba.BiodataCamaba?.Agama?.id_agama || "",
+        kelurahan: camaba.BiodataCamaba?.Wilayah?.nama_wilayah || "",
+        kode_wilayah: `'${camaba.BiodataCamaba?.Wilayah?.id_wilayah || ""}`,
+        nama_ibu_kandung: camaba.BiodataCamaba?.nama_ibu_kandung || "",
+        kode_prodi: `'${camaba.Prodi?.kode_program_studi || ""}`,
+        tanggal_masuk: `'${new Date().toISOString().slice(0, 10)}`, // Format YYYY-MM-DD
+        semester_masuk: setting_global_semester_aktif.SemesterAktif.id_semester,
+        jenis_pendaftaran: jenisPendaftaranPesertaDidikBaru.id_jenis_daftar,
+        jalur_pendaftaran: periodePendaftaran.id_jalur_masuk,
+        kode_pt_asal: "",
+        kode_prodi_asal: "",
+        biaya_awal_masuk: periodePendaftaran.biaya_pendaftaran,
+        jenis_pembiayaan: camaba.id_pembiayaan
+      });
+    });
+
+    // Set headers for the response
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", `attachment; filename=camaba-to-mahasiswa-periode-${periodePendaftaranId}.xlsx`);
+
+    // update kolom status_export_mahasiswa menjadi true
+    const promises = camabas.map(async (camaba) => {
+      camaba.status_export_mahasiswa = true; // Set status to true
+      return camaba.save(); // Save changes
+    });
+
+    // Wait for all promises to resolve
+    await Promise.all(promises);
+
+    // Write to the response
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    next(error);
+  }
+};
+
+// res.status(200).json({
+//   message: "Import and Update Data Nim Camaba Kolektif Success",
+//   jumlahData: camabas.length,
+//   data: camabas
+// });
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -1087,5 +1256,6 @@ module.exports = {
   cetakFormPendaftaranByCamabaActive,
   cetakKartuUjianByCamabaActive,
   exportCamabaByPeriodePendaftaranId,
-  importCamabaForUpdateNimKolektif
+  importCamabaForUpdateNimKolektif,
+  exportCamabaForMahasiswaByPeriodePendaftaranId
 };

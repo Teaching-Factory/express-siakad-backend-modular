@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 
       // relasi tabel child
       Camaba.hasMany(models.ProdiCamaba, { foreignKey: "id_camaba" });
-      Camaba.hasMany(models.BiodataCamaba, { foreignKey: "id_camaba" });
+      Camaba.hasOne(models.BiodataCamaba, { foreignKey: "id_camaba" });
       Camaba.hasMany(models.PemberkasanCamaba, { foreignKey: "id_camaba" });
       Camaba.hasMany(models.TagihanCamaba, { foreignKey: "id_camaba" });
       Camaba.hasMany(models.SumberInfoCamaba, { foreignKey: "id_camaba" });
@@ -92,6 +92,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue: true
+      },
+      status_export_mahasiswa: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false
       },
       finalisasi: {
         type: DataTypes.BOOLEAN,

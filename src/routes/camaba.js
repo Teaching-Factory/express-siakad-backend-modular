@@ -50,5 +50,6 @@ router.get("/cetak-kartu-ujian-camaba-aktif", checkRole(["camaba"]), CamabaContr
 router.put("/detail-camaba/:id/update-status-kelulusan-pendaftar", checkRole(["admin", "admin-pmb"]), CamabaController.updateStatusKelulusanPendaftar);
 router.get("/export/:id_periode_pendaftaran/get", checkRole(["admin", "admin-pmb"]), CamabaController.exportCamabaByPeriodePendaftaranId);
 router.post("/:id_periode_pendaftaran/import", checkRole(["admin", "admin-pmb"]), importCamaba.single("file"), CamabaController.importCamabaForUpdateNimKolektif);
+router.get("/export-camaba-to-mahasiswa/:id_periode_pendaftaran/get", checkRole(["admin", "admin-pmb"]), importCamaba.single("file"), CamabaController.exportCamabaForMahasiswaByPeriodePendaftaranId);
 
 module.exports = router;

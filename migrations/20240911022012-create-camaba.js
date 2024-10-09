@@ -73,6 +73,11 @@ module.exports = {
         allowNull: true,
         defaultValue: true
       },
+      status_export_mahasiswa: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false
+      },
       finalisasi: {
         type: Sequelize.BOOLEAN,
         allowNull: true,
