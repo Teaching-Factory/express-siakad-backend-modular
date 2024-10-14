@@ -7,47 +7,52 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       file_berkas: {
         type: Sequelize.STRING(255),
-        allowNull: true
+        allowNull: true,
+      },
+      status_berkas: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
       },
       id_berkas_periode_pendaftaran: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: {
-            tableName: "berkas_periode_pendaftarans"
+            tableName: "berkas_periode_pendaftarans",
           },
-          key: "id"
+          key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
       id_camaba: {
         type: Sequelize.STRING(36),
         allowNull: false,
         references: {
           model: {
-            tableName: "camabas"
+            tableName: "camabas",
           },
-          key: "id"
+          key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("pemberkasan_camabas");
-  }
+  },
 };

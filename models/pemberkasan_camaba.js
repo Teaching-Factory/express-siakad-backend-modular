@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, BOOLEAN } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PemberkasanCamaba extends Model {
     /**
@@ -19,25 +19,30 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
       },
       file_berkas: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
+      },
+      status_berkas: {
+        type: BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
       },
       id_berkas_periode_pendaftaran: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
       },
       id_camaba: {
         type: DataTypes.STRING(36),
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       sequelize,
       modelName: "PemberkasanCamaba",
-      tableName: "pemberkasan_camabas"
+      tableName: "pemberkasan_camabas",
     }
   );
   return PemberkasanCamaba;
