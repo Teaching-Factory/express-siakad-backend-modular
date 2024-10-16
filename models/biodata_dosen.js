@@ -120,7 +120,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(18),
         allowNull: true,
       },
-      tanggal_mulai_cpns: {
+      tanggal_mulai_pns: {
         type: DataTypes.DATE,
         allowNull: true,
       },

@@ -105,7 +105,7 @@ module.exports = {
         type: Sequelize.STRING(18),
         allowNull: true,
       },
-      tanggal_mulai_cpns: {
+      tanggal_mulai_pns: {
         type: Sequelize.DATE,
         allowNull: true,
       },

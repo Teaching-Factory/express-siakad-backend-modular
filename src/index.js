@@ -11,6 +11,7 @@ const path = require("path");
 // route api feeder dikti
 const apiFeederRoutes = require("./routes/api-feeder");
 const apiExternalRoutes = require("./routes/api-external");
+const apiSyncFeederRoutes = require("./routes/api-sync-feeder");
 
 // route endpoint pengujian performa
 const pengujianPerformaRoutes = require("./routes/pengujian-performa");
@@ -194,6 +195,7 @@ app.use(express.json());
 // route api feeder dikti
 app.use("/api-feeder", checkToken, apiFeederRoutes);
 app.use("/api-external", checkToken, apiExternalRoutes);
+app.use("/sync-feeder", checkToken, apiSyncFeederRoutes);
 
 app.use("/pengujian-performa", checkToken, pengujianPerformaRoutes);
 

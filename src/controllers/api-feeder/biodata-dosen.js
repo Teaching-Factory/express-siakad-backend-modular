@@ -9,13 +9,13 @@ const getBiodataDosen = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "DetailBiodataDosen",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -51,12 +51,12 @@ const getBiodataDosen = async (req, res, next) => {
         status_pernikahan: biodata_dosen.status_pernikahan,
         nama_suami_istri: biodata_dosen.nama_suami_istri,
         nip_suami_istri: biodata_dosen.nip_suami_istri,
-        tanggal_mulai_cpns: biodata_dosen.tanggal_mulai_cpns,
+        tanggal_mulai_pns: biodata_dosen.tanggal_mulai_pns,
         id_dosen: biodata_dosen.id_dosen,
         id_lembaga_pengangkatan: biodata_dosen.id_lembaga_pengangkatan,
         id_pangkat_golongan: biodata_dosen.id_pangkat_golongan,
         id_wilayah: biodata_dosen.id_wilayah,
-        id_pekerjaan_suami_istri: biodata_dosen.id_pekerjaan_suami_istri
+        id_pekerjaan_suami_istri: biodata_dosen.id_pekerjaan_suami_istri,
       });
     }
 
@@ -64,7 +64,7 @@ const getBiodataDosen = async (req, res, next) => {
     res.status(200).json({
       message: "Create Biodata Dosen Success",
       totalData: dataBiodataDosen.length,
-      dataBiodataDosen: dataBiodataDosen
+      dataBiodataDosen: dataBiodataDosen,
     });
   } catch (error) {
     next(error);
@@ -72,5 +72,5 @@ const getBiodataDosen = async (req, res, next) => {
 };
 
 module.exports = {
-  getBiodataDosen
+  getBiodataDosen,
 };
