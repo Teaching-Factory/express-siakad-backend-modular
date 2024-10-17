@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
-  }
+  },
 });
 
 // filter untuk memastikan hanya file pdf yang bisa diupload
@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  fileFilter: fileFilter
+  fileFilter: fileFilter,
 });
 
 const importCamaba = multer({ dest: "uploads/" });

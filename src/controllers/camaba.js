@@ -25,7 +25,7 @@ const {
   Agama,
   SettingGlobalSemester,
   JenisPendaftaran,
-  Pembiayaan
+  Pembiayaan,
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const fs = require("fs").promises;
@@ -40,15 +40,15 @@ const getAllCamaba = async (req, res, next) => {
     const camabas = await Camaba.findAll({
       include: [
         { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Camaba Success",
       jumlahData: camabas.length,
-      data: camabas
+      data: camabas,
     });
   } catch (error) {
     next(error);
@@ -90,18 +90,18 @@ const getAllCamabaByFilter = async (req, res, next) => {
     const camabas = await Camaba.findAll({
       include: [
         { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
       ],
       where: {
         id_periode_pendaftaran: id_periode_pendaftaran,
         status_berkas: status_berkas_now,
-        status_tes: status_tes_now
-      }
+        status_tes: status_tes_now,
+      },
     });
 
     if (!camabas || camabas.length === 0) {
       return res.status(404).json({
-        message: `<===== Camaba Not Found`
+        message: `<===== Camaba Not Found`,
       });
     }
 
@@ -111,15 +111,15 @@ const getAllCamabaByFilter = async (req, res, next) => {
         // Ambil prodi pertama berdasarkan id_camaba
         const prodi_camaba = await ProdiCamaba.findOne({
           where: {
-            id_camaba: camaba.id
+            id_camaba: camaba.id,
           },
-          order: [["createdAt", "ASC"]] // Mengambil berdasarkan urutan (prodi pertama)
+          order: [["createdAt", "ASC"]], // Mengambil berdasarkan urutan (prodi pertama)
         });
 
         // Jika prodi_camaba ditemukan, tambahkan ke data camaba
         return {
           ...camaba.toJSON(), // Konversi instance Sequelize menjadi JSON
-          ProdiCamaba: prodi_camaba || null // Tambahkan ProdiCamaba atau null jika tidak ditemukan
+          ProdiCamaba: prodi_camaba || null, // Tambahkan ProdiCamaba atau null jika tidak ditemukan
         };
       })
     );
@@ -128,7 +128,7 @@ const getAllCamabaByFilter = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Camaba By Filter Success",
       jumlahData: camabaWithProdi.length,
-      data: camabaWithProdi
+      data: camabaWithProdi,
     });
   } catch (error) {
     next(error);
@@ -143,7 +143,7 @@ const getCamabaById = async (req, res, next) => {
 
     if (!camabaId) {
       return res.status(400).json({
-        message: "Camaba ID is required"
+        message: "Camaba ID is required",
       });
     }
 
@@ -151,27 +151,27 @@ const getCamabaById = async (req, res, next) => {
     const camaba = await Camaba.findByPk(camabaId, {
       include: [
         { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!camaba) {
       return res.status(404).json({
-        message: `<===== Camaba With ID ${camabaId} Not Found:`
+        message: `<===== Camaba With ID ${camabaId} Not Found:`,
       });
     }
 
     // get data Prodi Camaba
     const prodiCamaba = await ProdiCamaba.findAll({
       where: { id_camaba: camabaId },
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!prodiCamaba) {
       return res.status(404).json({
-        message: `<===== Prodi Camaba With Camaba ID ${camabaId} Not Found:`
+        message: `<===== Prodi Camaba With Camaba ID ${camabaId} Not Found:`,
       });
     }
 
@@ -179,7 +179,7 @@ const getCamabaById = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Camaba By ID ${camabaId} Success:`,
       data: camaba,
-      prodiCamaba: prodiCamaba
+      prodiCamaba: prodiCamaba,
     });
   } catch (error) {
     next(error);
@@ -223,39 +223,39 @@ const createCamaba = async (req, res, next) => {
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Periode Pendaftaran ID is required"
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
     const periode_pendaftaran = await PeriodePendaftaran.findOne({
       where: {
-        id: periodePendaftaranId
-      }
+        id: periodePendaftaranId,
+      },
     });
 
     if (!periode_pendaftaran) {
       return res.status(404).json({
-        message: `<===== Periode Pendaftaran With ID ${periodePendaftaranId} Not Found:`
+        message: `<===== Periode Pendaftaran With ID ${periodePendaftaranId} Not Found:`,
       });
     }
 
     const setting_ws_feeder_aktif = await SettingWSFeeder.findOne({
-      where: { status: true }
+      where: { status: true },
     });
 
     if (!setting_ws_feeder_aktif) {
       return res.status(404).json({
-        message: `<===== Setting WS Feeder Aktif Not Found:`
+        message: `<===== Setting WS Feeder Aktif Not Found:`,
       });
     }
 
     const role = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!role) {
       return res.status(404).json({
-        message: `<===== Role Camaba Not Found:`
+        message: `<===== Role Camaba Not Found:`,
       });
     }
 
@@ -266,7 +266,7 @@ const createCamaba = async (req, res, next) => {
 
       const lastCamaba = await Camaba.findOne({
         where: { id_periode_pendaftaran: periode_pendaftaran.id },
-        order: [["nomor_daftar", "DESC"]]
+        order: [["nomor_daftar", "DESC"]],
       });
 
       let nomorUrut = "0001"; // default jika belum ada
@@ -288,12 +288,12 @@ const createCamaba = async (req, res, next) => {
 
     // get data jenis tagihan PMB
     const jenis_tagihan_pmb = await JenisTagihan.findOne({
-      where: { nama_jenis_tagihan: "PMB" }
+      where: { nama_jenis_tagihan: "PMB" },
     });
 
     if (!jenis_tagihan_pmb) {
       return res.status(404).json({
-        message: `<===== Jenis Tagihan PMB Not Found:`
+        message: `<===== Jenis Tagihan PMB Not Found:`,
       });
     }
 
@@ -308,7 +308,7 @@ const createCamaba = async (req, res, next) => {
       tanggal_pendaftaran: new Date(),
       nomor_daftar: nomorDaftar,
       hints: tanggal_lahir_format,
-      id_periode_pendaftaran: periodePendaftaranId
+      id_periode_pendaftaran: periodePendaftaranId,
     });
 
     // Buat data user baru
@@ -318,12 +318,12 @@ const createCamaba = async (req, res, next) => {
       password: hashedPassword,
       hints: tanggal_lahir_format,
       email: null,
-      status: true
+      status: true,
     });
 
     await UserRole.create({
       id_role: role.id,
-      id_user: newUser.id
+      id_user: newUser.id,
     });
 
     // Buat data Biodata Camaba
@@ -331,20 +331,20 @@ const createCamaba = async (req, res, next) => {
       telepon: newCamaba.nomor_hp,
       handphone: newCamaba.nomor_hp,
       email: newCamaba.email,
-      id_camaba: newCamaba.id
+      id_camaba: newCamaba.id,
     });
 
     // Get data berkas periode pendaftaran
     const berkas_periode_pendaftaran = await BerkasPeriodePendaftaran.findAll({
       where: {
-        id_periode_pendaftaran: periodePendaftaranId
-      }
+        id_periode_pendaftaran: periodePendaftaranId,
+      },
     });
 
     // Periksa apakah data ditemukan
     if (!berkas_periode_pendaftaran || berkas_periode_pendaftaran.length === 0) {
       return res.status(404).json({
-        message: `<===== Berkas Periode Pendaftaran Not Found:`
+        message: `<===== Berkas Periode Pendaftaran Not Found:`,
       });
     }
 
@@ -353,7 +353,7 @@ const createCamaba = async (req, res, next) => {
       await PemberkasanCamaba.create({
         file_berkas: null,
         id_berkas_periode_pendaftaran: berkas.id,
-        id_camaba: newCamaba.id
+        id_camaba: newCamaba.id,
       });
     }
 
@@ -365,13 +365,13 @@ const createCamaba = async (req, res, next) => {
       prodiCamaba = await Promise.all(
         prodi.map(async ({ id_prodi }) => {
           const data_prodi = await Prodi.findOne({
-            where: { id_prodi: id_prodi }
+            where: { id_prodi: id_prodi },
           });
 
           if (data_prodi) {
             await ProdiCamaba.create({
               id_prodi: data_prodi.id_prodi,
-              id_camaba: newCamaba.id
+              id_camaba: newCamaba.id,
             });
             return data_prodi;
           } else {
@@ -392,7 +392,7 @@ const createCamaba = async (req, res, next) => {
       id_jenis_tagihan: jenis_tagihan_pmb.id_jenis_tagihan,
       id_semester: periode_pendaftaran.id_semester,
       id_camaba: newCamaba.id,
-      id_periode_pendaftaran: periode_pendaftaran.id
+      id_periode_pendaftaran: periode_pendaftaran.id,
     });
 
     // Variabel untuk menyimpan sumber_periode_pendaftaran yang berhasil ditambahkan
@@ -404,7 +404,7 @@ const createCamaba = async (req, res, next) => {
           // tambahkan nama_sumber dari request
           const data_sumber_periode_pendaftaran = await SumberPeriodePendaftaran.findOne({
             where: { id: id },
-            include: [{ model: Sumber }]
+            include: [{ model: Sumber }],
           });
 
           if (data_sumber_periode_pendaftaran) {
@@ -413,7 +413,7 @@ const createCamaba = async (req, res, next) => {
             await SumberInfoCamaba.create({
               nama_sumber: namaSumber, // menggunakan nama sumber sesuai kondisi
               id_camaba: newCamaba.id,
-              id_sumber_periode_pendaftaran: data_sumber_periode_pendaftaran.id
+              id_sumber_periode_pendaftaran: data_sumber_periode_pendaftaran.id,
             });
 
             return data_sumber_periode_pendaftaran;
@@ -432,7 +432,7 @@ const createCamaba = async (req, res, next) => {
       message: "<===== CREATE Camaba Success",
       dataCamaba: newCamaba,
       dataProdiCamaba: prodiCamaba,
-      dataSumberInfoCamaba: sumberPeriodePendaftaran
+      dataSumberInfoCamaba: sumberPeriodePendaftaran,
     });
   } catch (error) {
     next(error);
@@ -446,52 +446,52 @@ const getCamabaActiveByUser = async (req, res, next) => {
 
     // get role user active
     const roleCamaba = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!roleCamaba) {
       return res.status(404).json({
-        message: "Role Camaba not found"
+        message: "Role Camaba not found",
       });
     }
 
     // mengecek apakah user saat ini memiliki role camaba
     const userRole = await UserRole.findOne({
-      where: { id_user: user.id, id_role: roleCamaba.id }
+      where: { id_user: user.id, id_role: roleCamaba.id },
     });
 
     if (!userRole) {
       return res.status(404).json({
-        message: "User is not Camaba"
+        message: "User is not Camaba",
       });
     }
 
     const camaba = await Camaba.findOne({
       where: {
-        nomor_daftar: user.username
+        nomor_daftar: user.username,
       },
       include: [
         { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
 
     if (!camaba) {
       return res.status(404).json({
-        message: "Camaba not found"
+        message: "Camaba not found",
       });
     }
 
     // get data Prodi Camaba
     const prodiCamaba = await ProdiCamaba.findAll({
       where: { id_camaba: camaba.id },
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!prodiCamaba) {
       return res.status(404).json({
-        message: `<===== Prodi Camaba Not Found:`
+        message: `<===== Prodi Camaba Not Found:`,
       });
     }
 
@@ -499,7 +499,7 @@ const getCamabaActiveByUser = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Camaba Active Success:`,
       data: camaba,
-      prodiCamaba: prodiCamaba
+      prodiCamaba: prodiCamaba,
     });
   } catch (error) {
     next(error);
@@ -513,39 +513,39 @@ const updateProfileCamabaActive = async (req, res, next) => {
 
     // get role user active
     const roleCamaba = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!roleCamaba) {
       return res.status(404).json({
-        message: "Role Camaba not found"
+        message: "Role Camaba not found",
       });
     }
 
     // mengecek apakah user saat ini memiliki role camaba
     const userRole = await UserRole.findOne({
-      where: { id_user: user.id, id_role: roleCamaba.id }
+      where: { id_user: user.id, id_role: roleCamaba.id },
     });
 
     if (!userRole) {
       return res.status(404).json({
-        message: "User is not Camaba"
+        message: "User is not Camaba",
       });
     }
 
     const camaba = await Camaba.findOne({
       where: {
-        nomor_daftar: user.username
+        nomor_daftar: user.username,
       },
       include: [
         { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
 
     if (!camaba) {
       return res.status(404).json({
-        message: "Camaba not found"
+        message: "Camaba not found",
       });
     }
 
@@ -584,7 +584,7 @@ const updateProfileCamabaActive = async (req, res, next) => {
 
     res.json({
       message: "UPDATE Profile Camaba Success",
-      data: camaba
+      data: camaba,
     });
   } catch (error) {
     next(error);
@@ -604,35 +604,35 @@ const finalisasiByCamabaActive = async (req, res, next) => {
 
     // get role user active
     const roleCamaba = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!roleCamaba) {
       return res.status(404).json({
-        message: "Role Camaba not found"
+        message: "Role Camaba not found",
       });
     }
 
     // mengecek apakah user saat ini memiliki role camaba
     const userRole = await UserRole.findOne({
-      where: { id_user: user.id, id_role: roleCamaba.id }
+      where: { id_user: user.id, id_role: roleCamaba.id },
     });
 
     if (!userRole) {
       return res.status(404).json({
-        message: "User is not Camaba"
+        message: "User is not Camaba",
       });
     }
 
     const camaba = await Camaba.findOne({
       where: {
-        nomor_daftar: user.username
-      }
+        nomor_daftar: user.username,
+      },
     });
 
     if (!camaba) {
       return res.status(404).json({
-        message: "Camaba not found"
+        message: "Camaba not found",
       });
     }
 
@@ -643,7 +643,7 @@ const finalisasiByCamabaActive = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== Finalisasi Camaba Active Success:`,
-      data: camaba
+      data: camaba,
     });
   } catch (error) {
     next(error);
@@ -683,7 +683,7 @@ const updateStatusKelulusanPendaftar = async (req, res, next) => {
 
     if (!camabaId) {
       return res.status(400).json({
-        message: "Camaba ID is required"
+        message: "Camaba ID is required",
       });
     }
 
@@ -703,7 +703,7 @@ const updateStatusKelulusanPendaftar = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== UPDATE Status Kelulusan Pendaftar By Camaba ID ${camabaId} Success:`,
-      data: camaba
+      data: camaba,
     });
   } catch (error) {
     next(error);
@@ -717,66 +717,66 @@ const cetakFormPendaftaranByCamabaActive = async (req, res, next) => {
 
     // get role user active
     const roleCamaba = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!roleCamaba) {
       return res.status(404).json({
-        message: "Role Camaba not found"
+        message: "Role Camaba not found",
       });
     }
 
     // mengecek apakah user saat ini memiliki role camaba
     const userRole = await UserRole.findOne({
-      where: { id_user: user.id, id_role: roleCamaba.id }
+      where: { id_user: user.id, id_role: roleCamaba.id },
     });
 
     if (!userRole) {
       return res.status(404).json({
-        message: "User is not Camaba"
+        message: "User is not Camaba",
       });
     }
 
     const camaba = await Camaba.findOne({
       where: {
-        nomor_daftar: user.username
+        nomor_daftar: user.username,
       },
       include: [
         { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
 
     if (!camaba) {
       return res.status(404).json({
-        message: "Camaba not found"
+        message: "Camaba not found",
       });
     }
 
     // get data user
     const user_camaba = await User.findOne({
       where: {
-        username: camaba.nomor_daftar
+        username: camaba.nomor_daftar,
       },
-      attributes: ["username", "hints"]
+      attributes: ["username", "hints"],
     });
 
     if (!user_camaba) {
       return res.status(404).json({
-        message: "User Camaba not found"
+        message: "User Camaba not found",
       });
     }
 
     // get data Prodi Camaba
     const prodiCamaba = await ProdiCamaba.findAll({
       where: { id_camaba: camaba.id },
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!prodiCamaba) {
       return res.status(404).json({
-        message: `<===== Prodi Camaba Not Found:`
+        message: `<===== Prodi Camaba Not Found:`,
       });
     }
 
@@ -785,7 +785,7 @@ const cetakFormPendaftaranByCamabaActive = async (req, res, next) => {
       message: `<===== Cetak Form Pendaftaran Camaba Active Success:`,
       dataCamaba: camaba,
       dataProdiCamaba: prodiCamaba,
-      dataUserCamaba: user_camaba
+      dataUserCamaba: user_camaba,
     });
   } catch (error) {
     next(error);
@@ -799,39 +799,39 @@ const cetakKartuUjianByCamabaActive = async (req, res, next) => {
 
     // get role user active
     const roleCamaba = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!roleCamaba) {
       return res.status(404).json({
-        message: "Role Camaba not found"
+        message: "Role Camaba not found",
       });
     }
 
     // mengecek apakah user saat ini memiliki role camaba
     const userRole = await UserRole.findOne({
-      where: { id_user: user.id, id_role: roleCamaba.id }
+      where: { id_user: user.id, id_role: roleCamaba.id },
     });
 
     if (!userRole) {
       return res.status(404).json({
-        message: "User is not Camaba"
+        message: "User is not Camaba",
       });
     }
 
     const camaba = await Camaba.findOne({
       where: {
-        nomor_daftar: user.username
+        nomor_daftar: user.username,
       },
       include: [
         { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
 
     if (!camaba) {
       return res.status(404).json({
-        message: "Camaba not found"
+        message: "Camaba not found",
       });
     }
 
@@ -840,56 +840,56 @@ const cetakKartuUjianByCamabaActive = async (req, res, next) => {
       // get biodata camaba
       const biodata_camaba = await BiodataCamaba.findOne({
         where: {
-          id_camaba: camaba.id
-        }
+          id_camaba: camaba.id,
+        },
       });
 
       // Jika data tidak ditemukan, kirim respons 404
       if (!biodata_camaba) {
         return res.status(404).json({
-          message: `<===== Biodata Camaba Not Found:`
+          message: `<===== Biodata Camaba Not Found:`,
         });
       }
 
       // get data periode pendaftaran
       const periode_pendaftaran = await PeriodePendaftaran.findOne({
         where: {
-          id: camaba.id_periode_pendaftaran
-        }
+          id: camaba.id_periode_pendaftaran,
+        },
       });
 
       // Jika data tidak ditemukan, kirim respons 404
       if (!periode_pendaftaran) {
         return res.status(404).json({
-          message: `<===== Periode Pendaftaran Not Found:`
+          message: `<===== Periode Pendaftaran Not Found:`,
         });
       }
 
       // get tahap tes periode pendaftaran
       const tahap_tes_periode_pendaftaran = await TahapTesPeriodePendaftaran.findAll({
         where: {
-          id_periode_pendaftaran: periode_pendaftaran.id
+          id_periode_pendaftaran: periode_pendaftaran.id,
         },
-        include: [{ model: JenisTes }]
+        include: [{ model: JenisTes }],
       });
 
       // Jika data tidak ditemukan, kirim respons 404
       if (!tahap_tes_periode_pendaftaran) {
         return res.status(404).json({
-          message: `<===== Tahap Tes Periode Pendaftaran Not Found:`
+          message: `<===== Tahap Tes Periode Pendaftaran Not Found:`,
         });
       }
 
       // get data Prodi Camaba
       const prodiCamaba = await ProdiCamaba.findAll({
         where: { id_camaba: camaba.id },
-        include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+        include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
       });
 
       // Jika data tidak ditemukan, kirim respons 404
       if (!prodiCamaba) {
         return res.status(404).json({
-          message: `<===== Prodi Camaba Not Found:`
+          message: `<===== Prodi Camaba Not Found:`,
         });
       }
 
@@ -899,11 +899,11 @@ const cetakKartuUjianByCamabaActive = async (req, res, next) => {
         dataCamaba: camaba,
         dataBiodataCamaba: biodata_camaba,
         dataProdiCamaba: prodiCamaba,
-        dataTahapTes: tahap_tes_periode_pendaftaran
+        dataTahapTes: tahap_tes_periode_pendaftaran,
       });
     } else {
       return res.status(404).json({
-        message: "Camaba belum melakukan finalisasi"
+        message: "Camaba belum melakukan finalisasi",
       });
     }
   } catch (error) {
@@ -917,7 +917,7 @@ const exportCamabaByPeriodePendaftaranId = async (req, res, next) => {
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Periode Pendaftaran ID is required"
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
@@ -928,14 +928,14 @@ const exportCamabaByPeriodePendaftaranId = async (req, res, next) => {
         finalisasi: true,
         status_berkas: true,
         status_tes: true,
-        status_pembayaran: true
+        status_pembayaran: true,
       },
-      include: [{ model: PeriodePendaftaran }, { model: Prodi, include: [{ model: JenjangPendidikan }] }]
+      include: [{ model: PeriodePendaftaran }, { model: Prodi, include: [{ model: JenjangPendidikan }] }],
     });
 
     if (!camabas || camabas.length === 0) {
       return res.status(404).json({
-        message: `<===== Camaba With Periode Pendaftaran ID ${periodePendaftaranId} Not Found:`
+        message: `<===== Camaba With Periode Pendaftaran ID ${periodePendaftaranId} Not Found:`,
       });
     }
 
@@ -959,7 +959,7 @@ const exportCamabaByPeriodePendaftaranId = async (req, res, next) => {
       { header: "Status Berkas", key: "status_berkas", width: 20 },
       { header: "Status Tes", key: "status_tes", width: 20 },
       { header: "Status Pembayaran", key: "status_pembayaran", width: 20 },
-      { header: "Finalisasi Camaba", key: "finalisasi", width: 20 }
+      { header: "Finalisasi Camaba", key: "finalisasi", width: 20 },
     ];
 
     // Add data rows
@@ -979,7 +979,7 @@ const exportCamabaByPeriodePendaftaranId = async (req, res, next) => {
         status_berkas: camaba.status_berkas ? "Lulus" : "Tidak Lulus",
         status_tes: camaba.status_tes ? "Lulus" : "Tidak Lulus",
         status_pembayaran: camaba.status_tes ? "Lunas" : "Belum Lunas",
-        finalisasi: camaba.status_tes ? "Sudah" : "Belum"
+        finalisasi: camaba.status_tes ? "Sudah" : "Belum",
       });
     });
 
@@ -1001,7 +1001,7 @@ const importCamabaForUpdateNimKolektif = async (req, res, next) => {
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Periode Pendaftaran ID is required"
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
@@ -1037,8 +1037,8 @@ const importCamabaForUpdateNimKolektif = async (req, res, next) => {
       const camaba = await Camaba.findOne({
         where: {
           nomor_daftar: nomor_daftar,
-          id_periode_pendaftaran: periodePendaftaranId
-        }
+          id_periode_pendaftaran: periodePendaftaranId,
+        },
       });
 
       if (camaba) {
@@ -1065,7 +1065,7 @@ const importCamabaForUpdateNimKolektif = async (req, res, next) => {
     res.status(200).json({
       message: "Import and Update Data Nim Camaba Kolektif Success",
       jumlahData: camabaDataNew.length,
-      data: camabaDataNew
+      data: camabaDataNew,
     });
   } catch (error) {
     next(error);
@@ -1078,47 +1078,47 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Periode Pendaftaran ID is required"
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
     // get periode pendaftaran
     const periodePendaftaran = await PeriodePendaftaran.findByPk(periodePendaftaranId, {
-      include: [{ model: JalurMasuk }]
+      include: [{ model: JalurMasuk }],
     });
 
     if (!periodePendaftaran) {
       return res.status(400).json({
-        message: "Periode Pendaftaran Not Found"
+        message: "Periode Pendaftaran Not Found",
       });
     }
 
     // get data setting global semester
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
       where: {
-        status: true
+        status: true,
       },
-      include: [{ model: Semester, as: "SemesterAktif" }]
+      include: [{ model: Semester, as: "SemesterAktif" }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!setting_global_semester_aktif) {
       return res.status(404).json({
-        message: `<===== Setting Global Semester Aktif Not Found:`
+        message: `<===== Setting Global Semester Aktif Not Found:`,
       });
     }
 
     // get jenis pendaftaran Peserta Didik Baru
     const jenisPendaftaranPesertaDidikBaru = await JenisPendaftaran.findOne({
       where: {
-        nama_jenis_daftar: "Peserta didik baru"
-      }
+        nama_jenis_daftar: "Peserta didik baru",
+      },
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!jenisPendaftaranPesertaDidikBaru) {
       return res.status(404).json({
-        message: `<===== Jenis Pendaftaran Peserta Didik Baru Not Found:`
+        message: `<===== Jenis Pendaftaran Peserta Didik Baru Not Found:`,
       });
     }
 
@@ -1128,24 +1128,24 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
         id_periode_pendaftaran: periodePendaftaranId,
         status_export_mahasiswa: false,
         nim: {
-          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }]
+          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }],
         },
         nama_lengkap: {
-          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }]
+          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }],
         },
         tempat_lahir: {
-          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }]
+          [Op.and]: [{ [Op.not]: null }, { [Op.not]: "" }],
         },
         tanggal_lahir: { [Op.not]: null },
         jenis_kelamin: { [Op.not]: null },
-        id_prodi_diterima: { [Op.not]: null }
+        id_prodi_diterima: { [Op.not]: null },
       },
-      include: [{ model: Prodi }, { model: Pembiayaan }, { model: BiodataCamaba, include: [{ model: Wilayah }, { model: Agama }] }]
+      include: [{ model: Prodi }, { model: Pembiayaan }, { model: BiodataCamaba, include: [{ model: Wilayah }, { model: Agama }] }],
     });
 
     if (!camabas || camabas.length === 0) {
       return res.status(404).json({
-        message: `<===== Camaba With Periode Pendaftaran ID ${periodePendaftaranId} Not Found:`
+        message: `<===== Camaba With Periode Pendaftaran ID ${periodePendaftaranId} Not Found:`,
       });
     }
 
@@ -1177,14 +1177,14 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
       { header: "Kode PT Asal", key: "kode_pt_asal", width: 20 },
       { header: "Kode Prodi Asal", key: "kode_prodi_asal", width: 20 },
       { header: "Biaya Awal Masuk", key: "biaya_awal_masuk", width: 20 },
-      { header: "Jenis Pembiayaan", key: "jenis_pembiayaan", width: 20 }
+      { header: "Jenis Pembiayaan", key: "jenis_pembiayaan", width: 20 },
     ];
 
     // Format tanggal masuk dengan toLocaleDateString
     const formattedTanggalMasuk = new Date().toLocaleDateString("en-US", {
       month: "numeric",
       day: "numeric",
-      year: "numeric"
+      year: "numeric",
     });
 
     // Add data rows
@@ -1192,7 +1192,7 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
       const formattedTanggalLahir = new Date(camaba.tanggal_lahir).toLocaleDateString("en-US", {
         month: "numeric",
         day: "numeric",
-        year: "numeric"
+        year: "numeric",
       });
 
       // Format biaya_awal_masuk tanpa desimal
@@ -1221,7 +1221,7 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
         kode_pt_asal: "",
         kode_prodi_asal: "",
         biaya_awal_masuk: formattedBiayaAwalMasuk,
-        jenis_pembiayaan: camaba.Pembiayaan?.nama_pembiayaan || ""
+        jenis_pembiayaan: camaba.Pembiayaan?.nama_pembiayaan || "",
       });
     });
 
@@ -1268,5 +1268,5 @@ module.exports = {
   cetakKartuUjianByCamabaActive,
   exportCamabaByPeriodePendaftaranId,
   importCamabaForUpdateNimKolektif,
-  exportCamabaForMahasiswaByPeriodePendaftaranId
+  exportCamabaForMahasiswaByPeriodePendaftaranId,
 };
