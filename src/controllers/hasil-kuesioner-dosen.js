@@ -1,4 +1,4 @@
-const { Kuesioner, AspekPenilaianDosen, SkalaPenilaianDosen, KelasKuliah, Mahasiswa } = require("../../models");
+const { Kuesioner, AspekPenilaianDosen, SkalaPenilaianDosen, KelasKuliah, Mahasiswa, Dosen, Semester, TahunAjaran } = require("../../models");
 
 const getHasilPenilaianDosenByDosenIdAndSemesterId = async (req, res, next) => {
   const { id_semester, id_dosen } = req.query;
@@ -12,14 +12,22 @@ const getHasilPenilaianDosenByDosenIdAndSemesterId = async (req, res, next) => {
   }
 
   try {
+    // Cari data dosen berdasarkan ID di database
+    const dosen = await Dosen.findByPk(id_dosen);
+
+    // Cari data semester berdasarkan ID di database
+    const semester = await Semester.findByPk(id_semester, {
+      include: [{ model: TahunAjaran }],
+    });
+
     // Get all aspek penilaian by id_semester
     const aspek_penilaian = await AspekPenilaianDosen.findAll({
-      where: { id_semester: id_semester }
+      where: { id_semester: id_semester },
     });
 
     // Get all skala penilaian dosen by id_semester
     const skala_penilaian = await SkalaPenilaianDosen.findAll({
-      where: { id_semester: id_semester }
+      where: { id_semester: id_semester },
     });
 
     // Cari data responden kuesioner berdasarkan ID Semester dan Dosen di database
@@ -29,20 +37,20 @@ const getHasilPenilaianDosenByDosenIdAndSemesterId = async (req, res, next) => {
           model: KelasKuliah,
           where: {
             id_semester: id_semester,
-            id_dosen: id_dosen
-          }
+            id_dosen: id_dosen,
+          },
         },
         {
           model: Mahasiswa, // Mahasiswa yang mengisi kuesioner
-          attributes: ["id_registrasi_mahasiswa"]
-        }
-      ]
+          attributes: ["id_registrasi_mahasiswa"],
+        },
+      ],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!respondenKuesioners || respondenKuesioners.length === 0) {
       return res.status(404).json({
-        message: `<===== Hasil Kuesioner Dosen With Dosen ID ${id_dosen} And Semester ID ${id_semester} Not Found:`
+        message: `<===== Hasil Kuesioner Dosen With Dosen ID ${id_dosen} And Semester ID ${id_semester} Not Found:`,
       });
     }
 
@@ -55,7 +63,7 @@ const getHasilPenilaianDosenByDosenIdAndSemesterId = async (req, res, next) => {
         tipe_aspek_penilaian: aspek.tipe_aspek_penilaian,
         deskripsi_pendek: aspek.deskripsi_pendek,
         jumlah_koresponden: 0, // Untuk menghitung jumlah koresponden yang menilai aspek ini
-        nilai_akhir: 0.0
+        nilai_akhir: 0.0,
       };
 
       // Inisialisasi hitungan skala dinamis berdasarkan variabel skala_penilaian
@@ -87,7 +95,7 @@ const getHasilPenilaianDosenByDosenIdAndSemesterId = async (req, res, next) => {
       // Return hasil untuk aspek penilaian ini
       return {
         aspekPenilaian: aspek.deskripsi, // Atau kolom lainnya yang relevan
-        skalaPenilaian: skalaCount
+        skalaPenilaian: skalaCount,
       };
     });
 
@@ -104,8 +112,10 @@ const getHasilPenilaianDosenByDosenIdAndSemesterId = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Hasil Kuesioner Dosen By Dosen ID ${id_dosen} And Semester ID ${id_semester} Success:`,
       rata_rata_nilai_akhir: rata_rata_nilai_akhir,
+      dosen: dosen,
+      semester: semester,
       skala_penilaian: skala_penilaian,
-      hasilPenilaian: hasilPenilaian
+      hasilPenilaian: hasilPenilaian,
     });
   } catch (error) {
     next(error);
@@ -113,5 +123,5 @@ const getHasilPenilaianDosenByDosenIdAndSemesterId = async (req, res, next) => {
 };
 
 module.exports = {
-  getHasilPenilaianDosenByDosenIdAndSemesterId
+  getHasilPenilaianDosenByDosenIdAndSemesterId,
 };

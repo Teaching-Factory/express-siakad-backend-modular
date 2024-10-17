@@ -68,7 +68,7 @@ describe("getHasilPenilaianDosenPerKelasByKelasKuliahId", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res._getJSONData()).toEqual({
-      message: "Jabatan ID is required"
+      message: "Jabatan ID is required",
     });
   });
 
@@ -82,7 +82,7 @@ describe("getHasilPenilaianDosenPerKelasByKelasKuliahId", () => {
 
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
-      message: "<===== Kelas Kuliah With ID 1 Not Found:"
+      message: "<===== Kelas Kuliah With ID 1 Not Found:",
     });
   });
 
@@ -94,7 +94,7 @@ describe("getHasilPenilaianDosenPerKelasByKelasKuliahId", () => {
       id: 1,
       id_semester: 2,
       id_dosen: 3,
-      MataKuliah: { id: 101, nama: "Matematika" }
+      MataKuliah: { id: 101, nama: "Matematika" },
     };
 
     jest.spyOn(KelasKuliah, "findByPk").mockResolvedValue(mockKelasKuliah);
@@ -106,7 +106,7 @@ describe("getHasilPenilaianDosenPerKelasByKelasKuliahId", () => {
 
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
-      message: "<===== Hasil Kuesioner Dosen With Dosen ID 3 And Semester ID 2 Not Found:"
+      message: "<===== Hasil Kuesioner Dosen With Dosen ID 3 And Semester ID 2 Not Found:",
     });
   });
 
