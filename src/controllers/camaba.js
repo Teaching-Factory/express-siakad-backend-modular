@@ -664,9 +664,6 @@ const updateStatusKelulusanPendaftar = async (req, res, next) => {
   if (status_akun_pendaftar === undefined || status_akun_pendaftar === null) {
     return res.status(400).json({ message: "status_akun_pendaftar is required" });
   }
-  // if (!nim) {
-  //   return res.status(400).json({ message: "nim is required" });
-  // }
   if (!id_prodi_diterima) {
     return res.status(400).json({ message: "id_prodi_diterima is required" });
   }
@@ -690,14 +687,22 @@ const updateStatusKelulusanPendaftar = async (req, res, next) => {
     // Cari data camaba berdasarkan ID di database
     const camaba = await Camaba.findByPk(camabaId);
 
-    // update data camaba aktif
+    // Jika tidak ditemukan, kembalikan error 404
+    if (!camaba) {
+      return res.status(404).json({
+        message: `Camaba with ID ${camabaId} not found`,
+      });
+    }
+
+    // Update data camaba
     camaba.status_berkas = status_berkas;
     camaba.status_tes = status_tes;
-    // camaba.nim = nim;
     camaba.id_prodi_diterima = id_prodi_diterima;
     camaba.id_pembiayaan = id_pembiayaan;
     camaba.finalisasi = finalisasi;
     camaba.status_akun_pendaftar = status_akun_pendaftar;
+
+    // Simpan perubahan
     await camaba.save();
 
     // Kirim respons JSON jika berhasil
@@ -1246,6 +1251,54 @@ const exportCamabaForMahasiswaByPeriodePendaftaranId = async (req, res, next) =>
   }
 };
 
+const getFinalisasiByCamabaActive = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // get role user active
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" },
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found",
+      });
+    }
+
+    // mengecek apakah user saat ini memiliki role camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba",
+      });
+    }
+
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username,
+      },
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found",
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Finalisasi Camaba Active Success:`,
+      finalisasi_camaba: camaba.finalisasi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -1269,4 +1322,5 @@ module.exports = {
   exportCamabaByPeriodePendaftaranId,
   importCamabaForUpdateNimKolektif,
   exportCamabaForMahasiswaByPeriodePendaftaranId,
+  getFinalisasiByCamabaActive,
 };

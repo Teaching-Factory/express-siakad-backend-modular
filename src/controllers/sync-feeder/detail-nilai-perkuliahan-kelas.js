@@ -58,7 +58,7 @@ async function getDetailNilaiPerkuliahanKelasFromLocal(semesterId) {
 }
 
 // Fungsi utama untuk sinkronisasi detail nilai perkuliahan kelas
-async function syncDataDetailNilaiPerkuliahanKelas() {
+async function syncDataDetailNilaiPerkuliahanKelas(req, res, next) {
   try {
     // Dapatkan ID dari parameter permintaan
     const semesterId = req.params.id_semester;
@@ -140,7 +140,7 @@ async function syncDataDetailNilaiPerkuliahanKelas() {
 
 const synceDetailNilaiPerkuliahanKelas = async (req, res, next) => {
   try {
-    await syncDataDetailNilaiPerkuliahanKelas();
+    await syncDataDetailNilaiPerkuliahanKelas(req, res, next);
     res.status(200).json({ message: "Sinkronisasi detail nilai perkuliahan kelas berhasil." });
   } catch (error) {
     next(error);
