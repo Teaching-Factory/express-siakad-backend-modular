@@ -9,8 +9,10 @@ const checkRole = require("../middlewares/check-role");
 const SyncListDosenController = require("../controllers/sync-feeder/list-dosen");
 const SyncTahunAjaranController = require("../controllers/sync-feeder/tahun-ajaran");
 const SyncSemesterController = require("../controllers/sync-feeder/semester");
+const SyncListMataKuliahController = require("../controllers/sync-feeder/list-mata-kuliah");
 
 // controller belum digunakan dan belum dicoba
+// const SyncKelasKuliahController = require("../controllers/sync-feeder/list-kelas-kuliah");
 // const SyncDetailNilaiPerkuliahanKelasController = require("../controllers/sync-feeder/detail-nilai-perkuliahan-kelas");
 // const SyncDetailKelasKuliahController = require("../controllers/sync-feeder/detail-kelas-kuliah");
 
@@ -18,8 +20,10 @@ const SyncSemesterController = require("../controllers/sync-feeder/semester");
 router.get("/list-dosen", checkRole(["admin"]), SyncListDosenController.syncListDosen);
 router.get("/tahun-ajaran", checkRole(["admin"]), SyncTahunAjaranController.syncTahunAjaran);
 router.get("/semester", checkRole(["admin"]), SyncSemesterController.syncSemester);
+router.get("/list-mata-kuliah", checkRole(["admin"]), SyncListMataKuliahController.syncListMataKuliah);
 
 // route belum digunakan dan belum dicoba
+// router.get("/list-kelas-kuliah", checkRole(["admin"]), SyncKelasKuliahController.syncKelasKuliah);
 // router.get("/semester/:id_semester/detail-nilai-perkuliahan-kelas", checkRole(["admin"]), SyncDetailNilaiPerkuliahanKelasController.synceDetailNilaiPerkuliahanKelas);
 // router.get("/semester/:id_semester/detail-kelas-kuliah", checkRole(["admin"]), SyncDetailKelasKuliahController.syncDetailKelasKuliah);
 
