@@ -3,8 +3,14 @@ const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
 // Fungsi untuk mendapatkan daftar kelas kuliah dari Feeder
-async function getKelasKuliahFromFeeder() {
+async function getKelasKuliahFromFeeder(semesterId, req, res, next) {
   try {
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+
     const { token, url_feeder } = await getToken();
 
     if (!token || !url_feeder) {
@@ -14,6 +20,7 @@ async function getKelasKuliahFromFeeder() {
     const requestBody = {
       act: "GetListKelasKuliah",
       token: token,
+      filter: `id_semester='${semesterId}'`,
     };
 
     const response = await axios.post(url_feeder, requestBody);
@@ -26,9 +33,13 @@ async function getKelasKuliahFromFeeder() {
 }
 
 // Fungsi untuk mendapatkan daftar kelas kuliah dari database lokal
-async function getKelasKuliahFromLocal() {
+async function getKelasKuliahFromLocal(semesterId, req, res, next) {
   try {
-    return await KelasKuliah.findAll();
+    return await KelasKuliah.findAll({
+      where: {
+        id_semester: semesterId,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data from local DB:", error.message);
     throw error;
@@ -43,14 +54,12 @@ async function createKelasKuliahToFeeder(kelas) {
     const requestBody = {
       act: "InsertKelasKuliah",
       token: token,
-      record: {
+      data: {
         id_kelas_kuliah: kelas.id_kelas_kuliah,
         nama_kelas_kuliah: kelas.nama_kelas_kuliah,
         sks: kelas.sks,
         jumlah_mahasiswa: kelas.jumlah_mahasiswa,
         apa_untuk_pditt: kelas.apa_untuk_pditt,
-        lingkup: kelas.lingkup,
-        mode: kelas.mode,
         id_prodi: kelas.id_prodi,
         id_semester: kelas.id_semester,
         id_matkul: kelas.id_matkul,
@@ -85,11 +94,20 @@ async function deleteKelasKuliahFromFeeder(id_kelas_kuliah) {
   }
 }
 
-// Fungsi utama untuk sinkronisasi kelas kuliah
-async function syncDataKelasKuliah() {
+// Fungsi utama untuk sinkronisasi kelas kuliah (belum selesai)
+async function syncDataKelasKuliah(req, res, next) {
   try {
-    const kelasFeeder = await getKelasKuliahFromFeeder();
-    const kelasLocal = await getKelasKuliahFromLocal();
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+
+    const kelasFeeder = await getKelasKuliahFromFeeder(semesterId);
+    const kelasLocal = await getKelasKuliahFromLocal(semesterId);
 
     const localMap = kelasLocal.reduce((map, kelas) => {
       map[kelas.id_kelas_kuliah] = kelas;
@@ -155,6 +173,7 @@ async function syncDataKelasKuliah() {
       if (!feederMap[localKelas.id_kelas_kuliah]) {
         // Tambahkan ke Feeder jika tidak ada di Feeder
         await createKelasKuliahToFeeder(localKelas);
+        console.log("Kelas berhasil ditambahkan dari local ke feeder");
       } else {
         // Jika ada di Feeder, pastikan data lokal up-to-date
         const feederKelas = feederMap[localKelas.id_kelas_kuliah];
@@ -190,14 +209,14 @@ async function syncDataKelasKuliah() {
       }
     }
 
-    // Hapus data lokal yang tidak ada di Feeder
-    for (let localKelas of kelasLocal) {
-      if (!feederMap[localKelas.id_kelas_kuliah]) {
-        await deleteKelasKuliahFromFeeder(localKelas.id_kelas_kuliah);
-        await localKelas.destroy();
-        console.log(`Data kelas kuliah ${localKelas.nama_kelas_kuliah} dihapus dari lokal karena tidak ada di Feeder.`);
-      }
-    }
+    // // Hapus data lokal yang tidak ada di Feeder
+    // for (let localKelas of kelasLocal) {
+    //   if (!feederMap[localKelas.id_kelas_kuliah]) {
+    //     await deleteKelasKuliahFromFeeder(localKelas.id_kelas_kuliah);
+    //     await localKelas.destroy();
+    //     console.log(`Data kelas kuliah ${localKelas.nama_kelas_kuliah} dihapus dari lokal karena tidak ada di Feeder.`);
+    //   }
+    // }
 
     console.log("Sinkronisasi kelas kuliah selesai.");
   } catch (error) {
@@ -208,7 +227,7 @@ async function syncDataKelasKuliah() {
 
 const syncKelasKuliah = async (req, res, next) => {
   try {
-    await syncDataKelasKuliah();
+    await syncDataKelasKuliah(req, res, next);
     res.status(200).json({ message: "Sinkronisasi kelas kuliah berhasil." });
   } catch (error) {
     next(error);

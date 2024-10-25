@@ -6,14 +6,14 @@ const getAllTagihanCamaba = async (req, res, next) => {
   try {
     // Ambil semua data tagihan_camabas dari database
     const tagihan_camabas = await TagihanCamaba.findAll({
-      include: [{ model: Semester }, { model: JenisTagihan }]
+      include: [{ model: Semester }, { model: JenisTagihan }],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Tagihan Camaba Success",
       jumlahData: tagihan_camabas.length,
-      data: tagihan_camabas
+      data: tagihan_camabas,
     });
   } catch (error) {
     next(error);
@@ -29,12 +29,12 @@ const getAllTagihanCamabaByFilter = async (req, res, next) => {
 
     if (!semesterId) {
       return res.status(400).json({
-        message: "Semester ID is required"
+        message: "Semester ID is required",
       });
     }
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Periode Pendaftaran ID is required"
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
@@ -58,15 +58,15 @@ const getAllTagihanCamabaByFilter = async (req, res, next) => {
       where: {
         id_semester: semesterId,
         id_periode_pendaftaran: periodePendaftaranId,
-        ...tagihanCondition
+        ...tagihanCondition,
       },
-      include: [{ model: Semester }, { model: JenisTagihan }]
+      include: [{ model: Semester }, { model: JenisTagihan }, { model: Camaba }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!tagihan_camaba_by_filter.length) {
       return res.status(404).json({
-        message: "Tagihan Camaba Not Found"
+        message: "Tagihan Camaba Not Found",
       });
     }
 
@@ -74,7 +74,7 @@ const getAllTagihanCamabaByFilter = async (req, res, next) => {
     res.status(200).json({
       message: "GET Tagihan By Filter Camaba Success",
       jumlahData: tagihan_camaba_by_filter.length,
-      data: tagihan_camaba_by_filter
+      data: tagihan_camaba_by_filter,
     });
   } catch (error) {
     next(error);
@@ -87,26 +87,26 @@ const getTagihanCamabaById = async (req, res, next) => {
 
     if (!tagihanCamabaId) {
       return res.status(400).json({
-        message: "Tagihan Camaba ID is required"
+        message: "Tagihan Camaba ID is required",
       });
     }
 
     // Cari data tagihan_camaba berdasarkan ID di database
     const tagihan_camaba = await TagihanCamaba.findByPk(tagihanCamabaId, {
-      include: [{ model: Semester }, { model: JenisTagihan }]
+      include: [{ model: Semester }, { model: JenisTagihan }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!tagihan_camaba) {
       return res.status(404).json({
-        message: `<===== Tagihan Camaba With ID ${tagihanCamabaId} Not Found:`
+        message: `<===== Tagihan Camaba With ID ${tagihanCamabaId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Tagihan Camaba By ID ${tagihanCamabaId} Success:`,
-      data: tagihan_camaba
+      data: tagihan_camaba,
     });
   } catch (error) {
     next(error);
@@ -119,50 +119,50 @@ const getTagihanCamabaByCamabaActive = async (req, res, next) => {
 
     // get role user active
     const roleCamaba = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!roleCamaba) {
       return res.status(404).json({
-        message: "Role Camaba not found"
+        message: "Role Camaba not found",
       });
     }
 
     // mengecek apakah user saat ini memiliki role camaba
     const userRole = await UserRole.findOne({
-      where: { id_user: user.id, id_role: roleCamaba.id }
+      where: { id_user: user.id, id_role: roleCamaba.id },
     });
 
     if (!userRole) {
       return res.status(404).json({
-        message: "User is not Camaba"
+        message: "User is not Camaba",
       });
     }
 
     const camaba = await Camaba.findOne({
       where: {
-        nomor_daftar: user.username
-      }
+        nomor_daftar: user.username,
+      },
     });
 
     if (!camaba) {
       return res.status(404).json({
-        message: "Camaba not found"
+        message: "Camaba not found",
       });
     }
 
     // Ambil data tagihan_camaba berdasarkan camaba yang aktif dari database
     const tagihan_camaba = await TagihanCamaba.findOne({
       where: {
-        id_camaba: camaba.id
+        id_camaba: camaba.id,
       },
-      include: [{ model: Semester }, { model: JenisTagihan }]
+      include: [{ model: Semester }, { model: JenisTagihan }],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Tagihan Camaba Active Success",
-      data: tagihan_camaba
+      data: tagihan_camaba,
     });
   } catch (error) {
     next(error);
@@ -175,43 +175,43 @@ const uploadBuktiPembayaranByCamabaActive = async (req, res, next) => {
 
     // get role user active
     const roleCamaba = await Role.findOne({
-      where: { nama_role: "camaba" }
+      where: { nama_role: "camaba" },
     });
 
     if (!roleCamaba) {
       return res.status(404).json({
-        message: "Role Camaba not found"
+        message: "Role Camaba not found",
       });
     }
 
     // mengecek apakah user saat ini memiliki role camaba
     const userRole = await UserRole.findOne({
-      where: { id_user: user.id, id_role: roleCamaba.id }
+      where: { id_user: user.id, id_role: roleCamaba.id },
     });
 
     if (!userRole) {
       return res.status(404).json({
-        message: "User is not Camaba"
+        message: "User is not Camaba",
       });
     }
 
     const camaba = await Camaba.findOne({
       where: {
-        nomor_daftar: user.username
-      }
+        nomor_daftar: user.username,
+      },
     });
 
     if (!camaba) {
       return res.status(404).json({
-        message: "Camaba not found"
+        message: "Camaba not found",
       });
     }
 
     // Ambil data tagihan_camaba berdasarkan camaba yang aktif dari database
     const tagihan_camaba = await TagihanCamaba.findOne({
       where: {
-        id_camaba: camaba.id
-      }
+        id_camaba: camaba.id,
+      },
     });
 
     // Simpan path file lama jika ada
@@ -250,7 +250,7 @@ const uploadBuktiPembayaranByCamabaActive = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== Upload Tagihan Camaba Active Success:`,
-      data: tagihan_camaba
+      data: tagihan_camaba,
     });
   } catch (error) {
     next(error);
@@ -275,14 +275,14 @@ const validasiTagihanCamabaKolektif = async (req, res, next) => {
       // Ambil data Tagihan Camaba berdasarkan id
       let dataTagihanCamaba = await TagihanCamaba.findOne({
         where: {
-          id: tagihanCamabaId
-        }
+          id: tagihanCamabaId,
+        },
       });
 
       // Periksa apakah data tagihan camaba ditemukan
       if (!dataTagihanCamaba) {
         return res.status(404).json({
-          message: `Tagihan Camaba with ID ${tagihanCamabaId} not found`
+          message: `Tagihan Camaba with ID ${tagihanCamabaId} not found`,
         });
       }
 
@@ -297,14 +297,14 @@ const validasiTagihanCamabaKolektif = async (req, res, next) => {
       // update data status_pembayaran milik oleh camaba
       let dataCamaba = await Camaba.findOne({
         where: {
-          id: dataTagihanCamaba.id_camaba
-        }
+          id: dataTagihanCamaba.id_camaba,
+        },
       });
 
       // Periksa apakah data camaba ditemukan
       if (!dataCamaba) {
         return res.status(404).json({
-          message: `Camaba with ID ${dataCamaba.id_camaba} not found`
+          message: `Camaba with ID ${dataCamaba.id_camaba} not found`,
         });
       }
 
@@ -318,7 +318,7 @@ const validasiTagihanCamabaKolektif = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== UPDATE Tagihan Camaba Kolektif Success:`,
-      data: tagihan_camabas
+      data: tagihan_camabas,
     });
   } catch (error) {
     next(error);
@@ -331,5 +331,5 @@ module.exports = {
   getTagihanCamabaById,
   getTagihanCamabaByCamabaActive,
   uploadBuktiPembayaranByCamabaActive,
-  validasiTagihanCamabaKolektif
+  validasiTagihanCamabaKolektif,
 };
