@@ -1,4 +1,4 @@
-const { TagihanCamaba, Semester, JenisTagihan, Camaba, UserRole, Role } = require("../../models");
+const { TagihanCamaba, Semester, JenisTagihan, Camaba, UserRole, Role, PeriodePendaftaran } = require("../../models");
 const fs = require("fs"); // untuk menghapus file
 const path = require("path");
 
@@ -60,7 +60,7 @@ const getAllTagihanCamabaByFilter = async (req, res, next) => {
         id_periode_pendaftaran: periodePendaftaranId,
         ...tagihanCondition,
       },
-      include: [{ model: Semester }, { model: JenisTagihan }, { model: Camaba }],
+      include: [{ model: Semester }, { model: JenisTagihan }, { model: Camaba }, { model: PeriodePendaftaran }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404

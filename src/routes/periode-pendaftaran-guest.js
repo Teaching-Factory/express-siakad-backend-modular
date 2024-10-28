@@ -7,5 +7,6 @@ const PeriodePendaftaranGuestController = require("../controllers/periode-pendaf
 
 // all routes
 router.get("/periode-pendaftaran/dibuka/get", PeriodePendaftaranGuestController.getPeriodePendaftaranDibuka);
+router.get("/:id/get", PeriodePendaftaranGuestController.getPeriodePendaftaranGuestById);
 
 module.exports = router;

@@ -1,17 +1,31 @@
-const { PeriodePendaftaran, Semester, JalurMasuk, SistemKuliah, ProdiPeriodePendaftaran, BerkasPeriodePendaftaran, TahapTesPeriodePendaftaran, SumberPeriodePendaftaran, Prodi, JenisTes, JenisBerkas, Sumber, TagihanCamaba } = require("../../models");
+const {
+  PeriodePendaftaran,
+  Semester,
+  JalurMasuk,
+  SistemKuliah,
+  ProdiPeriodePendaftaran,
+  BerkasPeriodePendaftaran,
+  TahapTesPeriodePendaftaran,
+  SumberPeriodePendaftaran,
+  Prodi,
+  JenisTes,
+  JenisBerkas,
+  Sumber,
+  TagihanCamaba,
+} = require("../../models");
 
 const getAllPeriodePendaftaran = async (req, res, next) => {
   try {
     // Ambil semua data periode_pendaftarans dari database
     const periode_pendaftarans = await PeriodePendaftaran.findAll({
-      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }]
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Periode Pendaftaran Success",
       jumlahData: periode_pendaftarans.length,
-      data: periode_pendaftarans
+      data: periode_pendaftarans,
     });
   } catch (error) {
     next(error);
@@ -27,17 +41,17 @@ const getPeriodePendaftaranByFilter = async (req, res, next) => {
 
     if (!semesterId) {
       return res.status(400).json({
-        message: "Semester ID is required"
+        message: "Semester ID is required",
       });
     }
     if (!jalurMasukId) {
       return res.status(400).json({
-        message: "Jalur Masuk ID is required"
+        message: "Jalur Masuk ID is required",
       });
     }
     if (!sistemKuliahId) {
       return res.status(400).json({
-        message: "Sistem Kuliah ID is required"
+        message: "Sistem Kuliah ID is required",
       });
     }
 
@@ -46,16 +60,16 @@ const getPeriodePendaftaranByFilter = async (req, res, next) => {
       where: {
         id_semester: semesterId,
         id_jalur_masuk: jalurMasukId,
-        id_sistem_kuliah: sistemKuliahId
+        id_sistem_kuliah: sistemKuliahId,
       },
-      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }]
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Periode Pendaftaran By Filter Success",
       jumlahData: periode_pendaftarans.length,
-      data: periode_pendaftarans
+      data: periode_pendaftarans,
     });
   } catch (error) {
     next(error);
@@ -69,23 +83,23 @@ const getPeriodePendaftaranBySemesterId = async (req, res, next) => {
 
     if (!semesterId) {
       return res.status(400).json({
-        message: "Semester ID is required"
+        message: "Semester ID is required",
       });
     }
 
     // Ambil semua data periode_pendaftarans dari database
     const periode_pendaftarans = await PeriodePendaftaran.findAll({
       where: {
-        id_semester: semesterId
+        id_semester: semesterId,
       },
-      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }]
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET All Periode Pendaftaran By Semester ID ${semesterId} Success`,
       jumlahData: periode_pendaftarans.length,
-      data: periode_pendaftarans
+      data: periode_pendaftarans,
     });
   } catch (error) {
     next(error);
@@ -99,26 +113,26 @@ const getPeriodePendaftaranById = async (req, res, next) => {
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Periode Pendaftaran ID is required"
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
     // Cari data periode_pendaftaran berdasarkan ID di database
     const periode_pendaftaran = await PeriodePendaftaran.findByPk(periodePendaftaranId, {
-      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }]
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!periode_pendaftaran) {
       return res.status(404).json({
-        message: `<===== Periode Pendaftaran With ID ${periodePendaftaranId} Not Found:`
+        message: `<===== Periode Pendaftaran With ID ${periodePendaftaranId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Periode Pendaftaran By ID ${periodePendaftaranId} Success:`,
-      data: periode_pendaftaran
+      data: periode_pendaftaran,
     });
   } catch (error) {
     next(error);
@@ -130,15 +144,15 @@ const getPeriodePendaftaranDibuka = async (req, res, next) => {
     // Cari data periode_pendaftaran_dibuka berdasarkan ID di database
     const periode_pendaftaran_dibuka = await PeriodePendaftaran.findAll({
       where: {
-        dibuka: true
+        dibuka: true,
       },
-      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }]
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!periode_pendaftaran_dibuka) {
       return res.status(404).json({
-        message: `<===== Periode Pendaftaran Dibuka Not Found:`
+        message: `<===== Periode Pendaftaran Dibuka Not Found:`,
       });
     }
 
@@ -146,7 +160,7 @@ const getPeriodePendaftaranDibuka = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Periode Pendaftaran Dibuka Success:`,
       jumlahData: periode_pendaftaran_dibuka.length,
-      data: periode_pendaftaran_dibuka
+      data: periode_pendaftaran_dibuka,
     });
   } catch (error) {
     next(error);
@@ -174,7 +188,7 @@ const createPeriodePendaftaran = async (req, res, next) => {
     prodi = [],
     berkas = [],
     tahap_tes = [],
-    sumber = []
+    sumber = [],
   } = req.body;
 
   if (!nama_periode_pendaftaran) {
@@ -228,7 +242,7 @@ const createPeriodePendaftaran = async (req, res, next) => {
       jumlah_pilihan_prodi: jumlah_pilihan_prodi,
       deskripsi_singkat: deskripsi_singkat,
       konten_informasi: konten_informasi,
-      sumber_informasi: sumber_informasi
+      sumber_informasi: sumber_informasi,
     });
 
     // Tambah data Prodi, jika ada
@@ -238,14 +252,14 @@ const createPeriodePendaftaran = async (req, res, next) => {
           // Cari data prodi apakah id_prodi valid
           const data_prodi = await Prodi.findOne({
             where: {
-              id_prodi: id_prodi
-            }
+              id_prodi: id_prodi,
+            },
           });
 
           if (data_prodi) {
             await ProdiPeriodePendaftaran.create({
               id_periode_pendaftaran: newPeriodePendaftaran.id,
-              id_prodi: data_prodi.id_prodi
+              id_prodi: data_prodi.id_prodi,
             });
           } else {
             console.error(`Prodi with id_prodi: ${id_prodi} not found`);
@@ -260,14 +274,14 @@ const createPeriodePendaftaran = async (req, res, next) => {
         // Cari data jenis berkas apakah id_prodi valid
         const data_jenis_berkas = await JenisBerkas.findOne({
           where: {
-            id: id_jenis_berkas
-          }
+            id: id_jenis_berkas,
+          },
         });
 
         if (data_jenis_berkas) {
           await BerkasPeriodePendaftaran.create({
             id_periode_pendaftaran: newPeriodePendaftaran.id,
-            id_jenis_berkas: data_jenis_berkas.id
+            id_jenis_berkas: data_jenis_berkas.id,
           });
         } else {
           console.error(`Jenis Berkas with id_jenis_berkas: ${id_jenis_berkas} not found`);
@@ -281,8 +295,8 @@ const createPeriodePendaftaran = async (req, res, next) => {
         // Cari data jenis tes apakah id_prodi valid
         const data_jenis_tes = await JenisTes.findOne({
           where: {
-            id: id_jenis_tes
-          }
+            id: id_jenis_tes,
+          },
         });
 
         if (data_jenis_tes) {
@@ -291,7 +305,7 @@ const createPeriodePendaftaran = async (req, res, next) => {
             id_jenis_tes: data_jenis_tes.id,
             urutan_tes: urutan_tes,
             tanggal_awal_tes: tanggal_awal_tes,
-            tanggal_akhir_tes: tanggal_akhir_tes
+            tanggal_akhir_tes: tanggal_akhir_tes,
           });
         } else {
           console.error(`Jenis Tes with id_jenis_tes: ${id_jenis_tes} not found`);
@@ -306,14 +320,14 @@ const createPeriodePendaftaran = async (req, res, next) => {
           // Cari data sumber apakah id_prodi valid
           const data_sumber = await Sumber.findOne({
             where: {
-              id: id_sumber
-            }
+              id: id_sumber,
+            },
           });
 
           if (data_sumber) {
             await SumberPeriodePendaftaran.create({
               id_periode_pendaftaran: newPeriodePendaftaran.id,
-              id_sumber: data_sumber.id
+              id_sumber: data_sumber.id,
             });
           } else {
             console.error(`Sumber with id_sumber: ${id_sumber} not found`);
@@ -325,7 +339,7 @@ const createPeriodePendaftaran = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(201).json({
       message: "<===== CREATE Periode Pendaftaran Success",
-      data: newPeriodePendaftaran
+      data: newPeriodePendaftaran,
     });
   } catch (error) {
     next(error);
@@ -353,7 +367,7 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
     prodi = [],
     berkas = [],
     tahap_tes = [],
-    sumber = []
+    sumber = [],
   } = req.body;
 
   if (!nama_periode_pendaftaran) {
@@ -384,7 +398,7 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Periode Pendaftaran ID is required"
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
@@ -419,7 +433,7 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
           if (data_prodi) {
             await ProdiPeriodePendaftaran.create({
               id_periode_pendaftaran: periodePendaftaranId,
-              id_prodi: data_prodi.id_prodi
+              id_prodi: data_prodi.id_prodi,
             });
           } else {
             console.error(`Prodi with id_prodi: ${id_prodi} not found`);
@@ -437,7 +451,7 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
           if (data_jenis_berkas) {
             await BerkasPeriodePendaftaran.create({
               id_periode_pendaftaran: periodePendaftaranId,
-              id_jenis_berkas: data_jenis_berkas.id
+              id_jenis_berkas: data_jenis_berkas.id,
             });
           } else {
             console.error(`Jenis Berkas with id_jenis_berkas: ${id_jenis_berkas} not found`);
@@ -458,7 +472,7 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
               id_jenis_tes: data_jenis_tes.id,
               urutan_tes,
               tanggal_awal_tes,
-              tanggal_akhir_tes
+              tanggal_akhir_tes,
             });
           } else {
             console.error(`Jenis Tes with id_jenis_tes: ${id_jenis_tes} not found`);
@@ -476,7 +490,7 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
           if (data_sumber) {
             await SumberPeriodePendaftaran.create({
               id_periode_pendaftaran: periodePendaftaranId,
-              id_sumber: data_sumber.id
+              id_sumber: data_sumber.id,
             });
           } else {
             console.error(`Sumber with id_sumber: ${id_sumber} not found`);
@@ -488,8 +502,8 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
     // update seluruh data tagihan camaba untuk kolom jumlah_tagihan, dan tanggal_tagihan
     const all_tagihan_camaba = await TagihanCamaba.findAll({
       where: {
-        id_periode_pendaftaran: periodePendaftaranId
-      }
+        id_periode_pendaftaran: periodePendaftaranId,
+      },
     });
 
     if (all_tagihan_camaba.length > 0) {
@@ -506,7 +520,7 @@ const updatePeriodePerkuliahanById = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== UPDATE Periode Pendaftaran With ID ${periodePendaftaranId} Success:`,
-      data: periode_pendaftaran
+      data: periode_pendaftaran,
     });
   } catch (error) {
     next(error);
@@ -520,7 +534,7 @@ const deletePeriodePendaftaranById = async (req, res, next) => {
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Jabatan ID is required"
+        message: "Jabatan ID is required",
       });
     }
 
@@ -530,7 +544,7 @@ const deletePeriodePendaftaranById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!periode_pendaftaran) {
       return res.status(404).json({
-        message: `<===== Periode Pendaftaran With ID ${periodePendaftaranId} Not Found:`
+        message: `<===== Periode Pendaftaran With ID ${periodePendaftaranId} Not Found:`,
       });
     }
 
@@ -539,7 +553,47 @@ const deletePeriodePendaftaranById = async (req, res, next) => {
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: `<===== DELETE Periode Pendaftaran With ID ${periodePendaftaranId} Success:`
+      message: `<===== DELETE Periode Pendaftaran With ID ${periodePendaftaranId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPeriodePendaftaranGuestById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const periodePendaftaranId = req.params.id;
+
+    if (!periodePendaftaranId) {
+      return res.status(400).json({
+        message: "Periode Pendaftaran ID is required",
+      });
+    }
+
+    // Cari data periode_pendaftaran berdasarkan ID di database
+    const periode_pendaftaran = await PeriodePendaftaran.findByPk(periodePendaftaranId, {
+      include: [{ model: Semester }, { model: SistemKuliah }, { model: JalurMasuk }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!periode_pendaftaran) {
+      return res.status(404).json({
+        message: `<===== Periode Pendaftaran With ID ${periodePendaftaranId} Not Found:`,
+      });
+    }
+
+    // Get berkas periode pendaftaran dengan include dan alias yang sesuai
+    const berkas_periode_pendaftaran = await BerkasPeriodePendaftaran.findAll({
+      where: { id_periode_pendaftaran: periodePendaftaranId },
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }], // Pastikan 'jenisBerkas' sesuai dengan alias yang ditentukan
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Periode Pendaftaran By ID ${periodePendaftaranId} Success:`,
+      data: periode_pendaftaran,
+      berkas: berkas_periode_pendaftaran,
     });
   } catch (error) {
     next(error);
@@ -554,5 +608,6 @@ module.exports = {
   getPeriodePendaftaranDibuka,
   createPeriodePendaftaran,
   updatePeriodePerkuliahanById,
-  deletePeriodePendaftaranById
+  deletePeriodePendaftaranById,
+  getPeriodePendaftaranGuestById,
 };
