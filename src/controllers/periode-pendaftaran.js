@@ -589,11 +589,18 @@ const getPeriodePendaftaranGuestById = async (req, res, next) => {
       include: [{ model: JenisBerkas, as: "JenisBerkas" }], // Pastikan 'jenisBerkas' sesuai dengan alias yang ditentukan
     });
 
+    // Get sumber periode pendaftaran
+    const sumber_periode_pendaftaran = await SumberPeriodePendaftaran.findAll({
+      where: { id_periode_pendaftaran: periodePendaftaranId },
+      include: [{ model: Sumber, as: "Sumber" }],
+    });
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Periode Pendaftaran By ID ${periodePendaftaranId} Success:`,
       data: periode_pendaftaran,
       berkas: berkas_periode_pendaftaran,
+      sumber: sumber_periode_pendaftaran,
     });
   } catch (error) {
     next(error);
