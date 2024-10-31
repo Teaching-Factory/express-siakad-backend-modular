@@ -12,6 +12,7 @@ const {
   JenisBerkas,
   Sumber,
   TagihanCamaba,
+  JenjangPendidikan,
 } = require("../../models");
 
 const getAllPeriodePendaftaran = async (req, res, next) => {
@@ -595,12 +596,19 @@ const getPeriodePendaftaranGuestById = async (req, res, next) => {
       include: [{ model: Sumber, as: "Sumber" }],
     });
 
+    // Get prodi periode pendaftaran
+    const prodi_periode_pendaftaran = await ProdiPeriodePendaftaran.findAll({
+      where: { id_periode_pendaftaran: periodePendaftaranId },
+      include: [{ model: Prodi, as: "Prodi", include: [{ model: JenjangPendidikan }] }],
+    });
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Periode Pendaftaran By ID ${periodePendaftaranId} Success:`,
       data: periode_pendaftaran,
       berkas: berkas_periode_pendaftaran,
       sumber: sumber_periode_pendaftaran,
+      prodi: prodi_periode_pendaftaran,
     });
   } catch (error) {
     next(error);
