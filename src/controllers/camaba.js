@@ -1299,6 +1299,335 @@ const getFinalisasiByCamabaActive = async (req, res, next) => {
   }
 };
 
+// camaba
+const getStatusBiodataCamabaByCamabaActive = async (req, res, next) => {
+  try {
+    let statusBiodataCamaba = false;
+    const user = req.user;
+
+    // Dapatkan role camaba
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" },
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found",
+      });
+    }
+
+    // Cek apakah user adalah camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba",
+      });
+    }
+
+    // Ambil data camaba berdasarkan nomor_daftar
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username,
+      },
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found",
+      });
+    }
+
+    // get biodata camaba
+    const biodataCamaba = await BiodataCamaba.findOne({
+      where: {
+        id_camaba: camaba.id,
+      },
+    });
+
+    if (!biodataCamaba) {
+      return res.status(404).json({
+        message: "Biodata Camaba not found",
+      });
+    }
+
+    // Daftar kolom yang wajib diisi
+    const requiredFields = ["nik", "nisn", "kewarganegaraan", "jalan", "dusun", "rt", "rw", "kelurahan", "kode_pos", "nama_ibu_kandung", "id_sekolah", "id_agama", "id_jenis_tinggal"];
+
+    // Cek apakah semua kolom wajib terisi
+    statusBiodataCamaba = requiredFields.every((field) => biodataCamaba[field] !== null && biodataCamaba[field] !== "");
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Status Biodata Camaba By Camaba Active Success:`,
+      data: statusBiodataCamaba,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// camaba
+const getStatusUploadFotoByCamabaActive = async (req, res, next) => {
+  try {
+    let statusUploadFoto = false;
+    const user = req.user;
+
+    // Dapatkan role camaba
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" },
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found",
+      });
+    }
+
+    // Cek apakah user adalah camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba",
+      });
+    }
+
+    // Ambil data camaba berdasarkan nomor_daftar
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username,
+      },
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found",
+      });
+    }
+
+    // Daftar kolom yang wajib diisi
+    const requiredFields = ["foto_profil"];
+
+    // Cek apakah semua kolom wajib terisi
+    statusUploadFoto = requiredFields.every((field) => camaba[field] !== null && camaba[field] !== "");
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Status Foto Profil By Camaba Active Success:`,
+      data: statusUploadFoto,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// camaba
+const getStatusProdiCamabaByCamabaActive = async (req, res, next) => {
+  try {
+    let statusProdiCamaba = false;
+    const user = req.user;
+
+    // Dapatkan role camaba
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" },
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found",
+      });
+    }
+
+    // Cek apakah user adalah camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba",
+      });
+    }
+
+    // Ambil data camaba berdasarkan nomor_daftar
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username,
+      },
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found",
+      });
+    }
+
+    // get data prodi camaba
+    const prodiCamaba = await ProdiCamaba.findOne({
+      where: { id_camaba: camaba.id },
+    });
+
+    if (!prodiCamaba) {
+      statusProdiCamaba = false;
+    } else {
+      statusProdiCamaba = true;
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Status Prodi Camaba By Camaba Active Success:`,
+      data: statusProdiCamaba,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// camaba
+const getStatusBerkasCamabaByCamabaActive = async (req, res, next) => {
+  try {
+    let statusBerkasCamaba = false;
+    const user = req.user;
+
+    // Dapatkan role camaba
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" },
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found",
+      });
+    }
+
+    // Cek apakah user adalah camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba",
+      });
+    }
+
+    // Ambil data camaba berdasarkan nomor_daftar
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username,
+      },
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found",
+      });
+    }
+
+    // Dapatkan data berkas periode pendaftaran
+    const berkasPeriodePendaftaran = await BerkasPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: camaba.id_periode_pendaftaran,
+      },
+    });
+
+    if (!berkasPeriodePendaftaran || berkasPeriodePendaftaran.length === 0) {
+      return res.status(404).json({
+        message: "Berkas Periode Pendaftaran not found",
+      });
+    }
+
+    // Dapatkan data pemberkasan camaba yang telah diupload
+    const pemberkasanCamabas = await PemberkasanCamaba.findAll({
+      where: {
+        id_camaba: camaba.id,
+      },
+    });
+
+    if (!pemberkasanCamabas || pemberkasanCamabas.length === 0) {
+      return res.status(404).json({
+        message: "Pemberkasan Camaba not found",
+      });
+    }
+
+    // Membandingkan ID dari berkasPeriodePendaftaran dan pemberkasanCamabas
+    const requiredBerkasIds = berkasPeriodePendaftaran.map((berkas) => berkas.id);
+    const uploadedBerkasIds = pemberkasanCamabas.map((pemberkasan) => pemberkasan.id_berkas_periode_pendaftaran);
+
+    // Cek apakah semua berkas yang diperlukan sudah di-upload
+    const isAllBerkasUploaded = requiredBerkasIds.length === uploadedBerkasIds.length && requiredBerkasIds.every((id) => uploadedBerkasIds.includes(id));
+
+    // Set statusBerkasCamaba berdasarkan hasil pengecekan
+    statusBerkasCamaba = isAllBerkasUploaded;
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Status Berkas Camaba By Camaba Active Success:`,
+      data: statusBerkasCamaba,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// camaba
+const getStatusFinalisasiByCamabaActive = async (req, res, next) => {
+  try {
+    let statusFinalisasi = false;
+    const user = req.user;
+
+    // Dapatkan role camaba
+    const roleCamaba = await Role.findOne({
+      where: { nama_role: "camaba" },
+    });
+
+    if (!roleCamaba) {
+      return res.status(404).json({
+        message: "Role Camaba not found",
+      });
+    }
+
+    // Cek apakah user adalah camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleCamaba.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Camaba",
+      });
+    }
+
+    // Ambil data camaba berdasarkan nomor_daftar
+    const camaba = await Camaba.findOne({
+      where: {
+        nomor_daftar: user.username,
+      },
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found",
+      });
+    }
+
+    statusFinalisasi = camaba.finalisasi;
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Status Finalisasi By Camaba Active Success:`,
+      data: statusFinalisasi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -1323,4 +1652,9 @@ module.exports = {
   importCamabaForUpdateNimKolektif,
   exportCamabaForMahasiswaByPeriodePendaftaranId,
   getFinalisasiByCamabaActive,
+  getStatusBiodataCamabaByCamabaActive,
+  getStatusUploadFotoByCamabaActive,
+  getStatusProdiCamabaByCamabaActive,
+  getStatusBerkasCamabaByCamabaActive,
+  getStatusFinalisasiByCamabaActive,
 };

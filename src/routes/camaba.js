@@ -52,5 +52,10 @@ router.get("/export/:id_periode_pendaftaran/get", checkRole(["admin", "admin-pmb
 router.post("/:id_periode_pendaftaran/import", checkRole(["admin", "admin-pmb"]), importCamaba.single("file"), CamabaController.importCamabaForUpdateNimKolektif);
 router.get("/export-camaba-to-mahasiswa/:id_periode_pendaftaran/get", checkRole(["admin", "admin-pmb"]), importCamaba.single("file"), CamabaController.exportCamabaForMahasiswaByPeriodePendaftaranId);
 router.get("/get-finalisasi-camaba-aktif", checkRole(["camaba"]), CamabaController.getFinalisasiByCamabaActive);
+router.get("/status-pendaftaran/biodata-camaba/get", checkRole(["camaba"]), CamabaController.getStatusBiodataCamabaByCamabaActive);
+router.get("/status-pendaftaran/upload-foto/get", checkRole(["camaba"]), CamabaController.getStatusUploadFotoByCamabaActive);
+router.get("/status-pendaftaran/prodi-camaba/get", checkRole(["camaba"]), CamabaController.getStatusProdiCamabaByCamabaActive);
+router.get("/status-pendaftaran/berkas-camaba/get", checkRole(["camaba"]), CamabaController.getStatusBerkasCamabaByCamabaActive);
+router.get("/status-pendaftaran/finalisasi/get", checkRole(["camaba"]), CamabaController.getStatusFinalisasiByCamabaActive);
 
 module.exports = router;
