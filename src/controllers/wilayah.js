@@ -9,7 +9,25 @@ const getAllWilayahs = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Wilayah Success",
       jumlahData: wilayahs.length,
-      data: wilayahs
+      data: wilayahs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllWilayahsSimply = async (req, res, next) => {
+  try {
+    // Ambil semua data wilayahs dari database
+    const wilayahs = await Wilayah.findAll({
+      attributes: ["id_wilayah", "nama_wilayah"],
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET All Wilayah Simply Success",
+      jumlahData: wilayahs.length,
+      data: wilayahs,
     });
   } catch (error) {
     next(error);
@@ -24,26 +42,26 @@ const getWilayahById = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!wilayahId) {
       return res.status(400).json({
-        message: "Wilayah ID is required"
+        message: "Wilayah ID is required",
       });
     }
 
     // Cari data wilayah berdasarkan ID di database
     const wilayah = await Wilayah.findByPk(wilayahId, {
-      include: [{ model: Negara }]
+      include: [{ model: Negara }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!wilayah) {
       return res.status(404).json({
-        message: `<===== Wilayah With ID ${wilayahId} Not Found:`
+        message: `<===== Wilayah With ID ${wilayahId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Wilayah By ID ${wilayahId} Success:`,
-      data: wilayah
+      data: wilayah,
     });
   } catch (error) {
     next(error);
@@ -69,7 +87,7 @@ const getAllWilayahGrouped = async (req, res, next) => {
           groupedWilayah[idWilayah] = {
             id_wilayah: idWilayah,
             nama_wilayah: namaWilayah,
-            kota: {}
+            kota: {},
           };
         }
       }
@@ -82,7 +100,7 @@ const getAllWilayahGrouped = async (req, res, next) => {
           groupedWilayah[provinsiId] = {
             id_wilayah: provinsiId,
             nama_wilayah: wilayah.Negara.nama_negara, // Nama default jika provinsi belum ada
-            kota: {}
+            kota: {},
           };
         }
 
@@ -90,7 +108,7 @@ const getAllWilayahGrouped = async (req, res, next) => {
         groupedWilayah[provinsiId].kota[idWilayah] = {
           id_wilayah: idWilayah,
           nama_wilayah: namaWilayah,
-          kecamatan: {}
+          kecamatan: {},
         };
       }
       // Jika id_wilayah mengindikasikan kecamatan (misal xxx00x)
@@ -103,7 +121,7 @@ const getAllWilayahGrouped = async (req, res, next) => {
           groupedWilayah[provinsiId] = {
             id_wilayah: provinsiId,
             nama_wilayah: wilayah.Negara.nama_negara,
-            kota: {}
+            kota: {},
           };
         }
 
@@ -111,14 +129,14 @@ const getAllWilayahGrouped = async (req, res, next) => {
           groupedWilayah[provinsiId].kota[kotaId] = {
             id_wilayah: kotaId,
             nama_wilayah: namaWilayah, // Nama default jika kota belum ada
-            kecamatan: {}
+            kecamatan: {},
           };
         }
 
         // Tambahkan kecamatan ke dalam kota
         groupedWilayah[provinsiId].kota[kotaId].kecamatan[idWilayah] = {
           id_wilayah: idWilayah,
-          nama_wilayah: namaWilayah
+          nama_wilayah: namaWilayah,
         };
       }
     });
@@ -127,7 +145,7 @@ const getAllWilayahGrouped = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Wilayah Grouped Success",
       jumlahData: wilayahs.length,
-      data: groupedWilayah
+      data: groupedWilayah,
     });
   } catch (error) {
     next(error);
@@ -136,6 +154,7 @@ const getAllWilayahGrouped = async (req, res, next) => {
 
 module.exports = {
   getAllWilayahs,
+  getAllWilayahsSimply,
   getWilayahById,
-  getAllWilayahGrouped
+  getAllWilayahGrouped,
 };
