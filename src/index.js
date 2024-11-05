@@ -16,6 +16,9 @@ const apiSyncFeederRoutes = require("./routes/api-sync-feeder");
 // route endpoint pengujian performa
 const pengujianPerformaRoutes = require("./routes/pengujian-performa");
 
+// route api setup for installation
+const setupGuestRoutes = require("./routes/setup-guest");
+
 // route api local done
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
@@ -200,7 +203,11 @@ app.use("/api-feeder", checkToken, apiFeederRoutes);
 app.use("/api-external", checkToken, apiExternalRoutes);
 app.use("/sync-feeder", checkToken, apiSyncFeederRoutes);
 
+// route api pengujian performa
 app.use("/pengujian-performa", checkToken, pengujianPerformaRoutes);
+
+// route api setup for installation
+app.use("/setup-guest", setupGuestRoutes);
 
 // route api local done
 app.use("/user", checkToken, userRoutes);
