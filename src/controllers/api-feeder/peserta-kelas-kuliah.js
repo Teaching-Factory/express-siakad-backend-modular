@@ -9,15 +9,26 @@ const getPesertaKelasKuliah = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
+
+    // Ambil parameter angkatan dari query string
+    const angkatan = req.query.angkatan;
+
+    // Cek apakah angkatan dikirim dalam bentuk array
+    if (!angkatan || angkatan.length === 0) {
+      return res.status(400).json({ message: "Parameter angkatan is required" });
+    }
+
+    // Buat filter dinamis berdasarkan parameter angkatan
+    const angkatanFilter = Array.isArray(angkatan) ? angkatan.map((year) => `angkatan = '${year}'`).join(" OR ") : `angkatan = '${angkatan}'`;
 
     const requestBody = {
       act: "GetPesertaKelasKuliah",
       token: `${token}`,
-      filter: `angkatan = '2023'`,
-      order: "id_registrasi_mahasiswa"
+      filter: angkatanFilter,
+      order: "id_registrasi_mahasiswa",
     };
 
     // Menggunakan token untuk mengambil data
@@ -31,7 +42,7 @@ const getPesertaKelasKuliah = async (req, res, next) => {
       await PesertaKelasKuliah.create({
         angkatan: peserta_kelas_kuliah.angkatan,
         id_kelas_kuliah: peserta_kelas_kuliah.id_kelas_kuliah,
-        id_registrasi_mahasiswa: peserta_kelas_kuliah.id_registrasi_mahasiswa
+        id_registrasi_mahasiswa: peserta_kelas_kuliah.id_registrasi_mahasiswa,
       });
     }
 
@@ -39,7 +50,7 @@ const getPesertaKelasKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Peserta Kelas Kuliah Success",
       totalData: dataPesertaKelasKuliah.length,
-      dataPesertaKelasKuliah: dataPesertaKelasKuliah
+      dataPesertaKelasKuliah: dataPesertaKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -47,5 +58,5 @@ const getPesertaKelasKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getPesertaKelasKuliah
+  getPesertaKelasKuliah,
 };

@@ -9,13 +9,13 @@ const getKebutuhanKhusus = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetKebutuhanKhusus",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,15 +29,15 @@ const getKebutuhanKhusus = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingKebutuhanKhusus = await KebutuhanKhusus.findOne({
         where: {
-          id_kebutuhan_khusus: kebutuhan_khusus.id_kebutuhan_khusus
-        }
+          id_kebutuhan_khusus: kebutuhan_khusus.id_kebutuhan_khusus,
+        },
       });
 
       if (!existingKebutuhanKhusus) {
         // Data belum ada, buat entri baru di database
         await KebutuhanKhusus.create({
           id_kebutuhan_khusus: kebutuhan_khusus.id_kebutuhan_khusus,
-          nama_kebutuhan_khusus: kebutuhan_khusus.nama_kebutuhan_khusus
+          nama_kebutuhan_khusus: kebutuhan_khusus.nama_kebutuhan_khusus,
         });
       }
     }
@@ -46,7 +46,7 @@ const getKebutuhanKhusus = async (req, res, next) => {
     res.status(200).json({
       message: "Create Kebutuhan Khusus Success",
       totalData: dataKebutuhanKhusus.length,
-      dataKebutuhanKhusus: dataKebutuhanKhusus
+      dataKebutuhanKhusus: dataKebutuhanKhusus,
     });
   } catch (error) {
     next(error);
@@ -54,5 +54,5 @@ const getKebutuhanKhusus = async (req, res, next) => {
 };
 
 module.exports = {
-  getKebutuhanKhusus
+  getKebutuhanKhusus,
 };

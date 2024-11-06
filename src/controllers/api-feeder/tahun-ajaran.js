@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { TahunAjaran } = require("../../../models");
+const { TahunAjaran, sequelize } = require("../../../models");
+const TahunAjaranSeeder = require("../../../seeders/20240430134902-seed-tahun-ajaran");
 
 const getTahunAjaran = async (req, res, next) => {
   try {
@@ -9,13 +10,13 @@ const getTahunAjaran = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetTahunAjaran",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,8 +30,8 @@ const getTahunAjaran = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingTahunAjaran = await TahunAjaran.findOne({
         where: {
-          id_tahun_ajaran: tahun_ajaran.id_tahun_ajaran
-        }
+          id_tahun_ajaran: tahun_ajaran.id_tahun_ajaran,
+        },
       });
 
       if (!existingTahunAjaran) {
@@ -40,16 +41,19 @@ const getTahunAjaran = async (req, res, next) => {
           nama_tahun_ajaran: tahun_ajaran.nama_tahun_ajaran,
           a_periode: tahun_ajaran.a_periode_aktif,
           tanggal_mulai: tahun_ajaran.tanggal_mulai,
-          tanggal_selesai: tahun_ajaran.tanggal_selesai
+          tanggal_selesai: tahun_ajaran.tanggal_selesai,
         });
       }
     }
+
+    // menjalankan seeder
+    await TahunAjaranSeeder.up(sequelize.getQueryInterface(), sequelize);
 
     // Kirim data sebagai respons
     res.status(200).json({
       message: "Create Tahun Ajaran Success",
       totalData: dataTahunAjaran.length,
-      dataTahunAjaran: dataTahunAjaran
+      dataTahunAjaran: dataTahunAjaran,
     });
   } catch (error) {
     next(error);
@@ -57,5 +61,5 @@ const getTahunAjaran = async (req, res, next) => {
 };
 
 module.exports = {
-  getTahunAjaran
+  getTahunAjaran,
 };

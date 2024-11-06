@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id_lembaga_angkat: {
         allowNull: false,
-        autoIncrement: true,
+        // autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER(2),
       },

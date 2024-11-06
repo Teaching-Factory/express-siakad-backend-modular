@@ -11,13 +11,13 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-      {
-        id_jenis_keluar: "C",
-        jenis_keluar: "Aktif",
-        apa_mahasiswa: "0",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+      // {
+      //   id_jenis_keluar: "C",
+      //   jenis_keluar: "Aktif",
+      //   apa_mahasiswa: "0",
+      //   createdAt: new Date(),
+      //   updatedAt: new Date(),
+      // },
     ]);
   },
 

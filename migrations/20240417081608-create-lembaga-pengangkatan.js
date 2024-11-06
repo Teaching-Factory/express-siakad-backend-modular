@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.createTable("lembaga_pengangkatans", {
       id_lembaga_angkat: {
         allowNull: false,
-        autoIncrement: true,
+        // autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER(2),
       },

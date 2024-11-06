@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { ProfilPT } = require("../../../models");
+const { ProfilPT, SettingWSFeeder } = require("../../../models");
 
 const getProfilPT = async (req, res, next) => {
   try {
@@ -9,14 +9,28 @@ const getProfilPT = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
+      });
+    }
+
+    // get data ws aktif
+    const ws_aktif = await SettingWSFeeder.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!ws_aktif) {
+      return res.status(404).json({
+        message: `<===== WS Aktif Not Found:`,
       });
     }
 
     const requestBody = {
       act: "GetProfilPT",
       token: `${token}`,
-      filter: "id_perguruan_tinggi='0f893db4-cb60-488d-9629-405c729096ae'"
+      filter: `kode_perguruan_tinggi='${ws_aktif.username_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -52,7 +66,7 @@ const getProfilPT = async (req, res, next) => {
         sk_izin_operasional: profil_perguruan_tinggi.sk_izin_operasional,
         tanggal_izin_operasional: profil_perguruan_tinggi.tanggal_izin_operasional,
         id_perguruan_tinggi: profil_perguruan_tinggi.id_perguruan_tinggi,
-        id_wilayah: profil_perguruan_tinggi.id_wilayah
+        id_wilayah: profil_perguruan_tinggi.id_wilayah,
       });
     }
 
@@ -60,7 +74,7 @@ const getProfilPT = async (req, res, next) => {
     res.status(200).json({
       message: "Create Profil PT Success",
       totalData: dataProfilPT.length,
-      dataProfilPT: dataProfilPT
+      dataProfilPT: dataProfilPT,
     });
   } catch (error) {
     next(error);
@@ -68,5 +82,5 @@ const getProfilPT = async (req, res, next) => {
 };
 
 module.exports = {
-  getProfilPT
+  getProfilPT,
 };

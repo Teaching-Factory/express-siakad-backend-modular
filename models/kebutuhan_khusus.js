@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id_kebutuhan_khusus: {
         allowNull: false,
-        autoIncrement: true,
+        // autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER(10),
       },

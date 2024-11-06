@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { Agama } = require("../../../models");
+const { Agama, sequelize } = require("../../../models");
+const AgamaSeeder = require("../../../seeders/20240430124934-seed-agama");
 
 const getAgama = async (req, res, next) => {
   try {
@@ -9,13 +10,13 @@ const getAgama = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetAgama",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,24 +30,27 @@ const getAgama = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingAgama = await Agama.findOne({
         where: {
-          id_agama: data_agama.id_agama
-        }
+          id_agama: data_agama.id_agama,
+        },
       });
 
       if (!existingAgama) {
         // Data belum ada, buat entri baru di database
         await Agama.create({
           id_agama: data_agama.id_agama,
-          nama_agama: data_agama.nama_agama
+          nama_agama: data_agama.nama_agama,
         });
       }
     }
+
+    // menjalankan seeder
+    await AgamaSeeder.up(sequelize.getQueryInterface(), sequelize);
 
     // Kirim data sebagai respons
     res.status(200).json({
       message: "Create Agama Success",
       totalData: dataAgama.length,
-      dataAgama: dataAgama
+      dataAgama: dataAgama,
     });
   } catch (error) {
     next(error);
@@ -54,5 +58,5 @@ const getAgama = async (req, res, next) => {
 };
 
 module.exports = {
-  getAgama
+  getAgama,
 };

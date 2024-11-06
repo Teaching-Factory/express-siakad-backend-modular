@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { Pekerjaan } = require("../../../models");
+const { Pekerjaan, sequelize } = require("../../../models");
+const PekerjaanSeeder = require("../../../seeders/20240430133000-seed-pekerjaan");
 
 const getPekerjaan = async (req, res, next) => {
   try {
@@ -9,13 +10,13 @@ const getPekerjaan = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetPekerjaan",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,24 +30,27 @@ const getPekerjaan = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingPekerjaan = await Pekerjaan.findOne({
         where: {
-          id_pekerjaan: data_pekerjaan.id_pekerjaan
-        }
+          id_pekerjaan: data_pekerjaan.id_pekerjaan,
+        },
       });
 
       if (!existingPekerjaan) {
         // Data belum ada, buat entri baru di database
         await Pekerjaan.create({
           id_pekerjaan: data_pekerjaan.id_pekerjaan,
-          nama_pekerjaan: data_pekerjaan.nama_pekerjaan
+          nama_pekerjaan: data_pekerjaan.nama_pekerjaan,
         });
       }
     }
+
+    // menjalankan seeder
+    await PekerjaanSeeder.up(sequelize.getQueryInterface(), sequelize);
 
     // Kirim data sebagai respons
     res.status(200).json({
       message: "Create Pekerjaan Success",
       totalData: dataPekerjaan.length,
-      dataPekerjaan: dataPekerjaan
+      dataPekerjaan: dataPekerjaan,
     });
   } catch (error) {
     next(error);
@@ -54,5 +58,5 @@ const getPekerjaan = async (req, res, next) => {
 };
 
 module.exports = {
-  getPekerjaan
+  getPekerjaan,
 };

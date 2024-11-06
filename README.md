@@ -223,6 +223,13 @@ Install Paket :
 
 ```
 
+- Instal Plugin Helmet :
+
+```bash
+  npm install helmet
+
+```
+
 - Memperbaiki Plugin yang corrupt (Optional) :
 
 ```bash

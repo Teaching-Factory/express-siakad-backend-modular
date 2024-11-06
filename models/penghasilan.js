@@ -24,19 +24,19 @@ module.exports = (sequelize, DataTypes) => {
     {
       id_penghasilan: {
         allowNull: false,
-        autoIncrement: true,
+        // autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER(10)
+        type: DataTypes.INTEGER(10),
       },
       nama_penghasilan: {
         type: DataTypes.STRING(50),
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       sequelize,
       modelName: "Penghasilan",
-      tableName: "penghasilans"
+      tableName: "penghasilans",
     }
   );
   return Penghasilan;
