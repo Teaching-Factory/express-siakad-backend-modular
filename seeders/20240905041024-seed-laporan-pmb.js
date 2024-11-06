@@ -7,25 +7,25 @@ module.exports = {
       {
         id: 1,
         jenis_laporan: "Laporan Rekap Pendaftaran PMB",
-        nama_penandatanganan: "Dr. Haya SHI, MPdI",
-        nomor_identitas: "2109067402",
+        nama_penandatanganan: "",
+        nomor_identitas: "",
         id_jabatan: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: 2,
         jenis_laporan: "Laporan Rekap Pembayaran PMB",
-        nama_penandatanganan: "Dr.Haya SHI, MPdI",
-        nomor_identitas: "2109067402",
+        nama_penandatanganan: "",
+        nomor_identitas: "",
         id_jabatan: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ]);
   },
 
   async down(queryInterface, Sequelize) {
     return queryInterface.bulkDelete("laporan_pmbs", null, {});
-  }
+  },
 };

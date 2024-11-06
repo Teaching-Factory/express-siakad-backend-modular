@@ -19,6 +19,7 @@ const pengujianPerformaRoutes = require("./routes/pengujian-performa");
 
 // route api setup for installation
 const setupGuestRoutes = require("./routes/setup-guest");
+const setupSeedRoutes = require("./routes/setup-seed");
 
 // route api local done
 const userRoutes = require("./routes/user");
@@ -212,6 +213,7 @@ app.use("/pengujian-performa", checkToken, pengujianPerformaRoutes);
 
 // route api setup for installation
 app.use("/setup-guest", setupGuestRoutes);
+app.use("/setup-seed", setupSeedRoutes);
 
 // route api local done
 app.use("/user", checkToken, userRoutes);
