@@ -80,6 +80,14 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      last_sync: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: DataTypes.STRING(36),
+        allowNull: true,
+      },
       id_registrasi_dosen: {
         type: DataTypes.STRING(36),
         allowNull: true,

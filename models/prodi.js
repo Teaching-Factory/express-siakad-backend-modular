@@ -48,29 +48,37 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.STRING(36),
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
       },
       kode_program_studi: {
         type: DataTypes.STRING(10),
-        allowNull: false
+        allowNull: false,
       },
       nama_program_studi: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
       status: {
         type: DataTypes.CHAR(1),
-        allowNull: false
+        allowNull: false,
+      },
+      last_sync: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: DataTypes.STRING(36),
+        allowNull: true,
       },
       id_jenjang_pendidikan: {
         type: DataTypes.DECIMAL(2, 0),
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       sequelize,
       modelName: "Prodi",
-      tableName: "prodis"
+      tableName: "prodis",
     }
   );
   return Prodi;

@@ -18,65 +18,73 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.STRING(36),
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
       },
       npsn: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       sekolah: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       bentuk: {
         type: DataTypes.ENUM(["SMA", "SMK"]),
-        allowNull: true
+        allowNull: true,
       },
       status: {
         type: DataTypes.CHAR,
-        allowNull: true
+        allowNull: true,
       },
       alamat_jalan: {
         type: DataTypes.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       lintang: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       bujur: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       kode_kec: {
         type: DataTypes.CHAR,
-        allowNull: true
+        allowNull: true,
       },
       kecamatan: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       kode_kab_kota: {
         type: DataTypes.CHAR,
-        allowNull: true
+        allowNull: true,
       },
       kabupaten_kota: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       kode_prop: {
         type: DataTypes.CHAR,
-        allowNull: true
+        allowNull: true,
       },
       propinsi: {
         type: DataTypes.STRING,
-        allowNull: true
-      }
+        allowNull: true,
+      },
+      last_sync: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: DataTypes.STRING(36),
+        allowNull: true,
+      },
     },
     {
       sequelize,
       modelName: "Sekolah",
-      tableName: "sekolahs"
+      tableName: "sekolahs",
     }
   );
   return Sekolah;

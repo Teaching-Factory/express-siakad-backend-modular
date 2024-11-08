@@ -9,13 +9,13 @@ const getKurikulum = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetKurikulum",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,8 +29,8 @@ const getKurikulum = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingKurikulum = await Kurikulum.findOne({
         where: {
-          id_kurikulum: data_kurikulum.id_kurikulum
-        }
+          id_kurikulum: data_kurikulum.id_kurikulum,
+        },
       });
 
       if (!existingKurikulum) {
@@ -44,8 +44,10 @@ const getKurikulum = async (req, res, next) => {
           jumlah_sks_pilihan: data_kurikulum.jumlah_sks_pilihan,
           jumlah_sks_mata_kuliah_wajib: data_kurikulum.jumlah_sks_mata_kuliah_wajib,
           jumlah_sks_mata_kuliah_pilihan: data_kurikulum.jumlah_sks_mata_kuliah_pilihan,
+          last_sync: new Date(),
+          id_feeder: data_kurikulum.id_kurikulum,
           id_prodi: data_kurikulum.id_prodi,
-          id_semester: data_kurikulum.id_semester
+          id_semester: data_kurikulum.id_semester,
         });
       }
     }
@@ -54,7 +56,7 @@ const getKurikulum = async (req, res, next) => {
     res.status(200).json({
       message: "Create Kurikulum Success",
       totalData: dataKurikulum.length,
-      dataKurikulum: dataKurikulum
+      dataKurikulum: dataKurikulum,
     });
   } catch (error) {
     next(error);
@@ -62,5 +64,5 @@ const getKurikulum = async (req, res, next) => {
 };
 
 module.exports = {
-  getKurikulum
+  getKurikulum,
 };

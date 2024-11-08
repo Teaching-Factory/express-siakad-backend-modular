@@ -22,7 +22,7 @@ const getSekolahSMK = async (req, res, next) => {
         // Loop untuk menyimpan data ke dalam database
         for (const data_smk of dataSekolahSMK) {
           const existingSekolahSMK = await Sekolah.findOne({
-            where: { id: data_smk.id }
+            where: { id: data_smk.id },
           });
 
           if (!existingSekolahSMK) {
@@ -40,7 +40,9 @@ const getSekolahSMK = async (req, res, next) => {
               kode_kab_kota: data_smk.kode_kab_kota || null,
               kabupaten_kota: data_smk.kabupaten_kota || null,
               kode_prop: data_smk.kode_prop || null,
-              propinsi: data_smk.propinsi || null
+              propinsi: data_smk.propinsi || null,
+              last_sync: new Date(),
+              id_feeder: data_smk.id,
             });
           }
         }
@@ -52,7 +54,7 @@ const getSekolahSMK = async (req, res, next) => {
         // Jika API gagal, kirim respons error
         return res.status(404).json({
           status: "Error",
-          message: "Data sekolah tidak ditemukan"
+          message: "Data sekolah tidak ditemukan",
         });
       }
     } while (page <= totalPages);
@@ -61,7 +63,7 @@ const getSekolahSMK = async (req, res, next) => {
     res.status(200).json({
       message: "Data Sekolah SMK berhasil diambil dan disimpan",
       totalData: totalData.length,
-      dataSekolahSMK: totalData
+      dataSekolahSMK: totalData,
     });
   } catch (error) {
     next(error);
@@ -89,7 +91,7 @@ const getSekolahSMA = async (req, res, next) => {
         // Loop untuk menyimpan data ke dalam database
         for (const data_sma of dataSekolahSMA) {
           const existingSekolahSMA = await Sekolah.findOne({
-            where: { id: data_sma.id }
+            where: { id: data_sma.id },
           });
 
           if (!existingSekolahSMA) {
@@ -107,7 +109,9 @@ const getSekolahSMA = async (req, res, next) => {
               kode_kab_kota: data_sma.kode_kab_kota || null,
               kabupaten_kota: data_sma.kabupaten_kota || null,
               kode_prop: data_sma.kode_prop || null,
-              propinsi: data_sma.propinsi || null
+              propinsi: data_sma.propinsi || null,
+              last_sync: new Date(),
+              id_feeder: data_sma.id,
             });
           }
         }
@@ -119,7 +123,7 @@ const getSekolahSMA = async (req, res, next) => {
         // Jika API gagal, kirim respons error
         return res.status(404).json({
           status: "Error",
-          message: "Data sekolah tidak ditemukan"
+          message: "Data sekolah tidak ditemukan",
         });
       }
     } while (page <= totalPages);
@@ -128,7 +132,7 @@ const getSekolahSMA = async (req, res, next) => {
     res.status(200).json({
       message: "Data Sekolah SMA berhasil diambil dan disimpan",
       totalData: totalData.length,
-      dataSekolahSMA: totalData
+      dataSekolahSMA: totalData,
     });
   } catch (error) {
     next(error);
@@ -137,5 +141,5 @@ const getSekolahSMA = async (req, res, next) => {
 
 module.exports = {
   getSekolahSMK,
-  getSekolahSMA
+  getSekolahSMA,
 };

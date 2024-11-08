@@ -1,4 +1,4 @@
-const { KelasKuliah } = require("../../../models");
+const { KelasKuliah, DetailKelasKuliah, PenugasanDosen, DosenPengajarKelasKuliah, sequelize } = require("../../../models");
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
@@ -51,23 +51,106 @@ async function createKelasKuliahToFeeder(kelas) {
   try {
     const { token, url_feeder } = await getToken();
 
+    // get data detail kelas kuliah
+    const detailKelasKuliah = await DetailKelasKuliah.findOne({
+      where: {
+        id_kelas_kuliah: kelas.id_kelas_kuliah,
+      },
+    });
+
+    if (!detailKelasKuliah) {
+      return res.status(404).json({
+        message: `<===== Detail Kelas Kuliah With ID ${kelas.id_kelas_kuliah} Not Found:`,
+      });
+    }
+
+    // create data kelas kuliah ke feeder
     const requestBody = {
       act: "InsertKelasKuliah",
       token: token,
-      data: {
-        id_kelas_kuliah: kelas.id_kelas_kuliah,
-        nama_kelas_kuliah: kelas.nama_kelas_kuliah,
-        sks: kelas.sks,
-        jumlah_mahasiswa: kelas.jumlah_mahasiswa,
-        apa_untuk_pditt: kelas.apa_untuk_pditt,
+      record: {
+        // id_kelas_kuliah: null, // tidak dipakai
         id_prodi: kelas.id_prodi,
         id_semester: kelas.id_semester,
+        nama_kelas_kuliah: kelas.nama_kelas_kuliah,
+        sks_mk: kelas.sks,
+        sks_tm: kelas.sks,
+        sks_prak: 0,
+        sks_prak_lap: 0,
+        sks_sim: 0,
+        bahasan: null,
+        a_selenggara_pditt: 1,
+        apa_untuk_pditt: 0,
+        kapasitas: kelas.jumlah_mahasiswa,
+        tanggal_mulai_efektif: detailKelasKuliah.tanggal_mulai_efektif,
+        tanggal_akhir_efektif: detailKelasKuliah.tanggal_akhir_efektif,
+        id_mou: null,
         id_matkul: kelas.id_matkul,
-        id_dosen: kelas.id_dosen,
+        lingkup: kelas.lingkup,
+        mode: kelas.mode,
       },
     };
 
-    await axios.post(url_feeder, requestBody);
+    let requestBodyDosenPengajar = null;
+
+    // Menyimpan response dari API post untuk kelas kuliah
+    const response = await axios.post(url_feeder, requestBody);
+
+    // Mengecek jika ada error pada respons dari server
+    if (response.data.error_code !== 0) {
+      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+    }
+
+    // Mendapatkan id_kelas_kuliah dari response
+    const idKelasKuliah = response.data.data.id_kelas_kuliah;
+
+    // get data registrasi
+    const penugasanDosen = await PenugasanDosen.findOne({
+      where: {
+        id_dosen: kelas.id_dosen,
+      },
+    });
+
+    if (!penugasanDosen) {
+      return res.status(404).json({
+        message: `<===== Penugasan Dosen With Dosen ID ${kelas.id_dosen} Not Found:`,
+      });
+    }
+
+    // get data dosen pengajar kelas kuliah
+    const dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findOne({
+      where: {
+        id_kelas_kuliah: kelas.id_kelas_kuliah,
+      },
+    });
+
+    if (!dosen_pengajar_kelas_kuliah) {
+      return res.status(404).json({
+        message: `<===== Dosen Pengajar Kelas Kuliah With Kelas ID ${kelas.id_kelas_kuliah} Not Found:`,
+      });
+    }
+
+    // Membuat data dosen pengajar kelas kuliah
+    requestBodyDosenPengajar = {
+      act: "InsertDosenPengajarKelasKuliah",
+      token: token,
+      record: {
+        id_registrasi_dosen: penugasanDosen.id_registrasi_dosen,
+        id_kelas_kuliah: idKelasKuliah,
+        sks_substansi_total: kelas.sks,
+        rencana_minggu_pertemuan: 16,
+        id_jenis_evaluasi: 1,
+      },
+    };
+
+    // Mengirim request untuk menambahkan data dosen pengajar
+    await axios.post(url_feeder, requestBodyDosenPengajar);
+
+    await sequelize.transaction(async (t) => {
+      kelas.id_kelas_kuliah = idKelasKuliah;
+      await kelas.save({ transaction: t });
+    });
+
     console.log(`Data kelas kuliah ${kelas.nama_kelas_kuliah} ditambahkan ke Feeder.`);
   } catch (error) {
     console.error("Error inserting data to Feeder:", error.message);
@@ -75,24 +158,24 @@ async function createKelasKuliahToFeeder(kelas) {
   }
 }
 
-// Fungsi untuk menghapus kelas kuliah dari Feeder
-async function deleteKelasKuliahFromFeeder(id_kelas_kuliah) {
-  try {
-    const { token, url_feeder } = await getToken();
+// // Fungsi untuk menghapus kelas kuliah dari Feeder
+// async function deleteKelasKuliahFromFeeder(id_kelas_kuliah) {
+//   try {
+//     const { token, url_feeder } = await getToken();
 
-    const requestBody = {
-      act: "DeleteKelasKuliah",
-      token: token,
-      key: `id_kelas_kuliah='${id_kelas_kuliah}'`,
-    };
+//     const requestBody = {
+//       act: "DeleteKelasKuliah",
+//       token: token,
+//       key: `id_kelas_kuliah='${id_kelas_kuliah}'`,
+//     };
 
-    await axios.post(url_feeder, requestBody);
-    console.log(`Kelas kuliah dengan ID ${id_kelas_kuliah} dihapus dari Feeder.`);
-  } catch (error) {
-    console.error("Error deleting data from Feeder:", error.message);
-    throw error;
-  }
-}
+//     await axios.post(url_feeder, requestBody);
+//     console.log(`Kelas kuliah dengan ID ${id_kelas_kuliah} dihapus dari Feeder.`);
+//   } catch (error) {
+//     console.error("Error deleting data from Feeder:", error.message);
+//     throw error;
+//   }
+// }
 
 // Fungsi utama untuk sinkronisasi kelas kuliah (belum selesai)
 async function syncDataKelasKuliah(req, res, next) {

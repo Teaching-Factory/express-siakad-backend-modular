@@ -104,6 +104,14 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: true,
       },
+      last_sync: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+      },
       id_wilayah: {
         type: Sequelize.CHAR(8),
         allowNull: true,

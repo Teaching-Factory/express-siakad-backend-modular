@@ -41,25 +41,33 @@ module.exports = (sequelize, DataTypes) => {
       id_semester: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.CHAR(5)
+        type: DataTypes.CHAR(5),
       },
       nama_semester: {
         type: DataTypes.STRING(50),
-        allowNull: false
+        allowNull: false,
       },
       semester: {
         type: DataTypes.INTEGER(1),
-        allowNull: false
+        allowNull: false,
+      },
+      last_sync: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: DataTypes.STRING(36),
+        allowNull: true,
       },
       id_tahun_ajaran: {
         type: DataTypes.INTEGER(4),
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       sequelize,
       modelName: "Semester",
-      tableName: "semesters"
+      tableName: "semesters",
     }
   );
   return Semester;

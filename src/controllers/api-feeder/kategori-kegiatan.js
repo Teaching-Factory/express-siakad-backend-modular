@@ -9,13 +9,13 @@ const getKategoriKegiatan = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetKategoriKegiatan",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,15 +29,17 @@ const getKategoriKegiatan = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingKategoriKegiatan = await KategoriKegiatan.findOne({
         where: {
-          id_kategori_kegiatan: kategori_kegiatan.id_kategori_kegiatan
-        }
+          id_kategori_kegiatan: kategori_kegiatan.id_kategori_kegiatan,
+        },
       });
 
       if (!existingKategoriKegiatan) {
         // Data belum ada, buat entri baru di database
         await KategoriKegiatan.create({
           id_kategori_kegiatan: kategori_kegiatan.id_kategori_kegiatan,
-          nama_kategori_kegiatan: kategori_kegiatan.nama_kategori_kegiatan
+          nama_kategori_kegiatan: kategori_kegiatan.nama_kategori_kegiatan,
+          last_sync: new Date(),
+          id_feeder: kategori_kegiatan.id_kategori_kegiatan,
         });
       }
     }
@@ -46,7 +48,7 @@ const getKategoriKegiatan = async (req, res, next) => {
     res.status(200).json({
       message: "Create Kategori Kegiatan Success",
       totalData: dataKategoriKegiatan.length,
-      dataKategoriKegiatan: dataKategoriKegiatan
+      dataKategoriKegiatan: dataKategoriKegiatan,
     });
   } catch (error) {
     next(error);
@@ -54,5 +56,5 @@ const getKategoriKegiatan = async (req, res, next) => {
 };
 
 module.exports = {
-  getKategoriKegiatan
+  getKategoriKegiatan,
 };

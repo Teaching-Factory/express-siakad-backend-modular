@@ -9,13 +9,13 @@ const getMataKuliah = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListMataKuliah",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,8 +29,8 @@ const getMataKuliah = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingMataKuliah = await MataKuliah.findOne({
         where: {
-          id_matkul: mata_kuliah.id_matkul
-        }
+          id_matkul: mata_kuliah.id_matkul,
+        },
       });
 
       if (!existingMataKuliah) {
@@ -56,7 +56,9 @@ const getMataKuliah = async (req, res, next) => {
           ada_diktat: mata_kuliah.ada_diktat,
           tanggal_mulai_efektif: mata_kuliah.tanggal_mulai_efektif,
           tanggal_selesai_efektif: mata_kuliah.tanggal_selesai_efektif,
-          id_prodi: mata_kuliah.id_prodi
+          last_sync: new Date(),
+          id_feeder: mata_kuliah.id_matkul,
+          id_prodi: mata_kuliah.id_prodi,
         });
       }
     }
@@ -65,7 +67,7 @@ const getMataKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Mata Kuliah Success",
       totalData: dataMataKuliah.length,
-      dataMataKuliah: dataMataKuliah
+      dataMataKuliah: dataMataKuliah,
     });
   } catch (error) {
     next(error);
@@ -73,5 +75,5 @@ const getMataKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getMataKuliah
+  getMataKuliah,
 };

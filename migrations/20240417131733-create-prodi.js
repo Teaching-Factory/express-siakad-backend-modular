@@ -21,6 +21,14 @@ module.exports = {
         type: Sequelize.CHAR(1),
         allowNull: false,
       },
+      last_sync: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+      },
       id_jenjang_pendidikan: {
         type: Sequelize.DECIMAL(2, 0),
         allowNull: false,

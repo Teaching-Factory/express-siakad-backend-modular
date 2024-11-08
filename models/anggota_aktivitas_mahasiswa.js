@@ -32,6 +32,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.CHAR(10),
         allowNull: false,
       },
+      last_sync: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: DataTypes.STRING(36),
+        allowNull: true,
+      },
       id_aktivitas: {
         type: DataTypes.STRING(36),
         allowNull: false,

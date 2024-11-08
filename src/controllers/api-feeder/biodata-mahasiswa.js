@@ -10,14 +10,14 @@ const getBiodataMahasiswa = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetBiodataMahasiswa",
       token: `${token}`,
-      order: "id_mahasiswa"
+      order: "id_mahasiswa",
     };
 
     // Menggunakan token untuk mengambil data
@@ -31,8 +31,8 @@ const getBiodataMahasiswa = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingBiodataMahasiswa = await BiodataMahasiswa.findOne({
         where: {
-          id_mahasiswa: biodata_mahasiswa.id_mahasiswa
-        }
+          id_mahasiswa: biodata_mahasiswa.id_mahasiswa,
+        },
       });
 
       let id_wilayah = null;
@@ -40,8 +40,8 @@ const getBiodataMahasiswa = async (req, res, next) => {
       // Periksa apakah id_wilayah Wilayah
       const wilayah = await Wilayah.findOne({
         where: {
-          id_wilayah: biodata_mahasiswa.id_wilayah
-        }
+          id_wilayah: biodata_mahasiswa.id_wilayah,
+        },
       });
 
       // Jika ditemukan, simpan nilainya
@@ -101,6 +101,8 @@ const getBiodataMahasiswa = async (req, res, next) => {
           tanggal_lahir_ibu: data_tanggal_lahir_ibu,
           nama_wali: biodata_mahasiswa.nama_wali,
           tanggal_lahir_wali: data_tanggal_lahir_wali,
+          last_sync: new Date(),
+          id_feeder: biodata_mahasiswa.id_mahasiswa,
           id_wilayah: id_wilayah,
           id_jenis_tinggal: biodata_mahasiswa.id_jenis_tinggal,
           id_alat_transportasi: biodata_mahasiswa.id_alat_transportasi,
@@ -115,7 +117,7 @@ const getBiodataMahasiswa = async (req, res, next) => {
           id_penghasilan_wali: biodata_mahasiswa.id_penghasilan_wali,
           id_kebutuhan_khusus_mahasiswa: biodata_mahasiswa.id_kebutuhan_khusus_mahasiswa,
           id_kebutuhan_khusus_ayah: biodata_mahasiswa.id_kebutuhan_khusus_ayah,
-          id_kebutuhan_khusus_ibu: biodata_mahasiswa.id_kebutuhan_khuibuayah
+          id_kebutuhan_khusus_ibu: biodata_mahasiswa.id_kebutuhan_khuibuayah,
         });
       }
     }
@@ -124,7 +126,7 @@ const getBiodataMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Biodata Mahasiswa Success",
       totalData: dataBiodataMahasiswa.length,
-      dataBiodataMahasiswa: dataBiodataMahasiswa
+      dataBiodataMahasiswa: dataBiodataMahasiswa,
     });
   } catch (error) {
     next(error);
@@ -132,5 +134,5 @@ const getBiodataMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getBiodataMahasiswa
+  getBiodataMahasiswa,
 };

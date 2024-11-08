@@ -9,7 +9,7 @@ const getMahasiswa = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
@@ -17,7 +17,7 @@ const getMahasiswa = async (req, res, next) => {
       act: "GetListMahasiswa",
       token: `${token}`,
       order: "id_registrasi_mahasiswa",
-      filter: "id_registrasi_mahasiswa is not null"
+      filter: "id_registrasi_mahasiswa is not null",
     };
 
     // Menggunakan token untuk mengambil data
@@ -31,8 +31,8 @@ const getMahasiswa = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingMahasiswa = await Mahasiswa.findOne({
         where: {
-          id_registrasi_mahasiswa: data_mahasiswa.id_registrasi_mahasiswa
-        }
+          id_registrasi_mahasiswa: data_mahasiswa.id_registrasi_mahasiswa,
+        },
       });
 
       if (!existingMahasiswa) {
@@ -51,12 +51,14 @@ const getMahasiswa = async (req, res, next) => {
           nama_status_mahasiswa: data_mahasiswa.nama_status_mahasiswa,
           nim: data_mahasiswa.nim,
           nama_periode_masuk: data_mahasiswa.nama_periode_masuk,
+          last_sync: new Date(),
+          id_feeder: data_mahasiswa.id_registrasi_mahasiswa,
           id_sms: data_mahasiswa.id_sms,
           id_mahasiswa: data_mahasiswa.id_mahasiswa,
           id_perguruan_tinggi: data_mahasiswa.id_perguruan_tinggi,
           id_agama: data_mahasiswa.id_agama,
           id_semester: data_mahasiswa.id_periode,
-          id_prodi: data_mahasiswa.id_prodi
+          id_prodi: data_mahasiswa.id_prodi,
         });
       }
     }
@@ -65,7 +67,7 @@ const getMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Mahasiswa Success",
       totalData: dataMahasiswa.length,
-      dataMahasiswa: dataMahasiswa
+      dataMahasiswa: dataMahasiswa,
     });
   } catch (error) {
     next(error);
@@ -73,5 +75,5 @@ const getMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getMahasiswa
+  getMahasiswa,
 };

@@ -9,14 +9,14 @@ const getAktivitasMahasiswa = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListAktivitasMahasiswa",
       token: `${token}`,
-      order: "id_aktivitas"
+      order: "id_aktivitas",
     };
 
     // Menggunakan token untuk mengambil data
@@ -30,8 +30,8 @@ const getAktivitasMahasiswa = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingAktivitasMahasiswa = await AktivitasMahasiswa.findOne({
         where: {
-          id_aktivitas: aktivitas_mahasiswa.id_aktivitas
-        }
+          id_aktivitas: aktivitas_mahasiswa.id_aktivitas,
+        },
       });
 
       if (!existingAktivitasMahasiswa) {
@@ -53,9 +53,11 @@ const getAktivitasMahasiswa = async (req, res, next) => {
           sk_tugas: aktivitas_mahasiswa.sk_tugas,
           tanggal_sk_tugas: data_tanggal,
           untuk_kampus_merdeka: aktivitas_mahasiswa.untuk_kampus_merdeka,
+          last_sync: new Date(),
+          id_feeder: aktivitas_mahasiswa.id_aktivitas,
           id_jenis_aktivitas: aktivitas_mahasiswa.id_jenis_aktivitas,
           id_prodi: aktivitas_mahasiswa.id_prodi,
-          id_semester: aktivitas_mahasiswa.id_semester
+          id_semester: aktivitas_mahasiswa.id_semester,
         });
       }
     }
@@ -64,7 +66,7 @@ const getAktivitasMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Aktivitas Mahasiswa Success",
       totalData: dataAktivitasMahasiswa.length,
-      dataAktivitasMahasiswa: dataAktivitasMahasiswa
+      dataAktivitasMahasiswa: dataAktivitasMahasiswa,
     });
   } catch (error) {
     next(error);
@@ -72,5 +74,5 @@ const getAktivitasMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getAktivitasMahasiswa
+  getAktivitasMahasiswa,
 };

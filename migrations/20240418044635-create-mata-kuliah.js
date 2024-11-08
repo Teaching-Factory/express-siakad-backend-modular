@@ -34,6 +34,14 @@ module.exports = {
         type: Sequelize.DECIMAL(5, 2),
         allowNull: false,
       },
+      last_sync: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+      },
       id_jenis_mata_kuliah: {
         type: Sequelize.CHAR(1),
         allowNull: true,

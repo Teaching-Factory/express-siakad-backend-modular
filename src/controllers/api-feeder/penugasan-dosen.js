@@ -9,13 +9,13 @@ const getPenugasanDosen = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListPenugasanDosen",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,8 +29,8 @@ const getPenugasanDosen = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingPenugasanDosen = await PenugasanDosen.findOne({
         where: {
-          id_registrasi_dosen: penugasan_dosen.id_registrasi_dosen
-        }
+          id_registrasi_dosen: penugasan_dosen.id_registrasi_dosen,
+        },
       });
 
       let tanggal_surat_tugas, mulai_surat_tugas;
@@ -56,10 +56,12 @@ const getPenugasanDosen = async (req, res, next) => {
           mulai_surat_tugas: mulai_surat_tugas,
           tanggal_create: penugasan_dosen.tgl_create,
           tanggal_ptk_keluar: penugasan_dosen.tgl_ptk_keluar,
+          last_sync: new Date(),
+          id_feeder: penugasan_dosen.id_registrasi_dosen,
           id_dosen: penugasan_dosen.id_dosen,
           id_tahun_ajaran: penugasan_dosen.id_tahun_ajaran,
           id_perguruan_tinggi: penugasan_dosen.id_perguruan_tinggi,
-          id_prodi: penugasan_dosen.id_prodi
+          id_prodi: penugasan_dosen.id_prodi,
         });
       }
     }
@@ -68,7 +70,7 @@ const getPenugasanDosen = async (req, res, next) => {
     res.status(200).json({
       message: "Create Penugasan Dosen Success",
       totalData: dataPenugasanDosen.length,
-      dataPenugasanDosen: dataPenugasanDosen
+      dataPenugasanDosen: dataPenugasanDosen,
     });
   } catch (error) {
     next(error);
@@ -76,5 +78,5 @@ const getPenugasanDosen = async (req, res, next) => {
 };
 
 module.exports = {
-  getPenugasanDosen
+  getPenugasanDosen,
 };

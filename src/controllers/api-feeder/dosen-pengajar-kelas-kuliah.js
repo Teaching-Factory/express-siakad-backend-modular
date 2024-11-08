@@ -9,14 +9,14 @@ const getDosenPengajarKelasKuliah = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetDosenPengajarKelasKuliah",
       token: `${token}`,
-      order: "id_aktivitas_mengajar"
+      order: "id_aktivitas_mengajar",
     };
 
     // Menggunakan token untuk mengambil data
@@ -30,8 +30,8 @@ const getDosenPengajarKelasKuliah = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingDosenPengajarKelasKuliah = await DosenPengajarKelasKuliah.findOne({
         where: {
-          id_aktivitas_mengajar: dosen_pengajar_kelas_kuliah.id_aktivitas_mengajar
-        }
+          id_aktivitas_mengajar: dosen_pengajar_kelas_kuliah.id_aktivitas_mengajar,
+        },
       });
 
       let id_registrasi_dosen = null;
@@ -41,22 +41,22 @@ const getDosenPengajarKelasKuliah = async (req, res, next) => {
       // Periksa apakah id_registrasi_dosen ada di tabel penugasan dosen
       const penugasan_dosen = await PenugasanDosen.findOne({
         where: {
-          id_registrasi_dosen: dosen_pengajar_kelas_kuliah.id_registrasi_dosen
-        }
+          id_registrasi_dosen: dosen_pengajar_kelas_kuliah.id_registrasi_dosen,
+        },
       });
 
       // Periksa apakah id_dosen ada di tabel dosen
       const dosen = await Dosen.findOne({
         where: {
-          id_dosen: dosen_pengajar_kelas_kuliah.id_dosen
-        }
+          id_dosen: dosen_pengajar_kelas_kuliah.id_dosen,
+        },
       });
 
       // Periksa apakah id_kelas_kuliah ada di tabel kelas kuliah
       const kelas_kuliah = await KelasKuliah.findOne({
         where: {
-          id_kelas_kuliah: dosen_pengajar_kelas_kuliah.id_kelas_kuliah
-        }
+          id_kelas_kuliah: dosen_pengajar_kelas_kuliah.id_kelas_kuliah,
+        },
       });
 
       // Jika ditemukan, simpan nilainya
@@ -81,13 +81,15 @@ const getDosenPengajarKelasKuliah = async (req, res, next) => {
           sks_substansi_total: dosen_pengajar_kelas_kuliah.sks_substansi_total,
           rencana_minggu_pertemuan: dosen_pengajar_kelas_kuliah.rencana_minggu_pertemuan,
           realisasi_minggu_pertemuan: dosen_pengajar_kelas_kuliah.realisasi_minggu_pertemuan,
+          last_sync: new Date(),
+          id_feeder: dosen_pengajar_kelas_kuliah.id_aktivitas_mengajar,
           id_registrasi_dosen: id_registrasi_dosen,
           id_dosen: id_dosen,
           id_kelas_kuliah: id_kelas_kuliah,
           id_substansi: dosen_pengajar_kelas_kuliah.id_substansi,
           id_jenis_evaluasi: dosen_pengajar_kelas_kuliah.id_jenis_evaluasi,
           id_prodi: dosen_pengajar_kelas_kuliah.id_prodi,
-          id_semester: dosen_pengajar_kelas_kuliah.id_semester
+          id_semester: dosen_pengajar_kelas_kuliah.id_semester,
         });
       }
     }
@@ -96,7 +98,7 @@ const getDosenPengajarKelasKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Dosen Pengajar Kelas Kuliah Success",
       totalData: dosenPengajarKelasKuliah.length,
-      dosenPengajarKelasKuliah: dosenPengajarKelasKuliah
+      dosenPengajarKelasKuliah: dosenPengajarKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -104,5 +106,5 @@ const getDosenPengajarKelasKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getDosenPengajarKelasKuliah
+  getDosenPengajarKelasKuliah,
 };

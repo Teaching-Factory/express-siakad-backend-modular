@@ -13,6 +13,14 @@ module.exports = {
         type: Sequelize.STRING(300),
         allowNull: false,
       },
+      last_sync: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

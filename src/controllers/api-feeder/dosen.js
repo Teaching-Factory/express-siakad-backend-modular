@@ -9,13 +9,13 @@ const getDosen = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListDosen",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,8 +29,8 @@ const getDosen = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingDosen = await Dosen.findOne({
         where: {
-          id_dosen: data_dosen.id_dosen
-        }
+          id_dosen: data_dosen.id_dosen,
+        },
       });
 
       if (!existingDosen) {
@@ -45,8 +45,10 @@ const getDosen = async (req, res, next) => {
           nip: data_dosen.nip,
           jenis_kelamin: data_dosen.jenis_kelamin,
           tanggal_lahir: tanggal_lahir,
+          last_sync: new Date(),
+          id_feeder: data_dosen.id_dosen,
           id_agama: data_dosen.id_agama,
-          id_status_aktif: data_dosen.id_status_aktif
+          id_status_aktif: data_dosen.id_status_aktif,
         });
       }
     }
@@ -55,7 +57,7 @@ const getDosen = async (req, res, next) => {
     res.status(200).json({
       message: "Create Dosen Success",
       totalData: dataDosen.length,
-      dataDosen: dataDosen
+      dataDosen: dataDosen,
     });
   } catch (error) {
     next(error);
@@ -63,5 +65,5 @@ const getDosen = async (req, res, next) => {
 };
 
 module.exports = {
-  getDosen
+  getDosen,
 };

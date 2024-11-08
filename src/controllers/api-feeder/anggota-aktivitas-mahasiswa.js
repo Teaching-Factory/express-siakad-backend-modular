@@ -9,14 +9,14 @@ const getAnggotaAktivitasMahasiswa = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListAnggotaAktivitasMahasiswa",
       token: `${token}`,
-      order: "id_registrasi_mahasiswa"
+      order: "id_registrasi_mahasiswa",
     };
 
     // Menggunakan token untuk mengambil data
@@ -30,8 +30,8 @@ const getAnggotaAktivitasMahasiswa = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingAnggotaAktivitasMahasiswa = await AnggotaAktivitasMahasiswa.findOne({
         where: {
-          id_anggota: anggota_kuliah_mahasiswa.id_anggota
-        }
+          id_anggota: anggota_kuliah_mahasiswa.id_anggota,
+        },
       });
 
       if (!existingAnggotaAktivitasMahasiswa) {
@@ -40,8 +40,10 @@ const getAnggotaAktivitasMahasiswa = async (req, res, next) => {
           id_anggota: anggota_kuliah_mahasiswa.id_anggota,
           jenis_peran: anggota_kuliah_mahasiswa.jenis_peran,
           nama_jenis_peran: anggota_kuliah_mahasiswa.nama_jenis_peran,
+          last_sync: new Date(),
+          id_feeder: anggota_kuliah_mahasiswa.id_anggota,
           id_aktivitas: anggota_kuliah_mahasiswa.id_aktivitas,
-          id_registrasi_mahasiswa: anggota_kuliah_mahasiswa.id_registrasi_mahasiswa
+          id_registrasi_mahasiswa: anggota_kuliah_mahasiswa.id_registrasi_mahasiswa,
         });
       }
     }
@@ -49,7 +51,7 @@ const getAnggotaAktivitasMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Anggota Aktivitas Mahasiswa Success",
       totalData: dataAnggotaAktivitasMahasiswa.length,
-      dataAnggotaAktivitasMahasiswa: dataAnggotaAktivitasMahasiswa
+      dataAnggotaAktivitasMahasiswa: dataAnggotaAktivitasMahasiswa,
     });
   } catch (error) {
     next(error);
@@ -57,5 +59,5 @@ const getAnggotaAktivitasMahasiswa = async (req, res, next) => {
 };
 
 module.exports = {
-  getAnggotaAktivitasMahasiswa
+  getAnggotaAktivitasMahasiswa,
 };

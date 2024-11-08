@@ -21,6 +21,14 @@ module.exports = {
         type: Sequelize.DECIMAL(2, 0),
         allowNull: true,
       },
+      last_sync: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+      },
       id_registrasi_dosen: {
         type: Sequelize.STRING(36),
         allowNull: true,

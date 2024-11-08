@@ -37,6 +37,14 @@ module.exports = {
         type: Sequelize.DECIMAL(3, 0),
         allowNull: true,
       },
+      last_sync: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+      },
       id_prodi: {
         type: Sequelize.STRING(36),
         allowNull: false,

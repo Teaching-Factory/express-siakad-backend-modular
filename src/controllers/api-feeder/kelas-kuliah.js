@@ -9,13 +9,13 @@ const getKelasKuliah = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListKelasKuliah",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -29,8 +29,8 @@ const getKelasKuliah = async (req, res, next) => {
       // Periksa apakah data sudah ada di tabel
       const existingKelasKuliah = await KelasKuliah.findOne({
         where: {
-          id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah
-        }
+          id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah,
+        },
       });
 
       if (!existingKelasKuliah) {
@@ -43,10 +43,12 @@ const getKelasKuliah = async (req, res, next) => {
           apa_untuk_pditt: kelas_kuliah.apa_untuk_pditt,
           lingkup: kelas_kuliah.lingkup,
           mode: kelas_kuliah.mode,
+          last_sync: new Date(),
+          id_feeder: kelas_kuliah.id_kelas_kuliah,
           id_prodi: kelas_kuliah.id_prodi,
           id_semester: kelas_kuliah.id_semester,
           id_matkul: kelas_kuliah.id_matkul,
-          id_dosen: kelas_kuliah.id_dosen
+          id_dosen: kelas_kuliah.id_dosen,
         });
       }
     }
@@ -55,7 +57,7 @@ const getKelasKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Kelas Kuliah Success",
       totalData: dataKelasKuliah.length,
-      dataKelasKuliah: dataKelasKuliah
+      dataKelasKuliah: dataKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -63,5 +65,5 @@ const getKelasKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getKelasKuliah
+  getKelasKuliah,
 };
