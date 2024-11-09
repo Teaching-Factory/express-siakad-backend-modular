@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getCamabaById } = require("../../src/controllers/camaba");
-const { Camaba, PeriodePendaftaran, Semester, Prodi, JenjangPendidikan, ProdiCamaba } = require("../../models");
+const { Camaba, PeriodePendaftaran, Semester, Prodi, JenjangPendidikan, ProdiCamaba, JalurMasuk, SistemKuliah } = require("../../models");
 
 jest.mock("../../models");
 
@@ -22,15 +22,15 @@ describe("getCamabaById", () => {
       id: camabaId,
       nama: "Camaba 1",
       PeriodePendaftaran: { Semester: { id: 1, nama: "Semester 1" } },
-      Prodi: { JenjangPendidikan: { id: 1, nama: "Jenjang 1" } }
+      Prodi: { JenjangPendidikan: { id: 1, nama: "Jenjang 1" } },
     };
 
     const mockProdiCamaba = [
       {
         id: 1,
         id_camaba: camabaId,
-        Prodi: { JenjangPendidikan: { id: 1, nama: "Jenjang 1" } }
-      }
+        Prodi: { JenjangPendidikan: { id: 1, nama: "Jenjang 1" } },
+      },
     ];
 
     Camaba.findByPk.mockResolvedValue(mockCamaba);
@@ -40,19 +40,19 @@ describe("getCamabaById", () => {
 
     expect(Camaba.findByPk).toHaveBeenCalledWith(camabaId, {
       include: [
-        { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
     expect(ProdiCamaba.findAll).toHaveBeenCalledWith({
       where: { id_camaba: camabaId },
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
       message: `<===== GET Camaba By ID ${camabaId} Success:`,
       data: mockCamaba,
-      prodiCamaba: mockProdiCamaba
+      prodiCamaba: mockProdiCamaba,
     });
   });
 
@@ -63,7 +63,7 @@ describe("getCamabaById", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res._getJSONData()).toEqual({
-      message: "Camaba ID is required"
+      message: "Camaba ID is required",
     });
   });
 
@@ -77,13 +77,13 @@ describe("getCamabaById", () => {
 
     expect(Camaba.findByPk).toHaveBeenCalledWith(camabaId, {
       include: [
-        { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
-      message: `<===== Camaba With ID ${camabaId} Not Found:`
+      message: `<===== Camaba With ID ${camabaId} Not Found:`,
     });
   });
 
@@ -95,7 +95,7 @@ describe("getCamabaById", () => {
       id: camabaId,
       nama: "Camaba 1",
       PeriodePendaftaran: { Semester: { id: 1, nama: "Semester 1" } },
-      Prodi: { JenjangPendidikan: { id: 1, nama: "Jenjang 1" } }
+      Prodi: { JenjangPendidikan: { id: 1, nama: "Jenjang 1" } },
     };
 
     Camaba.findByPk.mockResolvedValue(mockCamaba);
@@ -105,17 +105,17 @@ describe("getCamabaById", () => {
 
     expect(Camaba.findByPk).toHaveBeenCalledWith(camabaId, {
       include: [
-        { model: PeriodePendaftaran, include: [{ model: Semester }] },
-        { model: Prodi, include: [{ model: JenjangPendidikan }] }
-      ]
+        { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
     });
     expect(ProdiCamaba.findAll).toHaveBeenCalledWith({
       where: { id_camaba: camabaId },
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }]
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
-      message: `<===== Prodi Camaba With Camaba ID ${camabaId} Not Found:`
+      message: `<===== Prodi Camaba With Camaba ID ${camabaId} Not Found:`,
     });
   });
 

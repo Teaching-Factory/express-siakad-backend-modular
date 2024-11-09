@@ -150,7 +150,7 @@ const getCamabaById = async (req, res, next) => {
     // Cari data camaba berdasarkan ID di database
     const camaba = await Camaba.findByPk(camabaId, {
       include: [
-        { model: PeriodePendaftaran, include: [{ model: Semester }] },
+        { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
         { model: Prodi, include: [{ model: JenjangPendidikan }] },
       ],
     });

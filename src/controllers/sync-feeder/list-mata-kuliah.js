@@ -42,7 +42,7 @@ async function syncDataMataKuliah() {
     const mataKuliahLocal = await getMataKuliahFromLocal();
 
     const localMap = mataKuliahLocal.reduce((map, mata_kuliah) => {
-      map[mata_kuliah.id_matkul] = mata_kuliah;
+      map[mata_kuliah.id_feeder] = mata_kuliah;
       return map;
     }, {});
 
@@ -72,6 +72,8 @@ async function syncDataMataKuliah() {
           tanggal_mulai_efektif: feederMataKuliah.tanggal_mulai_efektif,
           tanggal_selesai_efektif: feederMataKuliah.tanggal_selesai_efektif,
           id_prodi: feederMataKuliah.id_prodi,
+          last_sync: new Date(),
+          id_feeder: feederMataKuliah.id_matkul,
         });
 
         console.log(`Data mata kuliah ${feederMataKuliah.nama_mata_kuliah} ditambahkan ke lokal.`);
@@ -126,8 +128,10 @@ async function syncDataMataKuliah() {
               tanggal_mulai_efektif: feederMataKuliah.tanggal_mulai_efektif,
               tanggal_selesai_efektif: feederMataKuliah.tanggal_selesai_efektif,
               id_prodi: feederMataKuliah.id_prodi,
+              last_sync: new Date(),
+              id_feeder: feederMataKuliah.id_matkul,
             },
-            { where: { id_matkul: feederMataKuliah.id_matkul } }
+            { where: { id_feeder: feederMataKuliah.id_matkul } }
           );
 
           console.log(`Data mata kuliah ${feederMataKuliah.nama_mata_kuliah} di-update di lokal.`);

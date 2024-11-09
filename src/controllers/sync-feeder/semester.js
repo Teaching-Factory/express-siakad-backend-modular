@@ -42,7 +42,7 @@ async function syncDataSemester() {
     const semesterLocal = await getSemesterFromLocal();
 
     const localMap = semesterLocal.reduce((map, semester) => {
-      map[semester.id_semester] = semester;
+      map[semester.id_feeder] = semester;
       return map;
     }, {});
 
@@ -55,6 +55,8 @@ async function syncDataSemester() {
           nama_semester: feederSemester.nama_semester,
           semester: feederSemester.semester,
           id_tahun_ajaran: feederSemester.id_tahun_ajaran,
+          last_sync: new Date(),
+          id_feeder: feederSemester.id_semester,
         });
 
         console.log(`Data semester ${feederSemester.nama_semester} ditambahkan ke lokal.`);
@@ -75,8 +77,10 @@ async function syncDataSemester() {
               nama_semester: feederSemester.nama_semester,
               semester: feederSemester.semester,
               id_tahun_ajaran: feederSemester.id_tahun_ajaran,
+              last_sync: new Date(),
+              id_feeder: feederSemester.id_semester,
             },
-            { where: { id_semester: feederSemester.id_semester } }
+            { where: { id_feeder: feederSemester.id_semester } }
           );
 
           console.log(`Data semester ${feederSemester.nama_semester} di-update di lokal.`);

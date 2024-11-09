@@ -77,7 +77,7 @@ async function syncDosen() {
     const role = await Role.findOne({ where: { nama_role: "dosen" } });
 
     const localMap = dosenLocal.reduce((map, dosen) => {
-      map[dosen.id_dosen] = dosen;
+      map[dosen.id_feeder] = dosen;
       return map;
     }, {});
 
@@ -93,13 +93,15 @@ async function syncDosen() {
         const tanggal_lahir = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
         // Buat entri baru dosen
-        let dosen = await Dosen.create({
+        await Dosen.create({
           id_dosen: feederDosen.id_dosen,
           nama_dosen: feederDosen.nama_dosen,
           nidn: feederDosen.nidn,
           nip: feederDosen.nip,
           jenis_kelamin: feederDosen.jenis_kelamin,
           tanggal_lahir: tanggal_lahir,
+          last_sync: new Date(),
+          id_feeder: feederDosen.id_dosen,
           id_agama: feederDosen.id_agama,
           id_status_aktif: feederDosen.id_status_aktif,
         });
@@ -181,10 +183,12 @@ async function syncDosen() {
               nip: feederDosen.nip,
               jenis_kelamin: feederDosen.jenis_kelamin,
               tanggal_lahir: tanggal_lahir,
+              last_sync: new Date(),
+              id_feeder: feederDosen.id_dosen,
               id_agama: feederDosen.id_agama,
               id_status_aktif: feederDosen.id_status_aktif,
             },
-            { where: { id_dosen: feederDosen.id_dosen } }
+            { where: { id_feeder: feederDosen.id_dosen } }
           );
 
           console.log(`Data dosen ${feederDosen.nama_dosen} di-update di lokal.`);
