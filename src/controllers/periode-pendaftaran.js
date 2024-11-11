@@ -130,10 +130,46 @@ const getPeriodePendaftaranById = async (req, res, next) => {
       });
     }
 
+    // get data prodi periode pendaftaran
+    const prodiPeriodePendaftaran = await ProdiPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId,
+      },
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
+    });
+
+    // get data berkas periode pendaftaran
+    const berkasPeriodePendaftaran = await BerkasPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId,
+      },
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }],
+    });
+
+    // get data tahap tes periode pendaftaran
+    const tahapTesPeriodePendaftaran = await TahapTesPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId,
+      },
+      include: [{ model: JenisTes }],
+    });
+
+    // get data sumber periode pendaftaran
+    const sumberPeriodePendaftaran = await SumberPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId,
+      },
+      include: [{ model: Sumber }],
+    });
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Periode Pendaftaran By ID ${periodePendaftaranId} Success:`,
       data: periode_pendaftaran,
+      prodi_periode_pendaftaran: prodiPeriodePendaftaran,
+      berkas_periode_pendaftaran: berkasPeriodePendaftaran,
+      tahap_tes_periode_pendaftaran: tahapTesPeriodePendaftaran,
+      sumber_periode_pendaftaran: sumberPeriodePendaftaran,
     });
   } catch (error) {
     next(error);

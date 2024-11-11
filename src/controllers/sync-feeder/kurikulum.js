@@ -61,7 +61,7 @@ async function syncDataKurikulum() {
           jumlah_sks_mata_kuliah_pilihan: feederKurikulum.jumlah_sks_mata_kuliah_pilihan,
           id_prodi: feederKurikulum.id_prodi,
           id_semester: feederKurikulum.id_semester,
-          last_sync: feederKurikulum.last_sync,
+          last_sync: new Date(),
           id_feeder: feederKurikulum.id_kurikulum,
         });
 
@@ -95,7 +95,7 @@ async function syncDataKurikulum() {
               jumlah_sks_mata_kuliah_pilihan: feederKurikulum.jumlah_sks_mata_kuliah_pilihan,
               id_prodi: feederKurikulum.id_prodi,
               id_semester: feederKurikulum.id_semester,
-              last_sync: feederKurikulum.last_sync,
+              last_sync: new Date(),
               id_feeder: feederKurikulum.id_kurikulum,
             },
             { where: { id_feeder: feederKurikulum.id_kurikulum } }

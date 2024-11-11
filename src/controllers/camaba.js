@@ -1628,6 +1628,64 @@ const getStatusFinalisasiByCamabaActive = async (req, res, next) => {
   }
 };
 
+// admin, admin-pmb
+const getAllCamabaByPeriodePendaftaranId = async (req, res, next) => {
+  try {
+    const periodePendaftaranId = req.params.id_periode_pendaftaran;
+
+    if (!periodePendaftaranId) {
+      return res.status(400).json({
+        message: "Jabatan ID is required",
+      });
+    }
+
+    // Ambil semua data camabas dari database
+    const camabas = await Camaba.findAll({
+      include: [
+        { model: PeriodePendaftaran, include: [{ model: Semester }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
+      where: {
+        id_periode_pendaftaran: periodePendaftaranId,
+      },
+    });
+
+    if (!camabas || camabas.length === 0) {
+      return res.status(404).json({
+        message: `<===== Camaba Not Found`,
+      });
+    }
+
+    // Loop melalui setiap camaba untuk mendapatkan prodi pertama mereka
+    const camabaWithProdi = await Promise.all(
+      camabas.map(async (camaba) => {
+        // Ambil prodi pertama berdasarkan id_camaba
+        const prodi_camaba = await ProdiCamaba.findOne({
+          where: {
+            id_camaba: camaba.id,
+          },
+          order: [["createdAt", "ASC"]], // Mengambil berdasarkan urutan (prodi pertama)
+        });
+
+        // Jika prodi_camaba ditemukan, tambahkan ke data camaba
+        return {
+          ...camaba.toJSON(), // Konversi instance Sequelize menjadi JSON
+          ProdiCamaba: prodi_camaba || null, // Tambahkan ProdiCamaba atau null jika tidak ditemukan
+        };
+      })
+    );
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET All Camaba By Periode Pendaftaran ID ${periodePendaftaranId} Success`,
+      jumlahData: camabaWithProdi.length,
+      data: camabaWithProdi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -1657,4 +1715,5 @@ module.exports = {
   getStatusProdiCamabaByCamabaActive,
   getStatusBerkasCamabaByCamabaActive,
   getStatusFinalisasiByCamabaActive,
+  getAllCamabaByPeriodePendaftaranId,
 };

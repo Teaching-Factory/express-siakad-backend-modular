@@ -46,6 +46,50 @@ async function getKelasKuliahFromLocal(semesterId, req, res, next) {
   }
 }
 
+// Fungsi untuk mendapatkan daftar kelas kuliah dari Feeder
+async function getDosenPengajarKelasKuliahFromFeeder(semesterId, req, res, next) {
+  try {
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      throw new Error("Failed to obtain token or URL feeder");
+    }
+
+    const requestBody = {
+      act: "GetDosenPengajarKelasKuliah",
+      token: token,
+      filter: `id_semester='${semesterId}'`,
+    };
+
+    const response = await axios.post(url_feeder, requestBody);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching data from Feeder:", error.message);
+    throw error;
+  }
+}
+
+// Fungsi untuk mendapatkan daftar kelas kuliah dari database lokal
+async function getDosenPengajarKelasKuliahFromLocal(semesterId, req, res, next) {
+  try {
+    return await DosenPengajarKelasKuliah.findAll({
+      where: {
+        id_semester: semesterId,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data from local DB:", error.message);
+    throw error;
+  }
+}
+
 // Fungsi untuk menambah data kelas kuliah ke Feeder
 async function createKelasKuliahToFeeder(kelas) {
   try {
@@ -144,12 +188,20 @@ async function createKelasKuliahToFeeder(kelas) {
     };
 
     // Mengirim request untuk menambahkan data dosen pengajar
-    await axios.post(url_feeder, requestBodyDosenPengajar);
+    const responDosenPengajarKelasKuliah = await axios.post(url_feeder, requestBodyDosenPengajar);
 
-    await sequelize.transaction(async (t) => {
-      kelas.id_kelas_kuliah = idKelasKuliah;
-      await kelas.save({ transaction: t });
-    });
+    // Mendapatkan id_aktivitas_mengajar dari response
+    const idAktivitasMengajar = responDosenPengajarKelasKuliah.data.data.id_aktivitas_mengajar;
+
+    // update data dosen pengajar kelas kuliah
+    dosen_pengajar_kelas_kuliah.id_feeder = idAktivitasMengajar;
+    dosen_pengajar_kelas_kuliah.last_sync = new Date();
+    await dosen_pengajar_kelas_kuliah.save();
+
+    // ubah data kelas kuliah local yang baru saja ditambahkan ke feeder
+    kelas.id_feeder = idKelasKuliah;
+    kelas.last_sync = new Date();
+    await kelas.save();
 
     console.log(`Data kelas kuliah ${kelas.nama_kelas_kuliah} ditambahkan ke Feeder.`);
   } catch (error) {
@@ -189,11 +241,16 @@ async function syncDataKelasKuliah(req, res, next) {
       });
     }
 
+    // get kelas kuliah local dan feeder
     const kelasFeeder = await getKelasKuliahFromFeeder(semesterId);
     const kelasLocal = await getKelasKuliahFromLocal(semesterId);
 
+    // get dosen pengajar kelas kuliah local dan feeder
+    const dosenPengajarKelasKuliahFeeder = await getDosenPengajarKelasKuliahFromFeeder(semesterId);
+    const dosenPengajarKelasKuliahLocal = await getDosenPengajarKelasKuliahFromLocal(semesterId);
+
     const localMap = kelasLocal.reduce((map, kelas) => {
-      map[kelas.id_kelas_kuliah] = kelas;
+      map[kelas.id_feeder] = kelas;
       return map;
     }, {});
 
@@ -218,6 +275,8 @@ async function syncDataKelasKuliah(req, res, next) {
           id_semester: feederKelas.id_semester,
           id_matkul: feederKelas.id_matkul,
           id_dosen: feederKelas.id_dosen,
+          last_sync: new Date(),
+          id_feeder: feederKelas.id_kelas_kuliah,
         });
 
         console.log(`Data kelas kuliah ${feederKelas.nama_kelas_kuliah} ditambahkan ke lokal.`);
@@ -226,8 +285,16 @@ async function syncDataKelasKuliah(req, res, next) {
         const localKelas = localMap[feederKelas.id_kelas_kuliah];
 
         if (
-          feederKelas.nama_kelas_kuliah !== localKelas.nama_kelas_kuliah
-          // tambahkan properti lain yang ingin di-update
+          feederKelas.nama_kelas_kuliah !== localKelas.nama_kelas_kuliah ||
+          feederKelas.sks !== localKelas.sks ||
+          feederKelas.jumlah_mahasiswa !== localKelas.jumlah_mahasiswa ||
+          feederKelas.apa_untuk_pditt !== localKelas.apa_untuk_pditt ||
+          feederKelas.lingkup !== localKelas.lingkup ||
+          feederKelas.mode !== localKelas.mode ||
+          feederKelas.id_prodi !== localKelas.id_prodi ||
+          feederKelas.id_semester !== localKelas.id_semester ||
+          feederKelas.id_matkul !== localKelas.id_matkul ||
+          feederKelas.id_dosen !== localKelas.id_dosen
         ) {
           await KelasKuliah.update(
             {
@@ -242,8 +309,10 @@ async function syncDataKelasKuliah(req, res, next) {
               id_semester: feederKelas.id_semester,
               id_matkul: feederKelas.id_matkul,
               id_dosen: feederKelas.id_dosen,
+              last_sync: new Date(),
+              id_feeder: feederKelas.id_kelas_kuliah,
             },
-            { where: { id_kelas_kuliah: feederKelas.id_kelas_kuliah } }
+            { where: { id_feeder: feederKelas.id_kelas_kuliah } }
           );
 
           console.log(`Data kelas kuliah ${feederKelas.nama_kelas_kuliah} di-update di lokal.`);
@@ -253,17 +322,26 @@ async function syncDataKelasKuliah(req, res, next) {
 
     // Sinkronisasi dari Lokal ke Feeder (Create/Update/Delete)
     for (let localKelas of kelasLocal) {
-      if (!feederMap[localKelas.id_kelas_kuliah]) {
+      if (!feederMap[localKelas.id_feeder]) {
         // Tambahkan ke Feeder jika tidak ada di Feeder
         await createKelasKuliahToFeeder(localKelas);
         console.log("Kelas berhasil ditambahkan dari local ke feeder");
       } else {
         // Jika ada di Feeder, pastikan data lokal up-to-date
-        const feederKelas = feederMap[localKelas.id_kelas_kuliah];
+        const feederKelas = feederMap[localKelas.id_feeder];
 
         if (
-          localKelas.nama_kelas_kuliah !== feederKelas.nama_kelas_kuliah
-          // tambahkan properti lain yang ingin di-update di Feeder
+          localKelas.nama_kelas_kuliah !== feederKelas.nama_kelas_kuliah ||
+          localKelas.nama_kelas_kuliah !== feederKelas.nama_kelas_kuliah ||
+          localKelas.sks !== feederKelas.sks ||
+          localKelas.jumlah_mahasiswa !== feederKelas.jumlah_mahasiswa ||
+          localKelas.apa_untuk_pditt !== feederKelas.apa_untuk_pditt ||
+          localKelas.lingkup !== feederKelas.lingkup ||
+          localKelas.mode !== feederKelas.mode ||
+          localKelas.id_prodi !== feederKelas.id_prodi ||
+          localKelas.id_semester !== feederKelas.id_semester ||
+          localKelas.id_matkul !== feederKelas.id_matkul ||
+          localKelas.id_dosen !== feederKelas.id_dosen
         ) {
           const { token, url_feeder } = await getToken();
 

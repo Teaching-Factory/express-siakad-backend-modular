@@ -60,7 +60,7 @@ async function syncDataSubstansi() {
           sks_simulasi: feederSubstansi.sks_simulasi,
           id_prodi: feederSubstansi.id_prodi,
           id_jenis_substansi: feederSubstansi.id_jenis_substansi,
-          last_sync: feederSubstansi.last_sync,
+          last_sync: new Date(),
           id_feeder: feederSubstansi.id_substansi,
         });
 
@@ -92,7 +92,7 @@ async function syncDataSubstansi() {
               sks_simulasi: feederSubstansi.sks_simulasi,
               id_prodi: feederSubstansi.id_prodi,
               id_jenis_substansi: feederSubstansi.id_jenis_substansi,
-              last_sync: feederSubstansi.last_sync,
+              last_sync: new Date(),
               id_feeder: feederSubstansi.id_substansi,
             },
             { where: { id_feeder: feederSubstansi.id_substansi } }

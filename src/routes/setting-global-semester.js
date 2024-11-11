@@ -9,7 +9,7 @@ const checkRole = require("../middlewares/check-role");
 // all routes
 router.get("/", checkRole(["admin"]), SettingGlobalSemesterController.getAllSettingGlobalSemester);
 router.get("/:id/get", checkRole(["admin"]), SettingGlobalSemesterController.getSettingGlobalSemesterById);
-router.get("/get-setting-global-semester-active", checkRole(["admin"]), SettingGlobalSemesterController.getSettingGlobalSemesterAktif);
+router.get("/get-setting-global-semester-active", checkRole(["admin", "admin-prodi", "dosen", "mahasiswa", "admin-keuangan", "camaba", "admin-pmb"]), SettingGlobalSemesterController.getSettingGlobalSemesterAktif);
 router.post("/create", checkRole(["admin"]), SettingGlobalSemesterController.createSettingGlobalSemester);
 router.put("/update", checkRole(["admin"]), SettingGlobalSemesterController.updateSettingGlobalSemester);
 

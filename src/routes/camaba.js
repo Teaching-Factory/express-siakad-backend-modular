@@ -57,5 +57,6 @@ router.get("/status-pendaftaran/upload-foto/get", checkRole(["camaba"]), CamabaC
 router.get("/status-pendaftaran/prodi-camaba/get", checkRole(["camaba"]), CamabaController.getStatusProdiCamabaByCamabaActive);
 router.get("/status-pendaftaran/berkas-camaba/get", checkRole(["camaba"]), CamabaController.getStatusBerkasCamabaByCamabaActive);
 router.get("/status-pendaftaran/finalisasi/get", checkRole(["camaba"]), CamabaController.getStatusFinalisasiByCamabaActive);
+router.get("/:id_periode_pendaftaran/get-camaba", checkRole(["admin", "admin-pmb"]), CamabaController.getAllCamabaByPeriodePendaftaranId);
 
 module.exports = router;

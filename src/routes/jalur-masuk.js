@@ -7,7 +7,7 @@ const JalurMasukController = require("../controllers/jalur-masuk");
 const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", checkRole(["admin"]), JalurMasukController.getAllJalurMasuk);
+router.get("/", checkRole(["admin", "admin-pmb"]), JalurMasukController.getAllJalurMasuk);
 router.get("/:id/get", checkRole(["admin"]), JalurMasukController.getJalurMasukById);
 
 module.exports = router;
