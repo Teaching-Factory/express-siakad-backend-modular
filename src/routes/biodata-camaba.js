@@ -13,5 +13,6 @@ router.get("/get-biodata-camaba-aktif", checkRole(["camaba"]), BiodataCamabaCont
 router.put("/camaba-aktif/data-diri/update", checkRole(["camaba"]), BiodataCamabaController.updateDataDiriCamabaByCamabaActive);
 router.put("/camaba-aktif/data-ortu/update", checkRole(["camaba"]), BiodataCamabaController.updateDataOrtuCamabaByCamabaActive);
 router.get("/cetak-biodata-camaba-aktif", checkRole(["camaba"]), BiodataCamabaController.cetakBiodataByCamabaActive);
+router.get("/:id_camaba/cetak-biodata-camaba", checkRole(["admin", "admin-pmb"]), BiodataCamabaController.cetakBiodataByCamabaId);
 
 module.exports = router;

@@ -1686,6 +1686,102 @@ const getAllCamabaByPeriodePendaftaranId = async (req, res, next) => {
   }
 };
 
+// admin, admin-pmb
+const cetakKartuUjianByCamabaId = async (req, res, next) => {
+  try {
+    const camabaId = req.params.id_camaba;
+
+    if (!camabaId) {
+      return res.status(400).json({
+        message: "Camaba ID is required",
+      });
+    }
+
+    const camaba = await Camaba.findOne({
+      where: {
+        id: camabaId,
+      },
+      include: [
+        { model: PeriodePendaftaran, include: [{ model: Semester }, { model: JalurMasuk }, { model: SistemKuliah }] },
+        { model: Prodi, include: [{ model: JenjangPendidikan }] },
+      ],
+    });
+
+    if (!camaba) {
+      return res.status(404).json({
+        message: "Camaba not found",
+      });
+    }
+
+    // get biodata camaba
+    const biodata_camaba = await BiodataCamaba.findOne({
+      where: {
+        id_camaba: camaba.id,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!biodata_camaba) {
+      return res.status(404).json({
+        message: `<===== Biodata Camaba Not Found:`,
+      });
+    }
+
+    // get data periode pendaftaran
+    const periode_pendaftaran = await PeriodePendaftaran.findOne({
+      where: {
+        id: camaba.id_periode_pendaftaran,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!periode_pendaftaran) {
+      return res.status(404).json({
+        message: `<===== Periode Pendaftaran Not Found:`,
+      });
+    }
+
+    // get tahap tes periode pendaftaran
+    const tahap_tes_periode_pendaftaran = await TahapTesPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: periode_pendaftaran.id,
+      },
+      include: [{ model: JenisTes }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!tahap_tes_periode_pendaftaran) {
+      return res.status(404).json({
+        message: `<===== Tahap Tes Periode Pendaftaran Not Found:`,
+      });
+    }
+
+    // get data Prodi Camaba
+    const prodiCamaba = await ProdiCamaba.findAll({
+      where: { id_camaba: camaba.id },
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!prodiCamaba) {
+      return res.status(404).json({
+        message: `<===== Prodi Camaba Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== Cetak Kartu Ujian By ID Camaba ${camabaId} Success:`,
+      dataCamaba: camaba,
+      dataBiodataCamaba: biodata_camaba,
+      dataProdiCamaba: prodiCamaba,
+      dataTahapTes: tahap_tes_periode_pendaftaran,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -1716,4 +1812,5 @@ module.exports = {
   getStatusBerkasCamabaByCamabaActive,
   getStatusFinalisasiByCamabaActive,
   getAllCamabaByPeriodePendaftaranId,
+  cetakKartuUjianByCamabaId,
 };
