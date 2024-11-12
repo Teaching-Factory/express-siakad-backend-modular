@@ -3,6 +3,8 @@ const { exec } = require("child_process");
 const { User, Role, UserRole, sequelize, SeederStatus } = require("../../models");
 const { doLogin } = require("../controllers/auth");
 const RoleSeeder = require("../../seeders/20240509025858-seed-role");
+const PermissionSeeder = require("../../seeders/20241112032257-seed-permission");
+const RolePermissionSeeder = require("../../seeders/20241112042714-seed-role-permission");
 
 const setupSeeder = async (req, res, next) => {
   try {
@@ -33,7 +35,8 @@ const setupSeeder = async (req, res, next) => {
 
     // melakukan seeder data role, permission dan role permission
     await RoleSeeder.up(sequelize.getQueryInterface(), sequelize);
-    // seeder permission dan role permission menunggu
+    await PermissionSeeder.up(sequelize.getQueryInterface(), sequelize);
+    await RolePermissionSeeder.up(sequelize.getQueryInterface(), sequelize);
 
     // Update status seeder
     seederStatus.is_seeded = true;
