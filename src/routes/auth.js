@@ -9,5 +9,6 @@ const AuthController = require("../controllers/auth");
 router.post("/do-login", AuthController.doLogin);
 router.get("/do-logout", AuthController.doLogout);
 router.post("/:id/do-login-as", AuthController.doLoginAs);
+router.post("/:id_camaba/do-login-as-camaba", AuthController.doLoginAsCamaba);
 
 module.exports = router;

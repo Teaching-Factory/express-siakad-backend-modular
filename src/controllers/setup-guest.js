@@ -5,6 +5,7 @@ const { doLogin } = require("../controllers/auth");
 const RoleSeeder = require("../../seeders/20240509025858-seed-role");
 const PermissionSeeder = require("../../seeders/20241112032257-seed-permission");
 const RolePermissionSeeder = require("../../seeders/20241112042714-seed-role-permission");
+const AngkatanSeeder = require("../../seeders/20240514065136-seed-angkatan");
 
 const setupSeeder = async (req, res, next) => {
   try {
@@ -37,6 +38,7 @@ const setupSeeder = async (req, res, next) => {
     await RoleSeeder.up(sequelize.getQueryInterface(), sequelize);
     await PermissionSeeder.up(sequelize.getQueryInterface(), sequelize);
     await RolePermissionSeeder.up(sequelize.getQueryInterface(), sequelize);
+    await AngkatanSeeder.up(sequelize.getQueryInterface(), sequelize);
 
     // Update status seeder
     seederStatus.is_seeded = true;

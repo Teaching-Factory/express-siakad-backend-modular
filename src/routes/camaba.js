@@ -59,5 +59,6 @@ router.get("/status-pendaftaran/berkas-camaba/get", checkRole(["camaba"]), Camab
 router.get("/status-pendaftaran/finalisasi/get", checkRole(["camaba"]), CamabaController.getStatusFinalisasiByCamabaActive);
 router.get("/:id_periode_pendaftaran/get-camaba", checkRole(["admin", "admin-pmb"]), CamabaController.getAllCamabaByPeriodePendaftaranId);
 router.get("/:id_camaba/cetak-kartu-ujian", checkRole(["admin", "admin-pmb"]), CamabaController.cetakKartuUjianByCamabaId);
+router.delete("/:id_camaba/delete-camaba", checkRole(["admin", "admin-pmb"]), CamabaController.deleteCamabaById);
 
 module.exports = router;

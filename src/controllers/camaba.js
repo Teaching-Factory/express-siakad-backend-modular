@@ -403,7 +403,7 @@ const createCamaba = async (req, res, next) => {
         sumber_periode_pendaftaran.map(async ({ id, nama_sumber: namaSumberRequest }) => {
           // tambahkan nama_sumber dari request
           const data_sumber_periode_pendaftaran = await SumberPeriodePendaftaran.findOne({
-            where: { id: id },
+            where: { id_sumber: id },
             include: [{ model: Sumber }],
           });
 
@@ -1635,7 +1635,7 @@ const getAllCamabaByPeriodePendaftaranId = async (req, res, next) => {
 
     if (!periodePendaftaranId) {
       return res.status(400).json({
-        message: "Jabatan ID is required",
+        message: "Periode Pendaftaran ID is required",
       });
     }
 
@@ -1782,6 +1782,39 @@ const cetakKartuUjianByCamabaId = async (req, res, next) => {
   }
 };
 
+const deleteCamabaById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const camabaId = req.params.id_camaba;
+
+    if (!camabaId) {
+      return res.status(400).json({
+        message: "Camaba ID is required",
+      });
+    }
+
+    // Cari data camaba berdasarkan ID di database
+    let camaba = await Camaba.findByPk(camabaId);
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!camaba) {
+      return res.status(404).json({
+        message: `<===== Camaba With ID ${camabaId} Not Found:`,
+      });
+    }
+
+    // Hapus data camaba dari database
+    await camaba.destroy();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== DELETE Camaba With ID ${camabaId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -1813,4 +1846,5 @@ module.exports = {
   getStatusFinalisasiByCamabaActive,
   getAllCamabaByPeriodePendaftaranId,
   cetakKartuUjianByCamabaId,
+  deleteCamabaById,
 };
