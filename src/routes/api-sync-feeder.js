@@ -13,9 +13,10 @@ const SyncSubstansiController = require("../controllers/sync-feeder/substansi");
 const SyncListMataKuliahController = require("../controllers/sync-feeder/list-mata-kuliah");
 const SyncSemesterController = require("../controllers/sync-feeder/semester");
 const SyncKurikulumController = require("../controllers/sync-feeder/kurikulum");
-const SyncKelasKuliahController = require("../controllers/sync-feeder/list-kelas-kuliah");
+const SyncKelasKuliahController = require("../controllers/sync-feeder/kelas-kuliah-sync");
 
-// controller belum digunakan dan belum dicoba
+// controller belum digunakan, belum dicoba atau belum selesai
+// const SyncKelasKuliahController = require("../controllers/sync-feeder/list-kelas-kuliah");
 // const SyncDetailNilaiPerkuliahanKelasController = require("../controllers/sync-feeder/detail-nilai-perkuliahan-kelas");
 // const SyncDetailKelasKuliahController = require("../controllers/sync-feeder/detail-kelas-kuliah");
 
@@ -27,9 +28,10 @@ router.get("/substansi", checkRole(["admin"]), SyncSubstansiController.syncSubst
 router.get("/list-mata-kuliah", checkRole(["admin"]), SyncListMataKuliahController.syncListMataKuliah);
 router.get("/semester", checkRole(["admin"]), SyncSemesterController.syncSemester);
 router.get("/kurikulum", checkRole(["admin"]), SyncKurikulumController.syncKurikulum);
-router.get("/:id_semester/list-kelas-kuliah", checkRole(["admin"]), SyncKelasKuliahController.syncKelasKuliah);
+router.get("/:id_semester/matching-kelas-kuliah", checkRole(["admin"]), SyncKelasKuliahController.matchingDataKelasKuliah);
 
-// route belum digunakan dan belum dicoba
+// route belum digunakan, belum dicoba atau belum selesai
+// router.get("/:id_semester/list-kelas-kuliah", checkRole(["admin"]), SyncKelasKuliahController.syncKelasKuliah);
 // router.get("/semester/:id_semester/detail-nilai-perkuliahan-kelas", checkRole(["admin"]), SyncDetailNilaiPerkuliahanKelasController.synceDetailNilaiPerkuliahanKelas);
 // router.get("/semester/:id_semester/detail-kelas-kuliah", checkRole(["admin"]), SyncDetailKelasKuliahController.syncDetailKelasKuliah);
 
