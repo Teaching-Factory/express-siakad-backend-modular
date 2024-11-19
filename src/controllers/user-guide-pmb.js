@@ -11,7 +11,7 @@ const getAllUserGuidePMB = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All User Guide PMB Success",
       jumlahData: user_guide_pmbs.length,
-      data: user_guide_pmbs
+      data: user_guide_pmbs,
     });
   } catch (error) {
     next(error);
@@ -25,7 +25,7 @@ const getUserGuidePMBById = async (req, res, next) => {
 
     if (!userGuidePMBId) {
       return res.status(400).json({
-        message: "User Guide PMB ID is required"
+        message: "User Guide PMB ID is required",
       });
     }
 
@@ -35,14 +35,14 @@ const getUserGuidePMBById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!user_guide_pmb) {
       return res.status(404).json({
-        message: `<===== User Guide PMB With ID ${userGuidePMBId} Not Found:`
+        message: `<===== User Guide PMB With ID ${userGuidePMBId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET User Guide PMB By ID ${userGuidePMBId} Success:`,
-      data: user_guide_pmb
+      data: user_guide_pmb,
     });
   } catch (error) {
     next(error);
@@ -54,14 +54,14 @@ const getUserGuidePMBAktif = async (req, res, next) => {
     // Ambil data user_guide_pmb_aktif dari database
     const user_guide_pmb_aktif = await UserGuidePMB.findOne({
       where: {
-        status: true
-      }
+        status: true,
+      },
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!user_guide_pmb_aktif) {
       return res.status(404).json({
-        message: `<===== User Guide PMB Aktif Not Found:`
+        message: `<===== User Guide PMB Aktif Not Found:`,
       });
     }
 
@@ -69,7 +69,7 @@ const getUserGuidePMBAktif = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET User Guide PMB Aktif Success",
       jumlahData: user_guide_pmb_aktif.length,
-      data: user_guide_pmb_aktif
+      data: user_guide_pmb_aktif,
     });
   } catch (error) {
     next(error);
@@ -113,13 +113,13 @@ const createUserGuidePMB = async (req, res, next) => {
     const newUserGuidePMB = await UserGuidePMB.create({
       type: type,
       file: file,
-      status: status
+      status: status,
     });
 
     // Kirim respons JSON jika berhasil
     res.status(201).json({
       message: "<===== CREATE User Guide PMB Success =====>",
-      data: newUserGuidePMB
+      data: newUserGuidePMB,
     });
   } catch (error) {
     next(error);
@@ -140,8 +140,8 @@ const updateUserGuidePMB = async (req, res, next) => {
     // Temukan user guide pmb yang aktif
     const user_guide_pmb = await UserGuidePMB.findOne({
       where: {
-        status: true
-      }
+        status: true,
+      },
     });
 
     if (!user_guide_pmb) {
@@ -188,7 +188,34 @@ const updateUserGuidePMB = async (req, res, next) => {
 
     res.json({
       message: "UPDATE User Guide PMB Success",
-      data: user_guide_pmb
+      data: user_guide_pmb,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUserGuidePMBGuestAktif = async (req, res, next) => {
+  try {
+    // Ambil data user_guide_pmb_aktif dari database
+    const user_guide_pmb_aktif = await UserGuidePMB.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!user_guide_pmb_aktif) {
+      return res.status(404).json({
+        message: `<===== User Guide PMB Aktif Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET User Guide PMB Aktif Success",
+      jumlahData: user_guide_pmb_aktif.length,
+      data: user_guide_pmb_aktif,
     });
   } catch (error) {
     next(error);
@@ -200,5 +227,6 @@ module.exports = {
   getUserGuidePMBById,
   getUserGuidePMBAktif,
   createUserGuidePMB,
-  updateUserGuidePMB
+  updateUserGuidePMB,
+  getUserGuidePMBGuestAktif
 };

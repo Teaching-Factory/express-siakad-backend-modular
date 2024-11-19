@@ -130,6 +130,7 @@ const prodiPeriodePendaftaranGuestRoutes = require("./routes/prodi-periode-penda
 const berkasPeriodePendaftaranRoutes = require("./routes/berkas-periode-pendaftaran");
 const tahapTesPeriodePendaftaranRoutes = require("./routes/tahap-tes-periode-pendaftaran");
 const userGuidePMBRoutes = require("./routes/user-guide-pmb");
+const userGuidePMBGuestRoutes = require("./routes/user-guide-pmb-guest");
 const camabaRoutes = require("./routes/camaba");
 const camabaGuestRoutes = require("./routes/camaba-guest");
 const sekolahRoutes = require("./routes/sekolah");
@@ -324,6 +325,7 @@ app.use("/prodi-periode-pendaftaran-guest", prodiPeriodePendaftaranGuestRoutes);
 app.use("/berkas-periode-pendaftaran", checkToken, berkasPeriodePendaftaranRoutes);
 app.use("/tahap-tes-periode-pendaftaran", checkToken, tahapTesPeriodePendaftaranRoutes);
 app.use("/user-guide-pmb", checkToken, userGuidePMBRoutes);
+app.use("/user-guide-pmb-guest", userGuidePMBGuestRoutes);
 app.use("/camaba", checkToken, camabaRoutes);
 app.use("/camaba-guest", camabaGuestRoutes);
 app.use("/sekolah", checkToken, sekolahRoutes);
