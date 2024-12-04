@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       nidn: {
         type: DataTypes.CHAR(10),
-        allowNull: false,
+        allowNull: true,
       },
       nip: {
         type: DataTypes.STRING(18),

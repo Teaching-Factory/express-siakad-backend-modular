@@ -15,7 +15,7 @@ module.exports = {
       },
       nidn: {
         type: Sequelize.CHAR(10),
-        allowNull: false,
+        allowNull: true,
       },
       nip: {
         type: Sequelize.STRING(18),

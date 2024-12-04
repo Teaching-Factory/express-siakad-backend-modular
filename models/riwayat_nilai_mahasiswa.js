@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_periode: {
         type: DataTypes.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
       id_kelas: {
         type: DataTypes.STRING(36),

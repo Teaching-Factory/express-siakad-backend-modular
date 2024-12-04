@@ -59,7 +59,7 @@ module.exports = {
       },
       id_periode: {
         type: Sequelize.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "periodes",
