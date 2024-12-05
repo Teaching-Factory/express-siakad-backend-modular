@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class KelasKuliahSync extends Model {
+  class DosenPengajarKelasKuliahSync extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,10 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi table parent
-      KelasKuliahSync.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas_kuliah" });
+      DosenPengajarKelasKuliahSync.belongsTo(models.DosenPengajarKelasKuliah, { foreignKey: "id_aktivitas_mengajar" });
     }
   }
-  KelasKuliahSync.init(
+  DosenPengajarKelasKuliahSync.init(
     {
       id: {
         allowNull: false,
@@ -32,16 +32,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(36),
         allowNull: true,
       },
-      id_kelas_kuliah: {
+      id_aktivitas_mengajar: {
         type: DataTypes.STRING(36),
         allowNull: true,
       },
     },
     {
       sequelize,
-      modelName: "KelasKuliahSync",
-      tableName: "kelas_kuliah_syncs",
+      modelName: "DosenPengajarKelasKuliahSync",
+      tableName: "dosen_pengajar_kelas_kuliah_syncs",
     }
   );
-  return KelasKuliahSync;
+  return DosenPengajarKelasKuliahSync;
 };

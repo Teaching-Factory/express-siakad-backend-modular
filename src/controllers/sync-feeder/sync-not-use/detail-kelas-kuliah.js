@@ -1,5 +1,5 @@
-const { DetailKelasKuliah, KelasKuliah } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { DetailKelasKuliah, KelasKuliah } = require("../../../../models");
+const { getToken } = require("../../api-feeder/get-token");
 const axios = require("axios");
 
 // Fungsi untuk mendapatkan daftar detail kelas kuliah dari Feeder

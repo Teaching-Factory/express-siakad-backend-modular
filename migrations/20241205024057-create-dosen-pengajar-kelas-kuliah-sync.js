@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("kelas_kuliah_syncs", {
+    await queryInterface.createTable("dosen_pengajar_kelas_kuliah_syncs", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -21,14 +21,14 @@ module.exports = {
         type: Sequelize.STRING(36),
         allowNull: true,
       },
-      id_kelas_kuliah: {
+      id_aktivitas_mengajar: {
         type: Sequelize.STRING(36),
         allowNull: true,
         references: {
           model: {
-            tableName: "kelas_kuliahs",
+            tableName: "dosen_pengajar_kelas_kuliahs",
           },
-          key: "id_kelas_kuliah",
+          key: "id_aktivitas_mengajar",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -44,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("kelas_kuliah_syncs");
+    await queryInterface.dropTable("dosen_pengajar_kelas_kuliah_syncs");
   },
 };

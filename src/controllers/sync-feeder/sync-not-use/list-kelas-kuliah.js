@@ -1,5 +1,5 @@
-const { KelasKuliah, DetailKelasKuliah, PenugasanDosen, DosenPengajarKelasKuliah, Dosen, sequelize } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { KelasKuliah, DetailKelasKuliah, PenugasanDosen, DosenPengajarKelasKuliah, Dosen, sequelize } = require("../../../../models");
+const { getToken } = require("../../api-feeder/get-token");
 const axios = require("axios");
 
 // Fungsi untuk mendapatkan daftar kelas kuliah dari Feeder

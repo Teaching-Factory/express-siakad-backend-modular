@@ -9,7 +9,7 @@ const getAllKelasKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Kelas Kuliah Success",
       jumlahData: kelas_kuliah.length,
-      data: kelas_kuliah
+      data: kelas_kuliah,
     });
   } catch (error) {
     next(error);
@@ -24,26 +24,26 @@ const getKelasKuliahById = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!KelasKuliahId) {
       return res.status(400).json({
-        message: "Kelas Kuliah ID is required"
+        message: "Kelas Kuliah ID is required",
       });
     }
 
     // Cari data kelas_kuliah berdasarkan ID di database
     const kelas_kuliah = await KelasKuliah.findByPk(KelasKuliahId, {
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }]
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!kelas_kuliah) {
       return res.status(404).json({
-        message: `<===== Kelas Kuliah With ID ${KelasKuliahId} Not Found:`
+        message: `<===== Kelas Kuliah With ID ${KelasKuliahId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Kelas Kuliah By ID ${KelasKuliahId} Success:`,
-      data: kelas_kuliah
+      data: kelas_kuliah,
     });
   } catch (error) {
     next(error);
@@ -59,14 +59,14 @@ const GetAllKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required"
+        message: "Prodi ID is required",
       });
     }
 
     // Periksa apakah ID disediakan
     if (!semesterId) {
       return res.status(400).json({
-        message: "Semester ID is required"
+        message: "Semester ID is required",
       });
     }
 
@@ -74,22 +74,22 @@ const GetAllKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
         id_prodi: prodiId,
-        id_semester: semesterId
+        id_semester: semesterId,
       },
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }]
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });
 
     if (kelas_kuliah.length === 0) {
       return res.status(404).json({
-        message: `<===== Kelas Kuliah With ID ${prodiId} Not Found:`
+        message: `<===== Kelas Kuliah With ID ${prodiId} Not Found:`,
       });
     }
 
     // Ambil semua data mata_kuliah dari database
     const mata_kuliah = await MataKuliah.findAll({
       where: {
-        id_prodi: prodiId
-      }
+        id_prodi: prodiId,
+      },
     });
 
     // Kirim respons JSON jika berhasil
@@ -98,7 +98,7 @@ const GetAllKelasKuliahByProdiAndSemesterId = async (req, res, next) => {
       jumlahDataKelasKuliah: kelas_kuliah.length,
       jumlahDataMataKuliah: mata_kuliah.length,
       dataKelasKuliah: kelas_kuliah,
-      dataMataKuliah: mata_kuliah
+      dataMataKuliah: mata_kuliah,
     });
   } catch (error) {
     next(error);
@@ -153,33 +153,33 @@ const createKelasKuliah = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required"
+        message: "Prodi ID is required",
       });
     }
     if (!semesterId) {
       return res.status(400).json({
-        message: "Semester ID is required"
+        message: "Semester ID is required",
       });
     }
     if (!matkulId) {
       return res.status(400).json({
-        message: "Mata Kuliah ID is required"
+        message: "Mata Kuliah ID is required",
       });
     }
 
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required"
+        message: "Prodi ID is required",
       });
     }
     if (!semesterId) {
       return res.status(400).json({
-        message: "Semester ID is required"
+        message: "Semester ID is required",
       });
     }
     if (!matkulId) {
       return res.status(400).json({
-        message: "Mata Kuliah ID is required"
+        message: "Mata Kuliah ID is required",
       });
     }
 
@@ -189,13 +189,13 @@ const createKelasKuliah = async (req, res, next) => {
     // get data penugasan dosen dari id_dosen
     const penugasan_dosen = await PenugasanDosen.findOne({
       where: {
-        id_dosen: id_dosen
-      }
+        id_dosen: id_dosen,
+      },
     });
 
     if (!penugasan_dosen) {
       return res.status(404).json({
-        message: `<===== Penugasan Dosen With ID ${id_dosen} Not Found:`
+        message: `<===== Penugasan Dosen With ID ${id_dosen} Not Found:`,
       });
     }
 
@@ -210,7 +210,7 @@ const createKelasKuliah = async (req, res, next) => {
       id_prodi: prodiId,
       id_semester: semesterId,
       id_matkul: matkulId,
-      id_dosen: id_dosen
+      id_dosen: id_dosen,
     });
 
     // create data detail kelas kuliah
@@ -226,7 +226,7 @@ const createKelasKuliah = async (req, res, next) => {
       jam_mulai: jam_mulai,
       jam_selesai: jam_selesai,
       id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah,
-      id_ruang_perkuliahan: id_ruang_perkuliahan
+      id_ruang_perkuliahan: id_ruang_perkuliahan,
     });
 
     // create dosen pengajar kelas kuliah
@@ -240,7 +240,7 @@ const createKelasKuliah = async (req, res, next) => {
       id_substansi: null,
       id_jenis_evaluasi: 1,
       id_prodi: kelas_kuliah.id_prodi,
-      id_semester: kelas_kuliah.id_semester
+      id_semester: kelas_kuliah.id_semester,
     });
 
     // Kirim respons JSON jika berhasil
@@ -248,7 +248,7 @@ const createKelasKuliah = async (req, res, next) => {
       message: "<===== CREATE Kelas Kuliah Success",
       dataKelasKuliah: kelas_kuliah,
       dataDetailKelasKuliah: detail_kelas_kuliah,
-      dataDosenPengajarKelasKuliah: dosen_pengajar_kelas_kuliah
+      dataDosenPengajarKelasKuliah: dosen_pengajar_kelas_kuliah,
     });
   } catch (error) {
     next(error);
@@ -301,12 +301,48 @@ const updateKelasKuliahById = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!kelasKuliahId) {
       return res.status(400).json({
-        message: "Kelas Kuliah ID is required"
+        message: "Kelas Kuliah ID is required",
       });
     }
 
     // Cari data kelas kuliah berdasarkan ID di database
     let dataKelasKuliah = await KelasKuliah.findByPk(kelasKuliahId);
+
+    // Melakukan update ketika data id_dosen berubah untuk data dosen pengajar kelas kuliah
+    if (kelasKuliahId.id_dosen != id_dosen) {
+      // update data dosen pengajar kelas kuliah
+      const dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findOne({
+        where: {
+          id_kelas_kuliah: dataKelasKuliah.id_kelas_kuliah,
+        },
+      });
+
+      // Jika data tidak ditemukan, kirim respons 404
+      if (!dosen_pengajar_kelas_kuliah) {
+        return res.status(404).json({
+          message: `<===== Dosen Pengajar Kelas Kuliah With ID ${dataKelasKuliah.id_kelas_kuliah} Not Found:`,
+        });
+      }
+
+      // get data penugasan dosen
+      const penugasan_dosen = await PenugasanDosen.findOne({
+        where: {
+          id_dosen: id_dosen,
+        },
+      });
+
+      // Jika data tidak ditemukan, kirim respons 404
+      if (!penugasan_dosen) {
+        return res.status(404).json({
+          message: `<===== Penugasan Dosen With ID ${dataKelasKuliah.id_kelas_kuliah} Not Found:`,
+        });
+      }
+
+      dosen_pengajar_kelas_kuliah.id_dosen = id_dosen;
+      dosen_pengajar_kelas_kuliah.id_registrasi_dosen = penugasan_dosen.id_registrasi_dosen;
+
+      await dosen_pengajar_kelas_kuliah.save();
+    }
 
     // Update data kelas kuliah
     dataKelasKuliah.nama_kelas_kuliah = nama_kelas_kuliah;
@@ -321,27 +357,27 @@ const updateKelasKuliahById = async (req, res, next) => {
     // cari data detail kelas kuliah
     let dataDetailKelasKuliah = await DetailKelasKuliah.findOne({
       where: {
-        id_kelas_kuliah: dataKelasKuliah.id_kelas_kuliah
-      }
+        id_kelas_kuliah: dataKelasKuliah.id_kelas_kuliah,
+      },
     });
 
-    // // update data detail kelas kuliah
-    // dataDetailKelasKuliah.tanggal_mulai_efektif = tanggal_mulai_efektif;
-    // dataDetailKelasKuliah.tanggal_akhir_efektif = tanggal_akhir_efektif;
-    // dataDetailKelasKuliah.kapasitas = kapasitas_peserta_kelas;
-    // dataDetailKelasKuliah.hari = hari;
-    // dataDetailKelasKuliah.jam_mulai = jam_mulai;
-    // dataDetailKelasKuliah.jam_selesai = jam_selesai;
-    // dataDetailKelasKuliah.id_ruang_perkuliahan = id_ruang_perkuliahan;
+    // update data detail kelas kuliah
+    dataDetailKelasKuliah.tanggal_mulai_efektif = tanggal_mulai_efektif;
+    dataDetailKelasKuliah.tanggal_akhir_efektif = tanggal_akhir_efektif;
+    dataDetailKelasKuliah.kapasitas = kapasitas_peserta_kelas;
+    dataDetailKelasKuliah.hari = hari;
+    dataDetailKelasKuliah.jam_mulai = jam_mulai;
+    dataDetailKelasKuliah.jam_selesai = jam_selesai;
+    dataDetailKelasKuliah.id_ruang_perkuliahan = id_ruang_perkuliahan;
 
-    // // Simpan perubahan ke dalam database
-    // await dataDetailKelasKuliah.save();
+    // Simpan perubahan ke dalam database
+    await dataDetailKelasKuliah.save();
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== UPDATE Kelas Kuliah Success",
       dataKelasKuliah: dataKelasKuliah,
-      dataDetailKelasKuliah: dataDetailKelasKuliah
+      dataDetailKelasKuliah: dataDetailKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -356,7 +392,7 @@ const deleteKelasKuliahById = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!kelasKuliahId) {
       return res.status(400).json({
-        message: "Kelas Kuliah ID is required"
+        message: "Kelas Kuliah ID is required",
       });
     }
 
@@ -366,15 +402,15 @@ const deleteKelasKuliahById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!kelas_kuliah) {
       return res.status(404).json({
-        message: `<===== Kelas Kuliah With ID ${kelasKuliahId} Not Found:`
+        message: `<===== Kelas Kuliah With ID ${kelasKuliahId} Not Found:`,
       });
     }
 
     // cari data detail kelas kuliah
     let detail_kelas_kuliah = await DetailKelasKuliah.findOne({
       where: {
-        id_kelas_kuliah: kelasKuliahId
-      }
+        id_kelas_kuliah: kelasKuliahId,
+      },
     });
 
     // Hapus data detail_kelas_kuliah dan kelas_kuliah dari database
@@ -383,7 +419,7 @@ const deleteKelasKuliahById = async (req, res, next) => {
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: `<===== DELETE Kelas Kuliah With ID ${kelasKuliahId} Success:`
+      message: `<===== DELETE Kelas Kuliah With ID ${kelasKuliahId} Success:`,
     });
   } catch (error) {
     next(error);
@@ -398,22 +434,22 @@ const getAllKelasKuliahByProdiId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required"
+        message: "Prodi ID is required",
       });
     }
 
     // Ambil semua data kelas_kuliah dari database
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
-        id_prodi: prodiId
+        id_prodi: prodiId,
       },
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }]
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });
 
     // Periksa apakah data kelas_kuliah ditemukan
     if (kelas_kuliah.length === 0) {
       return res.status(404).json({
-        message: `<===== No Kelas Kuliah Found for Prodi Id ${prodiId}`
+        message: `<===== No Kelas Kuliah Found for Prodi Id ${prodiId}`,
       });
     }
 
@@ -421,7 +457,7 @@ const getAllKelasKuliahByProdiId = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET All Kelas Kuliah By Prodi Id ${prodiId} Success`,
       jumlahData: kelas_kuliah.length,
-      data: kelas_kuliah
+      data: kelas_kuliah,
     });
   } catch (error) {
     next(error);
@@ -434,26 +470,26 @@ const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
 
     const mahasiswa = await Mahasiswa.findOne({
       where: {
-        nim: user.username
-      }
+        nim: user.username,
+      },
     });
 
     if (!mahasiswa) {
       return res.status(404).json({
-        message: "Mahasiswa not found"
+        message: "Mahasiswa not found",
       });
     }
 
     // get data setting global semester
     const setting_global_semester = await SettingGlobalSemester.findOne({
       where: {
-        status: true
-      }
+        status: true,
+      },
     });
 
     if (!setting_global_semester) {
       return res.status(404).json({
-        message: "Setting Global Semester Aktif not found"
+        message: "Setting Global Semester Aktif not found",
       });
     }
 
@@ -461,15 +497,15 @@ const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
         id_prodi: mahasiswa.id_prodi,
-        id_semester: setting_global_semester.id_semester_krs
+        id_semester: setting_global_semester.id_semester_krs,
       },
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }]
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }],
     });
 
     // Periksa apakah data kelas_kuliah ditemukan
     if (kelas_kuliah.length === 0) {
       return res.status(404).json({
-        message: "<===== No Kelas Kuliah Found"
+        message: "<===== No Kelas Kuliah Found",
       });
     }
 
@@ -480,7 +516,7 @@ const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
     for (const kelas of kelas_kuliah) {
       // Hitung jumlah peserta_kelas_kuliah untuk kelas tertentu
       const jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
-        where: { id_kelas_kuliah: kelas.id_kelas_kuliah }
+        where: { id_kelas_kuliah: kelas.id_kelas_kuliah },
       });
 
       // Periksa apakah jumlah peserta_kelas_kuliah kurang dari jumlah_mahasiswa
@@ -493,7 +529,7 @@ const getAllKelasKuliahAvailableByProdiMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET All Kelas Kuliah By Prodi Mahasiswa Success`,
       jumlahData: finalKelasKuliah.length,
-      data: finalKelasKuliah
+      data: finalKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -509,20 +545,20 @@ const getAllKelasKuliahAvailableByProdiMahasiswaId = async (req, res, next) => {
 
     if (!mahasiswa) {
       return res.status(404).json({
-        message: "Mahasiswa not found"
+        message: "Mahasiswa not found",
       });
     }
 
     // get data setting global semester
     const setting_global_semester = await SettingGlobalSemester.findOne({
       where: {
-        status: true
-      }
+        status: true,
+      },
     });
 
     if (!setting_global_semester) {
       return res.status(404).json({
-        message: "Setting Global Semester Aktif not found"
+        message: "Setting Global Semester Aktif not found",
       });
     }
 
@@ -530,15 +566,15 @@ const getAllKelasKuliahAvailableByProdiMahasiswaId = async (req, res, next) => {
     const kelas_kuliah = await KelasKuliah.findAll({
       where: {
         id_prodi: mahasiswa.id_prodi,
-        id_semester: setting_global_semester.id_semester_krs
+        id_semester: setting_global_semester.id_semester_krs,
       },
-      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }]
+      include: [{ model: Prodi }, { model: Semester }, { model: MataKuliah }, { model: Dosen }],
     });
 
     // Periksa apakah data kelas_kuliah ditemukan
     if (kelas_kuliah.length === 0) {
       return res.status(404).json({
-        message: "<===== No Kelas Kuliah Found"
+        message: "<===== No Kelas Kuliah Found",
       });
     }
 
@@ -549,7 +585,7 @@ const getAllKelasKuliahAvailableByProdiMahasiswaId = async (req, res, next) => {
     for (const kelas of kelas_kuliah) {
       // Hitung jumlah peserta_kelas_kuliah untuk kelas tertentu
       const jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
-        where: { id_kelas_kuliah: kelas.id_kelas_kuliah }
+        where: { id_kelas_kuliah: kelas.id_kelas_kuliah },
       });
 
       // Periksa apakah jumlah peserta_kelas_kuliah kurang dari jumlah_mahasiswa
@@ -562,7 +598,7 @@ const getAllKelasKuliahAvailableByProdiMahasiswaId = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET All Kelas Kuliah By Prodi Mahasiswa Success`,
       jumlahData: finalKelasKuliah.length,
-      data: finalKelasKuliah
+      data: finalKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -578,5 +614,5 @@ module.exports = {
   deleteKelasKuliahById,
   getAllKelasKuliahByProdiId,
   getAllKelasKuliahAvailableByProdiMahasiswa,
-  getAllKelasKuliahAvailableByProdiMahasiswaId
+  getAllKelasKuliahAvailableByProdiMahasiswaId,
 };
