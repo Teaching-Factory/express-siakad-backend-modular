@@ -29,7 +29,9 @@ router.get("/list-mata-kuliah", checkRole(["admin"]), SyncListMataKuliahControll
 router.get("/semester", checkRole(["admin"]), SyncSemesterController.syncSemester);
 router.get("/kurikulum", checkRole(["admin"]), SyncKurikulumController.syncKurikulum);
 router.get("/:id_semester/matching-kelas-kuliah", checkRole(["admin"]), SyncKelasKuliahController.matchingSyncDataKelasKuliah);
+router.get("/sync-kelas-kuliah", checkRole(["admin"]), SyncKelasKuliahController.syncKelasKuliahs);
 router.get("/:id_semester/matching-dosen-pengajar-kelas-kuliah", checkRole(["admin"]), SyncDosenPengajarKelasKuliahController.matchingSyncDataDosenPengajarKelasKuliah);
+router.get("/sync-dosen-pengajar-kelas-kuliah", checkRole(["admin"]), SyncDosenPengajarKelasKuliahController.syncDosenPengajarKelasKuliahs);
 
 // route belum digunakan, belum dicoba atau belum selesai
 // router.get("/semester/:id_semester/detail-nilai-perkuliahan-kelas", checkRole(["admin"]), SyncDetailNilaiPerkuliahanKelasController.synceDetailNilaiPerkuliahanKelas);
