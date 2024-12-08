@@ -94,69 +94,75 @@ async function matchingcDataDosenPengajarKelasKuliah(req, res, next) {
       return map;
     }, {});
 
-    // Tambahkan mapping untuk data KelasKuliah dari Feeder
-    const kelasKuliahFeeder = await getKelasKuliahFromFeeder(semesterId);
-    const kelasKuliahFeederMap = kelasKuliahFeeder.reduce((map, kelas) => {
-      map[kelas.id_feeder] = kelas.id_kelas_kuliah; // Mapping id_feeder ke id_kelas_kuliah Feeder
-      return map;
-    }, {});
-
     // Perbarui logika sinkronisasi
     for (let localDosenPengajar of dosenPengajarKelasKuliahLocal) {
       const feederDosenPengajar = dosenPengajarKelasKuliahFeederMap[localDosenPengajar.id_feeder];
 
-      // Ambil id_kelas_kuliah dari Feeder berdasarkan id_feeder
-      const feederKelasKuliahId = kelasKuliahFeederMap[localDosenPengajar.id_kelas_kuliah];
+      // get kelas kuliah yang terkait dengan localDosenPengajar
+      let kelasKuliahLocal = await KelasKuliah.findOne({
+        where: {
+          id_kelas_kuliah: localDosenPengajar.id_kelas_kuliah,
+        },
+      });
+
+      if (!kelasKuliahLocal) {
+        console.warn(`Kelas kuliah ${localDosenPengajar.id_kelas_kuliah} tidak ditemukan. Melewatkan data ini.`);
+        continue;
+      }
+
+      const existingSync = await DosenPengajarKelasKuliahSync.findOne({
+        where: {
+          id_aktivitas_mengajar: localDosenPengajar.id_aktivitas_mengajar,
+          jenis_singkron: feederDosenPengajar ? "update" : "create",
+          status: false,
+          id_feeder: feederDosenPengajar ? localDosenPengajar.id_feeder : null,
+        },
+      });
+
+      if (existingSync) {
+        console.log(`Data dosen pengajar kelas kuliah ${localDosenPengajar.id_aktivitas_mengajar} sudah disinkronisasi.`);
+        continue;
+      }
 
       // Jika data lokal tidak ada di Feeder, tambahkan sebagai create
       if (!feederDosenPengajar) {
-        const existingSync = await DosenPengajarKelasKuliahSync.findOne({
-          where: {
-            id_aktivitas_mengajar: localDosenPengajar.id_aktivitas_mengajar,
-          },
+        await DosenPengajarKelasKuliahSync.create({
+          id_aktivitas_mengajar: localDosenPengajar.id_aktivitas_mengajar,
+          jenis_singkron: "create",
+          status: false,
+          id_feeder: null,
         });
-
-        if (!existingSync) {
-          await DosenPengajarKelasKuliahSync.create({
-            jenis_singkron: "create",
-            status: false,
-            id_feeder: null,
-            id_aktivitas_mengajar: localDosenPengajar.id_aktivitas_mengajar,
-          });
-          console.log(`Data dosen pengajar kelas kuliah ${localDosenPengajar.id_aktivitas_mengajar} ditambahkan ke sinkronisasi dengan jenis 'create'.`);
-        }
+        console.log(`Data dosen pengajar kelas kuliah ${localDosenPengajar.id_aktivitas_mengajar} ditambahkan ke sinkronisasi dengan jenis 'create'.`);
       } else {
         // Perbarui logika update untuk juga mengecek id_kelas_kuliah
-        const isUpdated =
-          localDosenPengajar.sks_substansi_total !== feederDosenPengajar.sks_substansi_total ||
-          localDosenPengajar.rencana_minggu_pertemuan !== feederDosenPengajar.rencana_minggu_pertemuan ||
-          localDosenPengajar.realisasi_minggu_pertemuan !== feederDosenPengajar.realisasi_minggu_pertemuan ||
-          localDosenPengajar.id_registrasi_dosen !== feederDosenPengajar.id_registrasi_dosen ||
-          localDosenPengajar.id_dosen !== feederDosenPengajar.id_dosen ||
-          feederKelasKuliahId !== feederDosenPengajar.id_kelas_kuliah ||
-          localDosenPengajar.id_substansi !== feederDosenPengajar.id_substansi ||
-          localDosenPengajar.id_jenis_evaluasi !== feederDosenPengajar.id_jenis_evaluasi ||
-          localDosenPengajar.id_prodi !== feederDosenPengajar.id_prodi ||
-          localDosenPengajar.id_semester !== feederDosenPengajar.id_semester;
+        const isUpdated = compareDosenPengajarKelasKuliah(localDosenPengajar, feederDosenPengajar, kelasKuliahLocal);
 
         if (isUpdated) {
-          const existingSync = await DosenPengajarKelasKuliahSync.findOne({
-            where: {
-              id_aktivitas_mengajar: localDosenPengajar.id_aktivitas_mengajar,
-            },
+          await DosenPengajarKelasKuliahSync.create({
+            id_aktivitas_mengajar: localDosenPengajar.id_aktivitas_mengajar,
+            jenis_singkron: "update",
+            status: false,
+            id_feeder: localDosenPengajar.id_feeder,
           });
-
-          if (!existingSync) {
-            await DosenPengajarKelasKuliahSync.create({
-              jenis_singkron: "update",
-              status: false,
-              id_feeder: localDosenPengajar.id_feeder,
-              id_aktivitas_mengajar: localDosenPengajar.id_aktivitas_mengajar,
-            });
-            console.log(`Data dosen pengajar kelas kuliah ${localDosenPengajar.id_aktivitas_mengajar} ditambahkan ke sinkronisasi dengan jenis 'update'.`);
-          }
+          console.log(`Data dosen pengajar kelas kuliah ${localDosenPengajar.id_aktivitas_mengajar} ditambahkan ke sinkronisasi dengan jenis 'update'.`);
         }
       }
+    }
+
+    // Fungsi pembanding detail kelas
+    function compareDosenPengajarKelasKuliah(localDosenPengajar, feederDosenPengajar, kelasKuliahLocal) {
+      return (
+        kelasKuliahLocal.id_feeder !== feederDosenPengajar.id_kelas_kuliah ||
+        localDosenPengajar.sks_substansi_total !== feederDosenPengajar.sks_substansi_total ||
+        localDosenPengajar.rencana_minggu_pertemuan !== feederDosenPengajar.rencana_minggu_pertemuan ||
+        localDosenPengajar.realisasi_minggu_pertemuan !== feederDosenPengajar.realisasi_minggu_pertemuan ||
+        localDosenPengajar.id_registrasi_dosen !== feederDosenPengajar.id_registrasi_dosen ||
+        localDosenPengajar.id_dosen !== feederDosenPengajar.id_dosen ||
+        localDosenPengajar.id_substansi !== feederDosenPengajar.id_substansi ||
+        localDosenPengajar.id_jenis_evaluasi !== feederDosenPengajar.id_jenis_evaluasi ||
+        localDosenPengajar.id_prodi !== feederDosenPengajar.id_prodi ||
+        localDosenPengajar.id_semester !== feederDosenPengajar.id_semester
+      );
     }
 
     // mengecek jikalau data dosen pengajar kelas kuliah tidak ada di local namun ada di feeder, maka data dosen pengajar kelas kuliah di feeder akan tercatat sebagai delete
@@ -170,14 +176,17 @@ async function matchingcDataDosenPengajarKelasKuliah(req, res, next) {
         const existingSync = await DosenPengajarKelasKuliahSync.findOne({
           where: {
             id_feeder: feederDosenPengajar.id_aktivitas_mengajar,
+            jenis_singkron: "delete",
+            status: false,
+            id_aktivitas_mengajar: null,
           },
         });
 
         if (!existingSync) {
           await DosenPengajarKelasKuliahSync.create({
+            id_feeder: feederDosenPengajar.id_aktivitas_mengajar,
             jenis_singkron: "delete",
             status: false,
-            id_feeder: feederDosenPengajar.id_aktivitas_mengajar,
             id_aktivitas_mengajar: null,
           });
           console.log(`Data dosen pengajar kelas kuliah ${feederDosenPengajar.id_aktivitas_mengajar} ditambahkan ke sinkronisasi dengan jenis 'delete'.`);
@@ -185,7 +194,7 @@ async function matchingcDataDosenPengajarKelasKuliah(req, res, next) {
       }
     }
 
-    console.log("Sinkronisasi dosen pengajar kelas kuliah selesai.");
+    console.log("Matching dosen pengajar kelas kuliah selesai.");
   } catch (error) {
     console.error("Error during matchingDataKelasKuliah:", error.message);
     throw error;
@@ -219,11 +228,11 @@ const insertDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     }
 
     if (kelas_kuliah.id_feeder == null || kelas_kuliah.id_feeder == "") {
-      return res.status(404).json({ message: "Kelas kuliah belum dilakukan singkron ke feeder" });
+      return res.status(404).json({ message: `Kelas kuliah dengan ID ${kelas_kuliah.id_kelas_kuliah} belum dilakukan singkron ke feeder` });
     }
 
     // Mendapatkan token
-    const token = await getToken();
+    const { token, url_feeder } = await getToken();
 
     // akan insert data dosen pengajar kelas kuliah ke feeder
     const requestBody = {
@@ -239,7 +248,7 @@ const insertDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Mengecek jika ada error pada respons dari server
     if (response.data.error_code !== 0) {
@@ -258,6 +267,9 @@ const insertDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     let dosen_pengajar_kelas_kuliah_sync = await DosenPengajarKelasKuliahSync.findOne({
       where: {
         id_aktivitas_mengajar: id_aktivitas_mengajar,
+        status: false,
+        jenis_singkron: "create",
+        id_feeder: null,
       },
     });
 
@@ -268,10 +280,8 @@ const insertDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     dosen_pengajar_kelas_kuliah_sync.status = true;
     await dosen_pengajar_kelas_kuliah_sync.save();
 
-    // Kirim data sebagai respons
-    res.status(200).json({
-      message: "Insert Dosen Pengajar Kelas Kuliah from local to feeder Success",
-    });
+    // result
+    console.log(`Successfully inserted dosen pengajar kelas kuliah with ID ${dosen_pengajar_kelas_kuliah_sync.id_aktivitas_mengajar} to feeder`);
   } catch (error) {
     next(error);
   }
@@ -294,17 +304,19 @@ const updateDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     }
 
     if (kelas_kuliah.id_feeder == null || kelas_kuliah.id_feeder == "") {
-      return res.status(404).json({ message: "Kelas kuliah belum dilakukan singkron ke feeder" });
+      return res.status(404).json({ message: `Kelas kuliah dengan ID ${kelas_kuliah.id_kelas_kuliah} belum dilakukan singkron ke feeder` });
     }
 
     // Mendapatkan token
-    const token = await getToken();
+    const { token, url_feeder } = await getToken();
 
     // akan update data dosen pengajar kelas kuliah ke feeder
     const requestBody = {
       act: "UpdateDosenPengajarKelasKuliah",
       token: `${token}`,
-      key: `id_aktivitas_mengajar='${dosen_pengajar_kelas_kuliah.id_feeder}'`,
+      key: {
+        id_aktivitas_mengajar: dosen_pengajar_kelas_kuliah.id_feeder,
+      },
       record: {
         id_registrasi_dosen: dosen_pengajar_kelas_kuliah.id_registrasi_dosen,
         id_kelas_kuliah: kelas_kuliah.id_feeder,
@@ -315,7 +327,7 @@ const updateDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Mengecek jika ada error pada respons dari server
     if (response.data.error_code !== 0) {
@@ -326,6 +338,9 @@ const updateDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     let dosen_pengajar_kelas_kuliah_sync = await DosenPengajarKelasKuliahSync.findOne({
       where: {
         id_aktivitas_mengajar: id_aktivitas_mengajar,
+        status: false,
+        jenis_singkron: "update",
+        id_feeder: dosen_pengajar_kelas_kuliah.id_feeder,
       },
     });
 
@@ -336,10 +351,12 @@ const updateDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
     dosen_pengajar_kelas_kuliah_sync.status = true;
     await dosen_pengajar_kelas_kuliah_sync.save();
 
-    // Kirim data sebagai respons
-    res.status(200).json({
-      message: "Update Dosen Pengaar Kelas Kuliah from local to feeder Success",
-    });
+    // update last sync pada dosen pengajar kelas kuliah
+    dosen_pengajar_kelas_kuliah.last_sync = new Date();
+    await dosen_pengajar_kelas_kuliah.save();
+
+    // result
+    console.log(`Successfully updated dosen pengajar kelas kuliah with ID Feeder ${dosen_pengajar_kelas_kuliah.id_feeder} to feeder`);
   } catch (error) {
     next(error);
   }
@@ -348,17 +365,19 @@ const updateDosenPengajarKelasKuliah = async (id_aktivitas_mengajar, req, res, n
 const deleteDosenPengajarKelasKuliah = async (id_feeder, req, res, next) => {
   try {
     // Mendapatkan token
-    const token = await getToken();
+    const { token, url_feeder } = await getToken();
 
     // akan delete data dosen pengajar kelas kuliah ke feeder
     const requestBody = {
       act: "DeleteDosenPengajarKelasKuliah",
       token: `${token}`,
-      key: `id_aktivitas_mengajar='${id_feeder}'`,
+      key: {
+        id_aktivitas_mengajar: id_feeder,
+      },
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Mengecek jika ada error pada respons dari server
     if (response.data.error_code !== 0) {
@@ -369,6 +388,9 @@ const deleteDosenPengajarKelasKuliah = async (id_feeder, req, res, next) => {
     let dosen_pengajar_kelas_kuliah_sync = await DosenPengajarKelasKuliahSync.findOne({
       where: {
         id_feeder: id_feeder,
+        status: false,
+        jenis_singkron: "delete",
+        id_aktivitas_mengajar: null,
       },
     });
 
@@ -379,10 +401,8 @@ const deleteDosenPengajarKelasKuliah = async (id_feeder, req, res, next) => {
     dosen_pengajar_kelas_kuliah_sync.status = true;
     await dosen_pengajar_kelas_kuliah_sync.save();
 
-    // Kirim data sebagai respons
-    res.status(200).json({
-      message: "Delete Dosen Pengajar Kelas Kuliah feeder Success",
-    });
+    // result
+    console.log(`Successfully deleted dosen pengajar kelas kuliah with ID Feeder ${dosen_pengajar_kelas_kuliah_sync.id_feeder} to feeder`);
   } catch (error) {
     next(error);
   }
@@ -392,21 +412,35 @@ const syncDosenPengajarKelasKuliahs = async (req, res, next) => {
   try {
     const { dosen_pengajar_kelas_kuliah_syncs } = req.body;
 
+    // Validasi input
+    if (!dosen_pengajar_kelas_kuliah_syncs || !Array.isArray(dosen_pengajar_kelas_kuliah_syncs)) {
+      return res.status(400).json({ message: "Request body tidak valid" });
+    }
+
     // perulangan untuk aksi data dosen pengajar kelas kuliah berdasarkan jenis singkron
     for (const dosen_pengajar_kelas_kuliah_sync of dosen_pengajar_kelas_kuliah_syncs) {
-      let { id_aktivitas_mengajar } = dosen_pengajar_kelas_kuliah_sync.id_aktivitas_mengajar;
-      let { id_feeder } = dosen_pengajar_kelas_kuliah_sync.id_feeder;
+      // get data dosen pengajar kelas kuliah sync
+      const data_dosen_pengajar_kelas_kuliah_sync = await DosenPengajarKelasKuliahSync.findByPk(dosen_pengajar_kelas_kuliah_sync.id);
 
-      if (dosen_pengajar_kelas_kuliah_sync.status === false) {
-        if (dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "create") {
-          await insertDosenPengajarKelasKuliah(id_aktivitas_mengajar, req, res, next);
-        } else if (dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "update") {
-          await updateDosenPengajarKelasKuliah(id_aktivitas_mengajar, req, res, next);
-        } else if (dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "delete") {
-          await deleteDosenPengajarKelasKuliah(id_feeder, req, res, next);
+      if (!data_dosen_pengajar_kelas_kuliah_sync) {
+        return res.status(404).json({ message: "Data Dosen Pengajar Kelas kuliah sync not found" });
+      }
+
+      if (data_dosen_pengajar_kelas_kuliah_sync.status === false) {
+        if (data_dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "create") {
+          await insertDosenPengajarKelasKuliah(data_dosen_pengajar_kelas_kuliah_sync.id_aktivitas_mengajar, req, res, next);
+        } else if (data_dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "update") {
+          await updateDosenPengajarKelasKuliah(data_dosen_pengajar_kelas_kuliah_sync.id_aktivitas_mengajar, req, res, next);
+        } else if (data_dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "delete") {
+          await deleteDosenPengajarKelasKuliah(data_dosen_pengajar_kelas_kuliah_sync.id_feeder, req, res, next);
         }
+      } else {
+        console.log(`Data Dosen Pengajar Kelas Kuliah Sync dengan ID ${dosen_pengajar_kelas_kuliah_sync.id} tidak valid untuk dilakukan singkron`);
       }
     }
+
+    // return
+    res.status(200).json({ message: "Singkron dosen pengajar kelas kuliah lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }

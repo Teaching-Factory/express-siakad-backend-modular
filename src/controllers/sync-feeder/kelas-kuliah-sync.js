@@ -134,12 +134,14 @@ async function matchingDataKelasKuliah(req, res, next) {
       } else if (detailLocal) {
         // Proses update, validasi perbedaan data
         const detailFeeder = await getDetailKelasKuliahFromFeeder(localKelas.id_feeder);
+
         if (!detailFeeder) {
           console.error(`Detail feeder untuk kelas ${localKelas.id_kelas_kuliah} tidak ditemukan.`);
           continue;
         }
 
         const isUpdated = compareKelasDetails(localKelas, feederKelas, detailLocal, detailFeeder);
+
         if (isUpdated) {
           await KelasKuliahSync.create({
             jenis_singkron: "update",
@@ -321,6 +323,10 @@ const updateKelasKuliah = async (id_kelas_kuliah, req, res, next) => {
 
     if (!kelas_kuliah) {
       return res.status(404).json({ message: "Kelas kuliah not found" });
+    }
+
+    if (kelas_kuliah.id_feeder == null || kelas_kuliah.id_feeder == "") {
+      return res.status(404).json({ message: `Kelas kuliah dengan ID ${kelas_kuliah.id_kelas_kuliah} belum dilakukan singkron ke feeder` });
     }
 
     // get data detail kelas kuliah from local
