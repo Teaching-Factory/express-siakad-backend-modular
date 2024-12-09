@@ -9,14 +9,14 @@ const getWilayah = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetWilayah",
       token: `${token}`,
-      filter: `id_negara='ID'`
+      filter: `id_negara='ID'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -25,13 +25,18 @@ const getWilayah = async (req, res, next) => {
     // Tanggapan dari API
     const dataWilayah = response.data.data;
 
+    // Truncate data
+    await Wilayah.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_wilayah of dataWilayah) {
       // Periksa apakah data sudah ada di tabel
       const existingWilayah = await Wilayah.findOne({
         where: {
-          id_wilayah: data_wilayah.id_wilayah
-        }
+          id_wilayah: data_wilayah.id_wilayah,
+        },
       });
 
       if (!existingWilayah) {
@@ -39,7 +44,7 @@ const getWilayah = async (req, res, next) => {
         await Wilayah.create({
           id_wilayah: data_wilayah.id_wilayah,
           nama_wilayah: data_wilayah.nama_wilayah,
-          id_negara: data_wilayah.id_negara
+          id_negara: data_wilayah.id_negara,
         });
       }
     }
@@ -48,7 +53,7 @@ const getWilayah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Wilayah Success",
       totalData: dataWilayah.length,
-      dataWilayah: dataWilayah
+      dataWilayah: dataWilayah,
     });
   } catch (error) {
     next(error);
@@ -56,5 +61,5 @@ const getWilayah = async (req, res, next) => {
 };
 
 module.exports = {
-  getWilayah
+  getWilayah,
 };

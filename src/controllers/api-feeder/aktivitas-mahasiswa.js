@@ -25,6 +25,11 @@ const getAktivitasMahasiswa = async (req, res, next) => {
     // Tanggapan dari API
     const dataAktivitasMahasiswa = response.data.data;
 
+    // Truncate data
+    await AktivitasMahasiswa.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const aktivitas_mahasiswa of dataAktivitasMahasiswa) {
       // Periksa apakah data sudah ada di tabel

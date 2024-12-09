@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { DetailKurikulum } = require("../../../models");
+const { DetailKurikulum, sequelize } = require("../../../models");
 
 const getDetailKurikulum = async (req, res, next) => {
   try {
@@ -9,13 +9,13 @@ const getDetailKurikulum = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetDetailKurikulum",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -24,13 +24,20 @@ const getDetailKurikulum = async (req, res, next) => {
     // Tanggapan dari API
     const dataDetailKurikulum = response.data.data;
 
+    // Truncate data
+    await DetailKurikulum.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE detail_kurikulums AUTO_INCREMENT = 1");
+
     // Loop untuk menambahkan data ke dalam database
     for (const detail_kurikulum of dataDetailKurikulum) {
       await DetailKurikulum.create({
         id_detail_kurikulum: detail_kurikulum.id_detail_kurikulum,
         sks_wajib: detail_kurikulum.jumlah_sks_wajib,
         sks_pilihan: detail_kurikulum.jumlah_sks_pilihan,
-        id_kurikulum: detail_kurikulum.id_kurikulum
+        id_kurikulum: detail_kurikulum.id_kurikulum,
       });
     }
 
@@ -38,7 +45,7 @@ const getDetailKurikulum = async (req, res, next) => {
     res.status(200).json({
       message: "Create Detail Kurikulum Success",
       totalData: dataDetailKurikulum.length,
-      dataDetailKurikulum: dataDetailKurikulum
+      dataDetailKurikulum: dataDetailKurikulum,
     });
   } catch (error) {
     next(error);
@@ -46,5 +53,5 @@ const getDetailKurikulum = async (req, res, next) => {
 };
 
 module.exports = {
-  getDetailKurikulum
+  getDetailKurikulum,
 };

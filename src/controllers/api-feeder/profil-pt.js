@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { ProfilPT, SettingWSFeeder } = require("../../../models");
+const { ProfilPT, SettingWSFeeder, sequelize } = require("../../../models");
 
 const getProfilPT = async (req, res, next) => {
   try {
@@ -38,6 +38,13 @@ const getProfilPT = async (req, res, next) => {
 
     // Tanggapan dari API
     const dataProfilPT = response.data.data;
+
+    // Truncate data
+    await ProfilPT.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE profil_pts AUTO_INCREMENT = 1");
 
     // Loop untuk menambahkan data ke dalam database
     for (const profil_perguruan_tinggi of dataProfilPT) {

@@ -9,13 +9,13 @@ const getBidangMinat = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListBidangMinat",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -24,13 +24,18 @@ const getBidangMinat = async (req, res, next) => {
     // Tanggapan dari API
     const dataBidangMinat = response.data.data;
 
+    // Truncate data
+    await BidangMinat.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const bidang_minat of dataBidangMinat) {
       // Periksa apakah data sudah ada di tabel
       const existingBidangMinat = await BidangMinat.findOne({
         where: {
-          id_bidang_minat: bidang_minat.id_bidang_minat
-        }
+          id_bidang_minat: bidang_minat.id_bidang_minat,
+        },
       });
 
       if (!existingBidangMinat) {
@@ -41,7 +46,7 @@ const getBidangMinat = async (req, res, next) => {
           smt_dimulai: bidang_minat.smt_dimulai,
           sk_bidang_minat: bidang_minat.sk_bidang_minat,
           tamat_sk_bidang_minat: bidang_minat.tamat_sk_bidang_minat,
-          id_prodi: bidang_minat.id_prodi
+          id_prodi: bidang_minat.id_prodi,
         });
       }
     }
@@ -50,7 +55,7 @@ const getBidangMinat = async (req, res, next) => {
     res.status(200).json({
       message: "Create Bidang Minat Success",
       totalData: dataBidangMinat.length,
-      dataBidangMinat: dataBidangMinat
+      dataBidangMinat: dataBidangMinat,
     });
   } catch (error) {
     next(error);
@@ -58,5 +63,5 @@ const getBidangMinat = async (req, res, next) => {
 };
 
 module.exports = {
-  getBidangMinat
+  getBidangMinat,
 };

@@ -26,6 +26,11 @@ const getBiodataMahasiswa = async (req, res, next) => {
     // Tanggapan dari API
     const dataBiodataMahasiswa = response.data.data;
 
+    // Truncate data
+    await BiodataMahasiswa.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const biodata_mahasiswa of dataBiodataMahasiswa) {
       // Periksa apakah data sudah ada di tabel
@@ -72,8 +77,6 @@ const getBiodataMahasiswa = async (req, res, next) => {
           const dateParts = biodata_mahasiswa.tanggal_lahir_wali.split("-");
           data_tanggal_lahir_wali = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
         }
-
-        console.log(biodata_mahasiswa.id_kebutuhan_khusus_mahasiswa);
 
         await BiodataMahasiswa.create({
           id_mahasiswa: biodata_mahasiswa.id_mahasiswa,

@@ -1,7 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { RekapKRSMahasiswa } = require("../../../models");
-const { Periode } = require("../../../models");
+const { RekapKRSMahasiswa, Periode, sequelize } = require("../../../models");
 
 const getRekapKRSMahasiswa = async (req, res, next) => {
   try {
@@ -37,6 +36,13 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
 
     // Tanggapan dari API
     const dataRekapKRSMahasiswa = response.data.data;
+
+    // Truncate data
+    await RekapKRSMahasiswa.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE rekap_krs_mahasiswas AUTO_INCREMENT = 1");
 
     // Loop untuk menambahkan data ke dalam database
     for (const rekap_khs_mahasiswa of dataRekapKRSMahasiswa) {

@@ -24,6 +24,11 @@ const getPenugasanDosen = async (req, res, next) => {
     // Tanggapan dari API
     const dataPenugasanDosen = response.data.data;
 
+    // Truncate data
+    await PenugasanDosen.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const penugasan_dosen of dataPenugasanDosen) {
       // Periksa apakah data sudah ada di tabel

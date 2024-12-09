@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       sks: {
-        type: Sequelize.DECIMAL(5, 0),
+        type: Sequelize.DECIMAL(5, 2),
         allowNull: true,
       },
       jumlah_mahasiswa: {

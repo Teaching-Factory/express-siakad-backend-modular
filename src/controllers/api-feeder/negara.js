@@ -9,14 +9,14 @@ const getNegara = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetNegara",
       token: `${token}`,
-      filter: `id_negara='ID'`
+      filter: `id_negara='ID'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -25,20 +25,25 @@ const getNegara = async (req, res, next) => {
     // Tanggapan dari API
     const dataNegara = response.data.data;
 
+    // Truncate data
+    await Negara.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_negara of dataNegara) {
       // Periksa apakah data sudah ada di tabel
       const existingNegara = await Negara.findOne({
         where: {
-          id_negara: data_negara.id_negara
-        }
+          id_negara: data_negara.id_negara,
+        },
       });
 
       if (!existingNegara) {
         // Data belum ada, buat entri baru di database
         await Negara.create({
           id_negara: data_negara.id_negara,
-          nama_negara: data_negara.nama_negara
+          nama_negara: data_negara.nama_negara,
         });
       }
     }
@@ -47,7 +52,7 @@ const getNegara = async (req, res, next) => {
     res.status(200).json({
       message: "Create Negara Success",
       totalData: dataNegara.length,
-      dataNegara: dataNegara
+      dataNegara: dataNegara,
     });
   } catch (error) {
     next(error);
@@ -55,5 +60,5 @@ const getNegara = async (req, res, next) => {
 };
 
 module.exports = {
-  getNegara
+  getNegara,
 };

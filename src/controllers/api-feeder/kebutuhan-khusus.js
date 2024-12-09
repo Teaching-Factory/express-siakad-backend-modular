@@ -24,6 +24,11 @@ const getKebutuhanKhusus = async (req, res, next) => {
     // Tanggapan dari API
     const dataKebutuhanKhusus = response.data.data;
 
+    // Truncate data
+    await KebutuhanKhusus.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const kebutuhan_khusus of dataKebutuhanKhusus) {
       // Periksa apakah data sudah ada di tabel

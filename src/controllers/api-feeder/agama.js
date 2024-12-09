@@ -25,6 +25,13 @@ const getAgama = async (req, res, next) => {
     // Tanggapan dari API
     const dataAgama = response.data.data;
 
+    // Truncate data
+    await Agama.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE agamas AUTO_INCREMENT = 1");
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_agama of dataAgama) {
       // Periksa apakah data sudah ada di tabel

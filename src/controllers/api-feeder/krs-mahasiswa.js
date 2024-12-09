@@ -37,6 +37,11 @@ const getKRSMahasiswa = async (req, res, next) => {
     // Tanggapan dari API
     const dataKRSMahasiswa = response.data.data;
 
+    // Truncate data
+    await KRSMahasiswa.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const krs_mahasiswa of dataKRSMahasiswa) {
       await KRSMahasiswa.create({

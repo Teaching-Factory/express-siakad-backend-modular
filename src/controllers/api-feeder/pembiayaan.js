@@ -25,6 +25,13 @@ const getPembiayaan = async (req, res, next) => {
     // Tanggapan dari API
     const dataPembiayaan = response.data.data;
 
+    // Truncate data
+    await Pembiayaan.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE pembiayaans AUTO_INCREMENT = 1");
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_pembiayaan of dataPembiayaan) {
       // Periksa apakah data sudah ada di tabel

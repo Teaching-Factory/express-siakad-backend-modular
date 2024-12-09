@@ -24,6 +24,11 @@ const getSkalaNilaiProdi = async (req, res, next) => {
     // Tanggapan dari API
     const dataSkalaNilaiProdi = response.data.data;
 
+    // Truncate data
+    await SkalaNilaiProdi.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const skala_nilai_prodi of dataSkalaNilaiProdi) {
       // Periksa apakah data sudah ada di tabel

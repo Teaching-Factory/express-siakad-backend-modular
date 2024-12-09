@@ -25,6 +25,11 @@ const getDosenPengajarKelasKuliah = async (req, res, next) => {
     // Tanggapan dari API
     const dosenPengajarKelasKuliah = response.data.data;
 
+    // Truncate data
+    await DosenPengajarKelasKuliah.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const dosen_pengajar_kelas_kuliah of dosenPengajarKelasKuliah) {
       // Periksa apakah data sudah ada di tabel

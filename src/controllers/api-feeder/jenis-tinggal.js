@@ -25,6 +25,11 @@ const getJenisTinggal = async (req, res, next) => {
     // Tanggapan dari API
     const dataJenisTinggal = response.data.data;
 
+    // Truncate data
+    await JenisTinggal.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const jenis_tinggal of dataJenisTinggal) {
       // Periksa apakah data sudah ada di tabel

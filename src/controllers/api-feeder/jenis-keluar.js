@@ -25,6 +25,11 @@ const getJenisKeluar = async (req, res, next) => {
     // Tanggapan dari API
     const dataJenisKeluar = response.data.data;
 
+    // Truncate data
+    await JenisKeluar.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const jenis_keluar of dataJenisKeluar) {
       // Periksa apakah data sudah ada di tabel

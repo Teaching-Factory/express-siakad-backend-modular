@@ -156,24 +156,41 @@ async function matchingDataKelasKuliah(req, res, next) {
       }
     }
 
+    // Fungsi untuk memformat tanggal ke format dd-mm-yyyy
+    function convertToDDMMYYYY(localDate) {
+      if (!localDate) {
+        return null; // Kembalikan null jika tanggal kosong
+      }
+
+      const [year, month, day] = localDate.split("-"); // Pisahkan berdasarkan "-"
+      return `${day}-${month}-${year}`; // Gabungkan dalam urutan dd-mm-yyyy
+    }
+
     // Fungsi pembanding detail kelas
     function compareKelasDetails(localKelas, feederKelas, detailLocal, detailFeeder) {
+      // Konversi jumlah_mahasiswa dari local ke string sebelum perbandingan
+      const jumlahMahasiswaLocal = String(localKelas.jumlah_mahasiswa);
+      const jumlahMahasiswaFeeder = feederKelas.jumlah_mahasiswa;
+      let formatTanggalMulaiEfektifLocal = convertToDDMMYYYY(detailLocal.tanggal_mulai_efektif);
+
       return (
         localKelas.id_prodi !== feederKelas.id_prodi ||
         localKelas.id_semester !== feederKelas.id_semester ||
         localKelas.id_matkul !== feederKelas.id_matkul ||
         localKelas.nama_kelas_kuliah !== feederKelas.nama_kelas_kuliah ||
         localKelas.sks !== feederKelas.sks ||
-        detailLocal.bahasan !== detailFeeder.bahasan ||
-        localKelas.jumlah_mahasiswa !== feederKelas.jumlah_mahasiswa ||
-        detailLocal.kapasitas !== detailFeeder.kapasitas ||
-        detailLocal.tanggal_mulai_efektif !== detailFeeder.tanggal_mulai_efektif ||
-        detailLocal.tanggal_akhir_efektif !== detailFeeder.tanggal_akhir_efektif ||
-        localKelas.lingkup !== feederKelas.lingkup ||
-        localKelas.mode !== feederKelas.mode ||
-        localKelas.apa_untuk_pditt !== feederKelas.apa_untuk_pditt ||
+        !areEqual(detailLocal.bahasan, detailFeeder.bahasan) ||
+        jumlahMahasiswaLocal !== jumlahMahasiswaFeeder ||
+        !areEqual(detailLocal.kapasitas, detailFeeder.kapasitas) ||
+        // !areEqual(formatTanggalMulaiEfektifLocal, detailFeeder.tanggal_mulai_efektif) ||
+        // formatToDDMMYYYY(detailLocal.tanggal_akhir_efektif) !== detailFeeder.tanggal_akhir_efektif
         localKelas.id_dosen !== feederKelas.id_dosen
       );
+    }
+
+    // Fungsi pembanding nilai
+    function areEqual(value1, value2) {
+      return value1 === value2 || (value1 == null && value2 == null);
     }
 
     // mengecek jikalau data kelas kuliah tidak ada di local namun ada di feeder, maka data kelas kuliah di feeder akan tercatat sebagai delete

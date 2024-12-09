@@ -24,6 +24,11 @@ const getSubstansi = async (req, res, next) => {
     // Tanggapan dari API
     const dataSubstansi = response.data.data;
 
+    // Truncate data
+    await Substansi.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_substansi of dataSubstansi) {
       // Periksa apakah data sudah ada di tabel

@@ -25,6 +25,11 @@ const getPekerjaan = async (req, res, next) => {
     // Tanggapan dari API
     const dataPekerjaan = response.data.data;
 
+    // Truncate data
+    await Pekerjaan.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_pekerjaan of dataPekerjaan) {
       // Periksa apakah data sudah ada di tabel

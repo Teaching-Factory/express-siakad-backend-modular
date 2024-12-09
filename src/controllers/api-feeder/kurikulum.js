@@ -24,6 +24,11 @@ const getKurikulum = async (req, res, next) => {
     // Tanggapan dari API
     const dataKurikulum = response.data.data;
 
+    // Truncate data
+    await Kurikulum.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_kurikulum of dataKurikulum) {
       // Periksa apakah data sudah ada di tabel

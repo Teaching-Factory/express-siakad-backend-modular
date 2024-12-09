@@ -25,6 +25,11 @@ const getLembagaPengangkatan = async (req, res, next) => {
     // Tanggapan dari API
     const dataLembagaPengangkatan = response.data.data;
 
+    // Truncate data
+    await LembagaPengangkatan.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const lembaga_pengangkatan of dataLembagaPengangkatan) {
       // Periksa apakah data sudah ada di tabel

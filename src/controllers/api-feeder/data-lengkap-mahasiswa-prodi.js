@@ -1,8 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("./get-token");
-const { DataLengkapMahasiswaProdi } = require("../../../models");
-const { Prodi } = require("../../../models");
-const { Wilayah } = require("../../../models");
+const { DataLengkapMahasiswaProdi, Prodi, Wilayah, sequelize } = require("../../../models");
 
 const getDataLengkapMahasiswaProdi = async (req, res, next) => {
   try {
@@ -11,14 +9,14 @@ const getDataLengkapMahasiswaProdi = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetDataLengkapMahasiswaProdi",
       token: `${token}`,
-      order: "id_periode_masuk"
+      order: "id_periode_masuk",
     };
 
     // Menggunakan token untuk mengambil data
@@ -26,6 +24,13 @@ const getDataLengkapMahasiswaProdi = async (req, res, next) => {
 
     // Tanggapan dari API
     const dataDataLengkapMahasiswaProdi = response.data.data;
+
+    // Truncate data
+    await DataLengkapMahasiswaProdi.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE data_lengkap_mahasiswa_prodis AUTO_INCREMENT = 1");
 
     // Loop untuk menambahkan data ke dalam database
     for (const data_lengkap_mahasiswa_prodi of dataDataLengkapMahasiswaProdi) {
@@ -35,15 +40,15 @@ const getDataLengkapMahasiswaProdi = async (req, res, next) => {
       // Periksa apakah id_prodi_asal ada di tabel Prodi
       const prodi = await Prodi.findOne({
         where: {
-          id_prodi: data_lengkap_mahasiswa_prodi.id_prodi_asal
-        }
+          id_prodi: data_lengkap_mahasiswa_prodi.id_prodi_asal,
+        },
       });
 
       // Periksa apakah id_wilayah ada di tabel Wilayah
       const wilayah = await Wilayah.findOne({
         where: {
-          id_wilayah: data_lengkap_mahasiswa_prodi.id_wilayah
-        }
+          id_wilayah: data_lengkap_mahasiswa_prodi.id_wilayah,
+        },
       });
 
       // Jika ditemukan, simpan nilainya
@@ -80,7 +85,7 @@ const getDataLengkapMahasiswaProdi = async (req, res, next) => {
         id_kebutuhan_khusus_ayah: data_lengkap_mahasiswa_prodi.id_kebutuhan_khusus_ayah,
         id_kebutuhan_khusus_ibu: data_lengkap_mahasiswa_prodi.id_kebutuhan_khusus_ibu,
         id_perguruan_tinggi_asal: data_lengkap_mahasiswa_prodi.id_perguruan_tinggi_asal,
-        id_prodi_asal: id_prodi_asal
+        id_prodi_asal: id_prodi_asal,
       });
     }
 
@@ -88,7 +93,7 @@ const getDataLengkapMahasiswaProdi = async (req, res, next) => {
     res.status(200).json({
       message: "Create Data Lengkap Mahasiswa Prodi Success",
       totalData: dataDataLengkapMahasiswaProdi.length,
-      dataDataLengkapMahasiswaProdi: dataDataLengkapMahasiswaProdi
+      dataDataLengkapMahasiswaProdi: dataDataLengkapMahasiswaProdi,
     });
   } catch (error) {
     next(error);
@@ -96,5 +101,5 @@ const getDataLengkapMahasiswaProdi = async (req, res, next) => {
 };
 
 module.exports = {
-  getDataLengkapMahasiswaProdi
+  getDataLengkapMahasiswaProdi,
 };

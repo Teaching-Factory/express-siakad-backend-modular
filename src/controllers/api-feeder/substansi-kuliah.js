@@ -9,13 +9,13 @@ const getSubstansiKuliah = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetListSubstansiKuliah",
-      token: `${token}`
+      token: `${token}`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -24,11 +24,16 @@ const getSubstansiKuliah = async (req, res, next) => {
     // Tanggapan dari API
     const dataSubstansiKuliah = response.data.data;
 
+    // Truncate data
+    await SubstansiKuliah.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const substansi_kuliah of dataSubstansiKuliah) {
       // Buat entri baru di database
       await SubstansiKuliah.create({
-        id_substansi: substansi_kuliah.id_substansi
+        id_substansi: substansi_kuliah.id_substansi,
       });
     }
 
@@ -36,7 +41,7 @@ const getSubstansiKuliah = async (req, res, next) => {
     res.status(200).json({
       message: "Create Substansi Kuliah Success",
       totalData: dataSubstansiKuliah.length,
-      dataSubstansiKuliah: dataSubstansiKuliah
+      dataSubstansiKuliah: dataSubstansiKuliah,
     });
   } catch (error) {
     next(error);
@@ -44,5 +49,5 @@ const getSubstansiKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getSubstansiKuliah
+  getSubstansiKuliah,
 };

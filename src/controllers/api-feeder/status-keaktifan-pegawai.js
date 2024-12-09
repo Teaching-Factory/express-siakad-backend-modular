@@ -25,6 +25,13 @@ const getStatusKeaktifanPegawai = async (req, res, next) => {
     // Tanggapan dari API
     const dataStatusKeaktifanPegawai = response.data.data;
 
+    // Truncate data
+    await StatusKeaktifanPegawai.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE status_keaktifan_pegawais AUTO_INCREMENT = 1");
+
     // Loop untuk menambahkan data ke dalam database
     for (const status_keaktifan_pegawai of dataStatusKeaktifanPegawai) {
       // Periksa apakah data sudah ada di tabel

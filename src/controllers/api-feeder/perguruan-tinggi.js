@@ -9,13 +9,13 @@ const getAllPerguruanTinggi = async (req, res, next) => {
 
     if (!token || !url_feeder) {
       return res.status(500).json({
-        message: "Failed to obtain token or URL feeder"
+        message: "Failed to obtain token or URL feeder",
       });
     }
 
     const requestBody = {
       act: "GetAllPT",
-      token: `${token}`
+      token: `${token}`,
       // filter: `nama_singkat='UBI'`,
     };
 
@@ -25,13 +25,18 @@ const getAllPerguruanTinggi = async (req, res, next) => {
     // Tanggapan dari API
     const dataPerguruanTinggi = response.data.data;
 
+    // Truncate data
+    await PerguruanTinggi.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const perguruan_tinggi of dataPerguruanTinggi) {
       // Periksa apakah data sudah ada di tabel
       const existingPerguruanTinggi = await PerguruanTinggi.findOne({
         where: {
-          id_perguruan_tinggi: perguruan_tinggi.id_perguruan_tinggi
-        }
+          id_perguruan_tinggi: perguruan_tinggi.id_perguruan_tinggi,
+        },
       });
 
       if (!existingPerguruanTinggi) {
@@ -40,7 +45,7 @@ const getAllPerguruanTinggi = async (req, res, next) => {
           id_perguruan_tinggi: perguruan_tinggi.id_perguruan_tinggi,
           kode_perguruan_tinggi: perguruan_tinggi.kode_perguruan_tinggi,
           nama_perguruan_tinggi: perguruan_tinggi.nama_perguruan_tinggi,
-          nama_singkat: perguruan_tinggi.nama_singkat
+          nama_singkat: perguruan_tinggi.nama_singkat,
         });
       }
     }
@@ -49,7 +54,7 @@ const getAllPerguruanTinggi = async (req, res, next) => {
     res.status(200).json({
       message: "Create Perguruan Tinggi Success",
       totalData: dataPerguruanTinggi.length,
-      dataPerguruanTinggi: dataPerguruanTinggi
+      dataPerguruanTinggi: dataPerguruanTinggi,
     });
   } catch (error) {
     next(error);
@@ -57,5 +62,5 @@ const getAllPerguruanTinggi = async (req, res, next) => {
 };
 
 module.exports = {
-  getAllPerguruanTinggi
+  getAllPerguruanTinggi,
 };

@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       sks: {
-        type: DataTypes.DECIMAL(5, 0),
+        type: DataTypes.DECIMAL(5, 2),
         allowNull: true,
         isDecimal: true,
         validate: {

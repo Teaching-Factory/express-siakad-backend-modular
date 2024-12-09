@@ -24,6 +24,11 @@ const getSemester = async (req, res, next) => {
     // Tanggapan dari API
     const dataSemester = response.data.data;
 
+    // Truncate data
+    await Semester.destroy({
+      where: {}, // Hapus semua data
+    });
+
     // Loop untuk menambahkan data ke dalam database
     for (const data_semester of dataSemester) {
       // Periksa apakah data sudah ada di tabel

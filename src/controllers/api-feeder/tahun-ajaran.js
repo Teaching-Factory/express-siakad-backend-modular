@@ -25,6 +25,13 @@ const getTahunAjaran = async (req, res, next) => {
     // Tanggapan dari API
     const dataTahunAjaran = response.data.data;
 
+    // Truncate data
+    await TahunAjaran.destroy({
+      where: {}, // Hapus semua data
+    });
+
+    await sequelize.query("ALTER TABLE tahun_ajarans AUTO_INCREMENT = 1");
+
     // Loop untuk menambahkan data ke dalam database
     for (const tahun_ajaran of dataTahunAjaran) {
       // Periksa apakah data sudah ada di tabel
