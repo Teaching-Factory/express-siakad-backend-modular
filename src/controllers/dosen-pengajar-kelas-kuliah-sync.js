@@ -1,4 +1,25 @@
 const { KelasKuliah, MataKuliah, Prodi, DosenPengajarKelasKuliahSync, DosenPengajarKelasKuliah, PenugasanDosen, Dosen } = require("../../models");
+const { getToken } = require("./api-feeder/get-token");
+const axios = require("axios");
+
+async function getDosenPengajarKelasKuliahFromFeederByID(id_aktivitas_mengajar, req, res, next) {
+  try {
+    const { token, url_feeder } = await getToken();
+
+    const requestBody = {
+      act: "GetDosenPengajarKelasKuliah",
+      token: token,
+      filter: `id_aktivitas_mengajar='${id_aktivitas_mengajar}'`,
+    };
+
+    const response = await axios.post(url_feeder, requestBody);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching data from Feeder:", error.message);
+    throw error;
+  }
+}
 
 const getAllDosenPengajarKelasKuliahSyncBelumSingkron = async (req, res, next) => {
   try {
@@ -20,11 +41,32 @@ const getAllDosenPengajarKelasKuliahSyncBelumSingkron = async (req, res, next) =
       ],
     });
 
+    // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
+    const updatedDosenPengajarKelasKuliah = await Promise.all(
+      dosen_pengajar_kelas_kuliahs.map(async (dosen_pengajar) => {
+        if (dosen_pengajar.jenis_singkron === "delete") {
+          // Mendapatkan data dosen pengajar kelas kuliah dari feeder berdasarkan ID
+          const dosenPengajarKelasKuliahFeeder = await getDosenPengajarKelasKuliahFromFeederByID(dosen_pengajar.id_feeder);
+
+          if (!dosenPengajarKelasKuliahFeeder) {
+            throw new Error(`Data Dosen PengajarKelas Kuliah Feeder With ID ${dosen_pengajar.id_feeder} Not Found`);
+          }
+
+          // Menambahkan properti DosenPengajarKelasKuliahFeeder ke dalam objek dosen_pengajar
+          dosen_pengajar = {
+            ...dosen_pengajar.dataValues, // Membawa semua properti asli
+            DosenPengajarKelasKuliahFeeder: dosenPengajarKelasKuliahFeeder, // Properti tambahan
+          };
+        }
+        return dosen_pengajar;
+      })
+    );
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Dosen Pengajar Kelas Kuliah Sync Belum Singkron Success",
-      jumlahData: dosen_pengajar_kelas_kuliahs.length,
-      data: dosen_pengajar_kelas_kuliahs,
+      jumlahData: updatedDosenPengajarKelasKuliah.length,
+      data: updatedDosenPengajarKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -90,11 +132,32 @@ const getAllDosenPengajarKelasKuliahSyncBelumSingkronByFilter = async (req, res,
       ],
     });
 
+    // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
+    const updatedDosenPengajarKelasKuliah = await Promise.all(
+      dosen_pengajar_kelas_kuliahs.map(async (dosen_pengajar) => {
+        if (dosen_pengajar.jenis_singkron === "delete") {
+          // Mendapatkan data dosen pengajar kelas kuliah dari feeder berdasarkan ID
+          const dosenPengajarKelasKuliahFeeder = await getDosenPengajarKelasKuliahFromFeederByID(dosen_pengajar.id_feeder);
+
+          if (!dosenPengajarKelasKuliahFeeder) {
+            throw new Error(`Data Dosen PengajarKelas Kuliah Feeder With ID ${dosen_pengajar.id_feeder} Not Found`);
+          }
+
+          // Menambahkan properti DosenPengajarKelasKuliahFeeder ke dalam objek dosen_pengajar
+          dosen_pengajar = {
+            ...dosen_pengajar.dataValues, // Membawa semua properti asli
+            DosenPengajarKelasKuliahFeeder: dosenPengajarKelasKuliahFeeder, // Properti tambahan
+          };
+        }
+        return dosen_pengajar;
+      })
+    );
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Dosen Pengajar Kelas Kuliah Sync Belum Singkron By Filter Success",
-      jumlahData: dosen_pengajar_kelas_kuliahs.length,
-      data: dosen_pengajar_kelas_kuliahs,
+      jumlahData: updatedDosenPengajarKelasKuliah.length,
+      data: updatedDosenPengajarKelasKuliah,
     });
   } catch (error) {
     next(error);

@@ -1,7 +1,11 @@
 const { KelasKuliahSync, KelasKuliah, Semester, MataKuliah, Prodi } = require("../../models");
+const { getToken } = require("./api-feeder/get-token");
+const axios = require("axios");
 
 async function getKelasKuliahFromFeederByID(id_kelas_kuliah, req, res, next) {
   try {
+    const { token, url_feeder } = await getToken();
+
     const requestBody = {
       act: "GetListKelasKuliah",
       token: token,
@@ -37,20 +41,32 @@ const getAllKelasKuliahSyncBelumSingkron = async (req, res, next) => {
       ],
     });
 
-    // memodifikasi data kelas kuliah sync, yang memikiki jenis_singkron = delete agar menambahkan variable baru untuk data kelas kuliah sesuai feeder
-    // for(let kelas_kuliah of kelas_kuliahs) {
+    // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
+    const updatedKelasKuliah = await Promise.all(
+      kelas_kuliahs.map(async (kelas_kuliah) => {
+        if (kelas_kuliah.jenis_singkron === "delete") {
+          // Mendapatkan data kelas kuliah dari feeder berdasarkan ID
+          const kelasKuliahFeeder = await getKelasKuliahFromFeederByID(kelas_kuliah.id_feeder);
 
-    // }
+          if (!kelasKuliahFeeder) {
+            throw new Error(`Data Kelas Kuliah Feeder With ID ${kelas_kuliah.id_feeder} Not Found`);
+          }
 
-    // if (kelas_kuliahs.jenis_singkron === "delete") {
-    //   getKelasKuliahFromFeederByID()
-    // }
+          // Menambahkan properti KelasKuliahFeeder ke dalam objek kelas_kuliah
+          kelas_kuliah = {
+            ...kelas_kuliah.dataValues, // Membawa semua properti asli
+            KelasKuliahFeeder: kelasKuliahFeeder, // Properti tambahan
+          };
+        }
+        return kelas_kuliah;
+      })
+    );
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Kelas Kuliah Sync Belum Singkron Success",
-      jumlahData: kelas_kuliahs.length,
-      data: kelas_kuliahs,
+      jumlahData: updatedKelasKuliah.length,
+      data: updatedKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -116,11 +132,32 @@ const getAllKelasKuliahSyncBelumSingkronByFilter = async (req, res, next) => {
       ],
     });
 
+    // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
+    const updatedKelasKuliah = await Promise.all(
+      kelas_kuliahs.map(async (kelas_kuliah) => {
+        if (kelas_kuliah.jenis_singkron === "delete") {
+          // Mendapatkan data kelas kuliah dari feeder berdasarkan ID
+          const kelasKuliahFeeder = await getKelasKuliahFromFeederByID(kelas_kuliah.id_feeder);
+
+          if (!kelasKuliahFeeder) {
+            throw new Error(`Data Kelas Kuliah Feeder With ID ${kelas_kuliah.id_feeder} Not Found`);
+          }
+
+          // Menambahkan properti KelasKuliahFeeder ke dalam objek kelas_kuliah
+          kelas_kuliah = {
+            ...kelas_kuliah.dataValues, // Membawa semua properti asli
+            KelasKuliahFeeder: kelasKuliahFeeder, // Properti tambahan
+          };
+        }
+        return kelas_kuliah;
+      })
+    );
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Kelas Kuliah Sync Belum Singkron By Filter Success",
-      jumlahData: kelas_kuliahs.length,
-      data: kelas_kuliahs,
+      jumlahData: updatedKelasKuliah.length,
+      data: updatedKelasKuliah,
     });
   } catch (error) {
     next(error);
