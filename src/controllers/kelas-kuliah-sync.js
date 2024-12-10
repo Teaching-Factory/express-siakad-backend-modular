@@ -1,5 +1,22 @@
 const { KelasKuliahSync, KelasKuliah, Semester, MataKuliah, Prodi } = require("../../models");
 
+async function getKelasKuliahFromFeederByID(id_kelas_kuliah, req, res, next) {
+  try {
+    const requestBody = {
+      act: "GetListKelasKuliah",
+      token: token,
+      filter: `id_kelas_kuliah='${id_kelas_kuliah}'`,
+    };
+
+    const response = await axios.post(url_feeder, requestBody);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching data from Feeder:", error.message);
+    throw error;
+  }
+}
+
 const getAllKelasKuliahSyncBelumSingkron = async (req, res, next) => {
   try {
     // Ambil semua data kelas_kuliahs dari database
@@ -19,6 +36,15 @@ const getAllKelasKuliahSyncBelumSingkron = async (req, res, next) => {
         },
       ],
     });
+
+    // memodifikasi data kelas kuliah sync, yang memikiki jenis_singkron = delete agar menambahkan variable baru untuk data kelas kuliah sesuai feeder
+    // for(let kelas_kuliah of kelas_kuliahs) {
+
+    // }
+
+    // if (kelas_kuliahs.jenis_singkron === "delete") {
+    //   getKelasKuliahFromFeederByID()
+    // }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({

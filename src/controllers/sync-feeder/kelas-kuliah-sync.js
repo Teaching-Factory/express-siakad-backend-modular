@@ -265,7 +265,11 @@ const insertKelasKuliah = async (id_kelas_kuliah, req, res, next) => {
     const { token, url_feeder } = await getToken();
 
     // melakukan konversi
-    let tanggal_tutup_daftar = detail_kelas_kuliah.tanggal_tutup_daftar.toISOString().split("T")[0];
+    let tanggal_tutup_daftar = null;
+
+    if (detail_kelas_kuliah.tanggal_tutup_daftar != null || detail_kelas_kuliah.tanggal_tutup_daftar != undefined) {
+      tanggal_tutup_daftar = detail_kelas_kuliah.tanggal_tutup_daftar.toISOString().split("T")[0];
+    }
 
     // akan insert data kelas kuliah dan detail kelas kuliah ke feeder
     const requestBody = {
@@ -363,7 +367,10 @@ const updateKelasKuliah = async (id_kelas_kuliah, req, res, next) => {
     const { token, url_feeder } = await getToken();
 
     // melakukan konversi
-    let tanggal_tutup_daftar = detail_kelas_kuliah.tanggal_tutup_daftar.toISOString().split("T")[0];
+    let tanggal_tutup_daftar = null;
+    if (detail_kelas_kuliah.tanggal_tutup_daftar != null || detail_kelas_kuliah.tanggal_tutup_daftar != undefined) {
+      tanggal_tutup_daftar = detail_kelas_kuliah.tanggal_tutup_daftar.toISOString().split("T")[0];
+    }
 
     // akan update data kelas kuliah dan detail kelas kuliah ke feeder
     const requestBody = {
