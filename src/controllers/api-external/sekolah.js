@@ -5,7 +5,7 @@ const getSekolahSMK = async (req, res, next) => {
   try {
     let page = 1;
     let totalData = [];
-    let perPage = 1000;
+    let perPage = 500;
     let totalPages;
 
     do {
@@ -74,7 +74,7 @@ const getSekolahSMA = async (req, res, next) => {
   try {
     let page = 1;
     let totalData = [];
-    let perPage = 1000;
+    let perPage = 500;
     let totalPages;
 
     do {
