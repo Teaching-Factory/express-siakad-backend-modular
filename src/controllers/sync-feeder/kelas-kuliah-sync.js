@@ -174,8 +174,8 @@ async function matchingDataKelasKuliah(req, res, next) {
     // Fungsi pembanding detail kelas
     function compareKelasDetails(localKelas, feederKelas, detailLocal, detailFeeder) {
       // Konversi jumlah_mahasiswa dari local ke string sebelum perbandingan
-      const jumlahMahasiswaLocal = String(localKelas.jumlah_mahasiswa);
-      const jumlahMahasiswaFeeder = feederKelas.jumlah_mahasiswa;
+      // const jumlahMahasiswaLocal = String(localKelas.jumlah_mahasiswa);
+      // const jumlahMahasiswaFeeder = feederKelas.jumlah_mahasiswa;
 
       let formatTanggalMulaiEfektifLocal = convertToDDMMYYYY(detailLocal.tanggal_mulai_efektif);
       let formatTanggalAkhirEfektifLocal = convertToDDMMYYYY(detailLocal.tanggal_akhir_efektif);
@@ -187,11 +187,11 @@ async function matchingDataKelasKuliah(req, res, next) {
         localKelas.nama_kelas_kuliah !== feederKelas.nama_kelas_kuliah ||
         localKelas.sks !== feederKelas.sks ||
         !areEqual(detailLocal.bahasan, detailFeeder.bahasan) ||
-        jumlahMahasiswaLocal !== jumlahMahasiswaFeeder ||
-        !areEqual(detailLocal.kapasitas, detailFeeder.kapasitas) ||
+        // jumlahMahasiswaLocal !== jumlahMahasiswaFeeder ||
+        // !areEqual(detailLocal.kapasitas, detailFeeder.kapasitas) ||
         !areEqual(formatTanggalMulaiEfektifLocal, detailFeeder[0].tanggal_mulai_efektif) ||
-        !areEqual(formatTanggalAkhirEfektifLocal, detailFeeder[0].tanggal_akhir_efektif) ||
-        localKelas.id_dosen !== feederKelas.id_dosen
+        !areEqual(formatTanggalAkhirEfektifLocal, detailFeeder[0].tanggal_akhir_efektif)
+        // localKelas.id_dosen !== feederKelas.id_dosen
       );
     }
 
@@ -287,8 +287,8 @@ const insertKelasKuliah = async (id_kelas_kuliah, req, res, next) => {
         sks_sim: 0,
         bahasan: detail_kelas_kuliah.bahasan,
         tanggal_tutup_daftar: tanggal_tutup_daftar,
-        kapasitas: detail_kelas_kuliah.kapasitas,
-        jumlah_mahasiswa: kelas_kuliah.jumlah_mahasiswa,
+        // kapasitas: detail_kelas_kuliah.kapasitas,
+        // jumlah_mahasiswa: kelas_kuliah.jumlah_mahasiswa,
         tanggal_mulai_efektif: detail_kelas_kuliah.tanggal_mulai_efektif,
         tanggal_akhir_efektif: detail_kelas_kuliah.tanggal_akhir_efektif,
         lingkup: kelas_kuliah.lingkup,
@@ -396,8 +396,6 @@ const updateKelasKuliah = async (id_kelas_kuliah, req, res, next) => {
         apa_untuk_pditt: kelas_kuliah.apa_untuk_pditt,
       },
     };
-
-    console.log("Payload yang dikirim ke Feeder:", requestBody);
 
     // Menggunakan token untuk mengambil data
     const response = await axios.post(url_feeder, requestBody);
