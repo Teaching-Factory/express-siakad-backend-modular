@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       nipd: {
-        type: DataTypes.INTEGER(10),
+        type: DataTypes.STRING(24),
         allowNull: true,
       },
       ipk: {

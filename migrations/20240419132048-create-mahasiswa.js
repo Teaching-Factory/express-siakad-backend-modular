@@ -22,7 +22,7 @@ module.exports = {
         allowNull: false,
       },
       nipd: {
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.STRING(24),
         allowNull: true,
       },
       ipk: {

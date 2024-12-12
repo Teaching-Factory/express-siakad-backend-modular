@@ -15,5 +15,7 @@ router.get("/get-seed-user-guide-pmb", SetupSeederJabatanController.setupSeederU
 router.get("/get-seed-pengaturan-pmb", SetupSeederJabatanController.setupSeederPengaturanPMB);
 router.get("/get-seed-jenis-tagihan", SetupSeederJabatanController.setupSeederJenisTagihan);
 router.get("/get-seed-setting-global", SetupSeederJabatanController.setupSeederSettingGlobal);
+router.get("/get-seed-data-pelengkap", SetupSeederJabatanController.setupSeederDataPelengkap);
+router.get("/is-siacloud-ubi", SetupSeederJabatanController.isSiacloudUbi);
 
 module.exports = router;

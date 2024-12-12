@@ -22,7 +22,9 @@ const {
   KRSMahasiswa,
   KelasKuliah,
   MataKuliah,
-  SettingWSFeeder
+  SettingWSFeeder,
+  BiodataCamaba,
+  Camaba,
 } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
@@ -36,7 +38,7 @@ const getAllMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Mahasiswa Success",
       jumlahData: mahasiswa.length,
-      data: mahasiswa
+      data: mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -51,26 +53,26 @@ const getMahasiswaById = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!MahasiswaId) {
       return res.status(400).json({
-        message: "Mahasiswa ID is required"
+        message: "Mahasiswa ID is required",
       });
     }
 
     // Cari data mahasiswa berdasarkan ID di database
     const mahasiswa = await Mahasiswa.findByPk(MahasiswaId, {
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }]
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!mahasiswa) {
       return res.status(404).json({
-        message: `<===== Mahasiswa With ID ${MahasiswaId} Not Found:`
+        message: `<===== Mahasiswa With ID ${MahasiswaId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Mahasiswa By ID ${MahasiswaId} Success:`,
-      data: mahasiswa
+      data: mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -85,22 +87,22 @@ const getMahasiswaByProdiId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required"
+        message: "Prodi ID is required",
       });
     }
 
     // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
     const mahasiswas = await Mahasiswa.findAll({
       where: {
-        id_prodi: prodiId
+        id_prodi: prodiId,
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }]
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
     if (!mahasiswas || mahasiswas.length === 0) {
       return res.status(404).json({
-        message: `<===== Mahasiswa With Prodi ID ${prodiId} Not Found:`
+        message: `<===== Mahasiswa With Prodi ID ${prodiId} Not Found:`,
       });
     }
 
@@ -108,7 +110,7 @@ const getMahasiswaByProdiId = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Mahasiswa By Prodi ID ${prodiId} Success:`,
       jumlahData: mahasiswas.length,
-      data: mahasiswas
+      data: mahasiswas,
     });
   } catch (error) {
     next(error);
@@ -123,19 +125,19 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!angkatanId) {
       return res.status(400).json({
-        message: "Angkatan ID is required"
+        message: "Angkatan ID is required",
       });
     }
 
     // Ambil data angkatan berdasarkan id_angkatan
     const angkatan = await Angkatan.findOne({
-      where: { id: angkatanId }
+      where: { id: angkatanId },
     });
 
     // Jika data angkatan tidak ditemukan, kirim respons 404
     if (!angkatan) {
       return res.status(404).json({
-        message: `Angkatan dengan ID ${angkatanId} tidak ditemukan`
+        message: `Angkatan dengan ID ${angkatanId} tidak ditemukan`,
       });
     }
 
@@ -146,16 +148,16 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
     const mahasiswas = await Mahasiswa.findAll({
       where: {
         nama_periode_masuk: {
-          [Op.like]: `${tahunAngkatan}/%` // Memastikan nama_periode_masuk mengandung tahunAngkatan di awal
-        }
+          [Op.like]: `${tahunAngkatan}/%`, // Memastikan nama_periode_masuk mengandung tahunAngkatan di awal
+        },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }]
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
     if (mahasiswas.length === 0) {
       return res.status(404).json({
-        message: `Mahasiswa dengan tahun angkatan ${tahunAngkatan} tidak ditemukan`
+        message: `Mahasiswa dengan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
       });
     }
 
@@ -163,7 +165,7 @@ const getMahasiswaByAngkatanId = async (req, res, next) => {
     res.status(200).json({
       message: `GET Mahasiswa By Angkatan ID ${angkatanId} Success`,
       jumlahData: mahasiswas.length,
-      data: mahasiswas
+      data: mahasiswas,
     });
   } catch (error) {
     next(error);
@@ -178,36 +180,36 @@ const getMahasiswaByStatusMahasiswaId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!statusMahasiswaId) {
       return res.status(400).json({
-        message: "Status Mahasiswa ID is required"
+        message: "Status Mahasiswa ID is required",
       });
     }
 
     // Temukan status mahasiswa berdasarkan ID
     const status_mahasiswa = await StatusMahasiswa.findOne({
       where: {
-        id_status_mahasiswa: statusMahasiswaId
-      }
+        id_status_mahasiswa: statusMahasiswaId,
+      },
     });
 
     // Jika status mahasiswa tidak ditemukan, kirim respons 404
     if (!status_mahasiswa) {
       return res.status(404).json({
-        message: `Status Mahasiswa dengan ID ${statusMahasiswaId} tidak ditemukan`
+        message: `Status Mahasiswa dengan ID ${statusMahasiswaId} tidak ditemukan`,
       });
     }
 
     // Cari data mahasiswa berdasarkan nama_status_mahasiswa yang sesuai
     const mahasiswas = await Mahasiswa.findAll({
       where: {
-        nama_status_mahasiswa: status_mahasiswa.nama_status_mahasiswa
+        nama_status_mahasiswa: status_mahasiswa.nama_status_mahasiswa,
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }]
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
     if (!mahasiswas || mahasiswas.length === 0) {
       return res.status(404).json({
-        message: `Mahasiswa dengan status mahasiswa ${status_mahasiswa.nama_status_mahasiswa} tidak ditemukan`
+        message: `Mahasiswa dengan status mahasiswa ${status_mahasiswa.nama_status_mahasiswa} tidak ditemukan`,
       });
     }
 
@@ -215,7 +217,7 @@ const getMahasiswaByStatusMahasiswaId = async (req, res, next) => {
     res.status(200).json({
       message: `GET Mahasiswa By Status Mahasiswa ${status_mahasiswa.nama_status_mahasiswa} Success`,
       jumlahData: mahasiswas.length,
-      data: mahasiswas
+      data: mahasiswas,
     });
   } catch (error) {
     next(error);
@@ -231,12 +233,12 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required"
+        message: "Prodi ID is required",
       });
     }
     if (!angkatanId) {
       return res.status(400).json({
-        message: "Angkatan ID is required"
+        message: "Angkatan ID is required",
       });
     }
 
@@ -255,15 +257,15 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     const mahasiswas = await Mahasiswa.findAll({
       where: {
         id_prodi: prodiId,
-        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` }
+        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }]
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
     if (mahasiswas.length === 0) {
       return res.status(404).json({
-        message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`
+        message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
       });
     }
 
@@ -271,7 +273,7 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     res.status(200).json({
       message: `GET Mahasiswa By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
       jumlahData: mahasiswas.length,
-      data: mahasiswas
+      data: mahasiswas,
     });
   } catch (error) {
     next(error);
@@ -292,26 +294,26 @@ const importMahasiswas = async (req, res, next) => {
     // get data setting ws active
     const setting_ws_active = await SettingWSFeeder.findOne({
       where: {
-        status: true
-      }
+        status: true,
+      },
     });
 
     if (!setting_ws_active) {
       return res.status(400).json({
-        message: "Setting WS Feeder Active Not Found"
+        message: "Setting WS Feeder Active Not Found",
       });
     }
 
     // get data perguruan tinggi
     const perguruanTinggi = await PerguruanTinggi.findOne({
       where: {
-        kode_perguruan_tinggi: setting_ws_active.username_feeder
-      }
+        kode_perguruan_tinggi: setting_ws_active.username_feeder,
+      },
     });
 
     if (!perguruanTinggi) {
       return res.status(400).json({
-        message: "Perguruan Tinggi Not Found"
+        message: "Perguruan Tinggi Not Found",
       });
     }
 
@@ -358,7 +360,7 @@ const importMahasiswas = async (req, res, next) => {
 
       // Mengecek apakah data mahasiswa sudah ditambahkan di database dengan kolom nim
       let mahasiswaChecking = await Mahasiswa.findOne({
-        where: { nim: nim }
+        where: { nim: nim },
       });
 
       if (!mahasiswaChecking) {
@@ -404,50 +406,67 @@ const importMahasiswas = async (req, res, next) => {
 
             let semester = await Semester.findOne({
               where: {
-                id_semester: semester_masuk
-              }
+                id_semester: semester_masuk,
+              },
             });
+
+            let biodata_camaba = await BiodataCamaba.findOne({
+              include: [
+                {
+                  model: Camaba,
+                  where: {
+                    nim: nim,
+                  },
+                },
+              ],
+            });
+
+            if (!biodata_camaba) {
+              return res.status(400).json({
+                message: `Biodata Camaba With NIM ${biodata_camaba.nim} is required`,
+              });
+            }
 
             const biodata_mahasiswa = {
               tempat_lahir: tempat_lahir,
               nik: nik,
               nisn: nisn,
-              npwp: null,
+              npwp: biodata_camaba.npwp,
               kewarganegaraan: "Indonesia",
-              jalan: null,
-              dusun: null,
-              rt: null,
-              rw: null,
+              jalan: biodata_camaba.jalan,
+              dusun: biodata_camaba.dusun,
+              rt: biodata_camaba.rt,
+              rw: biodata_camaba.rw,
               kelurahan: desa_kelurahan,
-              kode_pos: null,
-              telepon: null,
+              kode_pos: biodata_camaba.kode_pos,
+              telepon: biodata_camaba.telepon,
               handphone: no_handphone,
               email: email,
               penerima_kps: 0,
               nomor_kps: null,
-              nik_ayah: null,
-              nama_ayah: null,
-              tanggal_lahir_ayah: null,
-              nik_ibu: null,
+              nik_ayah: biodata_camaba.nik_ayah,
+              nama_ayah: biodata_camaba.nama_ayah,
+              tanggal_lahir_ayah: biodata_camaba.tanggal_lahir_ayah,
+              nik_ibu: biodata_camaba.nik_ibu,
               nama_ibu_kandung: nama_ibu_kandung,
-              tanggal_lahir_ibu: null,
-              nama_wali: null,
-              tanggal_lahir_wali: null,
+              tanggal_lahir_ibu: biodata_camaba.tanggal_lahir_ibu,
+              nama_wali: biodata_camaba.nama_wali,
+              tanggal_lahir_wali: biodata_camaba.tanggal_lahir_wali,
               id_wilayah: id_wilayah,
-              id_jenis_tinggal: null,
+              id_jenis_tinggal: biodata_camaba.id_jenis_tinggal,
               id_alat_transportasi: null,
-              id_pendidikan_ayah: null,
-              id_pekerjaan_ayah: null,
-              id_penghasilan_ayah: null,
-              id_pendidikan_ibu: null,
-              id_pekerjaan_ibu: null,
-              id_penghasilan_ibu: null,
-              id_pendidikan_wali: null,
-              id_pekerjaan_wali: null,
-              id_penghasilan_wali: null,
-              id_kebutuhan_khusus_mahasiswa: null,
-              id_kebutuhan_khusus_ayah: null,
-              id_kebutuhan_khusus_ibu: null
+              id_pendidikan_ayah: biodata_camaba.id_pendidikan_ayah,
+              id_pekerjaan_ayah: biodata_camaba.id_pekerjaan_ayah,
+              id_penghasilan_ayah: biodata_camaba.id_penghasilan_ayah,
+              id_pendidikan_ibu: biodata_camaba.id_pendidikan_ibu,
+              id_pekerjaan_ibu: biodata_camaba.id_pekerjaan_ibu,
+              id_penghasilan_ibu: biodata_camaba.id_penghasilan_ibu,
+              id_pendidikan_wali: biodata_camaba.id_pendidikan_wali,
+              id_pekerjaan_wali: biodata_camaba.id_pekerjaan_wali,
+              id_penghasilan_wali: biodata_camaba.id_penghasilan_wali,
+              id_kebutuhan_khusus_mahasiswa: 0,
+              id_kebutuhan_khusus_ayah: 0,
+              id_kebutuhan_khusus_ibu: 0,
             };
 
             const createdBiodataMahasiswa = await BiodataMahasiswa.create(biodata_mahasiswa);
@@ -458,19 +477,19 @@ const importMahasiswas = async (req, res, next) => {
                 nama_mahasiswa: nama,
                 jenis_kelamin: jenis_kelamin,
                 tanggal_lahir: tanggal_lahir,
-                nipd: null,
                 ipk: null,
-                total_sks: null,
+                total_sks: 0,
                 nama_status_mahasiswa: null,
                 nim: nim,
-                nama_periode_masuk: null,
+                nipd: nim,
+                nama_periode_masuk: semester.nama_semester,
                 id_sms: null,
                 id_mahasiswa: createdBiodataMahasiswa.id_mahasiswa,
                 id_agama: id_agama,
                 id_semester: semester_masuk,
                 id_prodi: id_prodi,
                 id_perguruan_tinggi: perguruanTinggi.id_perguruan_tinggi,
-                nama_periode_masuk: semester.nama_semester
+                nama_periode_masuk: semester.nama_semester,
               });
               if (createdMahasiswa) {
                 mahasiswaData.push(createdMahasiswa);
@@ -493,7 +512,7 @@ const importMahasiswas = async (req, res, next) => {
                 id_pembiayaan: id_pembiayaan,
                 id_bidang_minat: null,
                 id_perguruan_tinggi_asal: null,
-                id_prodi_asal: null
+                id_prodi_asal: null,
               });
 
               riwayatPendidikanPromises.push(riwayatPendidikan);
@@ -513,7 +532,7 @@ const importMahasiswas = async (req, res, next) => {
     res.status(200).json({
       message: "Upload and Import Data Mahasiswa Success",
       jumlahData: mahasiswaData.length,
-      data: mahasiswaData
+      data: mahasiswaData,
     });
   } catch (error) {
     next(error);
@@ -526,28 +545,28 @@ const getMahasiswaActive = async (req, res, next) => {
 
     const mahasiswa = await Mahasiswa.findOne({
       where: {
-        nim: user.username
+        nim: user.username,
       },
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }]
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }],
     });
 
     if (!mahasiswa) {
       return res.status(404).json({
-        message: "Mahasiswa not found"
+        message: "Mahasiswa not found",
       });
     }
 
     // get data setting global semester
     const setting_global_semester = await SettingGlobalSemester.findOne({
       where: {
-        status: true
+        status: true,
       },
-      include: [{ model: Semester, as: "SemesterAktif" }]
+      include: [{ model: Semester, as: "SemesterAktif" }],
     });
 
     if (!setting_global_semester) {
       return res.status(404).json({
-        message: "Setting Global Semester Aktif not found"
+        message: "Setting Global Semester Aktif not found",
       });
     }
 
@@ -556,15 +575,15 @@ const getMahasiswaActive = async (req, res, next) => {
     dosen_wali = await DosenWali.findOne({
       where: {
         id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
-        id_tahun_ajaran: setting_global_semester.SemesterAktif.id_tahun_ajaran
+        id_tahun_ajaran: setting_global_semester.SemesterAktif.id_tahun_ajaran,
       },
-      include: [{ model: Dosen }]
+      include: [{ model: Dosen }],
     });
 
     res.status(200).json({
       message: "Get Mahasiswa Active Success",
       dosenWali: dosen_wali,
-      data: mahasiswa
+      data: mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -576,14 +595,14 @@ const getIpsMahasiswaActive = async (req, res, next) => {
 
   const mahasiswa = await Mahasiswa.findOne({
     where: {
-      nim: user.username
+      nim: user.username,
     },
-    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }]
+    include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }],
   });
 
   if (!mahasiswa) {
     return res.status(404).json({
-      message: "Mahasiswa not found"
+      message: "Mahasiswa not found",
     });
   }
 
@@ -594,7 +613,7 @@ const getIpsMahasiswaActive = async (req, res, next) => {
   const requestBody = {
     act: "GetRekapKHSMahasiswa",
     token: `${token}`,
-    filter: `id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`
+    filter: `id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
   };
 
   // Menggunakan token untuk mengambil data
@@ -632,7 +651,7 @@ const getIpsMahasiswaActive = async (req, res, next) => {
   res.json({
     message: `Get IPS Mahasiswa Active Success`,
     mahasiswa: mahasiswa,
-    daftar_ips: validIpsArray
+    daftar_ips: validIpsArray,
   });
 };
 
@@ -642,28 +661,28 @@ const getKRSMahasiswaBySemesterAktif = async (req, res, next) => {
 
     const mahasiswa = await Mahasiswa.findOne({
       where: {
-        nim: user.username
+        nim: user.username,
       },
-      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }]
+      include: [{ model: Prodi, include: [{ model: JenjangPendidikan }] }, { model: Agama }],
     });
 
     if (!mahasiswa) {
       return res.status(404).json({
-        message: "Mahasiswa not found"
+        message: "Mahasiswa not found",
       });
     }
 
     // get data setting global semester
     const setting_global_semester = await SettingGlobalSemester.findOne({
       where: {
-        status: true
+        status: true,
       },
-      include: [{ model: Semester, as: "SemesterAktif" }]
+      include: [{ model: Semester, as: "SemesterAktif" }],
     });
 
     if (!setting_global_semester) {
       return res.status(404).json({
-        message: "Setting Global Semester Aktif not found"
+        message: "Setting Global Semester Aktif not found",
       });
     }
 
@@ -672,18 +691,18 @@ const getKRSMahasiswaBySemesterAktif = async (req, res, next) => {
     dosen_wali = await DosenWali.findOne({
       where: {
         id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
-        id_tahun_ajaran: setting_global_semester.SemesterAktif.id_tahun_ajaran
+        id_tahun_ajaran: setting_global_semester.SemesterAktif.id_tahun_ajaran,
       },
-      include: [{ model: Dosen }]
+      include: [{ model: Dosen }],
     });
 
     // get data krs mahasiswa berdasarka semester aktif pada setting global semester
     const krs_mahasiswas = await KRSMahasiswa.findAll({
       where: {
         id_semester: setting_global_semester.SemesterAktif.id_semester,
-        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
       },
-      include: [{ model: KelasKuliah, include: [{ model: Dosen }, { model: MataKuliah }] }]
+      include: [{ model: KelasKuliah, include: [{ model: Dosen }, { model: MataKuliah }] }],
     });
 
     res.status(200).json({
@@ -692,7 +711,7 @@ const getKRSMahasiswaBySemesterAktif = async (req, res, next) => {
       jumlahDataKRSMahasiswa: krs_mahasiswas.length,
       dosenWali: dosen_wali,
       dataMahasiswa: mahasiswa,
-      dataKRSMahasiswa: krs_mahasiswas
+      dataKRSMahasiswa: krs_mahasiswas,
     });
   } catch (error) {
     next(error);
@@ -709,5 +728,5 @@ module.exports = {
   importMahasiswas,
   getMahasiswaActive,
   getIpsMahasiswaActive,
-  getKRSMahasiswaBySemesterAktif
+  getKRSMahasiswaBySemesterAktif,
 };

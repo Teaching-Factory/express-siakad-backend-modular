@@ -29,6 +29,14 @@ module.exports = {
         type: Sequelize.INTEGER(10),
         allowNull: true,
       },
+      last_sync: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_feeder: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+      },
       id_registrasi_mahasiswa: {
         type: Sequelize.STRING(36),
         allowNull: false,
