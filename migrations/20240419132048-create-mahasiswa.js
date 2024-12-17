@@ -45,14 +45,14 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: true,
       },
-      last_sync: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      id_feeder: {
-        type: Sequelize.STRING(36),
-        allowNull: true,
-      },
+      // last_sync: {
+      //   type: Sequelize.DATE,
+      //   allowNull: true,
+      // },
+      // id_feeder: {
+      //   type: Sequelize.STRING(36),
+      //   allowNull: true,
+      // },
       id_sms: {
         type: Sequelize.STRING(36),
         allowNull: true,

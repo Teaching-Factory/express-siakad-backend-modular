@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
 
       // relasi tabel child
       BiodataMahasiswa.hasMany(models.Mahasiswa, { foreignKey: "id_mahasiswa" });
+      BiodataMahasiswa.hasMany(models.BiodataMahasiswaSync, { foreignKey: "id_mahasiswa" });
     }
   }
   BiodataMahasiswa.init(
