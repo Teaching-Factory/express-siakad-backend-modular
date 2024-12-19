@@ -210,12 +210,6 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
       let formatTanggalLahirIbuLocal = convertToDDMMYYYY(localBiodataMahasiswa.tanggal_lahir_ibu);
       let formatTanggalLahirWaliLocal = convertToDDMMYYYY(localBiodataMahasiswa.tanggal_lahir_wali);
 
-      // res.status(200).json({
-      //   message: "Data retrieved successfully",
-      //   dataBiodataLocal: localBiodataMahasiswa,
-      //   dataBiodataFeeder: feederBiodataMahasiswa,
-      // });
-
       return (
         // data mahasiswa
         mahasiswaLocal.nama_mahasiswa !== mahasiswaFeeder[0].nama_mahasiswa ||
