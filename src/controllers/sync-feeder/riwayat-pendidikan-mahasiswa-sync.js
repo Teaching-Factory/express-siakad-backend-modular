@@ -44,6 +44,35 @@ async function getRiwayatPendidikanMahasiswaFromLocal(semesterId, req, res, next
   }
 }
 
+async function getListMahasiswaById(id_mahasiswa, req, res, next) {
+  try {
+    if (!id_mahasiswa) {
+      return res.status(400).json({
+        message: "Mahasiswa ID is required",
+      });
+    }
+
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      throw new Error("Failed to obtain token or URL feeder");
+    }
+
+    const requestBody = {
+      act: "GetListMahasiswa",
+      token: token,
+      filter: `id_mahasiswa='${id_mahasiswa}'`,
+    };
+
+    const response = await axios.post(url_feeder, requestBody);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching data from Feeder:", error.message);
+    throw error;
+  }
+}
+
 // Fungsi untuk memformat tanggal ke format dd-mm-yyyy
 function convertToDDMMYYYY(localDate) {
   if (!localDate) {
@@ -299,6 +328,11 @@ const insertRiwayatPendidikanMahasiswa = async (id_riwayat_pend_mhs, req, res, n
     if (!riwayat_pendidikan_mahasiswa_sync) {
       return res.status(404).json({ message: "Riwayat Pendidikan Mahasiswa sync not found" });
     }
+
+    // update data mahasiswa id_sms dengan data terbaru dari feeder mahasiswa
+    mahasiswaFeeder = await getListMahasiswaById(biodata_mahasiswa.id_feeder);
+    mahasiswa.id_sms = mahasiswaFeeder.id_sms;
+    await mahasiswa.save();
 
     riwayat_pendidikan_mahasiswa_sync.status = true;
     await riwayat_pendidikan_mahasiswa_sync.save();

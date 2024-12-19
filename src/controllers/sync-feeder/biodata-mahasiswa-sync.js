@@ -2,44 +2,38 @@ const { BiodataMahasiswa, Mahasiswa, BiodataMahasiswaSync } = require("../../../
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
-async function getBiodataMahasiswaFromFeeder(req, res, next) {
-  try {
-    const { token, url_feeder } = await getToken();
+// async function getBiodataMahasiswaFromFeeder(req, res, next) {
+//   try {
+//     const { token, url_feeder } = await getToken();
 
-    if (!token || !url_feeder) {
-      throw new Error("Failed to obtain token or URL feeder");
-    }
+//     if (!token || !url_feeder) {
+//       throw new Error("Failed to obtain token or URL feeder");
+//     }
 
-    const requestBody = {
-      act: "GetBiodataMahasiswa",
-      token: token,
-    };
+//     const requestBody = {
+//       act: "GetBiodataMahasiswa",
+//       token: token,
+//     };
 
-    console.log("Waiting for getting all biodata mahasiswa from feeder ...");
+//     console.log("Waiting for getting all biodata mahasiswa from feeder ...");
 
-    const response = await axios.post(url_feeder, requestBody);
+//     const response = await axios.post(url_feeder, requestBody);
 
-    if (response.data && response.data.data) {
-      // Buat Map dengan hanya kolom id_mahasiswa
-      const biodataMahasiswaMap = new Map(response.data.data.map((item) => [item.id_mahasiswa, item]));
-      return biodataMahasiswaMap;
-    } else {
-      throw new Error("No data returned from feeder");
-    }
-  } catch (error) {
-    console.error("Error fetching data from Feeder:", error.message);
-    throw error;
-  }
-}
+//     if (response.data && response.data.data) {
+//       // Buat Map dengan hanya kolom id_mahasiswa
+//       const biodataMahasiswaMap = new Map(response.data.data.map((item) => [item.id_mahasiswa, item]));
+//       return biodataMahasiswaMap;
+//     } else {
+//       throw new Error("No data returned from feeder");
+//     }
+//   } catch (error) {
+//     console.error("Error fetching data from Feeder:", error.message);
+//     throw error;
+//   }
+// }
 
 async function getMahasiswaFromLocal(semesterId, req, res, next) {
   try {
-    if (!semesterId) {
-      return res.status(400).json({
-        message: "Semester ID is required",
-      });
-    }
-
     console.log("Waiting for getting all mahasiswa by semester from local ...");
 
     return await Mahasiswa.findAll({
@@ -55,12 +49,6 @@ async function getMahasiswaFromLocal(semesterId, req, res, next) {
 
 async function getBiodataMahasiswaFromFeederByID(mahasiswaId, req, res, next) {
   try {
-    // if (!mahasiswaId) {
-    //   return res.status(400).json({
-    //     message: "Mahasiswa ID is required",
-    //   });
-    // }
-
     const { token, url_feeder } = await getToken();
 
     if (!token || !url_feeder) {
@@ -86,12 +74,6 @@ async function getBiodataMahasiswaFromFeederByID(mahasiswaId, req, res, next) {
 
 async function getMahasiswaFromFeederByID(mahasiswaId, req, res, next) {
   try {
-    // if (!mahasiswaId) {
-    //   return res.status(400).json({
-    //     message: "Mahasiswa ID is required",
-    //   });
-    // }
-
     const { token, url_feeder } = await getToken();
 
     if (!token || !url_feeder) {
@@ -143,7 +125,7 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
 
     // get mahasiswa local dan bioodata mahasiswa feeder
     const mahasiswaLocal = await getMahasiswaFromLocal(semesterId);
-    const biodataMahasiswaFeeder = await getBiodataMahasiswaFromFeeder();
+    // const biodataMahasiswaFeeder = await getBiodataMahasiswaFromFeeder();
 
     // Ambil id_mahasiswa dari mahasiswaLocal
     const idMahasiswaList = mahasiswaLocal.map((m) => m.id_mahasiswa);
@@ -163,7 +145,7 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
     // Loop untuk proses sinkronisasi
     for (let localBiodataMahasiswa of Object.values(biodataLocalMap)) {
       const feederBiodataMahasiswa = await getBiodataMahasiswaFromFeederByID(localBiodataMahasiswa.id_feeder);
-      const mahasiswaLocal = biodataLocalMap[localBiodataMahasiswa.id_mahasiswa];
+      const mahasiswaLocal = biodataLocalMap[localBiodataMahasiswa.id_mahasiswa]; // data biodata mahasiswa local
 
       // ambil data singkron sementara untuk biodata mahasiswa sync
       const existingSync = await BiodataMahasiswaSync.findOne({
@@ -176,7 +158,7 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
       });
 
       if (existingSync) {
-        console.log(`Data biodata mahasiswa ${localBiodataMahasiswa.id_mahasiswa} sudah disinkronisasi.`);
+        console.log(`Data biodata mahasiswa ${localBiodataMahasiswa.id_mahasiswa} sudah ditambahkan ke singkron sementara.`);
         continue;
       }
 
@@ -198,7 +180,14 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
           continue;
         }
 
-        const isUpdated = compareBiodataMahasiswas(localBiodataMahasiswa, feederBiodataMahasiswa, mahasiswaLocal, mahasiswaFeeder);
+        // get mahasiswa local
+        let mahasiswaLocalNew = await Mahasiswa.findOne({
+          where: {
+            id_mahasiswa: mahasiswaLocal.id_mahasiswa,
+          },
+        });
+
+        const isUpdated = compareBiodataMahasiswas(localBiodataMahasiswa, feederBiodataMahasiswa, mahasiswaLocalNew, mahasiswaFeeder);
 
         if (isUpdated) {
           await BiodataMahasiswaSync.create({
@@ -221,6 +210,12 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
       let formatTanggalLahirIbuLocal = convertToDDMMYYYY(localBiodataMahasiswa.tanggal_lahir_ibu);
       let formatTanggalLahirWaliLocal = convertToDDMMYYYY(localBiodataMahasiswa.tanggal_lahir_wali);
 
+      // res.status(200).json({
+      //   message: "Data retrieved successfully",
+      //   dataBiodataLocal: localBiodataMahasiswa,
+      //   dataBiodataFeeder: feederBiodataMahasiswa,
+      // });
+
       return (
         // data mahasiswa
         mahasiswaLocal.nama_mahasiswa !== mahasiswaFeeder[0].nama_mahasiswa ||
@@ -235,76 +230,78 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
         !areEqual(mahasiswaLocal.nama_status_mahasiswa, mahasiswaFeeder[0].nama_status_mahasiswa) ||
         mahasiswaLocal.nim !== mahasiswaFeeder[0].nim ||
         !areEqual(mahasiswaLocal.nama_periode_masuk, mahasiswaFeeder[0].nama_periode_masuk) ||
+        mahasiswaLocal.id_agama !== feederBiodataMahasiswa[0].id_agama ||
         // data biodata mahasiswa
-        localBiodataMahasiswa.tempat_lahir !== feederBiodataMahasiswa.tempat_lahir ||
-        localBiodataMahasiswa.id_agama !== feederBiodataMahasiswa.id_agama ||
-        !areEqual(localBiodataMahasiswa.nik, feederBiodataMahasiswa.nik) ||
-        !areEqual(localBiodataMahasiswa.nisn, feederBiodataMahasiswa.nisn) ||
-        !areEqual(localBiodataMahasiswa.npwp, feederBiodataMahasiswa.npwp) ||
-        !areEqual(localBiodataMahasiswa.jalan, feederBiodataMahasiswa.jalan) ||
-        !areEqual(localBiodataMahasiswa.dusun, feederBiodataMahasiswa.dusun) ||
-        !areEqual(localBiodataMahasiswa.rt, feederBiodataMahasiswa.rt) ||
-        !areEqual(localBiodataMahasiswa.rw, feederBiodataMahasiswa.rw) ||
-        !areEqual(localBiodataMahasiswa.kelurahan, feederBiodataMahasiswa.kelurahan) ||
-        !areEqual(localBiodataMahasiswa.kode_pos, feederBiodataMahasiswa.kode_pos) ||
-        localBiodataMahasiswa.id_wilayah !== feederBiodataMahasiswa.id_wilayah ||
-        !areEqual(localBiodataMahasiswa.id_jenis_tinggal, feederBiodataMahasiswa.id_jenis_tinggal) ||
-        !areEqual(localBiodataMahasiswa.id_alat_transportasi, feederBiodataMahasiswa.id_alat_transportasi) ||
-        !areEqual(localBiodataMahasiswa.telepon, feederBiodataMahasiswa.telepon) ||
-        !areEqual(localBiodataMahasiswa.handphone, feederBiodataMahasiswa.handphone) ||
-        !areEqual(localBiodataMahasiswa.email, feederBiodataMahasiswa.email) ||
-        localBiodataMahasiswa.penerima_kps !== feederBiodataMahasiswa.penerima_kps ||
-        !areEqual(localBiodataMahasiswa.nik_ayah, feederBiodataMahasiswa.nik_ayah) ||
-        !areEqual(localBiodataMahasiswa.nama_ayah, feederBiodataMahasiswa.nama_ayah) ||
-        !areEqual(formatTanggalLahirAyahLocal, feederBiodataMahasiswa.tanggal_lahir_ayah) ||
-        !areEqual(localBiodataMahasiswa.id_pendidikan_ayah, feederBiodataMahasiswa.id_pendidikan_ayah) ||
-        !areEqual(localBiodataMahasiswa.id_pekerjaan_ayah, feederBiodataMahasiswa.id_pekerjaan_ayah) ||
-        !areEqual(localBiodataMahasiswa.id_penghasilan_ayah, feederBiodataMahasiswa.id_penghasilan_ayah) ||
-        !areEqual(localBiodataMahasiswa.nik_ibu, feederBiodataMahasiswa.nik_ibu) ||
-        !areEqual(localBiodataMahasiswa.nama_ibu_kandung, feederBiodataMahasiswa.nama_ibu_kandung) ||
-        !areEqual(formatTanggalLahirIbuLocal, feederBiodataMahasiswa.tanggal_lahir_ibu) ||
-        !areEqual(localBiodataMahasiswa.id_pendidikan_ibu, feederBiodataMahasiswa.id_pendidikan_ibu) ||
-        !areEqual(localBiodataMahasiswa.id_pekerjaan_ibu, feederBiodataMahasiswa.id_pekerjaan_ibu) ||
-        !areEqual(localBiodataMahasiswa.id_penghasilan_ibu, feederBiodataMahasiswa.id_penghasilan_ibu) ||
-        !areEqual(localBiodataMahasiswa.nama_wali, feederBiodataMahasiswa.nama_wali) ||
-        !areEqual(formatTanggalLahirWaliLocal, feederBiodataMahasiswa.tanggal_lahir_wali) ||
-        !areEqual(localBiodataMahasiswa.id_pendidikan_wali, feederBiodataMahasiswa.id_pendidikan_wali) ||
-        !areEqual(localBiodataMahasiswa.id_pekerjaan_wali, feederBiodataMahasiswa.id_pekerjaan_wali) ||
-        !areEqual(localBiodataMahasiswa.id_penghasilan_wali, feederBiodataMahasiswa.id_penghasilan_wali) ||
-        localBiodataMahasiswa.id_kebutuhan_khusus_mahasiswa !== feederBiodataMahasiswa.id_kebutuhan_khusus_mahasiswa ||
-        localBiodataMahasiswa.id_kebutuhan_khusus_ayah !== feederBiodataMahasiswa.id_kebutuhan_khusus_ayah ||
-        localBiodataMahasiswa.id_kebutuhan_khusus_ibu !== feederBiodataMahasiswa.id_kebutuhan_khusus_ibu
+        localBiodataMahasiswa.tempat_lahir !== feederBiodataMahasiswa[0].tempat_lahir ||
+        !areEqual(localBiodataMahasiswa.nik, feederBiodataMahasiswa[0].nik) ||
+        !areEqual(localBiodataMahasiswa.nisn, feederBiodataMahasiswa[0].nisn) ||
+        !areEqual(localBiodataMahasiswa.npwp, feederBiodataMahasiswa[0].npwp) ||
+        !areEqual(localBiodataMahasiswa.jalan, feederBiodataMahasiswa[0].jalan) ||
+        !areEqual(localBiodataMahasiswa.dusun, feederBiodataMahasiswa[0].dusun) ||
+        !areEqual(localBiodataMahasiswa.rt, feederBiodataMahasiswa[0].rt) ||
+        !areEqual(localBiodataMahasiswa.rw, feederBiodataMahasiswa[0].rw) ||
+        !areEqual(localBiodataMahasiswa.kelurahan, feederBiodataMahasiswa[0].kelurahan) ||
+        !areEqual(localBiodataMahasiswa.kode_pos, feederBiodataMahasiswa[0].kode_pos) ||
+        localBiodataMahasiswa.id_wilayah !== feederBiodataMahasiswa[0].id_wilayah ||
+        !areEqual(localBiodataMahasiswa.id_jenis_tinggal, feederBiodataMahasiswa[0].id_jenis_tinggal) ||
+        !areEqual(localBiodataMahasiswa.id_alat_transportasi, feederBiodataMahasiswa[0].id_alat_transportasi) ||
+        !areEqual(localBiodataMahasiswa.telepon, feederBiodataMahasiswa[0].telepon) ||
+        !areEqual(localBiodataMahasiswa.handphone, feederBiodataMahasiswa[0].handphone) ||
+        !areEqual(localBiodataMahasiswa.email, feederBiodataMahasiswa[0].email) ||
+        localBiodataMahasiswa.penerima_kps !== feederBiodataMahasiswa[0].penerima_kps ||
+        !areEqual(localBiodataMahasiswa.nik_ayah, feederBiodataMahasiswa[0].nik_ayah) ||
+        !areEqual(localBiodataMahasiswa.nama_ayah, feederBiodataMahasiswa[0].nama_ayah) ||
+        !areEqual(formatTanggalLahirAyahLocal, feederBiodataMahasiswa[0].tanggal_lahir_ayah) ||
+        !areEqual(localBiodataMahasiswa.id_pendidikan_ayah, feederBiodataMahasiswa[0].id_pendidikan_ayah) ||
+        !areEqual(localBiodataMahasiswa.id_pekerjaan_ayah, feederBiodataMahasiswa[0].id_pekerjaan_ayah) ||
+        !areEqual(localBiodataMahasiswa.id_penghasilan_ayah, feederBiodataMahasiswa[0].id_penghasilan_ayah) ||
+        !areEqual(localBiodataMahasiswa.nik_ibu, feederBiodataMahasiswa[0].nik_ibu) ||
+        !areEqual(localBiodataMahasiswa.nama_ibu_kandung, feederBiodataMahasiswa[0].nama_ibu_kandung) ||
+        !areEqual(formatTanggalLahirIbuLocal, feederBiodataMahasiswa[0].tanggal_lahir_ibu) ||
+        !areEqual(localBiodataMahasiswa.id_pendidikan_ibu, feederBiodataMahasiswa[0].id_pendidikan_ibu) ||
+        !areEqual(localBiodataMahasiswa.id_pekerjaan_ibu, feederBiodataMahasiswa[0].id_pekerjaan_ibu) ||
+        !areEqual(localBiodataMahasiswa.id_penghasilan_ibu, feederBiodataMahasiswa[0].id_penghasilan_ibu) ||
+        !areEqual(localBiodataMahasiswa.nama_wali, feederBiodataMahasiswa[0].nama_wali) ||
+        !areEqual(formatTanggalLahirWaliLocal, feederBiodataMahasiswa[0].tanggal_lahir_wali) ||
+        !areEqual(localBiodataMahasiswa.id_pendidikan_wali, feederBiodataMahasiswa[0].id_pendidikan_wali) ||
+        !areEqual(localBiodataMahasiswa.id_pekerjaan_wali, feederBiodataMahasiswa[0].id_pekerjaan_wali) ||
+        !areEqual(localBiodataMahasiswa.id_penghasilan_wali, feederBiodataMahasiswa[0].id_penghasilan_wali) ||
+        localBiodataMahasiswa.id_kebutuhan_khusus_mahasiswa !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_mahasiswa ||
+        localBiodataMahasiswa.id_kebutuhan_khusus_ayah !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ayah ||
+        localBiodataMahasiswa.id_kebutuhan_khusus_ibu !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ibu
       );
     }
 
-    // pengecekan data untuk jenis singkron delete
-    for (let feederBiodataMahasiswaId of Object.values(biodataMahasiswaFeeder)) {
-      const feederBiodataMahasiswa = getBiodataMahasiswaFromFeederByID(feederBiodataMahasiswaId);
+    // // Pengecekan data untuk jenis singkron delete
+    // for (const feederBiodataMahasiswa of biodataMahasiswaFeeder) {
+    //   const feederBiodataMahasiswaId = feederBiodataMahasiswa.id_mahasiswa;
 
-      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "delete"
-      const localBiodataMahasiswa = biodataLocalMap.find((biodata_mahasiswa) => biodata_mahasiswa.id_feeder === feederBiodataMahasiswaId);
+    //   // Cari data di lokal berdasarkan id_feeder
+    //   const localBiodataMahasiswa = biodataLocalMap[feederBiodataMahasiswaId];
 
-      if (!localBiodataMahasiswa) {
-        const existingSync = await KelasKuliahSync.findOne({
-          where: {
-            id_feeder: feederBiodataMahasiswa.id_mahasiswa,
-            jenis_singkron: "delete",
-            status: false,
-            id_mahasiswa: null,
-          },
-        });
+    //   // Jika data Feeder tidak ada di Lokal
+    //   if (!localBiodataMahasiswa) {
+    //     const existingSync = await BiodataMahasiswaSync.findOne({
+    //       where: {
+    //         id_feeder: feederBiodataMahasiswaId,
+    //         jenis_singkron: "delete",
+    //         status: false,
+    //         id_mahasiswa: null,
+    //       },
+    //     });
 
-        if (!existingSync) {
-          await BiodataMahasiswaSync.create({
-            jenis_singkron: "delete",
-            status: false,
-            id_feeder: feederBiodataMahasiswa.id_mahasiswa,
-            id_mahasiswa: null,
-          });
-          console.log(`Data biodata mahasiswa ${feederBiodataMahasiswa.id_mahasiswa} ditambahkan ke sinkronisasi dengan jenis 'delete'.`);
-        }
-      }
-    }
+    //     // Jika belum ada sinkronisasi, tambahkan
+    //     if (!existingSync) {
+    //       await BiodataMahasiswaSync.create({
+    //         jenis_singkron: "delete",
+    //         status: false,
+    //         id_feeder: feederBiodataMahasiswaId,
+    //         id_mahasiswa: null,
+    //       });
+    //       console.log(`Data biodata mahasiswa ${feederBiodataMahasiswaId} ditambahkan ke sinkronisasi dengan jenis 'delete'.`);
+    //     }
+    //   }
+    // }
 
     console.log("Matching biodata mahasiswa lokal ke feeder berhasil.");
   } catch (error) {

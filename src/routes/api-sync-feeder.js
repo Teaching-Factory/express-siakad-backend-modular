@@ -16,8 +16,8 @@ const SyncKurikulumController = require("../controllers/sync-feeder/kurikulum");
 const SyncKelasKuliahController = require("../controllers/sync-feeder/kelas-kuliah-sync");
 const SyncDosenPengajarKelasKuliahController = require("../controllers/sync-feeder/dosen-pengajar-kelas-kuliah");
 const SyncSekolahController = require("../controllers/sync-feeder/sekolah");
-const SyncBiodataMahasiswaController = require("../controllers/sync-feeder/biodata-mahasiswa");
-const SyncRiwayatPendidikanMahasiswaController = require("../controllers/sync-feeder/riwayat-pendidikan-mahasiswa");
+const SyncBiodataMahasiswaController = require("../controllers/sync-feeder/biodata-mahasiswa-sync");
+const SyncRiwayatPendidikanMahasiswaController = require("../controllers/sync-feeder/riwayat-pendidikan-mahasiswa-sync");
 
 // all routes
 router.get("/list-dosen", checkRole(["admin"]), SyncListDosenController.syncListDosen);
