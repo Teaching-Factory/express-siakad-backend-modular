@@ -212,19 +212,19 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
 
       return (
         // data mahasiswa
-        mahasiswaLocal.nama_mahasiswa !== mahasiswaFeeder[0].nama_mahasiswa ||
-        mahasiswaLocal.jenis_kelamin !== mahasiswaFeeder[0].jenis_kelamin ||
-        !areEqual(formatTanggalLahirMahasiswaLocal, mahasiswaFeeder[0].tanggal_lahir) ||
-        mahasiswaLocal.id_perguruan_tinggi !== mahasiswaFeeder[0].id_perguruan_tinggi ||
-        mahasiswaLocal.nipd !== mahasiswaFeeder[0].nipd ||
-        !areEqual(mahasiswaLocal.ipk, mahasiswaFeeder[0].ipk) ||
-        mahasiswaLocal.total_sks !== mahasiswaFeeder[0].total_sks ||
-        !areEqual(mahasiswaLocal.id_sms, mahasiswaFeeder[0].id_sms) ||
-        mahasiswaLocal.id_prodi !== mahasiswaFeeder[0].id_prodi ||
-        !areEqual(mahasiswaLocal.nama_status_mahasiswa, mahasiswaFeeder[0].nama_status_mahasiswa) ||
-        mahasiswaLocal.nim !== mahasiswaFeeder[0].nim ||
-        !areEqual(mahasiswaLocal.nama_periode_masuk, mahasiswaFeeder[0].nama_periode_masuk) ||
-        mahasiswaLocal.id_agama !== feederBiodataMahasiswa[0].id_agama ||
+        // mahasiswaLocal.nama_mahasiswa !== mahasiswaFeeder[0].nama_mahasiswa ||
+        // mahasiswaLocal.jenis_kelamin !== mahasiswaFeeder[0].jenis_kelamin ||
+        // !areEqual(formatTanggalLahirMahasiswaLocal, mahasiswaFeeder[0].tanggal_lahir) ||
+        // mahasiswaLocal.id_perguruan_tinggi !== mahasiswaFeeder[0].id_perguruan_tinggi ||
+        // mahasiswaLocal.nipd !== mahasiswaFeeder[0].nipd ||
+        // !areEqual(mahasiswaLocal.ipk, mahasiswaFeeder[0].ipk) ||
+        // mahasiswaLocal.total_sks !== mahasiswaFeeder[0].total_sks ||
+        // !areEqual(mahasiswaLocal.id_sms, mahasiswaFeeder[0].id_sms) ||
+        // mahasiswaLocal.id_prodi !== mahasiswaFeeder[0].id_prodi ||
+        // !areEqual(mahasiswaLocal.nama_status_mahasiswa, mahasiswaFeeder[0].nama_status_mahasiswa) ||
+        // mahasiswaLocal.nim !== mahasiswaFeeder[0].nim ||
+        // !areEqual(mahasiswaLocal.nama_periode_masuk, mahasiswaFeeder[0].nama_periode_masuk) ||
+        // mahasiswaLocal.id_agama !== feederBiodataMahasiswa[0].id_agama ||
         // data biodata mahasiswa
         localBiodataMahasiswa.tempat_lahir !== feederBiodataMahasiswa[0].tempat_lahir ||
         !areEqual(localBiodataMahasiswa.nik, feederBiodataMahasiswa[0].nik) ||
@@ -242,27 +242,28 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
         !areEqual(localBiodataMahasiswa.telepon, feederBiodataMahasiswa[0].telepon) ||
         !areEqual(localBiodataMahasiswa.handphone, feederBiodataMahasiswa[0].handphone) ||
         !areEqual(localBiodataMahasiswa.email, feederBiodataMahasiswa[0].email) ||
-        localBiodataMahasiswa.penerima_kps !== feederBiodataMahasiswa[0].penerima_kps ||
-        !areEqual(localBiodataMahasiswa.nik_ayah, feederBiodataMahasiswa[0].nik_ayah) ||
-        !areEqual(localBiodataMahasiswa.nama_ayah, feederBiodataMahasiswa[0].nama_ayah) ||
-        !areEqual(formatTanggalLahirAyahLocal, feederBiodataMahasiswa[0].tanggal_lahir_ayah) ||
-        !areEqual(localBiodataMahasiswa.id_pendidikan_ayah, feederBiodataMahasiswa[0].id_pendidikan_ayah) ||
-        !areEqual(localBiodataMahasiswa.id_pekerjaan_ayah, feederBiodataMahasiswa[0].id_pekerjaan_ayah) ||
-        !areEqual(localBiodataMahasiswa.id_penghasilan_ayah, feederBiodataMahasiswa[0].id_penghasilan_ayah) ||
-        !areEqual(localBiodataMahasiswa.nik_ibu, feederBiodataMahasiswa[0].nik_ibu) ||
-        !areEqual(localBiodataMahasiswa.nama_ibu_kandung, feederBiodataMahasiswa[0].nama_ibu_kandung) ||
-        !areEqual(formatTanggalLahirIbuLocal, feederBiodataMahasiswa[0].tanggal_lahir_ibu) ||
-        !areEqual(localBiodataMahasiswa.id_pendidikan_ibu, feederBiodataMahasiswa[0].id_pendidikan_ibu) ||
-        !areEqual(localBiodataMahasiswa.id_pekerjaan_ibu, feederBiodataMahasiswa[0].id_pekerjaan_ibu) ||
-        !areEqual(localBiodataMahasiswa.id_penghasilan_ibu, feederBiodataMahasiswa[0].id_penghasilan_ibu) ||
-        !areEqual(localBiodataMahasiswa.nama_wali, feederBiodataMahasiswa[0].nama_wali) ||
-        !areEqual(formatTanggalLahirWaliLocal, feederBiodataMahasiswa[0].tanggal_lahir_wali) ||
-        !areEqual(localBiodataMahasiswa.id_pendidikan_wali, feederBiodataMahasiswa[0].id_pendidikan_wali) ||
-        !areEqual(localBiodataMahasiswa.id_pekerjaan_wali, feederBiodataMahasiswa[0].id_pekerjaan_wali) ||
-        !areEqual(localBiodataMahasiswa.id_penghasilan_wali, feederBiodataMahasiswa[0].id_penghasilan_wali) ||
-        localBiodataMahasiswa.id_kebutuhan_khusus_mahasiswa !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_mahasiswa ||
-        localBiodataMahasiswa.id_kebutuhan_khusus_ayah !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ayah ||
-        localBiodataMahasiswa.id_kebutuhan_khusus_ibu !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ibu
+        localBiodataMahasiswa.penerima_kps !== feederBiodataMahasiswa[0].penerima_kps
+        //
+        // !areEqual(localBiodataMahasiswa.nik_ayah, feederBiodataMahasiswa[0].nik_ayah) ||
+        // !areEqual(localBiodataMahasiswa.nama_ayah, feederBiodataMahasiswa[0].nama_ayah) ||
+        // !areEqual(formatTanggalLahirAyahLocal, feederBiodataMahasiswa[0].tanggal_lahir_ayah) ||
+        // !areEqual(localBiodataMahasiswa.id_pendidikan_ayah, feederBiodataMahasiswa[0].id_pendidikan_ayah) ||
+        // !areEqual(localBiodataMahasiswa.id_pekerjaan_ayah, feederBiodataMahasiswa[0].id_pekerjaan_ayah) ||
+        // !areEqual(localBiodataMahasiswa.id_penghasilan_ayah, feederBiodataMahasiswa[0].id_penghasilan_ayah) ||
+        // !areEqual(localBiodataMahasiswa.nik_ibu, feederBiodataMahasiswa[0].nik_ibu) ||
+        // !areEqual(localBiodataMahasiswa.nama_ibu_kandung, feederBiodataMahasiswa[0].nama_ibu_kandung) ||
+        // !areEqual(formatTanggalLahirIbuLocal, feederBiodataMahasiswa[0].tanggal_lahir_ibu) ||
+        // !areEqual(localBiodataMahasiswa.id_pendidikan_ibu, feederBiodataMahasiswa[0].id_pendidikan_ibu) ||
+        // !areEqual(localBiodataMahasiswa.id_pekerjaan_ibu, feederBiodataMahasiswa[0].id_pekerjaan_ibu) ||
+        // !areEqual(localBiodataMahasiswa.id_penghasilan_ibu, feederBiodataMahasiswa[0].id_penghasilan_ibu) ||
+        // !areEqual(localBiodataMahasiswa.nama_wali, feederBiodataMahasiswa[0].nama_wali) ||
+        // !areEqual(formatTanggalLahirWaliLocal, feederBiodataMahasiswa[0].tanggal_lahir_wali) ||
+        // !areEqual(localBiodataMahasiswa.id_pendidikan_wali, feederBiodataMahasiswa[0].id_pendidikan_wali) ||
+        // !areEqual(localBiodataMahasiswa.id_pekerjaan_wali, feederBiodataMahasiswa[0].id_pekerjaan_wali) ||
+        // !areEqual(localBiodataMahasiswa.id_penghasilan_wali, feederBiodataMahasiswa[0].id_penghasilan_wali) ||
+        // localBiodataMahasiswa.id_kebutuhan_khusus_mahasiswa !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_mahasiswa ||
+        // localBiodataMahasiswa.id_kebutuhan_khusus_ayah !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ayah ||
+        // localBiodataMahasiswa.id_kebutuhan_khusus_ibu !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ibu
       );
     }
 
@@ -337,24 +338,21 @@ const insertBiodataMahasiswa = async (id_mahasiswa, req, res, next) => {
     // Mendapatkan token
     const { token, url_feeder } = await getToken();
 
-    // melakukan konversi
-    let tanggal_lahir = null;
-    let tanggal_lahir_ayah = null;
-    let tanggal_lahir_ibu = null;
-    let tanggal_lahir_wali = null;
+    // Helper function untuk konversi tanggal
+    function formatTanggal(tanggal) {
+      if (tanggal) {
+        const date = new Date(tanggal); // Konversi ke Date
+        if (!isNaN(date)) {
+          return date.toISOString().split("T")[0]; // Format ke YYYY-MM-DD
+        }
+      }
+      return null; // Jika tidak valid, kembalikan null
+    }
 
-    if (mahasiswa.tanggal_lahir != null || mahasiswa.tanggal_lahir != undefined) {
-      tanggal_lahir = mahasiswa.tanggal_lahir.toISOString().split("T")[0];
-    }
-    if (biodata_mahasiswa.tanggal_lahir_ayah != null || biodata_mahasiswa.tanggal_lahir_ayah != undefined) {
-      tanggal_lahir_ayah = biodata_mahasiswa.tanggal_lahir_ayah.toISOString().split("T")[0];
-    }
-    if (biodata_mahasiswa.tanggal_lahir_ibu != null || biodata_mahasiswa.tanggal_lahir_ibu != undefined) {
-      tanggal_lahir_ibu = biodata_mahasiswa.tanggal_lahir_ibu.toISOString().split("T")[0];
-    }
-    if (biodata_mahasiswa.tanggal_lahir_wali != null || biodata_mahasiswa.tanggal_lahir_wali != undefined) {
-      tanggal_lahir_wali = biodata_mahasiswa.tanggal_lahir_wali.toISOString().split("T")[0];
-    }
+    tanggal_lahir = formatTanggal(mahasiswa.tanggal_lahir);
+    tanggal_lahir_ayah = formatTanggal(biodata_mahasiswa.tanggal_lahir_ayah);
+    tanggal_lahir_ibu = formatTanggal(biodata_mahasiswa.tanggal_lahir_ibu);
+    tanggal_lahir_wali = formatTanggal(biodata_mahasiswa.tanggal_lahir_wali);
 
     // akan insert data biodata mahasiswa dan mahasiswa ke feeder
     const requestBody = {
@@ -478,24 +476,21 @@ const updateBiodataMahasiswa = async (id_mahasiswa, req, res, next) => {
     // Mendapatkan token
     const { token, url_feeder } = await getToken();
 
-    // melakukan konversi
-    let tanggal_lahir = null;
-    let tanggal_lahir_ayah = null;
-    let tanggal_lahir_ibu = null;
-    let tanggal_lahir_wali = null;
+    // Helper function untuk konversi tanggal
+    function formatTanggal(tanggal) {
+      if (tanggal) {
+        const date = new Date(tanggal); // Konversi ke Date
+        if (!isNaN(date)) {
+          return date.toISOString().split("T")[0]; // Format ke YYYY-MM-DD
+        }
+      }
+      return null; // Jika tidak valid, kembalikan null
+    }
 
-    if (mahasiswa.tanggal_lahir != null || mahasiswa.tanggal_lahir != undefined) {
-      tanggal_lahir = mahasiswa.tanggal_lahir.toISOString().split("T")[0];
-    }
-    if (biodata_mahasiswa.tanggal_lahir_ayah != null || biodata_mahasiswa.tanggal_lahir_ayah != undefined) {
-      tanggal_lahir_ayah = biodata_mahasiswa.tanggal_lahir_ayah.toISOString().split("T")[0];
-    }
-    if (biodata_mahasiswa.tanggal_lahir_ibu != null || biodata_mahasiswa.tanggal_lahir_ibu != undefined) {
-      tanggal_lahir_ibu = biodata_mahasiswa.tanggal_lahir_ibu.toISOString().split("T")[0];
-    }
-    if (biodata_mahasiswa.tanggal_lahir_wali != null || biodata_mahasiswa.tanggal_lahir_wali != undefined) {
-      tanggal_lahir_wali = biodata_mahasiswa.tanggal_lahir_wali.toISOString().split("T")[0];
-    }
+    tanggal_lahir = formatTanggal(mahasiswa.tanggal_lahir);
+    tanggal_lahir_ayah = formatTanggal(biodata_mahasiswa.tanggal_lahir_ayah);
+    tanggal_lahir_ibu = formatTanggal(biodata_mahasiswa.tanggal_lahir_ibu);
+    tanggal_lahir_wali = formatTanggal(biodata_mahasiswa.tanggal_lahir_wali);
 
     // akan update data biodata mahasiswa dan biodata mahasiswa ke feeder
     const requestBody = {

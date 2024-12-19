@@ -43,5 +43,6 @@ router.get("/:id/get", checkRole(["admin", "admin-pmb", "camaba"]), PemberkasanC
 router.get("/get-pemberkasan-camaba-aktif", checkRole(["camaba"]), PemberkasanCamabaController.getAllPemberkasanCamabaByCamabaActive);
 router.put("/:id/update-file-pemberkasan-camaba-aktif", checkRole(["camaba"]), upload.single("file_berkas"), PemberkasanCamabaController.updatePemberkasanCamabaActiveById);
 router.put("/:id_camaba/validasi-pemberkasan-camaba", checkRole(["admin", "admin-pmb"]), PemberkasanCamabaController.validasiPemberkasanCamabaByCamabaId);
+router.get("/:id_camaba/get-pemberkasan-camaba", checkRole(["admin", "admin-pmb"]), PemberkasanCamabaController.getPemberkasanCamabaByCamabaId);
 
 module.exports = router;

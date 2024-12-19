@@ -263,10 +263,47 @@ const validasiPemberkasanCamabaByCamabaId = async (req, res, next) => {
   }
 };
 
+const getPemberkasanCamabaByCamabaId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const camabaId = req.params.id_camaba;
+
+    if (!camabaId) {
+      return res.status(400).json({
+        message: "Camaba ID is required",
+      });
+    }
+
+    // Cari data pemberkasan_camaba berdasarkan ID di database
+    const pemberkasan_camaba = await PemberkasanCamaba.findAll({
+      where: {
+        id_camaba: camabaId,
+      },
+      include: [{ model: BerkasPeriodePendaftaran, include: [{ model: JenisBerkas, as: "JenisBerkas" }] }, { model: Camaba }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!pemberkasan_camaba) {
+      return res.status(404).json({
+        message: `<===== Pemberkasan Camaba With Camaba ID ${camabaId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Pemberkasan Camaba By Camaba ID ${camabaId} Success:`,
+      data: pemberkasan_camaba,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPemberkasanCamaba,
   getPemberkasanCamabaById,
   getAllPemberkasanCamabaByCamabaActive,
   updatePemberkasanCamabaActiveById,
   validasiPemberkasanCamabaByCamabaId,
+  getPemberkasanCamabaByCamabaId,
 };

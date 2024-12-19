@@ -80,6 +80,7 @@ const getAllTagihanCamabaByFilter = async (req, res, next) => {
     next(error);
   }
 };
+
 const getTagihanCamabaById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
@@ -325,6 +326,42 @@ const validasiTagihanCamabaKolektif = async (req, res, next) => {
   }
 };
 
+const getTagihanCamabaByCamabaId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const camabaId = req.params.id_camaba;
+
+    if (!camabaId) {
+      return res.status(400).json({
+        message: "Camaba ID is required",
+      });
+    }
+
+    // Cari data tagihan_camaba berdasarkan ID di database
+    const tagihan_camaba = await TagihanCamaba.findOne({
+      where: {
+        id_camaba: camabaId,
+      },
+      include: [{ model: Semester }, { model: JenisTagihan }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!tagihan_camaba) {
+      return res.status(404).json({
+        message: `<===== Tagihan Camaba With Camaba ID ${camabaId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Tagihan Camaba By Camaba ID ${camabaId} Success:`,
+      data: tagihan_camaba,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllTagihanCamaba,
   getAllTagihanCamabaByFilter,
@@ -332,4 +369,5 @@ module.exports = {
   getTagihanCamabaByCamabaActive,
   uploadBuktiPembayaranByCamabaActive,
   validasiTagihanCamabaKolektif,
+  getTagihanCamabaByCamabaId,
 };
