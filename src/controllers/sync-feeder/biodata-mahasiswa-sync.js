@@ -107,6 +107,16 @@ function convertToDDMMYYYY(localDate) {
   return `${day}-${month}-${year}`; // Gabungkan dalam urutan dd-mm-yyyy
 }
 
+function convertToDDMMYYYYForFeeder(dateString) {
+  if (!dateString) return null; // Pastikan nilai tidak null atau undefined
+  const date = new Date(dateString); // Konversi ke objek Date
+  if (isNaN(date)) return null; // Pastikan tanggal valid
+  const day = String(date.getDate()).padStart(2, "0"); // Format hari
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Format bulan (0-based)
+  const year = date.getFullYear(); // Format tahun
+  return `${day}-${month}-${year}`;
+}
+
 // Fungsi pembanding nilai
 function areEqual(value1, value2) {
   return value1 === value2 || (value1 == null && value2 == null);
@@ -205,10 +215,11 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
 
     // Fungsi pembanding detail biodata mahasiswa
     function compareBiodataMahasiswas(localBiodataMahasiswa, feederBiodataMahasiswa, mahasiswaLocal, mahasiswaFeeder) {
-      let formatTanggalLahirMahasiswaLocal = convertToDDMMYYYY(mahasiswaLocal.tanggal_lahir);
+      // let formatTanggalLahirMahasiswaLocal = convertToDDMMYYYY(mahasiswaLocal.tanggal_lahir);
       let formatTanggalLahirAyahLocal = convertToDDMMYYYY(localBiodataMahasiswa.tanggal_lahir_ayah);
       let formatTanggalLahirIbuLocal = convertToDDMMYYYY(localBiodataMahasiswa.tanggal_lahir_ibu);
       let formatTanggalLahirWaliLocal = convertToDDMMYYYY(localBiodataMahasiswa.tanggal_lahir_wali);
+      let formatTanggalLahirWaliFeeder = convertToDDMMYYYYForFeeder(feederBiodataMahasiswa[0].tanggal_lahir_wali);
 
       return (
         // data mahasiswa
@@ -242,28 +253,27 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
         !areEqual(localBiodataMahasiswa.telepon, feederBiodataMahasiswa[0].telepon) ||
         !areEqual(localBiodataMahasiswa.handphone, feederBiodataMahasiswa[0].handphone) ||
         !areEqual(localBiodataMahasiswa.email, feederBiodataMahasiswa[0].email) ||
-        localBiodataMahasiswa.penerima_kps !== feederBiodataMahasiswa[0].penerima_kps
-        //
-        // !areEqual(localBiodataMahasiswa.nik_ayah, feederBiodataMahasiswa[0].nik_ayah) ||
-        // !areEqual(localBiodataMahasiswa.nama_ayah, feederBiodataMahasiswa[0].nama_ayah) ||
-        // !areEqual(formatTanggalLahirAyahLocal, feederBiodataMahasiswa[0].tanggal_lahir_ayah) ||
-        // !areEqual(localBiodataMahasiswa.id_pendidikan_ayah, feederBiodataMahasiswa[0].id_pendidikan_ayah) ||
-        // !areEqual(localBiodataMahasiswa.id_pekerjaan_ayah, feederBiodataMahasiswa[0].id_pekerjaan_ayah) ||
-        // !areEqual(localBiodataMahasiswa.id_penghasilan_ayah, feederBiodataMahasiswa[0].id_penghasilan_ayah) ||
-        // !areEqual(localBiodataMahasiswa.nik_ibu, feederBiodataMahasiswa[0].nik_ibu) ||
-        // !areEqual(localBiodataMahasiswa.nama_ibu_kandung, feederBiodataMahasiswa[0].nama_ibu_kandung) ||
-        // !areEqual(formatTanggalLahirIbuLocal, feederBiodataMahasiswa[0].tanggal_lahir_ibu) ||
-        // !areEqual(localBiodataMahasiswa.id_pendidikan_ibu, feederBiodataMahasiswa[0].id_pendidikan_ibu) ||
-        // !areEqual(localBiodataMahasiswa.id_pekerjaan_ibu, feederBiodataMahasiswa[0].id_pekerjaan_ibu) ||
-        // !areEqual(localBiodataMahasiswa.id_penghasilan_ibu, feederBiodataMahasiswa[0].id_penghasilan_ibu) ||
-        // !areEqual(localBiodataMahasiswa.nama_wali, feederBiodataMahasiswa[0].nama_wali) ||
-        // !areEqual(formatTanggalLahirWaliLocal, feederBiodataMahasiswa[0].tanggal_lahir_wali) ||
-        // !areEqual(localBiodataMahasiswa.id_pendidikan_wali, feederBiodataMahasiswa[0].id_pendidikan_wali) ||
-        // !areEqual(localBiodataMahasiswa.id_pekerjaan_wali, feederBiodataMahasiswa[0].id_pekerjaan_wali) ||
-        // !areEqual(localBiodataMahasiswa.id_penghasilan_wali, feederBiodataMahasiswa[0].id_penghasilan_wali) ||
-        // localBiodataMahasiswa.id_kebutuhan_khusus_mahasiswa !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_mahasiswa ||
-        // localBiodataMahasiswa.id_kebutuhan_khusus_ayah !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ayah ||
-        // localBiodataMahasiswa.id_kebutuhan_khusus_ibu !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ibu
+        localBiodataMahasiswa.penerima_kps !== feederBiodataMahasiswa[0].penerima_kps ||
+        !areEqual(localBiodataMahasiswa.nik_ayah, feederBiodataMahasiswa[0].nik_ayah) ||
+        !areEqual(localBiodataMahasiswa.nama_ayah, feederBiodataMahasiswa[0].nama_ayah) ||
+        !areEqual(formatTanggalLahirAyahLocal, feederBiodataMahasiswa[0].tanggal_lahir_ayah) ||
+        !areEqual(localBiodataMahasiswa.id_pendidikan_ayah, feederBiodataMahasiswa[0].id_pendidikan_ayah) ||
+        !areEqual(localBiodataMahasiswa.id_pekerjaan_ayah, feederBiodataMahasiswa[0].id_pekerjaan_ayah) ||
+        !areEqual(localBiodataMahasiswa.id_penghasilan_ayah, feederBiodataMahasiswa[0].id_penghasilan_ayah) ||
+        !areEqual(localBiodataMahasiswa.nik_ibu, feederBiodataMahasiswa[0].nik_ibu) ||
+        !areEqual(localBiodataMahasiswa.nama_ibu_kandung, feederBiodataMahasiswa[0].nama_ibu_kandung) ||
+        !areEqual(formatTanggalLahirIbuLocal, feederBiodataMahasiswa[0].tanggal_lahir_ibu) ||
+        !areEqual(localBiodataMahasiswa.id_pendidikan_ibu, feederBiodataMahasiswa[0].id_pendidikan_ibu) ||
+        !areEqual(localBiodataMahasiswa.id_pekerjaan_ibu, feederBiodataMahasiswa[0].id_pekerjaan_ibu) ||
+        !areEqual(localBiodataMahasiswa.id_penghasilan_ibu, feederBiodataMahasiswa[0].id_penghasilan_ibu) ||
+        !areEqual(localBiodataMahasiswa.nama_wali, feederBiodataMahasiswa[0].nama_wali) ||
+        !areEqual(formatTanggalLahirWaliLocal, formatTanggalLahirWaliFeeder) ||
+        !areEqual(localBiodataMahasiswa.id_pendidikan_wali, feederBiodataMahasiswa[0].id_pendidikan_wali) ||
+        !areEqual(localBiodataMahasiswa.id_pekerjaan_wali, feederBiodataMahasiswa[0].id_pekerjaan_wali) ||
+        !areEqual(localBiodataMahasiswa.id_penghasilan_wali, feederBiodataMahasiswa[0].id_penghasilan_wali) ||
+        localBiodataMahasiswa.id_kebutuhan_khusus_mahasiswa !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_mahasiswa ||
+        localBiodataMahasiswa.id_kebutuhan_khusus_ayah !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ayah ||
+        localBiodataMahasiswa.id_kebutuhan_khusus_ibu !== feederBiodataMahasiswa[0].id_kebutuhan_khusus_ibu
       );
     }
 
