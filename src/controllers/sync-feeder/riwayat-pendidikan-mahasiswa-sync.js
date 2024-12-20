@@ -172,6 +172,15 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
     // Fungsi pembanding riwayat pendidikan mahasiwa
     function compareRiwayatPendidikanMahasiswa(localRiwayatPendMahasiswa, feederRiwayatPendMahasiswa, biodataMahasiswaLocal) {
       let formatTanggalDaftarLocal = convertToDDMMYYYY(localRiwayatPendMahasiswa.tanggal_daftar);
+      let idPembiayaanLocal = String(localRiwayatPendMahasiswa.id_pembiayaan);
+      const formattedBiayaMasuk = localRiwayatPendMahasiswa.biaya_masuk.toFixed(2);
+
+      // Kirim respons JSON jika berhasil
+      // res.status(200).json({
+      //   message: `Success:`,
+      //   formattedBiayaMasuk: formattedBiayaMasuk,
+      //   biayaMasukFeeder: feederRiwayatPendMahasiswa.biaya_masuk,
+      // });
 
       return (
         biodataMahasiswaLocal.id_feeder !== feederRiwayatPendMahasiswa.id_mahasiswa ||
@@ -179,13 +188,12 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
         !areEqual(localRiwayatPendMahasiswa.id_jalur_daftar, feederRiwayatPendMahasiswa.id_jalur_daftar) ||
         localRiwayatPendMahasiswa.id_periode_masuk !== feederRiwayatPendMahasiswa.id_periode_masuk ||
         !areEqual(localRiwayatPendMahasiswa.id_jenis_keluar, feederRiwayatPendMahasiswa.id_jenis_keluar) ||
-        localRiwayatPendMahasiswa.id_perguruan_tinggi !== feederRiwayatPendMahasiswa.id_perguruan_tinggi ||
+        !areEqual(formattedBiayaMasuk, feederRiwayatPendMahasiswa.biaya_masuk) ||
         localRiwayatPendMahasiswa.id_prodi !== feederRiwayatPendMahasiswa.id_prodi ||
         !areEqual(localRiwayatPendMahasiswa.sks_diakui, feederRiwayatPendMahasiswa.sks_diakui) ||
         !areEqual(localRiwayatPendMahasiswa.id_perguruan_tinggi_asal, feederRiwayatPendMahasiswa.id_perguruan_tinggi_asal) ||
         !areEqual(localRiwayatPendMahasiswa.id_prodi_asal, feederRiwayatPendMahasiswa.id_prodi_asal) ||
-        !areEqual(localRiwayatPendMahasiswa.id_pembiayaan, feederRiwayatPendMahasiswa.id_pembiayaan) ||
-        !areEqual(localRiwayatPendMahasiswa.biaya_masuk, feederRiwayatPendMahasiswa.biaya_masuk) || // kemungkinan convert (harus di uji)
+        !areEqual(idPembiayaanLocal, feederRiwayatPendMahasiswa.id_pembiayaan) ||
         !areEqual(localRiwayatPendMahasiswa.id_bidang_minat, feederRiwayatPendMahasiswa.id_bidang_minat) ||
         formatTanggalDaftarLocal !== feederRiwayatPendMahasiswa.tanggal_daftar ||
         !areEqual(localRiwayatPendMahasiswa.keterangan_keluar, feederRiwayatPendMahasiswa.keterangan_keluar) ||
@@ -269,7 +277,11 @@ const insertRiwayatPendidikanMahasiswa = async (id_riwayat_pend_mhs, req, res, n
     }
 
     // get data mahasiswa from biodata mahasiswa
-    let mahasiswa = await Mahasiswa.findByPk(biodata_mahasiswa.id_registrasi_mahasiswa);
+    let mahasiswa = await Mahasiswa.findOne({
+      where: {
+        id_mahasiswa: biodata_mahasiswa.id_mahasiswa,
+      },
+    });
 
     if (!mahasiswa) {
       return res.status(404).json({ message: "Mahasiswa not found" });
@@ -374,7 +386,11 @@ const updateRiwayatPendidikanMahasiswa = async (id_riwayat_pend_mhs, req, res, n
     }
 
     // get data mahasiswa from biodata mahasiswa
-    let mahasiswa = await Mahasiswa.findByPk(biodata_mahasiswa.id_registrasi_mahasiswa);
+    let mahasiswa = await Mahasiswa.findOne({
+      where: {
+        id_mahasiswa: biodata_mahasiswa.id_mahasiswa,
+      },
+    });
 
     if (!mahasiswa) {
       return res.status(404).json({ message: "Mahasiswa not found" });

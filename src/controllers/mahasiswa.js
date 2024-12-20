@@ -500,7 +500,7 @@ const importMahasiswas = async (req, res, next) => {
               const riwayatPendidikan = await RiwayatPendidikanMahasiswa.create({
                 tanggal_daftar: tanggal_masuk,
                 keterangan_keluar: null,
-                sks_diakui: null,
+                sks_diakui: 0,
                 nama_ibu_kandung: nama_ibu_kandung,
                 biaya_masuk: biaya_awal_masuk,
                 id_registrasi_mahasiswa: createdMahasiswa.id_registrasi_mahasiswa,
