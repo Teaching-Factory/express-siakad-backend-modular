@@ -483,7 +483,7 @@ const importMahasiswas = async (req, res, next) => {
                 nim: nim,
                 nipd: nim,
                 nama_periode_masuk: semester.nama_semester,
-                id_sms: null,
+                id_sms: id_prodi,
                 id_mahasiswa: createdBiodataMahasiswa.id_mahasiswa,
                 id_agama: id_agama,
                 id_semester: semester_masuk,
