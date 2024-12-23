@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       // relasi tabel parent
       PesertaKelasKuliah.belongsTo(models.KelasKuliah, { foreignKey: "id_kelas_kuliah" });
       PesertaKelasKuliah.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
+
+      // relasi tabel child
+      PesertaKelasKuliah.hasMany(models.PesertaKelasKuliahSync, { foreignKey: "id_peserta_kuliah" });
     }
   }
   PesertaKelasKuliah.init(
