@@ -148,6 +148,8 @@ const hasilKuesionerDosenRoutes = require("./routes/hasil-kuesioner-dosen");
 const hasilKuesionerPerKelasRoutes = require("./routes/hasil-kuesioner-per-kelas");
 const kelasKuliahSyncRoutes = require("./routes/kelas-kuliah-sync");
 const dosenPengajarKelasKuliahSyncRoutes = require("./routes/dosen-pengajar-kelas-kuliah-sync");
+const biodataMahasiswaSyncRoutes = require("./routes/biodata-mahasiswa-sync");
+const riwayatPendidikanMahasiswaSyncRoutes = require("./routes/riwayat-pendidikan-mahasiswa-sync");
 
 // route api local not done yet
 // -
@@ -345,6 +347,8 @@ app.use("/hasil-kuesioner-dosen", checkToken, hasilKuesionerDosenRoutes);
 app.use("/hasil-kuesioner-per-kelas", checkToken, hasilKuesionerPerKelasRoutes);
 app.use("/kelas-kuliah-sync", checkToken, kelasKuliahSyncRoutes);
 app.use("/dosen-pengajar-kelas-kuliah-sync", checkToken, dosenPengajarKelasKuliahSyncRoutes);
+app.use("/biodata-mahasiswa-sync", checkToken, biodataMahasiswaSyncRoutes);
+app.use("/riwayat-pendidikan-mahasiswa-sync", checkToken, riwayatPendidikanMahasiswaSyncRoutes);
 
 // route api local not done yet
 // -
