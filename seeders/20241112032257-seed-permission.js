@@ -568,6 +568,12 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id: 95,
+        nama_permission: "dashboard-admin",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 

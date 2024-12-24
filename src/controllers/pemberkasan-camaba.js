@@ -230,7 +230,7 @@ const validasiPemberkasanCamabaByCamabaId = async (req, res, next) => {
     // Validasi dan update status setiap berkas camaba
     for (const berkas_camaba of pemberkasan_camabas) {
       // Dapatkan id berkas dan status dari body request
-      const { id, status_berkas } = berkas_camaba;
+      const { id, status_berkas, komentar_berkas } = berkas_camaba;
 
       // Temukan berkas camaba berdasarkan ID
       const pemberkasan_camaba = await PemberkasanCamaba.findOne({
@@ -248,6 +248,7 @@ const validasiPemberkasanCamabaByCamabaId = async (req, res, next) => {
 
       // Perbarui status berkas
       pemberkasan_camaba.status_berkas = status_berkas;
+      pemberkasan_camaba.komentar_berkas = komentar_berkas;
 
       // Simpan perubahan ke database
       await pemberkasan_camaba.save();

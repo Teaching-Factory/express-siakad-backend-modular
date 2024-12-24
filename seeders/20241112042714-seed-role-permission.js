@@ -13,6 +13,12 @@ module.exports = {
       },
       {
         id_role: 1,
+        id_permission: 95, // dashboard-admin
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
         id_permission: 2, // import-mahasiswa
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -541,6 +547,12 @@ module.exports = {
       // role camaba
       {
         id_role: 7,
+        id_permission: 1, // dashboard
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 7,
         id_permission: 84, // status-pendaftaran
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -609,6 +621,12 @@ module.exports = {
       // role admin-pmb
       {
         id_role: 6,
+        id_permission: 1, // dashboard
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 6,
         id_permission: 54, // pengaturan-pmb
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -657,6 +675,12 @@ module.exports = {
       },
 
       // // role admin-prodi (belum)
+      // {
+      //   id_role: 4,
+      //   id_permission: 1, // dashboard
+      //   createdAt: new Date(),
+      //   updatedAt: new Date(),
+      // },
       // {
       //   id: 4,
       //   id_role: "admin-prodi",
