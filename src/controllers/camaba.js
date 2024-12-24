@@ -26,6 +26,7 @@ const {
   SettingGlobalSemester,
   JenisPendaftaran,
   Pembiayaan,
+  TahapTesCamaba,
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const fs = require("fs").promises;
@@ -427,6 +428,22 @@ const createCamaba = async (req, res, next) => {
 
     // Hanya tambahkan data sumber info camaba yang berhasil ditemukan
     sumberPeriodePendaftaran = sumberPeriodePendaftaran.filter((sumber_periode_pendaftaran) => sumber_periode_pendaftaran !== null);
+
+    // tambahkan data tahap tes periode pendaftaran
+    const tahap_tes_periode_pendaftarans = await TahapTesPeriodePendaftaran.findAll({
+      where: {
+        id_periode_pendaftaran: periode_pendaftaran.id,
+      },
+    });
+
+    // Loop untuk setiap tahap tes yang ditemukan
+    for (const tahap_tes of tahap_tes_periode_pendaftarans) {
+      await TahapTesCamaba.create({
+        status: "Menunggu Persetujuan",
+        id_camaba: newCamaba.id,
+        id_tahap_tes_periode_pendaftaran: tahap_tes.id,
+      });
+    }
 
     res.status(201).json({
       message: "<===== CREATE Camaba Success",

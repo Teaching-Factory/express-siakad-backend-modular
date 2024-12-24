@@ -2,37 +2,16 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("pemberkasan_camabas", {
+    await queryInterface.createTable("tahap_tes_camabas", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      file_berkas: {
-        type: Sequelize.STRING(255),
-        allowNull: true,
-      },
-      status_berkas: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
-        defaultValue: false,
-      },
-      komentar_berkas: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      id_berkas_periode_pendaftaran: {
-        type: Sequelize.INTEGER,
+      status: {
+        type: Sequelize.ENUM("Lulus", "Tidak Lulus", "Menunggu Persetujuan"),
         allowNull: false,
-        references: {
-          model: {
-            tableName: "berkas_periode_pendaftarans",
-          },
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       id_camaba: {
         type: Sequelize.STRING(36),
@@ -40,6 +19,19 @@ module.exports = {
         references: {
           model: {
             tableName: "camabas",
+          },
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+
+      id_tahap_tes_periode_pendaftaran: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "tahap_tes_periode_pendaftarans",
           },
           key: "id",
         },
@@ -57,6 +49,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("pemberkasan_camabas");
+    await queryInterface.dropTable("tahap_tes_camabas");
   },
 };

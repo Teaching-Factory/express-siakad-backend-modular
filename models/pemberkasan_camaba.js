@@ -1,5 +1,5 @@
 "use strict";
-const { Model, BOOLEAN } = require("sequelize");
+const { Model, BOOLEAN, TEXT } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PemberkasanCamaba extends Model {
     /**
@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
         type: BOOLEAN,
         allowNull: true,
         defaultValue: false,
+      },
+      komentar_berkas: {
+        type: TEXT,
+        allowNull: true,
       },
       id_berkas_periode_pendaftaran: {
         type: DataTypes.INTEGER,

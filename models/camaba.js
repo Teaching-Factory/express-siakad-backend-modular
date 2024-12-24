@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       Camaba.hasMany(models.PemberkasanCamaba, { foreignKey: "id_camaba" });
       Camaba.hasMany(models.TagihanCamaba, { foreignKey: "id_camaba" });
       Camaba.hasMany(models.SumberInfoCamaba, { foreignKey: "id_camaba" });
+      Camaba.hasMany(models.TahapTesCamaba, { foreignKey: "id_camaba" });
     }
   }
   Camaba.init(
@@ -27,99 +28,99 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.STRING(36),
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
       },
       nomor_daftar: {
         type: DataTypes.STRING(13),
-        allowNull: false
+        allowNull: false,
       },
       hints: {
         type: DataTypes.STRING(8),
-        allowNull: false
+        allowNull: false,
       },
       tanggal_pendaftaran: {
         type: DataTypes.DATEONLY,
-        allowNull: false
+        allowNull: false,
       },
       nama_lengkap: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
       nim: {
         type: DataTypes.STRING(24),
-        allowNull: true
+        allowNull: true,
       },
       foto_profil: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
       tempat_lahir: {
         type: DataTypes.STRING(32),
-        allowNull: false
+        allowNull: false,
       },
       tanggal_lahir: {
         type: DataTypes.DATEONLY,
-        allowNull: false
+        allowNull: false,
       },
       jenis_kelamin: {
         type: DataTypes.ENUM("Laki-laki", "Perempuan"),
-        allowNull: false
+        allowNull: false,
       },
       nomor_hp: {
         type: DataTypes.STRING(20),
-        allowNull: false
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING(60),
-        allowNull: false
+        allowNull: false,
       },
       status_pembayaran: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: false
+        defaultValue: false,
       },
       status_berkas: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: false
+        defaultValue: false,
       },
       status_tes: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: false
+        defaultValue: false,
       },
       status_akun_pendaftar: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: true
+        defaultValue: true,
       },
       status_export_mahasiswa: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: false
+        defaultValue: false,
       },
       finalisasi: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: false
+        defaultValue: false,
       },
       id_prodi_diterima: {
         type: DataTypes.STRING(36),
-        allowNull: true
+        allowNull: true,
       },
       id_periode_pendaftaran: {
         type: DataTypes.STRING(36),
-        allowNull: false
+        allowNull: false,
       },
       id_pembiayaan: {
         type: DataTypes.INTEGER(10),
-        allowNull: true
-      }
+        allowNull: true,
+      },
     },
     {
       sequelize,
       modelName: "Camaba",
-      tableName: "camabas"
+      tableName: "camabas",
     }
   );
   return Camaba;
