@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER(10),
         autoIncrement: true,
       },
+      foto_profil_pt: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
       telepon: {
         type: DataTypes.STRING(20),
         allowNull: true,

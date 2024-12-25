@@ -1,5 +1,5 @@
 const express = require("express");
-const multer = require("multer"); // library utnuk upload file
+const multer = require("multer"); // library untuk upload file
 const path = require("path");
 
 const router = express.Router();

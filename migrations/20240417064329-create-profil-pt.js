@@ -9,6 +9,10 @@ module.exports = {
         type: Sequelize.INTEGER(10),
         autoIncrement: true,
       },
+      foto_profil_pt: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       telepon: {
         type: Sequelize.STRING(20),
         allowNull: true,

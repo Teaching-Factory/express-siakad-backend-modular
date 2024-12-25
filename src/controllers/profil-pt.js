@@ -1,4 +1,6 @@
 const { ProfilPT, PerguruanTinggi, Wilayah } = require("../../models");
+const fs = require("fs"); // untuk menghapus file
+const path = require("path");
 
 const getAllProfilPT = async (req, res, next) => {
   try {
@@ -222,6 +224,36 @@ const updateProfilPTActive = async (req, res, next) => {
     profil_pt.kode_pos = kode_pos || profil_pt.kode_pos;
     profil_pt.faximile = faximile || profil_pt.faximile;
     profil_pt.website = website || profil_pt.website;
+
+    // update foto profil
+    const oldFotoProfilPT = profil_pt.foto_profil_pt;
+
+    // Jika ada file gambar baru di-upload, update path foto profil pt dan hapus gambar lama
+    if (req.file) {
+      // Cek tipe MIME file yang di-upload
+      if (req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png") {
+        return res.status(400).json({ message: "File type not supported" });
+      } else {
+        const protocol = process.env.PROTOCOL || "http";
+        const host = process.env.HOST || "localhost";
+        const port = process.env.PORT || 4000;
+
+        const fileName = req.file.filename;
+        const fileUrl = `${protocol}://${host}:${port}/src/storage/perguruan-tinggi/profil/${fileName}`;
+
+        profil_pt.foto_profil_pt = fileUrl;
+
+        // Hapus file gambar lama jika ada
+        if (oldFotoProfilPT) {
+          const oldFilePath = path.resolve(__dirname, `../storage/perguruan-tinggi/profil/${path.basename(oldFotoProfilPT)}`);
+          fs.unlink(oldFilePath, (err) => {
+            if (err) {
+              console.error(`Gagal menghapus gambar: ${err.message}`);
+            }
+          });
+        }
+      }
+    }
 
     await profil_pt.save();
 

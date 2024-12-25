@@ -1,4 +1,4 @@
-const { PerguruanTinggi } = require("../../models");
+const { PerguruanTinggi, SettingWSFeeder, ProfilPT } = require("../../models");
 
 const getAllPerguruanTinggi = async (req, res, next) => {
   try {
@@ -94,8 +94,62 @@ const updatePerguruanTinggiById = async (req, res, next) => {
   }
 };
 
+const getDataKopSurat = async (req, res, next) => {
+  try {
+    // ambil data perguruan tinggi yang aktif berdasarkan web service
+    const settingWSFeeder = await SettingWSFeeder.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!settingWSFeeder) {
+      return res.status(404).json({
+        message: `Setting WS Feeder With Active Not Found:`,
+      });
+    }
+
+    const perguruanTinggi = await PerguruanTinggi.findOne({
+      where: {
+        kode_perguruan_tinggi: settingWSFeeder.username_feeder,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!perguruanTinggi) {
+      return res.status(404).json({
+        message: `Perguruan Tinggi Not Found:`,
+      });
+    }
+
+    const profilPT = await ProfilPT.findOne({
+      where: {
+        id_perguruan_tinggi: perguruanTinggi.id_perguruan_tinggi,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!profilPT) {
+      return res.status(404).json({
+        message: `Profil PT Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET Data Kop Surat Success",
+      perguruanTinggi: perguruanTinggi,
+      data: profilPT,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPerguruanTinggi,
   getPerguruanTinggiById,
   updatePerguruanTinggiById,
+  getDataKopSurat,
 };
