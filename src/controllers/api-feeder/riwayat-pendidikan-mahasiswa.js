@@ -69,6 +69,8 @@ const getRiwayatPendidikanMahasiswa = async (req, res, next) => {
         id_bidang_minat: riwayat_pendidikan_mahasiswa.id_bidang_minat,
         id_perguruan_tinggi_asal: riwayat_pendidikan_mahasiswa.id_perguruan_tinggi_asal,
         id_prodi_asal: id_prodi_asal,
+        last_sync: new Date(),
+        id_feeder: riwayat_pendidikan_mahasiswa.id_registrasi_mahasiswa,
       });
     }
 
