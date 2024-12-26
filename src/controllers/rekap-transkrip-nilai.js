@@ -41,7 +41,8 @@ const getRekapTranskripNilaiByFilterReqBody = async (req, res, next) => {
       ],
     });
 
-    const token = await getToken();
+    // Mendapatkan token
+    const { token, url_feeder } = await getToken();
 
     const requestBody = {
       act: "GetTranskripMahasiswa",
@@ -49,7 +50,7 @@ const getRekapTranskripNilaiByFilterReqBody = async (req, res, next) => {
       filter: `id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
     };
 
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
     let dataRekapTranskripNilai = response.data.data;
 
     // Hitung total_sks dan total_sks_indeks
@@ -94,7 +95,8 @@ const getRekapTranskripNilaiByMahasiswaActive = async (req, res, next) => {
       return res.status(404).json({ message: "Mahasiswa not found" });
     }
 
-    const token = await getToken();
+    // Mendapatkan token
+    const { token, url_feeder } = await getToken();
 
     const requestBody = {
       act: "GetTranskripMahasiswa",
@@ -102,7 +104,7 @@ const getRekapTranskripNilaiByMahasiswaActive = async (req, res, next) => {
       filter: `id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
     };
 
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
     let dataRekapTranskripNilai = response.data.data;
 
     // Hitung total_sks dan total_sks_indeks

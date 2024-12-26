@@ -4,7 +4,7 @@ const { getToken } = require("../api-feeder/get-token");
 const getWilayah = async (req, res, next) => {
   try {
     // Mendapatkan token
-    const token = await getToken();
+    const { token, url_feeder } = await getToken();
 
     const requestBody = {
       act: "GetWilayah",
@@ -13,7 +13,7 @@ const getWilayah = async (req, res, next) => {
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataWilayah = response.data.data;

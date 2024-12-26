@@ -607,7 +607,7 @@ const getIpsMahasiswaActive = async (req, res, next) => {
   }
 
   // Mendapatkan token
-  const token = await getToken();
+  const { token, url_feeder } = await getToken();
 
   // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK
   const requestBody = {
@@ -617,7 +617,7 @@ const getIpsMahasiswaActive = async (req, res, next) => {
   };
 
   // Menggunakan token untuk mengambil data
-  const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+  const response = await axios.post(url_feeder, requestBody);
 
   // Tanggapan dari API
   const dataRekapKHSMahasiswaAll = response.data.data;

@@ -132,7 +132,7 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
     }
 
     // Mendapatkan token
-    const token = await getToken();
+    const { token, url_feeder } = await getToken();
 
     const requestBody = {
       act: "GetRekapKHSMahasiswa",
@@ -141,7 +141,7 @@ const getRekapKHSMahasiswaByFilter = async (req, res, next) => {
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
     const dataRekapKHSMahasiswa = response.data.data;
@@ -221,7 +221,8 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         ],
       });
 
-      const token = await getToken();
+      // Mendapatkan token
+      const { token, url_feeder } = await getToken();
 
       const requestBody = {
         act: "GetRekapKHSMahasiswa",
@@ -229,7 +230,7 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         filter: `nim='${nim}' AND id_periode='${id_semester}'`,
       };
 
-      const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+      const response = await axios.post(url_feeder, requestBody);
       const dataRekapKHSMahasiswa = response.data.data;
 
       res.status(200).json({
@@ -265,7 +266,8 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         ],
       });
 
-      const token = await getToken();
+      // Mendapatkan token
+      const { token, url_feeder } = await getToken();
 
       const requestBody = {
         act: "GetRekapKHSMahasiswa",
@@ -273,7 +275,7 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         filter: `id_prodi='${id_prodi}' AND angkatan='${angkatan.tahun}' AND id_periode='${id_semester}'`,
       };
 
-      const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+      const response = await axios.post(url_feeder, requestBody);
       const dataRekapKHSMahasiswa = response.data.data;
 
       // Mengelompokkan data berdasarkan id_registrasi_mahasiswa
@@ -326,7 +328,7 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   }
 
   // Mendapatkan token
-  const token = await getToken();
+  const { token, url_feeder } = await getToken();
 
   const requestBody = {
     act: "GetRekapKHSMahasiswa",
@@ -335,7 +337,7 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   };
 
   // Menggunakan token untuk mengambil data
-  const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+  const response = await axios.post(url_feeder, requestBody);
 
   // Tanggapan dari API
   const dataRekapKHSMahasiswa = response.data.data;
@@ -362,7 +364,7 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   };
 
   // Menggunakan token untuk mengambil data
-  const responseTwo = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBodyTwo);
+  const responseTwo = await axios.post(url_feeder, requestBodyTwo);
 
   // Tanggapan dari API
   const dataRekapKHSMahasiswaAll = responseTwo.data.data;
@@ -461,7 +463,7 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
   });
 
   // Mendapatkan token
-  const token = await getToken();
+  const { token, url_feeder } = await getToken();
 
   const requestBody = {
     act: "GetRekapKHSMahasiswa",
@@ -470,7 +472,7 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
   };
 
   // Menggunakan token untuk mengambil data
-  const response = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBody);
+  const response = await axios.post(url_feeder, requestBody);
 
   // Tanggapan dari API
   const dataRekapKHSMahasiswa = response.data.data;
@@ -497,7 +499,7 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
   };
 
   // Menggunakan token untuk mengambil data
-  const responseTwo = await axios.post("http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php", requestBodyTwo);
+  const responseTwo = await axios.post(url_feeder, requestBodyTwo);
 
   // Tanggapan dari API
   const dataRekapKHSMahasiswaAll = responseTwo.data.data;
