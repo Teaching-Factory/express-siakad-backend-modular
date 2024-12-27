@@ -50,7 +50,36 @@ const getDosenById = async (req, res, next) => {
   }
 };
 
+const getCountGenderDosen = async (req, res, next) => {
+  try {
+    // Ambil semua data dosen dari database
+    const dosens = await Dosen.findAll();
+
+    // Inisialisasi objek untuk menghitung gender keseluruhan dan per angkatan
+    const totalGender = { L: 0, P: 0 };
+
+    // Iterasi melalui data dosen
+    dosens.forEach((dosen) => {
+      const { jenis_kelamin } = dosen;
+
+      // Hitung total gender
+      if (jenis_kelamin === "L" || jenis_kelamin === "P") {
+        totalGender[jenis_kelamin] = (totalGender[jenis_kelamin] || 0) + 1;
+      }
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== GET Count Gender Dosen Success",
+      totalGender,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllDosen,
   getDosenById,
+  getCountGenderDosen,
 };

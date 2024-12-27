@@ -490,7 +490,7 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
   // Hitung IPS untuk periode tertentu
   const ips = (total_sks_indeks / total_sks).toFixed(2);
   const formattedTotalSksIndeks = total_sks_indeks.toFixed(2);
-
+dos
   // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK
   const requestBodyTwo = {
     act: "GetRekapKHSMahasiswa",
