@@ -20,6 +20,7 @@ router.get("/:id_prodi/:id_angkatan/get", checkRole(["admin", "admin-prodi", "do
 router.get("/get-mahasiswa-active", checkRole(["mahasiswa"]), MahasiswaController.getMahasiswaActive);
 router.get("/get-ips-mahasiswa-active", checkRole(["mahasiswa"]), MahasiswaController.getIpsMahasiswaActive);
 router.get("/get-krs-mahasiswa-by-semester-active", checkRole(["mahasiswa"]), MahasiswaController.getKRSMahasiswaBySemesterAktif);
+router.get("/get-count-gender-mahasiswa", checkRole(["admin"]), MahasiswaController.getCountGenderMahasiswa);
 
 // import routes
 router.post("/import-data-mahasiswa", checkRole(["admin", "admin-prodi"]), upload.single("file"), MahasiswaController.importMahasiswas);
