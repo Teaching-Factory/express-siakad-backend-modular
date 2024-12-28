@@ -1,5 +1,4 @@
 const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, PesertaKelasKuliah, Prodi } = require("../../models");
-const { Op, fn, col } = require("sequelize");
 
 const getAllDetailKelasKuliah = async (req, res, next) => {
   try {
@@ -33,7 +32,7 @@ const getDetailKelasKuliahById = async (req, res, next) => {
 
     // Cari data detail_kelas_kuliah berdasarkan ID di database
     const detail_kelas_kuliah = await DetailKelasKuliah.findByPk(DetailKelasKuliahId, {
-      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: Prodi }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404

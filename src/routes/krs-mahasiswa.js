@@ -17,7 +17,7 @@ router.get("/mahasiswa/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin
 router.get("/semester", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.getAllMahasiswaKRSBySemester);
 router.get("/mahasiswa/semester/:id_registrasi_mahasiswa/get", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.GetKRSMahasiswaByMahasiswaSemester);
 router.delete("/:id/delete", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.deleteKRSMahasiswaById);
-router.put("/:id_prodi/:id_semester/validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.ValidasiKRSMahasiswa);
+router.put("/:id_prodi/:id_semester/validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.validasiKRSMahasiswa);
 router.put("/:id_prodi/:id_semester/:id_registrasi_mahasiswa/batalkan-validasi-krs", checkRole(["admin", "admin-prodi"]), KrsMahasiswaController.BatalkanValidasiKRSMahasiswa);
 
 // filter krs

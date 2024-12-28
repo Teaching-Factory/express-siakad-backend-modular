@@ -12,5 +12,6 @@ router.get("/:id/get", checkRole(["admin", "admin-prodi"]), PesertaKelasKuliahCo
 router.post("/:id_kelas_kuliah/:id_angkatan/create", checkRole(["admin", "admin-prodi"]), PesertaKelasKuliahController.createPesertaKelasByAngkatanAndKelasKuliahId);
 router.get("/kelas-kuliah/:id_kelas_kuliah/get", checkRole(["admin", "admin-prodi"]), PesertaKelasKuliahController.getPesertaKelasKuliahByKelasKuliahId);
 router.get("/:id_kelas_kuliah/get-nilai-kelas", checkRole(["admin", "admin-prodi"]), PesertaKelasKuliahController.getPesertaKelasWithDetailNilai);
+router.get("/:id_prodi/:id_angkatan/:id_kelas_kuliah/get-mahasiswa-belum-terdaftar", checkRole(["admin", "admin-prodi"]), PesertaKelasKuliahController.getMahasiswaBelumTerdaftarDiKelasByFilter);
 
 module.exports = router;
