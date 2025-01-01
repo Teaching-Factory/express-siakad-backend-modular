@@ -69,7 +69,7 @@ const getAllRiwayatPendidikanMahasiswaSyncBelumSingkron = async (req, res, next)
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Riwayat Pendidikan Mahasiswa Mahasiswa Sync Belum Singkron Success",
+      message: "<===== GET All Riwayat Pendidikan Mahasiswa Sync Belum Singkron Success",
       jumlahData: updatedRiwayatPendidikanMahasiswa.length,
       data: updatedRiwayatPendidikanMahasiswa,
     });
