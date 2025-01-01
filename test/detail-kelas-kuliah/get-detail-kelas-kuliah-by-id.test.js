@@ -1,5 +1,5 @@
 const { getDetailKelasKuliahById } = require("../../src/controllers/detail-kelas-kuliah");
-const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan } = require("../../models");
+const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, Prodi } = require("../../models");
 const httpMocks = require("node-mocks-http");
 
 jest.mock("../../models", () => ({
@@ -41,7 +41,7 @@ describe("getDetailKelasKuliahById", () => {
     await getDetailKelasKuliahById(req, res, next);
 
     expect(DetailKelasKuliah.findByPk).toHaveBeenCalledWith(detailKelasKuliahId, {
-      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: Prodi }] }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -63,7 +63,7 @@ describe("getDetailKelasKuliahById", () => {
     await getDetailKelasKuliahById(req, res, next);
 
     expect(DetailKelasKuliah.findByPk).toHaveBeenCalledWith(detailKelasKuliahId, {
-      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }] }],
+      include: [{ model: RuangPerkuliahan }, { model: KelasKuliah, include: [{ model: Semester }, { model: MataKuliah }, { model: Dosen }, { model: Prodi }] }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({

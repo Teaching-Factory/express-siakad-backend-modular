@@ -28,6 +28,14 @@ module.exports = {
       id_detail_nilai_perkuliahan_kelas: {
         type: Sequelize.INTEGER(10),
         allowNull: true,
+        references: {
+          model: {
+            tableName: "detail_nilai_perkuliahan_kelas",
+          },
+          key: "id_detail_nilai_perkuliahan_kelas",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,

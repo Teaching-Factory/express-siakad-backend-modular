@@ -53,11 +53,6 @@ async function getPesertaKelasKuliahFromLocal(angkatanId, req, res, next) {
   }
 }
 
-// Fungsi pembanding nilai
-function areEqual(value1, value2) {
-  return value1 === value2 || (value1 == null && value2 == null);
-}
-
 async function matchingDataPesertaKelasKuliah(req, res, next) {
   try {
     // Dapatkan ID dari parameter permintaan

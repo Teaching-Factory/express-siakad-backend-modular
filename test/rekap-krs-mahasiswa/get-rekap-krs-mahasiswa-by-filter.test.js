@@ -26,9 +26,7 @@ describe("getRekapKRSMahasiswaByFilter", () => {
     await getRekapKRSMahasiswaByFilter(req, res, next);
 
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData()).toEqual({
-      message: "Prodi ID is required",
-    });
+    expect(res._getJSONData()).toEqual({ message: "Prodi ID is required" });
   });
 
   it("should return 400 if semesterId is not provided", async () => {
@@ -45,9 +43,7 @@ describe("getRekapKRSMahasiswaByFilter", () => {
     await getRekapKRSMahasiswaByFilter(req, res, next);
 
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData()).toEqual({
-      message: "Semester ID is required",
-    });
+    expect(res._getJSONData()).toEqual({ message: "Semester ID is required" });
   });
 
   it("should return 400 if mataKuliahId is not provided", async () => {
@@ -64,9 +60,7 @@ describe("getRekapKRSMahasiswaByFilter", () => {
     await getRekapKRSMahasiswaByFilter(req, res, next);
 
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData()).toEqual({
-      message: "Mata Kuliah ID is required",
-    });
+    expect(res._getJSONData()).toEqual({ message: "Mata Kuliah ID is required" });
   });
 
   it("should return 400 if mahasiswaId is not provided", async () => {
@@ -83,24 +77,20 @@ describe("getRekapKRSMahasiswaByFilter", () => {
     await getRekapKRSMahasiswaByFilter(req, res, next);
 
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData()).toEqual({
-      message: "Mahasiswa ID is required",
-    });
+    expect(res._getJSONData()).toEqual({ message: "Mahasiswa ID is required" });
   });
 
   it("should return 200 and rekap KRS mahasiswa data if request is successful", async () => {
-    getToken.mockResolvedValue("test-token");
+    // Mocking getToken response
+    getToken.mockResolvedValue({
+      token: "test-token",
+      url_feeder: "http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php",
+    });
 
     const mockResponseData = {
       data: [
-        {
-          id: "1",
-          name: "Rekap KRS Mahasiswa 1",
-        },
-        {
-          id: "2",
-          name: "Rekap KRS Mahasiswa 2",
-        },
+        { id: "1", name: "Rekap KRS Mahasiswa 1" },
+        { id: "2", name: "Rekap KRS Mahasiswa 2" },
       ],
     };
 
@@ -134,6 +124,11 @@ describe("getRekapKRSMahasiswaByFilter", () => {
   });
 
   it("should handle server errors", async () => {
+    getToken.mockResolvedValue({
+      token: "test-token",
+      url_feeder: "http://feeder.ubibanyuwangi.ac.id:3003/ws/live2.php",
+    });
+
     const req = httpMocks.createRequest({
       params: {
         id_prodi: "123",

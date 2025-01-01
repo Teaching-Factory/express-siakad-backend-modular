@@ -19,6 +19,7 @@ const SyncSekolahController = require("../controllers/sync-feeder/sekolah");
 const SyncBiodataMahasiswaController = require("../controllers/sync-feeder/biodata-mahasiswa-sync");
 const SyncRiwayatPendidikanMahasiswaController = require("../controllers/sync-feeder/riwayat-pendidikan-mahasiswa-sync");
 const SyncPesertaKelasKuliahController = require("../controllers/sync-feeder/peserta-kelas-kuliah-sync");
+const SyncDetailNilaiPerkuliahanKelasController = require("../controllers/sync-feeder/detail-nilai-perkuliahan-kelas-sync");
 
 // all routes
 router.get("/list-dosen", checkRole(["admin"]), SyncListDosenController.syncListDosen);
@@ -39,5 +40,6 @@ router.get("/:id_semester/matching-riwayat-pendidikan-mahasiswa", checkRole(["ad
 router.post("/sync-riwayat-pendidikan-mahasiswa", checkRole(["admin"]), SyncRiwayatPendidikanMahasiswaController.syncRiwayatPendidikanMahasiswas);
 router.get("/:id_angkatan/matching-peserta-kelas-kuliah", checkRole(["admin"]), SyncPesertaKelasKuliahController.matchingSyncDataPesertaKelasKuliah);
 router.post("/sync-peserta-kelas-kuliah", checkRole(["admin"]), SyncPesertaKelasKuliahController.syncPesertaKelasKuliahs);
+router.get("/:id_semester/matching-detail-nilai-perkuliahan-kelas", checkRole(["admin"]), SyncDetailNilaiPerkuliahanKelasController.matchingSyncDataDetailNilaiPerkuliahanKelas);
 
 module.exports = router;

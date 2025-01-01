@@ -1,10 +1,10 @@
-const { ValidasiKRSMahasiswa } = require("../../src/controllers/krs-mahasiswa");
+const { validasiKRSMahasiswa } = require("../../src/controllers/krs-mahasiswa");
 const { KRSMahasiswa, KelasKuliah, Mahasiswa, PesertaKelasKuliah } = require("../../models");
 
 // Mock dependencies
 jest.mock("../../models");
 
-describe("ValidasiKRSMahasiswa", () => {
+describe("validasiKRSMahasiswa", () => {
   let req, res, next;
 
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe("ValidasiKRSMahasiswa", () => {
   it("should return 400 if prodiId is not provided", async () => {
     req.params.id_prodi = undefined;
 
-    await ValidasiKRSMahasiswa(req, res, next);
+    await validasiKRSMahasiswa(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ message: "Prodi ID is required" });
@@ -40,7 +40,7 @@ describe("ValidasiKRSMahasiswa", () => {
   it("should return 400 if semesterId is not provided", async () => {
     req.params.id_semester = undefined;
 
-    await ValidasiKRSMahasiswa(req, res, next);
+    await validasiKRSMahasiswa(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ message: "Semester ID is required" });
@@ -62,7 +62,7 @@ describe("ValidasiKRSMahasiswa", () => {
   //     PesertaKelasKuliah.count.mockResolvedValue(pesertaCountMockData);
   //     PesertaKelasKuliah.create.mockResolvedValue({});
 
-  //     await ValidasiKRSMahasiswa(req, res, next);
+  //     await validasiKRSMahasiswa(req, res, next);
 
   //     expect(KRSMahasiswa.findAll).toHaveBeenCalledTimes(2);
   //     expect(KelasKuliah.findOne).toHaveBeenCalledTimes(2);
@@ -86,7 +86,7 @@ describe("ValidasiKRSMahasiswa", () => {
     const error = new Error("Something went wrong");
     KRSMahasiswa.findAll.mockRejectedValue(error);
 
-    await ValidasiKRSMahasiswa(req, res, next);
+    await validasiKRSMahasiswa(req, res, next);
 
     expect(next).toHaveBeenCalledWith(error);
   });
