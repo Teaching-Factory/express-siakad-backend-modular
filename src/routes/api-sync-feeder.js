@@ -41,5 +41,6 @@ router.post("/sync-riwayat-pendidikan-mahasiswa", checkRole(["admin"]), SyncRiwa
 router.get("/:id_angkatan/matching-peserta-kelas-kuliah", checkRole(["admin"]), SyncPesertaKelasKuliahController.matchingSyncDataPesertaKelasKuliah);
 router.post("/sync-peserta-kelas-kuliah", checkRole(["admin"]), SyncPesertaKelasKuliahController.syncPesertaKelasKuliahs);
 router.get("/:id_semester/matching-detail-nilai-perkuliahan-kelas", checkRole(["admin"]), SyncDetailNilaiPerkuliahanKelasController.matchingSyncDataDetailNilaiPerkuliahanKelas);
+router.post("/sync-nilai-perkuliahan", checkRole(["admin"]), SyncDetailNilaiPerkuliahanKelasController.syncNilaiPerkuliahans);
 
 module.exports = router;
