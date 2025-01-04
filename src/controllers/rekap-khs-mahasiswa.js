@@ -347,13 +347,15 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   let total_sks_indeks = 0;
 
   dataRekapKHSMahasiswa.forEach((nilai) => {
-    nilai.total_sks_indeks = parseFloat(nilai.sks_mata_kuliah) * parseFloat(nilai.nilai_indeks);
-    total_sks += parseFloat(nilai.sks_mata_kuliah);
+    const sks = parseFloat(nilai.sks_mata_kuliah) || 0; // Default ke 0 jika null atau undefined
+    const indeks = parseFloat(nilai.nilai_indeks) || 0; // Default ke 0 jika null atau undefined
+    nilai.total_sks_indeks = sks * indeks; // Perhitungan indeks untuk masing-masing mata kuliah
+    total_sks += sks;
     total_sks_indeks += nilai.total_sks_indeks;
   });
 
   // Hitung IPS untuk periode tertentu
-  const ips = (total_sks_indeks / total_sks).toFixed(2);
+  const ips = total_sks > 0 ? (total_sks_indeks / total_sks).toFixed(2) : "0.00";
   const formattedTotalSksIndeks = total_sks_indeks.toFixed(2);
 
   // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK
@@ -385,20 +387,20 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
     let totalSksPeriode = 0;
     let totalSksIndeksPeriode = 0;
     groupedData[periode].forEach((nilai) => {
-      totalSksPeriode += parseFloat(nilai.sks_mata_kuliah);
-      totalSksIndeksPeriode += parseFloat(nilai.sks_mata_kuliah) * parseFloat(nilai.nilai_indeks);
+      const sks = parseFloat(nilai.sks_mata_kuliah) || 0; // Default ke 0 jika null
+      const indeks = parseFloat(nilai.nilai_indeks) || 0; // Default ke 0 jika null
+      totalSksPeriode += sks;
+      totalSksIndeksPeriode += sks * indeks;
     });
-    const ipsPeriode = (totalSksIndeksPeriode / totalSksPeriode).toFixed(2);
+    const ipsPeriode = totalSksPeriode > 0 ? (totalSksIndeksPeriode / totalSksPeriode).toFixed(2) : "0.00";
     ipsArray.push(parseFloat(ipsPeriode));
   }
 
   // Hitung IPK
-  // Menghapus nilai null dari array ipsArray
   const validIpsArray = ipsArray.filter((ips) => ips !== null && !isNaN(Number(ips)));
 
-  // Menghitung total dan rata-rata IPS
   const totalIps = validIpsArray.reduce((acc, curr) => acc + curr, 0);
-  const ipk = validIpsArray.length > 0 ? (totalIps / validIpsArray.length).toFixed(2) : null;
+  const ipk = validIpsArray.length > 0 ? (totalIps / validIpsArray.length).toFixed(2) : "0.00";
 
   res.json({
     message: `Get KHS Mahasiswa By Periode ID ${periodeId} from Feeder Success`,
@@ -475,22 +477,25 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
   const response = await axios.post(url_feeder, requestBody);
 
   // Tanggapan dari API
-  const dataRekapKHSMahasiswa = response.data.data;
+  const dataRekapKHSMahasiswa = response.data.data || [];
 
   // Hitung total_sks dan total_sks_indeks untuk periode tertentu
   let total_sks = 0;
   let total_sks_indeks = 0;
 
   dataRekapKHSMahasiswa.forEach((nilai) => {
-    nilai.total_sks_indeks = parseFloat(nilai.sks_mata_kuliah) * parseFloat(nilai.nilai_indeks);
-    total_sks += parseFloat(nilai.sks_mata_kuliah);
+    const sksMataKuliah = parseFloat(nilai.sks_mata_kuliah) || 0;
+    const nilaiIndeks = parseFloat(nilai.nilai_indeks) || 0;
+
+    nilai.total_sks_indeks = sksMataKuliah * nilaiIndeks;
+    total_sks += sksMataKuliah;
     total_sks_indeks += nilai.total_sks_indeks;
   });
 
   // Hitung IPS untuk periode tertentu
-  const ips = (total_sks_indeks / total_sks).toFixed(2);
+  const ips = total_sks > 0 ? (total_sks_indeks / total_sks).toFixed(2) : "0.00";
   const formattedTotalSksIndeks = total_sks_indeks.toFixed(2);
-dos
+
   // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK
   const requestBodyTwo = {
     act: "GetRekapKHSMahasiswa",
@@ -502,7 +507,7 @@ dos
   const responseTwo = await axios.post(url_feeder, requestBodyTwo);
 
   // Tanggapan dari API
-  const dataRekapKHSMahasiswaAll = responseTwo.data.data;
+  const dataRekapKHSMahasiswaAll = responseTwo.data.data || [];
 
   // Mengelompokkan data KHS berdasarkan id_periode
   const groupedData = dataRekapKHSMahasiswaAll.reduce((acc, curr) => {
@@ -520,20 +525,20 @@ dos
     let totalSksPeriode = 0;
     let totalSksIndeksPeriode = 0;
     groupedData[periode].forEach((nilai) => {
-      totalSksPeriode += parseFloat(nilai.sks_mata_kuliah);
-      totalSksIndeksPeriode += parseFloat(nilai.sks_mata_kuliah) * parseFloat(nilai.nilai_indeks);
+      const sksMataKuliah = parseFloat(nilai.sks_mata_kuliah) || 0;
+      const nilaiIndeks = parseFloat(nilai.nilai_indeks) || 0;
+
+      totalSksPeriode += sksMataKuliah;
+      totalSksIndeksPeriode += sksMataKuliah * nilaiIndeks;
     });
-    const ipsPeriode = (totalSksIndeksPeriode / totalSksPeriode).toFixed(2);
+    const ipsPeriode = totalSksPeriode > 0 ? (totalSksIndeksPeriode / totalSksPeriode).toFixed(2) : "0.00";
     ipsArray.push(parseFloat(ipsPeriode));
   }
 
   // Hitung IPK
-  // Menghapus nilai null dari array ipsArray
   const validIpsArray = ipsArray.filter((ips) => ips !== null && !isNaN(Number(ips)));
-
-  // Menghitung total dan rata-rata IPS
   const totalIps = validIpsArray.reduce((acc, curr) => acc + curr, 0);
-  const ipk = validIpsArray.length > 0 ? (totalIps / validIpsArray.length).toFixed(2) : null;
+  const ipk = validIpsArray.length > 0 ? (totalIps / validIpsArray.length).toFixed(2) : "0.00";
 
   // Mendapatkan tanggal saat ini
   const tanggalPenandatanganan = new Date().toISOString().split("T")[0];
