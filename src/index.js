@@ -153,6 +153,7 @@ const riwayatPendidikanMahasiswaSyncRoutes = require("./routes/riwayat-pendidika
 const pesertaKelasKuliahSyncRoutes = require("./routes/peserta-kelas-kuliah-sync");
 const detailNilaiPerkuliahanKelasSyncRoutes = require("./routes/detail-nilai-perkuliahan-kelas-sync");
 const tahapTesCamabaRoutes = require("./routes/tahap-tes-camaba");
+const angkatanGuestRoutes = require("./routes/angkatan-guest");
 
 // route api local not done yet
 // -
@@ -355,6 +356,7 @@ app.use("/riwayat-pendidikan-mahasiswa-sync", checkToken, riwayatPendidikanMahas
 app.use("/peserta-kelas-kuliah-sync", checkToken, pesertaKelasKuliahSyncRoutes);
 app.use("/detail-nilai-perkuliahan-kelas-sync", checkToken, detailNilaiPerkuliahanKelasSyncRoutes);
 app.use("/tahap-tes-camaba", checkToken, tahapTesCamabaRoutes);
+app.use("/angkatan-guest", checkToken, angkatanGuestRoutes);
 
 // route api local not done yet
 // -

@@ -1,6 +1,6 @@
 const axios = require("axios");
-const { getToken } = require("./get-token");
-const { RiwayatNilaiMahasiswa, Periode, sequelize } = require("../../../models");
+const { getToken } = require("../api-feeder/get-token");
+const { RiwayatNilaiMahasiswa, Periode } = require("../../../models");
 
 const getRiwayatNilaiMahasiswa = async (req, res, next) => {
   try {
@@ -37,45 +37,49 @@ const getRiwayatNilaiMahasiswa = async (req, res, next) => {
     // Tanggapan dari API
     const dataRiwayatNilaiMahasiswa = response.data.data;
 
-    // Truncate data
-    await RiwayatNilaiMahasiswa.destroy({
-      where: {}, // Hapus semua data
-    });
-
-    await sequelize.query("ALTER TABLE riwayat_nilai_mahasiswas AUTO_INCREMENT = 1");
-
-    // Loop untuk menambahkan data ke dalam database
+    // Proses data satu per satu
     for (const riwayat_nilai_mahasiswa of dataRiwayatNilaiMahasiswa) {
-      let id_periode = null;
-
-      // Periksa apakah id_periode atau periode_pelaporan ada di Periode
-      const periode = await Periode.findOne({
+      // Periksa apakah data sudah ada
+      const existingData = await RiwayatNilaiMahasiswa.findOne({
         where: {
-          periode_pelaporan: riwayat_nilai_mahasiswa.id_periode,
+          id_kelas: riwayat_nilai_mahasiswa.id_kelas,
+          id_registrasi_mahasiswa: riwayat_nilai_mahasiswa.id_registrasi_mahasiswa,
+          angkatan: riwayat_nilai_mahasiswa.angkatan,
         },
       });
 
-      // Jika ditemukan, simpan nilainya
-      if (periode) {
-        id_periode = periode.id_periode;
-      }
+      if (!existingData) {
+        // Jika belum ada, tambahkan data baru
+        let id_periode = null;
 
-      await RiwayatNilaiMahasiswa.create({
-        nilai_angka: riwayat_nilai_mahasiswa.nilai_angka,
-        nilai_huruf: riwayat_nilai_mahasiswa.nilai_huruf,
-        nilai_indeks: riwayat_nilai_mahasiswa.nilai_indeks,
-        angkatan: riwayat_nilai_mahasiswa.angkatan,
-        id_registrasi_mahasiswa: riwayat_nilai_mahasiswa.id_registrasi_mahasiswa,
-        id_periode: id_periode,
-        id_kelas: riwayat_nilai_mahasiswa.id_kelas,
-      });
+        // Periksa apakah id_periode atau periode_pelaporan ada di Periode
+        const periode = await Periode.findOne({
+          where: {
+            periode_pelaporan: riwayat_nilai_mahasiswa.id_periode,
+          },
+        });
+
+        // Jika ditemukan, simpan nilainya
+        if (periode) {
+          id_periode = periode.id_periode;
+        }
+
+        await RiwayatNilaiMahasiswa.create({
+          nilai_angka: riwayat_nilai_mahasiswa.nilai_angka,
+          nilai_huruf: riwayat_nilai_mahasiswa.nilai_huruf,
+          nilai_indeks: riwayat_nilai_mahasiswa.nilai_indeks,
+          angkatan: riwayat_nilai_mahasiswa.angkatan,
+          id_registrasi_mahasiswa: riwayat_nilai_mahasiswa.id_registrasi_mahasiswa,
+          id_periode: id_periode,
+          id_kelas: riwayat_nilai_mahasiswa.id_kelas,
+        });
+      }
     }
 
     // Kirim data sebagai respons
     res.status(200).json({
-      message: "Create Riwayat Nilai Mahasiswa Success",
+      message: "Update Riwayat Nilai Mahasiswa Success",
       totalData: dataRiwayatNilaiMahasiswa.length,
-      // dataRiwayatNilaiMahasiswa: dataRiwayatNilaiMahasiswa,
     });
   } catch (error) {
     next(error);

@@ -73,6 +73,10 @@ const KategoriKegiatanController = require("../controllers/api-feeder/kategori-k
 const MahasiswaBimbinganDosenController = require("../controllers/api-feeder/mahasiswa-bimbingan-dosen");
 const UjiMahasiswaController = require("../controllers/api-feeder/uji-mahasiswa");
 
+// controller for api-feeder-update (data)
+const DetailNilaiPerkuliahanKelasUpdateController = require("../controllers/api-feeder-update/detail-nilai-perkuliahan-kelas");
+const RiwayatNilaiMahasiswaUpdateController = require("../controllers/api-feeder-update/riwayat-nilai-mahasiswa");
+
 // all routes
 router.get("/get-agama", checkRole(["admin"]), AgamaController.getAgama);
 router.get("/get-negara", checkRole(["admin"]), NegaraController.getNegara);
@@ -140,5 +144,9 @@ router.get("/get-dosen-pengajar-kelas-kuliah", checkRole(["admin"]), DosenPengaj
 router.get("/get-kategori-kegiatan", checkRole(["admin"]), KategoriKegiatanController.getKategoriKegiatan);
 router.get("/get-mahasiswa-bimbingan-dosen", checkRole(["admin"]), MahasiswaBimbinganDosenController.getMahasiswaBimbinganDosen);
 router.get("/get-uji-mahasiswa", checkRole(["admin"]), UjiMahasiswaController.getUjiMahasiswa);
+
+// routes for api-feeder-update (data)
+router.get("/update-detail-nilai-perkuliahan-kelas", checkRole(["admin"]), DetailNilaiPerkuliahanKelasUpdateController.getDetailNilaiPerkuliahanKelas);
+router.get("/update-riwayat-nilai-mahasiswa", checkRole(["admin"]), RiwayatNilaiMahasiswaUpdateController.getRiwayatNilaiMahasiswa);
 
 module.exports = router;

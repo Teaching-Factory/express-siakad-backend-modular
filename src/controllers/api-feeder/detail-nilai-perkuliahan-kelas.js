@@ -61,7 +61,7 @@ const getDetailNilaiPerkuliahanKelas = async (req, res, next) => {
     res.status(200).json({
       message: "Create Detail Nilai Perkuliahan Kelas Success",
       totalData: dataDetailNilaiPerkuliahanKelas.length,
-      dataDetailNilaiPerkuliahanKelas: dataDetailNilaiPerkuliahanKelas,
+      // dataDetailNilaiPerkuliahanKelas: dataDetailNilaiPerkuliahanKelas,
     });
   } catch (error) {
     next(error);
