@@ -1,19 +1,19 @@
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const { Op } = require("sequelize");
-const { User, Dosen, Role, UserRole, Mahasiswa, Angkatan, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, StatusKeaktifanPegawai, Semester } = require("../../models");
+const { User, Dosen, Role, UserRole, Mahasiswa, Angkatan, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, StatusKeaktifanPegawai, Semester, AdminProdi } = require("../../models");
 
 const getAllUser = async (req, res, next) => {
   try {
     // Ambil semua data user dari database
     const user = await User.findAll({
-      include: [{ model: UserRole, include: [{ model: Role }] }]
+      include: [{ model: UserRole, include: [{ model: Role }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!user || user.length === 0) {
       return res.status(404).json({
-        message: `<===== User Not Found:`
+        message: `<===== User Not Found:`,
       });
     }
 
@@ -21,7 +21,7 @@ const getAllUser = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All User Success",
       jumlahData: user.length,
-      data: user
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -36,7 +36,7 @@ const getAllUserByRoleId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!roleId) {
       return res.status(400).json({
-        message: "Role ID is required"
+        message: "Role ID is required",
       });
     }
 
@@ -47,17 +47,17 @@ const getAllUserByRoleId = async (req, res, next) => {
         {
           model: UserRole,
           where: {
-            id_role: roleId
+            id_role: roleId,
           },
-          include: [{ model: Role }]
-        }
-      ]
+          include: [{ model: Role }],
+        },
+      ],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!user || user.length === 0) {
       return res.status(404).json({
-        message: `<===== User Not Found:`
+        message: `<===== User Not Found:`,
       });
     }
 
@@ -65,7 +65,7 @@ const getAllUserByRoleId = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET All User By Role ID ${roleId} Success`,
       jumlahData: user.length,
-      data: user
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -80,7 +80,7 @@ const getUserById = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!UserId) {
       return res.status(400).json({
-        message: "User ID is required"
+        message: "User ID is required",
       });
     }
 
@@ -90,14 +90,14 @@ const getUserById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!user) {
       return res.status(404).json({
-        message: `<===== User With ID ${UserId} Not Found:`
+        message: `<===== User With ID ${UserId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET User By ID ${UserId} Success:`,
-      data: user
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -184,7 +184,7 @@ const createUser = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!role) {
       return res.status(404).json({
-        message: "<===== Role Not Found:"
+        message: "<===== Role Not Found:",
       });
     }
 
@@ -195,18 +195,18 @@ const createUser = async (req, res, next) => {
       password: hashedPassword,
       hints: password,
       email: email,
-      status: status
+      status: status,
     });
 
     const newUserRole = await UserRole.create({
       id_role: role.id,
-      id_user: newUser.id
+      id_user: newUser.id,
     });
 
     res.status(201).json({
       message: "<===== GENERATE User Success",
       user: newUser,
-      role: newUserRole
+      role: newUserRole,
     });
   } catch (error) {
     next(error);
@@ -261,7 +261,7 @@ const updateUserById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!user) {
       return res.status(404).json({
-        message: "<===== User Not Found:"
+        message: "<===== User Not Found:",
       });
     }
 
@@ -278,14 +278,14 @@ const updateUserById = async (req, res, next) => {
     // get data user role
     const user_role = await UserRole.findOne({
       where: {
-        id_user: user.id
+        id_user: user.id,
       },
-      include: [{ model: User }, { model: Role }]
+      include: [{ model: User }, { model: Role }],
     });
 
     if (!user_role) {
       return res.status(404).json({
-        message: "<===== User Role Not Found:"
+        message: "<===== User Role Not Found:",
       });
     }
 
@@ -297,7 +297,7 @@ const updateUserById = async (req, res, next) => {
 
     res.json({
       message: "UPDATE User Success",
-      dataUser: user
+      dataUser: user,
     });
   } catch (error) {
     next(error);
@@ -315,7 +315,7 @@ const deleteUserById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!user) {
       return res.status(404).json({
-        message: `<===== User With ID ${userId} Not Found:`
+        message: `<===== User With ID ${userId} Not Found:`,
       });
     }
 
@@ -324,7 +324,7 @@ const deleteUserById = async (req, res, next) => {
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: `<===== DELETE User With ID ${userId} Success:`
+      message: `<===== DELETE User With ID ${userId} Success:`,
     });
   } catch (error) {
     next(error);
@@ -337,7 +337,7 @@ const generateUserByMahasiswa = async (req, res, next) => {
 
     const users = []; // Simpan data pengguna yang berhasil dibuat di sini
     const role = await Role.findOne({
-      where: { nama_role: "mahasiswa" }
+      where: { nama_role: "mahasiswa" },
     });
 
     for (const mahasiswa of mahasiswas) {
@@ -345,7 +345,7 @@ const generateUserByMahasiswa = async (req, res, next) => {
 
       // Ambil data mahasiswa berdasarkan id_registrasi_mahasiswa
       const data_mahasiswa = await Mahasiswa.findOne({
-        where: { id_registrasi_mahasiswa }
+        where: { id_registrasi_mahasiswa },
       });
 
       if (!data_mahasiswa) {
@@ -369,12 +369,12 @@ const generateUserByMahasiswa = async (req, res, next) => {
         password: hashedPassword,
         hints: tanggal_lahir_format,
         email: null,
-        status: true
+        status: true,
       });
 
       await UserRole.create({
         id_role: role.id,
-        id_user: newUser.id
+        id_user: newUser.id,
       });
 
       users.push(newUser);
@@ -384,7 +384,7 @@ const generateUserByMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GENERATE All User Mahasiswa Success",
       jumlahData: users.length,
-      data: users
+      data: users,
     });
   } catch (error) {
     next(error);
@@ -397,7 +397,7 @@ const generateUserByDosen = async (req, res, next) => {
 
     const users = []; // Simpan data pengguna yang berhasil dibuat di sini
     const role = await Role.findOne({
-      where: { nama_role: "dosen" }
+      where: { nama_role: "dosen" },
     });
 
     for (const dosen of dosens) {
@@ -405,7 +405,7 @@ const generateUserByDosen = async (req, res, next) => {
 
       // Ambil data dosen berdasarkan id_dosen
       const data_dosen = await Dosen.findOne({
-        where: { id_dosen }
+        where: { id_dosen },
       });
 
       if (!data_dosen) {
@@ -429,12 +429,12 @@ const generateUserByDosen = async (req, res, next) => {
         password: hashedPassword,
         hints: tanggal_lahir_format,
         email: null,
-        status: true
+        status: true,
       });
 
       await UserRole.create({
         id_role: role.id,
-        id_user: newUser.id
+        id_user: newUser.id,
       });
 
       users.push(newUser);
@@ -444,7 +444,7 @@ const generateUserByDosen = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GENERATE All User Dosen Success",
       jumlahData: users.length,
-      data: users
+      data: users,
     });
   } catch (error) {
     next(error);
@@ -460,12 +460,12 @@ const getMahasiswaDontHaveUserByProdiAndAngkatanId = async (req, res, next) => {
     // Periksa apakah ID disediakan
     if (!prodiId) {
       return res.status(400).json({
-        message: "Prodi ID is required"
+        message: "Prodi ID is required",
       });
     }
     if (!angkatanId) {
       return res.status(400).json({
-        message: "Angkatan ID is required"
+        message: "Angkatan ID is required",
       });
     }
 
@@ -482,7 +482,7 @@ const getMahasiswaDontHaveUserByProdiAndAngkatanId = async (req, res, next) => {
 
     // Ambil semua username dari tabel User untuk dibandingkan dengan nim mahasiswa
     const users = await User.findAll({
-      attributes: ["username"]
+      attributes: ["username"],
     });
 
     const userUsernames = users.map((user) => user.username);
@@ -491,15 +491,15 @@ const getMahasiswaDontHaveUserByProdiAndAngkatanId = async (req, res, next) => {
     const mahasiswas = await Mahasiswa.findAll({
       where: {
         id_prodi: prodiId,
-        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` }
+        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
       },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Prodi }, { model: Semester }]
+      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Prodi }, { model: Semester }],
     });
 
     // Jika data mahasiswa yang sesuai tidak ditemukan, kirim respons 404
     if (mahasiswas.length === 0) {
       return res.status(404).json({
-        message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`
+        message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
       });
     }
 
@@ -509,7 +509,7 @@ const getMahasiswaDontHaveUserByProdiAndAngkatanId = async (req, res, next) => {
     res.status(200).json({
       message: `GET Mahasiswa By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
       jumlahData: filteredMahasiswas.length,
-      data: filteredMahasiswas
+      data: filteredMahasiswas,
     });
   } catch (error) {
     next(error);
@@ -520,14 +520,14 @@ const getDosenDontHaveUser = async (req, res, next) => {
   try {
     // Ambil semua username dari tabel User untuk dibandingkan dengan nip dosen
     const users = await User.findAll({
-      attributes: ["username"]
+      attributes: ["username"],
     });
 
     const userUsernames = users.map((user) => user.username);
 
     // Ambil semua data dosen dari database
     const dosen = await Dosen.findAll({
-      include: [{ model: Agama }, { model: StatusKeaktifanPegawai }]
+      include: [{ model: Agama }, { model: StatusKeaktifanPegawai }],
     });
 
     // Filter dosen yang nip-nya ada dalam daftar username dari tabel User
@@ -536,7 +536,7 @@ const getDosenDontHaveUser = async (req, res, next) => {
     // Jika data dosen yang sesuai tidak ditemukan, kirim respons 404
     if (filteredDosen.length === 0) {
       return res.status(404).json({
-        message: "Tidak ada dosen yang belum memiliki user"
+        message: "Tidak ada dosen yang belum memiliki user",
       });
     }
 
@@ -544,7 +544,51 @@ const getDosenDontHaveUser = async (req, res, next) => {
     res.status(200).json({
       message: "<===== GET All Dosen Success",
       jumlahData: filteredDosen.length,
-      data: filteredDosen
+      data: filteredDosen,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUserAdminProdi = async (req, res, next) => {
+  try {
+    // get data role admin prodi
+    const role_admin_prodi = await Role.findOne({
+      where: {
+        nama_role: "admin-prodi",
+      },
+    });
+
+    if (!role_admin_prodi) {
+      return res.status(400).json({
+        message: "Role Admin Prodi not found",
+      });
+    }
+
+    // get data user role
+    const userRoles = await UserRole.findAll({
+      where: {
+        id_role: role_admin_prodi.id,
+      },
+      include: [{ model: User }],
+    });
+
+    // Ambil semua id_user dari tabel AdminProdi
+    const adminProdiIds = await AdminProdi.findAll({
+      attributes: ["id_user"], // Hanya ambil kolom id_user
+    });
+
+    // Buat set untuk id_user yang sudah terdaftar di tabel AdminProdi
+    const adminProdiIdSet = new Set(adminProdiIds.map((ap) => ap.id_user));
+
+    // Filter user roles untuk mendapatkan user admin prodi yang belum terdaftar
+    const unregisteredAdminProdiUsers = userRoles.filter((userRole) => !adminProdiIdSet.has(userRole.id_user));
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET User Admin Prodi yang belum terdaftar Success:`,
+      data: unregisteredAdminProdiUsers,
     });
   } catch (error) {
     next(error);
@@ -570,5 +614,6 @@ module.exports = {
   generateUserByMahasiswa,
   generateUserByDosen,
   getMahasiswaDontHaveUserByProdiAndAngkatanId,
-  getDosenDontHaveUser
+  getDosenDontHaveUser,
+  getUserAdminProdi,
 };

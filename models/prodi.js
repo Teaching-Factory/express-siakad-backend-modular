@@ -40,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       Prodi.hasMany(models.ProdiPeriodePendaftaran, { foreignKey: "id_prodi" });
       Prodi.hasMany(models.Camaba, { foreignKey: "id_prodi_diterima" });
       Prodi.hasMany(models.ProdiCamaba, { foreignKey: "id_prodi" });
+      Prodi.hasMany(models.AdminProdi, { foreignKey: "id_prodi" });
     }
   }
   Prodi.init(

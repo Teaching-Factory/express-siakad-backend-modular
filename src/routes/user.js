@@ -22,4 +22,7 @@ router.get("/get-dosen-dont-have-user", checkRole(["admin", "admin-prodi"]), Use
 router.post("/mahasiswa/generate", checkRole(["admin"]), UserController.generateUserByMahasiswa);
 router.post("/dosen/generate", checkRole(["admin"]), UserController.generateUserByDosen);
 
+// admin prodi
+router.get("/get-user-admin-prodi-not-registered", checkRole(["admin", "admin-prodi"]), UserController.getUserAdminProdi);
+
 module.exports = router;
