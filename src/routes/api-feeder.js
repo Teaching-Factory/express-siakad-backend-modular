@@ -76,6 +76,13 @@ const UjiMahasiswaController = require("../controllers/api-feeder/uji-mahasiswa"
 // controller for api-feeder-update (data)
 const DetailNilaiPerkuliahanKelasUpdateController = require("../controllers/api-feeder-update/detail-nilai-perkuliahan-kelas");
 const RiwayatNilaiMahasiswaUpdateController = require("../controllers/api-feeder-update/riwayat-nilai-mahasiswa");
+const PesertaKelasKuliahUpdateController = require("../controllers/api-feeder-update/peserta-kelas-kuliah");
+const PerkuliahanMahasiswaUpdateController = require("../controllers/api-feeder-update/perkuliahan-mahasiswa");
+const DetailPerkuliahanMahasiswaUpdateController = require("../controllers/api-feeder-update/detail-perkuliahan-mahasiswa");
+const KRSMahasiswaUpdateController = require("../controllers/api-feeder-update/krs-mahasiswa");
+const AktivitasKuliahMahasiswaUpdateController = require("../controllers/api-feeder-update/aktivitas-kuliah-mahasiswa");
+const RekapKHSMahasiswaUpdateController = require("../controllers/api-feeder-update/rekap-khs-mahasiswa");
+const RekapKRSMahasiswaUpdateController = require("../controllers/api-feeder-update/rekap-krs-mahasiswa");
 
 // all routes
 router.get("/get-agama", checkRole(["admin"]), AgamaController.getAgama);
@@ -148,5 +155,12 @@ router.get("/get-uji-mahasiswa", checkRole(["admin"]), UjiMahasiswaController.ge
 // routes for api-feeder-update (data)
 router.get("/update-detail-nilai-perkuliahan-kelas", checkRole(["admin"]), DetailNilaiPerkuliahanKelasUpdateController.getDetailNilaiPerkuliahanKelas);
 router.get("/update-riwayat-nilai-mahasiswa", checkRole(["admin"]), RiwayatNilaiMahasiswaUpdateController.getRiwayatNilaiMahasiswa);
+router.get("/update-peserta-kelas-kuliah", checkRole(["admin"]), PesertaKelasKuliahUpdateController.getPesertaKelasKuliah);
+router.get("/update-perkuliahan-mahasiswa", checkRole(["admin"]), PerkuliahanMahasiswaUpdateController.getPerkuliahanMahasiswa);
+router.get("/update-detail-perkuliahan-mahasiswa", checkRole(["admin"]), DetailPerkuliahanMahasiswaUpdateController.getDetailPerkuliahanMahasiswa);
+router.get("/update-krs-mahasiswa", checkRole(["admin"]), KRSMahasiswaUpdateController.getKRSMahasiswa);
+router.get("/update-aktivitas-kuliah-mahasiswa", checkRole(["admin"]), AktivitasKuliahMahasiswaUpdateController.getAktivitasKuliahMahasiswa);
+router.get("/update-rekap-khs-mahasiswa", checkRole(["admin"]), RekapKHSMahasiswaUpdateController.getRekapKHSMahasiswa);
+router.get("/update-rekap-krs-mahasiswa", checkRole(["admin"]), RekapKRSMahasiswaUpdateController.getRekapKRSMahasiswa);
 
 module.exports = router;

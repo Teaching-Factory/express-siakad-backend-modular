@@ -1,6 +1,6 @@
 const axios = require("axios");
-const { getToken } = require("./get-token");
-const { RekapKHSMahasiswa, Periode, sequelize } = require("../../../models");
+const { getToken } = require("../api-feeder/get-token");
+const { RekapKHSMahasiswa, Periode } = require("../../../models");
 
 const getRekapKHSMahasiswa = async (req, res, next) => {
   try {
@@ -37,13 +37,6 @@ const getRekapKHSMahasiswa = async (req, res, next) => {
     // Tanggapan dari API
     const dataRekapKHSMahasiswa = response.data.data;
 
-    // Truncate data
-    await RekapKHSMahasiswa.destroy({
-      where: {}, // Hapus semua data
-    });
-
-    await sequelize.query("ALTER TABLE rekap_khs_mahasiswas AUTO_INCREMENT = 1");
-
     // Loop untuk menambahkan data ke dalam database
     for (const rekap_khs_mahasiswa of dataRekapKHSMahasiswa) {
       let id_periode = null;
@@ -60,25 +53,37 @@ const getRekapKHSMahasiswa = async (req, res, next) => {
         id_periode = periode.id_periode;
       }
 
-      await RekapKHSMahasiswa.create({
-        angkatan: rekap_khs_mahasiswa.angkatan,
-        nama_periode: rekap_khs_mahasiswa.nama_periode,
-        nilai_angka: rekap_khs_mahasiswa.nilai_angka,
-        nilai_huruf: rekap_khs_mahasiswa.nilai_huruf,
-        nilai_indeks: rekap_khs_mahasiswa.nilai_indeks,
-        sks_x_indeks: rekap_khs_mahasiswa.sks_x_indeks,
-        id_registrasi_mahasiswa: rekap_khs_mahasiswa.id_registrasi_mahasiswa,
-        id_prodi: rekap_khs_mahasiswa.id_prodi,
-        id_periode: id_periode,
-        id_matkul: rekap_khs_mahasiswa.id_matkul,
+      // Periksa apakah data sudah ada
+      const existingData = await RekapKHSMahasiswa.findOne({
+        where: {
+          id_registrasi_mahasiswa: rekap_khs_mahasiswa.id_registrasi_mahasiswa,
+          angkatan: rekap_khs_mahasiswa.angkatan,
+          id_matkul: rekap_khs_mahasiswa.id_matkul,
+          id_periode: periode.id_periode,
+        },
       });
+
+      if (!existingData) {
+        // Jika belum ada, tambahkan data baru
+        await RekapKHSMahasiswa.create({
+          angkatan: rekap_khs_mahasiswa.angkatan,
+          nama_periode: rekap_khs_mahasiswa.nama_periode,
+          nilai_angka: rekap_khs_mahasiswa.nilai_angka,
+          nilai_huruf: rekap_khs_mahasiswa.nilai_huruf,
+          nilai_indeks: rekap_khs_mahasiswa.nilai_indeks,
+          sks_x_indeks: rekap_khs_mahasiswa.sks_x_indeks,
+          id_registrasi_mahasiswa: rekap_khs_mahasiswa.id_registrasi_mahasiswa,
+          id_prodi: rekap_khs_mahasiswa.id_prodi,
+          id_periode: id_periode,
+          id_matkul: rekap_khs_mahasiswa.id_matkul,
+        });
+      }
     }
 
     // Kirim data sebagai respons
     res.status(200).json({
-      message: "Create Rekap KHS Mahasiswa Success",
+      message: "Update Rekap KHS Mahasiswa Success",
       totalData: dataRekapKHSMahasiswa.length,
-      // dataRekapKHSMahasiswa: dataRekapKHSMahasiswa,
     });
   } catch (error) {
     next(error);

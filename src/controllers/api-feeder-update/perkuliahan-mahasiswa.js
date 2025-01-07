@@ -1,6 +1,6 @@
 const axios = require("axios");
-const { getToken } = require("./get-token");
-const { PerkuliahanMahasiswa, sequelize } = require("../../../models");
+const { getToken } = require("../api-feeder/get-token");
+const { PerkuliahanMahasiswa } = require("../../../models");
 
 const getPerkuliahanMahasiswa = async (req, res, next) => {
   try {
@@ -37,34 +37,38 @@ const getPerkuliahanMahasiswa = async (req, res, next) => {
     // Tanggapan dari API
     const dataPerkuliahanMahasiswa = response.data.data;
 
-    // Truncate data
-    await PerkuliahanMahasiswa.destroy({
-      where: {}, // Hapus semua data
-    });
-
-    await sequelize.query("ALTER TABLE perkuliahan_mahasiswas AUTO_INCREMENT = 1");
-
     // Loop untuk menambahkan data ke dalam database
     for (const perkuliahan_mahasiswa of dataPerkuliahanMahasiswa) {
-      await PerkuliahanMahasiswa.create({
-        angkatan: perkuliahan_mahasiswa.angkatan,
-        ips: perkuliahan_mahasiswa.ips,
-        ipk: perkuliahan_mahasiswa.ipk,
-        sks_semester: perkuliahan_mahasiswa.sks_semester,
-        sks_total: perkuliahan_mahasiswa.sks_total,
-        biaya_kuliah_smt: perkuliahan_mahasiswa.biaya_kuliah_smt,
-        id_registrasi_mahasiswa: perkuliahan_mahasiswa.id_registrasi_mahasiswa,
-        id_semester: perkuliahan_mahasiswa.id_semester,
-        id_status_mahasiswa: perkuliahan_mahasiswa.id_status_mahasiswa,
-        id_pembiayaan: perkuliahan_mahasiswa.id_pembiayaan,
+      // Periksa apakah data sudah ada
+      const existingData = await PerkuliahanMahasiswa.findOne({
+        where: {
+          id_semester: perkuliahan_mahasiswa.id_semester,
+          id_registrasi_mahasiswa: perkuliahan_mahasiswa.id_registrasi_mahasiswa,
+          angkatan: perkuliahan_mahasiswa.angkatan,
+        },
       });
+
+      if (!existingData) {
+        // Jika belum ada, tambahkan data baru
+        await PerkuliahanMahasiswa.create({
+          angkatan: perkuliahan_mahasiswa.angkatan,
+          ips: perkuliahan_mahasiswa.ips,
+          ipk: perkuliahan_mahasiswa.ipk,
+          sks_semester: perkuliahan_mahasiswa.sks_semester,
+          sks_total: perkuliahan_mahasiswa.sks_total,
+          biaya_kuliah_smt: perkuliahan_mahasiswa.biaya_kuliah_smt,
+          id_registrasi_mahasiswa: perkuliahan_mahasiswa.id_registrasi_mahasiswa,
+          id_semester: perkuliahan_mahasiswa.id_semester,
+          id_status_mahasiswa: perkuliahan_mahasiswa.id_status_mahasiswa,
+          id_pembiayaan: perkuliahan_mahasiswa.id_pembiayaan,
+        });
+      }
     }
 
     // Kirim data sebagai respons
     res.status(200).json({
-      message: "Create Perkuliahan Mahasiswa Success",
+      message: "Update Perkuliahan Mahasiswa Success",
       totalData: dataPerkuliahanMahasiswa.length,
-      // dataPerkuliahanMahasiswa: dataPerkuliahanMahasiswa,
     });
   } catch (error) {
     next(error);

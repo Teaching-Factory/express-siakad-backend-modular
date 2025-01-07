@@ -1,8 +1,8 @@
 const axios = require("axios");
-const { getToken } = require("./get-token");
-const { PesertaKelasKuliah, sequelize } = require("../../../models");
+const { getToken } = require("../api-feeder/get-token");
+const { KRSMahasiswa } = require("../../../models");
 
-const getPesertaKelasKuliah = async (req, res, next) => {
+const getKRSMahasiswa = async (req, res, next) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
@@ -25,7 +25,7 @@ const getPesertaKelasKuliah = async (req, res, next) => {
     const angkatanFilter = Array.isArray(angkatan) ? angkatan.map((year) => `angkatan = '${year}'`).join(" OR ") : `angkatan = '${angkatan}'`;
 
     const requestBody = {
-      act: "GetPesertaKelasKuliah",
+      act: "GetKRSMahasiswa",
       token: `${token}`,
       filter: angkatanFilter,
       order: "id_registrasi_mahasiswa",
@@ -35,29 +35,37 @@ const getPesertaKelasKuliah = async (req, res, next) => {
     const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
-    const dataPesertaKelasKuliah = response.data.data;
-
-    // Truncate data
-    await PesertaKelasKuliah.destroy({
-      where: {}, // Hapus semua data
-    });
-
-    await sequelize.query("ALTER TABLE peserta_kelas_kuliahs AUTO_INCREMENT = 1");
+    const dataKRSMahasiswa = response.data.data;
 
     // Loop untuk menambahkan data ke dalam database
-    for (const peserta_kelas_kuliah of dataPesertaKelasKuliah) {
-      await PesertaKelasKuliah.create({
-        angkatan: peserta_kelas_kuliah.angkatan,
-        id_kelas_kuliah: peserta_kelas_kuliah.id_kelas_kuliah,
-        id_registrasi_mahasiswa: peserta_kelas_kuliah.id_registrasi_mahasiswa,
+    for (const krs_mahasiswa of dataKRSMahasiswa) {
+      // Periksa apakah data sudah ada
+      const existingData = await KRSMahasiswa.findOne({
+        where: {
+          id_semester: krs_mahasiswa.id_periode,
+          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+          id_kelas: krs_mahasiswa.id_kelas,
+          angkatan: krs_mahasiswa.angkatan,
+        },
       });
+
+      if (!existingData) {
+        // Jika belum ada, tambahkan data baru
+        await KRSMahasiswa.create({
+          angkatan: krs_mahasiswa.angkatan,
+          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+          id_semester: krs_mahasiswa.id_periode,
+          id_prodi: krs_mahasiswa.id_prodi,
+          id_matkul: krs_mahasiswa.id_matkul,
+          id_kelas: krs_mahasiswa.id_kelas,
+        });
+      }
     }
 
     // Kirim data sebagai respons
     res.status(200).json({
-      message: "Create Peserta Kelas Kuliah Success",
-      totalData: dataPesertaKelasKuliah.length,
-      // dataPesertaKelasKuliah: dataPesertaKelasKuliah,
+      message: "Update KRS Mahasiswa Success",
+      totalData: dataKRSMahasiswa.length,
     });
   } catch (error) {
     next(error);
@@ -65,5 +73,5 @@ const getPesertaKelasKuliah = async (req, res, next) => {
 };
 
 module.exports = {
-  getPesertaKelasKuliah,
+  getKRSMahasiswa,
 };

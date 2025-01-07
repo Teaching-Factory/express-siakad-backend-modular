@@ -45,13 +45,13 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
     await sequelize.query("ALTER TABLE rekap_krs_mahasiswas AUTO_INCREMENT = 1");
 
     // Loop untuk menambahkan data ke dalam database
-    for (const rekap_khs_mahasiswa of dataRekapKRSMahasiswa) {
+    for (const rekap_krs_mahasiswa of dataRekapKRSMahasiswa) {
       let id_periode = null;
 
       // Periksa apakah id_periode atau periode_pelaporan ada di Periode
       const periode = await Periode.findOne({
         where: {
-          periode_pelaporan: rekap_khs_mahasiswa.id_periode,
+          periode_pelaporan: rekap_krs_mahasiswa.id_periode,
         },
       });
 
@@ -61,13 +61,13 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
       }
 
       await RekapKRSMahasiswa.create({
-        nama_periode: rekap_khs_mahasiswa.nama_periode,
-        angkatan: rekap_khs_mahasiswa.angkatan,
-        id_prodi: rekap_khs_mahasiswa.id_prodi,
+        nama_periode: rekap_krs_mahasiswa.nama_periode,
+        angkatan: rekap_krs_mahasiswa.angkatan,
+        id_prodi: rekap_krs_mahasiswa.id_prodi,
         id_periode: id_periode,
-        id_registrasi_mahasiswa: rekap_khs_mahasiswa.id_registrasi_mahasiswa,
-        id_matkul: rekap_khs_mahasiswa.id_matkul,
-        id_semester: rekap_khs_mahasiswa.id_semester,
+        id_registrasi_mahasiswa: rekap_krs_mahasiswa.id_registrasi_mahasiswa,
+        id_matkul: rekap_krs_mahasiswa.id_matkul,
+        id_semester: rekap_krs_mahasiswa.id_semester,
       });
     }
 
@@ -75,7 +75,7 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create Rekap KRS Mahasiswa Success",
       totalData: dataRekapKRSMahasiswa.length,
-      dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
+      // dataRekapKRSMahasiswa: dataRekapKRSMahasiswa,
     });
   } catch (error) {
     next(error);

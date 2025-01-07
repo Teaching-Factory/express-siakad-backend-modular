@@ -58,7 +58,7 @@ const getKRSMahasiswa = async (req, res, next) => {
     res.status(200).json({
       message: "Create KRS Mahasiswa Success",
       totalData: dataKRSMahasiswa.length,
-      dataKRSMahasiswa: dataKRSMahasiswa,
+      // dataKRSMahasiswa: dataKRSMahasiswa,
     });
   } catch (error) {
     next(error);

@@ -1,6 +1,6 @@
 const axios = require("axios");
-const { getToken } = require("./get-token");
-const { PesertaKelasKuliah, sequelize } = require("../../../models");
+const { getToken } = require("../api-feeder/get-token");
+const { PesertaKelasKuliah } = require("../../../models");
 
 const getPesertaKelasKuliah = async (req, res, next) => {
   try {
@@ -37,27 +37,31 @@ const getPesertaKelasKuliah = async (req, res, next) => {
     // Tanggapan dari API
     const dataPesertaKelasKuliah = response.data.data;
 
-    // Truncate data
-    await PesertaKelasKuliah.destroy({
-      where: {}, // Hapus semua data
-    });
-
-    await sequelize.query("ALTER TABLE peserta_kelas_kuliahs AUTO_INCREMENT = 1");
-
     // Loop untuk menambahkan data ke dalam database
     for (const peserta_kelas_kuliah of dataPesertaKelasKuliah) {
-      await PesertaKelasKuliah.create({
-        angkatan: peserta_kelas_kuliah.angkatan,
-        id_kelas_kuliah: peserta_kelas_kuliah.id_kelas_kuliah,
-        id_registrasi_mahasiswa: peserta_kelas_kuliah.id_registrasi_mahasiswa,
+      // Periksa apakah data sudah ada
+      const existingData = await PesertaKelasKuliah.findOne({
+        where: {
+          id_kelas_kuliah: peserta_kelas_kuliah.id_kelas_kuliah,
+          id_registrasi_mahasiswa: peserta_kelas_kuliah.id_registrasi_mahasiswa,
+          angkatan: peserta_kelas_kuliah.angkatan,
+        },
       });
+
+      if (!existingData) {
+        // Jika belum ada, tambahkan data baru
+        await PesertaKelasKuliah.create({
+          angkatan: peserta_kelas_kuliah.angkatan,
+          id_kelas_kuliah: peserta_kelas_kuliah.id_kelas_kuliah,
+          id_registrasi_mahasiswa: peserta_kelas_kuliah.id_registrasi_mahasiswa,
+        });
+      }
     }
 
     // Kirim data sebagai respons
     res.status(200).json({
-      message: "Create Peserta Kelas Kuliah Success",
+      message: "Update Peserta Kelas Kuliah Success",
       totalData: dataPesertaKelasKuliah.length,
-      // dataPesertaKelasKuliah: dataPesertaKelasKuliah,
     });
   } catch (error) {
     next(error);
