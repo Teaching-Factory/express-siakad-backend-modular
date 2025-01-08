@@ -1,18 +1,19 @@
 const { syncTahunAjaran } = require("../../controllers/sync-feeder/tahun-ajaran");
 
-async function singkronTahunAjaran(req, res, next) {
+async function singkronTahunAjaran() {
   console.log("Cronjob singkron tahun ajaran started");
 
   try {
     // proses singkron tahun ajaran
-    await syncTahunAjaran();
+    await syncTahunAjaran({}, { status: () => ({ json: () => {} }) }, (error) => {
+      if (error) {
+        console.error("Error during syncTahunAjaran:", error.message);
+      }
+    });
 
     console.log("Cronjob singkron tahun ajaran finished");
   } catch (error) {
-    if (error.response) {
-      console.error("Error saat cronjob singkron tahun ajaran dijalankan:", error.message);
-    }
-    next(error);
+    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
   }
 }
 

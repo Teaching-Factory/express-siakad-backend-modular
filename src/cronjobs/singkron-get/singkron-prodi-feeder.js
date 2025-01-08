@@ -1,18 +1,19 @@
 const { syncProdi } = require("../../controllers/sync-feeder/prodi");
 
-async function singkronProdi(req, res, next) {
+async function singkronProdi() {
   console.log("Cronjob singkron prodi started");
 
   try {
     // proses singkron prodi
-    await syncProdi();
+    await syncProdi({}, { status: () => ({ json: () => {} }) }, (error) => {
+      if (error) {
+        console.error("Error during syncProdi:", error.message);
+      }
+    });
 
     console.log("Cronjob singkron prodi finished");
   } catch (error) {
-    if (error.response) {
-      console.error("Error saat cronjob singkron prodi dijalankan:", error.message);
-    }
-    next(error);
+    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
   }
 }
 

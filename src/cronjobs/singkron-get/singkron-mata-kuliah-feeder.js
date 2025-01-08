@@ -1,18 +1,19 @@
 const { syncListMataKuliah } = require("../../controllers/sync-feeder/list-mata-kuliah");
 
-async function singkronMataKuliah(req, res, next) {
+async function singkronMataKuliah() {
   console.log("Cronjob singkron mata kuliah started");
 
   try {
     // proses singkron mata kuliah
-    await syncListMataKuliah();
+    await syncListMataKuliah({}, { status: () => ({ json: () => {} }) }, (error) => {
+      if (error) {
+        console.error("Error during syncListMataKuliah:", error.message);
+      }
+    });
 
     console.log("Cronjob singkron mata kuliah finished");
   } catch (error) {
-    if (error.response) {
-      console.error("Error saat cronjob singkron mata kuliah dijalankan:", error.message);
-    }
-    next(error);
+    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
   }
 }
 

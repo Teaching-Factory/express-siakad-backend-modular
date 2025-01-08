@@ -1,18 +1,19 @@
 const { syncSemester } = require("../../controllers/sync-feeder/semester");
 
-async function singkronSemester(req, res, next) {
+async function singkronSemester() {
   console.log("Cronjob singkron semester started");
 
   try {
     // proses singkron semester
-    await syncSemester();
+    await syncSemester({}, { status: () => ({ json: () => {} }) }, (error) => {
+      if (error) {
+        console.error("Error during syncSemester:", error.message);
+      }
+    });
 
     console.log("Cronjob singkron semester finished");
   } catch (error) {
-    if (error.response) {
-      console.error("Error saat cronjob singkron semester dijalankan:", error.message);
-    }
-    next(error);
+    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
   }
 }
 

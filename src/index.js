@@ -185,10 +185,12 @@ const singkronSubstansi = require("./cronjobs/singkron-get/singkron-substansi-fe
 const singkronMataKuliah = require("./cronjobs/singkron-get/singkron-mata-kuliah-feeder");
 const singkronSemester = require("./cronjobs/singkron-get/singkron-semester-feeder");
 const singkronKurikulum = require("./cronjobs/singkron-get/singkron-kurikulum-feeder");
+const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
+const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 
 const rule = new schedule.RecurrenceRule();
-rule.hour = 0;
-rule.minute = 0;
+rule.hour = 13;
+rule.minute = 58;
 
 // Atur penjadwalan tugas
 schedule.scheduleJob(rule, async function () {
@@ -204,10 +206,12 @@ schedule.scheduleJob(rule, async function () {
     await singkronMataKuliah();
     await singkronSemester();
     await singkronKurikulum();
+    await singkronSekolah();
 
     // Singkron Feeder CRUD
+    // await singkronKelasKuliah();
 
-    console.log("Cronjob selesai dijalankan.");
+    console.log("Semua Cronjob selesai dijalankan.");
   } catch (error) {
     console.error("Error during cronjob execution:", error);
   }
