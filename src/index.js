@@ -177,16 +177,40 @@ app.use("/src/storage", express.static(path.join(__dirname, "storage")));
 
 // Import cronjob blacklisted token
 const schedule = require("node-schedule");
-const cleanExpiredTokens = require("./cronjobs/cronjobScheduler");
+// const cleanExpiredTokens = require("./cronjobs/cronjobScheduler");
+const singkronDosen = require("./cronjobs/singkron-get/singkron-dosen-feeder");
+const singkronTahunAjaran = require("./cronjobs/singkron-get/singkron-tahun-ajaran-feeder");
+const singkronProdi = require("./cronjobs/singkron-get/singkron-prodi-feeder");
+const singkronSubstansi = require("./cronjobs/singkron-get/singkron-substansi-feeder");
+const singkronMataKuliah = require("./cronjobs/singkron-get/singkron-mata-kuliah-feeder");
+const singkronSemester = require("./cronjobs/singkron-get/singkron-semester-feeder");
+const singkronKurikulum = require("./cronjobs/singkron-get/singkron-kurikulum-feeder");
 
 const rule = new schedule.RecurrenceRule();
 rule.hour = 0;
 rule.minute = 0;
 
 // Atur penjadwalan tugas
-schedule.scheduleJob(rule, function () {
-  // Tambahkan kode untuk tugas yang ingin dijalankan
-  cleanExpiredTokens();
+schedule.scheduleJob(rule, async function () {
+  try {
+    // Cronjob dijalankan di jam 00:00
+    // await cleanExpiredTokens();
+
+    // Singkron Feeder Get
+    await singkronDosen();
+    await singkronTahunAjaran();
+    await singkronProdi();
+    await singkronSubstansi();
+    await singkronMataKuliah();
+    await singkronSemester();
+    await singkronKurikulum();
+
+    // Singkron Feeder CRUD
+
+    console.log("Cronjob selesai dijalankan.");
+  } catch (error) {
+    console.error("Error during cronjob execution:", error);
+  }
 });
 
 const corsOptions = {

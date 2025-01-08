@@ -98,7 +98,7 @@ const createUserGuidePMB = async (req, res, next) => {
       } else {
         // Jika tipe file valid, bentuk URL file dan set ke variabel file
         const protocol = process.env.PROTOCOL || "http";
-        const host = process.env.HOST || "localhost";
+        const host = process.env.DB_HOST || "localhost";
         const port = process.env.PORT || 4000;
 
         const fileName = req.file.filename;
@@ -163,7 +163,7 @@ const updateUserGuidePMB = async (req, res, next) => {
         return res.status(400).json({ message: "File type not supported" });
       } else {
         const protocol = process.env.PROTOCOL || "http";
-        const host = process.env.HOST || "localhost";
+        const host = process.env.DB_HOST || "localhost";
         const port = process.env.PORT || 4000;
 
         const fileName = req.file.filename;
@@ -228,5 +228,5 @@ module.exports = {
   getUserGuidePMBAktif,
   createUserGuidePMB,
   updateUserGuidePMB,
-  getUserGuidePMBGuestAktif
+  getUserGuidePMBGuestAktif,
 };

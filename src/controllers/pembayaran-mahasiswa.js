@@ -9,23 +9,23 @@ const getAllPembayaranMahasiswaByTagihanId = async (req, res, next) => {
 
     if (!tagihanMahasiswaId) {
       return res.status(400).json({
-        message: "Tagihan Mahasiswa ID is required"
+        message: "Tagihan Mahasiswa ID is required",
       });
     }
 
     // Ambil semua data pembayaran_mahasiswa dari database
     const pembayaran_mahasiswa = await PembayaranMahasiswa.findAll({
       where: {
-        id_tagihan_mahasiswa: tagihanMahasiswaId
+        id_tagihan_mahasiswa: tagihanMahasiswaId,
       },
-      include: [{ model: TagihanMahasiswa }]
+      include: [{ model: TagihanMahasiswa }],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET All Pembayaran Mahasiswa By Id ${tagihanMahasiswaId} Success`,
       jumlahData: pembayaran_mahasiswa.length,
-      data: pembayaran_mahasiswa
+      data: pembayaran_mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -37,16 +37,16 @@ const getAllPembayaranMahasiswaDikonfirmasi = async (req, res, next) => {
     // Ambil semua data pembayaran_mahasiswa dari database
     const pembayaran_mahasiswa = await PembayaranMahasiswa.findAll({
       where: {
-        status_pembayaran: "Dikonfirmasi"
+        status_pembayaran: "Dikonfirmasi",
       },
-      include: [{ model: TagihanMahasiswa, include: [{ model: JenisTagihan }, { model: Periode }, { model: Mahasiswa }] }]
+      include: [{ model: TagihanMahasiswa, include: [{ model: JenisTagihan }, { model: Periode }, { model: Mahasiswa }] }],
     });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET All Pembayaran Mahasiswa Dikonfirmasi Success`,
       jumlahData: pembayaran_mahasiswa.length,
-      data: pembayaran_mahasiswa
+      data: pembayaran_mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -60,26 +60,26 @@ const getPembayaranMahasiswaById = async (req, res, next) => {
 
     if (!pembayaranMahasiswaId) {
       return res.status(400).json({
-        message: "Pembayaran Mahasiswa ID is required"
+        message: "Pembayaran Mahasiswa ID is required",
       });
     }
 
     // Cari data pembayaran_mahasiswa berdasarkan ID di database
     const pembayaran_mahasiswa = await PembayaranMahasiswa.findByPk(pembayaranMahasiswaId, {
-      include: [{ model: TagihanMahasiswa }]
+      include: [{ model: TagihanMahasiswa }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!pembayaran_mahasiswa) {
       return res.status(404).json({
-        message: `<===== Pembayaran Mahasiswa With ID ${pembayaranMahasiswaId} Not Found:`
+        message: `<===== Pembayaran Mahasiswa With ID ${pembayaranMahasiswaId} Not Found:`,
       });
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Pembayaran Mahasiswa By ID ${pembayaranMahasiswaId} Success:`,
-      data: pembayaran_mahasiswa
+      data: pembayaran_mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -92,7 +92,7 @@ const createPembayaranMahasiswaByTagihanId = async (req, res, next) => {
 
     if (!tagihanMahasiswaId) {
       return res.status(400).json({
-        message: "Tagihan Mahasiswa ID is required"
+        message: "Tagihan Mahasiswa ID is required",
       });
     }
 
@@ -101,7 +101,7 @@ const createPembayaranMahasiswaByTagihanId = async (req, res, next) => {
 
     if (req.file) {
       const protocol = process.env.PROTOCOL || "http";
-      const host = process.env.HOST || "localhost";
+      const host = process.env.DB_HOST || "localhost";
       const port = process.env.PORT || 4000;
 
       // Path file yang di-upload
@@ -114,13 +114,13 @@ const createPembayaranMahasiswaByTagihanId = async (req, res, next) => {
     const newPembayaranMahasiswa = await PembayaranMahasiswa.create({
       upload_bukti_tf,
       status_pembayaran: "Menunggu Konfirmasi",
-      id_tagihan_mahasiswa: tagihanMahasiswaId
+      id_tagihan_mahasiswa: tagihanMahasiswaId,
     });
 
     // Kirim respons JSON jika berhasil
     res.status(201).json({
       message: "<===== CREATE Pembayaran Mahasiswa Success",
-      data: newPembayaranMahasiswa
+      data: newPembayaranMahasiswa,
     });
   } catch (error) {
     next(error);
@@ -141,7 +141,7 @@ const updatePembayaranMahasiswaById = async (req, res, next) => {
 
     if (!pembayaranMahasiswaId) {
       return res.status(400).json({
-        message: "Pembayaran Mahasiswa ID is required"
+        message: "Pembayaran Mahasiswa ID is required",
       });
     }
 
@@ -159,7 +159,7 @@ const updatePembayaranMahasiswaById = async (req, res, next) => {
 
     res.json({
       message: "UPDATE Pembayaran Mahasiswa Success",
-      dataPembayaranMahasiswa: pembayaran_mahasiswa
+      dataPembayaranMahasiswa: pembayaran_mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -180,7 +180,7 @@ const updateStatusPembayaranMahasiswaById = async (req, res, next) => {
 
     if (!pembayaranMahasiswaId) {
       return res.status(400).json({
-        message: "Pembayaran Mahasiswa ID is required"
+        message: "Pembayaran Mahasiswa ID is required",
       });
     }
 
@@ -200,8 +200,8 @@ const updateStatusPembayaranMahasiswaById = async (req, res, next) => {
       // update tagihan mahasiswa
       const tagihan_mahasiswa = await TagihanMahasiswa.findOne({
         where: {
-          id_tagihan_mahasiswa: pembayaran_mahasiswa.id_tagihan_mahasiswa
-        }
+          id_tagihan_mahasiswa: pembayaran_mahasiswa.id_tagihan_mahasiswa,
+        },
       });
 
       // Update data tagihan mahasiswa
@@ -210,7 +210,7 @@ const updateStatusPembayaranMahasiswaById = async (req, res, next) => {
 
       // get data status mahasiswa A
       const status_mahasiswa_a = await StatusMahasiswa.findOne({
-        id_status_mahasiswa: "A"
+        id_status_mahasiswa: "A",
       });
 
       if (!status_mahasiswa_a) {
@@ -220,13 +220,13 @@ const updateStatusPembayaranMahasiswaById = async (req, res, next) => {
       // get data setting global semester
       const setting_global_semester = await SettingGlobalSemester.findOne({
         where: {
-          status: true
-        }
+          status: true,
+        },
       });
 
       if (!setting_global_semester) {
         return res.status(404).json({
-          message: "Setting Global Semester Aktif not found"
+          message: "Setting Global Semester Aktif not found",
         });
       }
       const mahasiswa = await Mahasiswa.findByPk(tagihan_mahasiswa.id_registrasi_mahasiswa);
@@ -243,7 +243,7 @@ const updateStatusPembayaranMahasiswaById = async (req, res, next) => {
 
     res.json({
       message: "UPDATE Pembayaran Mahasiswa Success",
-      dataPembayaranMahasiswa: pembayaran_mahasiswa
+      dataPembayaranMahasiswa: pembayaran_mahasiswa,
     });
   } catch (error) {
     next(error);
@@ -257,7 +257,7 @@ const deletePembayaranMahasiswaById = async (req, res, next) => {
 
     if (!pembayaranMahasiswaId) {
       return res.status(400).json({
-        message: "Pembayaran Mahasiswa ID is required"
+        message: "Pembayaran Mahasiswa ID is required",
       });
     }
 
@@ -267,14 +267,14 @@ const deletePembayaranMahasiswaById = async (req, res, next) => {
     // Jika data tidak ditemukan, kirim respons 404
     if (!pembayaran_mahasiswa) {
       return res.status(404).json({
-        message: `<===== Pembayaran Mahasiswa With ID ${pembayaranMahasiswaId} Not Found:`
+        message: `<===== Pembayaran Mahasiswa With ID ${pembayaranMahasiswaId} Not Found:`,
       });
     }
 
     // Hapus foto yang telah disimpan
     if (pembayaran_mahasiswa.upload_bukti_tf) {
       // Extract the file path from the URL
-      const filePath = pembayaran_mahasiswa.upload_bukti_tf.replace(`${process.env.PROTOCOL || "http"}://${process.env.HOST || "localhost"}:${process.env.PORT || "4000"}`, "");
+      const filePath = pembayaran_mahasiswa.upload_bukti_tf.replace(`${process.env.PROTOCOL || "http"}://${process.env.DB_HOST || "localhost"}:${process.env.PORT || "4000"}`, "");
       const absoluteFilePath = path.join(__dirname, "../..", filePath);
 
       if (fs.existsSync(absoluteFilePath)) {
@@ -287,7 +287,7 @@ const deletePembayaranMahasiswaById = async (req, res, next) => {
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: `<===== DELETE Pembayaran Mahasiswa With ID ${pembayaranMahasiswaId} Success:`
+      message: `<===== DELETE Pembayaran Mahasiswa With ID ${pembayaranMahasiswaId} Success:`,
     });
   } catch (error) {
     next(error);
@@ -301,15 +301,15 @@ const getPembayaranMahasiswaByMahasiswaId = async (req, res, next) => {
 
     if (!idRegistrasiMahasiswa) {
       return res.status(400).json({
-        message: "ID Registrasi Mahasiswa is required"
+        message: "ID Registrasi Mahasiswa is required",
       });
     }
 
     // Cari data tagihan_mahasiswa berdasarkan id_registrasi_mahasiswa di database
     const tagihanMahasiswa = await TagihanMahasiswa.findAll({
       where: {
-        id_registrasi_mahasiswa: idRegistrasiMahasiswa
-      }
+        id_registrasi_mahasiswa: idRegistrasiMahasiswa,
+      },
     });
 
     // Ambil ID tagihan mahasiswa dari hasil query tagihanMahasiswa
@@ -318,15 +318,15 @@ const getPembayaranMahasiswaByMahasiswaId = async (req, res, next) => {
     // Cari data pembayaran_mahasiswa berdasarkan id_tagihan_mahasiswa di database
     const pembayaranMahasiswa = await PembayaranMahasiswa.findAll({
       where: {
-        id_tagihan_mahasiswa: idTagihanMahasiswa
+        id_tagihan_mahasiswa: idTagihanMahasiswa,
       },
-      include: [{ model: TagihanMahasiswa }]
+      include: [{ model: TagihanMahasiswa }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!pembayaranMahasiswa || pembayaranMahasiswa.length === 0) {
       return res.status(404).json({
-        message: `<===== Pembayaran Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`
+        message: `<===== Pembayaran Mahasiswa With ID ${idRegistrasiMahasiswa} Not Found:`,
       });
     }
 
@@ -334,7 +334,7 @@ const getPembayaranMahasiswaByMahasiswaId = async (req, res, next) => {
     res.status(200).json({
       message: `<===== GET Pembayaran Mahasiswa By ID ${idRegistrasiMahasiswa} Success:`,
       jumlahData: pembayaranMahasiswa.length,
-      data: pembayaranMahasiswa
+      data: pembayaranMahasiswa,
     });
   } catch (error) {
     next(error);
@@ -349,5 +349,5 @@ module.exports = {
   updatePembayaranMahasiswaById,
   updateStatusPembayaranMahasiswaById,
   deletePembayaranMahasiswaById,
-  getPembayaranMahasiswaByMahasiswaId
+  getPembayaranMahasiswaByMahasiswaId,
 };

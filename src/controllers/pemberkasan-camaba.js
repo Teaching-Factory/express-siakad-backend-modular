@@ -172,7 +172,7 @@ const updatePemberkasanCamabaActiveById = async (req, res, next) => {
 
       // Generate URL untuk file yang di-upload
       const protocol = process.env.PROTOCOL || "http";
-      const host = process.env.HOST || "localhost";
+      const host = process.env.DB_HOST || "localhost";
       const port = process.env.PORT || 4000;
 
       const fileName = req.file.filename;
