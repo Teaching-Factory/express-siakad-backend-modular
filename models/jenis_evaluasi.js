@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel child
       JenisEvaluasi.hasMany(models.DosenPengajarKelasKuliah, { foreignKey: "id_jenis_evaluasi" });
+      JenisEvaluasi.hasMany(models.RencanaEvaluasi, { foreignKey: "id_jenis_evaluasi" });
+      JenisEvaluasi.hasMany(models.KomponenEvaluasiKelas, { foreignKey: "id_jenis_evaluasi" });
     }
   }
   JenisEvaluasi.init(

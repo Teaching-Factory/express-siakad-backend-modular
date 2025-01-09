@@ -186,7 +186,7 @@ const singkronMataKuliah = require("./cronjobs/singkron-get/singkron-mata-kuliah
 const singkronSemester = require("./cronjobs/singkron-get/singkron-semester-feeder");
 const singkronKurikulum = require("./cronjobs/singkron-get/singkron-kurikulum-feeder");
 const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
-const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
+// const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 
 const rule = new schedule.RecurrenceRule();
 rule.hour = 13;

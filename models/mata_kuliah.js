@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class ListMataKuliah extends Model {
+  class MataKuliah extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,21 +9,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // relasi tabel parent
-      ListMataKuliah.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
+      MataKuliah.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
 
       // relasi tabel child
-      ListMataKuliah.hasMany(models.MataKuliah, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.MatkulKurikulum, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.KelasKuliah, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.KRSMahasiswa, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.KonversiKampusMerdeka, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.TranskripMahasiswa, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.RekapKHSMahasiswa, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_matkul" });
-      ListMataKuliah.hasMany(models.PelimpahanMataKuliah, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.MatkulKurikulum, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.KelasKuliah, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.KRSMahasiswa, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.KonversiKampusMerdeka, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.TranskripMahasiswa, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.RekapKHSMahasiswa, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.PelimpahanMataKuliah, { foreignKey: "id_matkul" });
+      MataKuliah.hasMany(models.RencanaEvaluasi, { foreignKey: "id_matkul" });
     }
   }
-  ListMataKuliah.init(
+  MataKuliah.init(
     {
       id_matkul: {
         allowNull: false,
@@ -132,5 +132,5 @@ module.exports = (sequelize, DataTypes) => {
       },
     }
   );
-  return ListMataKuliah;
+  return MataKuliah;
 };

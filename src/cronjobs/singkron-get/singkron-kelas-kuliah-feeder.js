@@ -17,7 +17,11 @@ async function singkronKelasKuliah() {
     }
 
     // proses singkron kelas kuliah
-    await matchingSyncDataKelasKuliah(setting_global_semester_aktif.id_semester_aktif);
+    await matchingSyncDataKelasKuliah(setting_global_semester_aktif.id_semester_aktif, {}, { status: () => ({ json: () => {} }) }, (error) => {
+      if (error) {
+        console.error("Error during matchingSyncDataKelasKuliah:", error.message);
+      }
+    });
 
     // get data kelas kuliah sync yang belum di singkron dengan jenis singkron create dan delete
     const kelas_kuliah_syncs = await KelasKuliahSync.findAll({
@@ -31,7 +35,12 @@ async function singkronKelasKuliah() {
     // Ubah data menjadi format yang dibutuhkan (request body)
     const formattedData = kelas_kuliah_syncs.map((kelas) => ({ id: kelas.id }));
 
-    await syncKelasKuliahs(formattedData);
+    // proses singkron kelas kuliah
+    await syncKelasKuliahs(formattedData, {}, { status: () => ({ json: () => {} }) }, (error) => {
+      if (error) {
+        console.error("Error during syncKelasKuliahs:", error.message);
+      }
+    });
 
     console.log("Cronjob singkron kelas kuliah finished");
   } catch (error) {
