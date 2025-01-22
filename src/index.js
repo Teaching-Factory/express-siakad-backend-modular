@@ -155,6 +155,8 @@ const detailNilaiPerkuliahanKelasSyncRoutes = require("./routes/detail-nilai-per
 const tahapTesCamabaRoutes = require("./routes/tahap-tes-camaba");
 const angkatanGuestRoutes = require("./routes/angkatan-guest");
 const adminProdiRoutes = require("./routes/admin-prodi");
+const jenisEvaluasiRoutes = require("./routes/jenis-evaluasi");
+const rencanaEvaluasiRoutes = require("./routes/rencana-evaluasi");
 
 // route api local not done yet
 // -
@@ -387,6 +389,8 @@ app.use("/detail-nilai-perkuliahan-kelas-sync", checkToken, detailNilaiPerkuliah
 app.use("/tahap-tes-camaba", checkToken, tahapTesCamabaRoutes);
 app.use("/angkatan-guest", angkatanGuestRoutes);
 app.use("/admin-prodi", checkToken, adminProdiRoutes);
+app.use("/jenis-evaluasi", checkToken, jenisEvaluasiRoutes);
+app.use("/rencana-evaluasi", checkToken, rencanaEvaluasiRoutes);
 
 // route api local not done yet
 // -
