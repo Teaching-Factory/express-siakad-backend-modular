@@ -157,6 +157,7 @@ const angkatanGuestRoutes = require("./routes/angkatan-guest");
 const adminProdiRoutes = require("./routes/admin-prodi");
 const jenisEvaluasiRoutes = require("./routes/jenis-evaluasi");
 const rencanaEvaluasiRoutes = require("./routes/rencana-evaluasi");
+const komponenEvaluasiKelasRoutes = require("./routes/komponen-evaluasi-kelas");
 
 // route api local not done yet
 // -
@@ -391,6 +392,7 @@ app.use("/angkatan-guest", angkatanGuestRoutes);
 app.use("/admin-prodi", checkToken, adminProdiRoutes);
 app.use("/jenis-evaluasi", checkToken, jenisEvaluasiRoutes);
 app.use("/rencana-evaluasi", checkToken, rencanaEvaluasiRoutes);
+app.use("/komponen-evaluasi-kelas", checkToken, komponenEvaluasiKelasRoutes);
 
 // route api local not done yet
 // -
