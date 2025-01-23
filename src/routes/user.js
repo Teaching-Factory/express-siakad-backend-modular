@@ -24,5 +24,6 @@ router.post("/dosen/generate", checkRole(["admin"]), UserController.generateUser
 
 // admin prodi
 router.get("/get-user-admin-prodi-not-registered", checkRole(["admin", "admin-prodi"]), UserController.getUserAdminProdi);
+router.get("/checking-admin-prodi-user", checkRole(["admin-prodi"]), UserController.checkingAdminProdiUser);
 
 module.exports = router;

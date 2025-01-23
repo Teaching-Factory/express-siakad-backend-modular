@@ -11,5 +11,6 @@ router.get("/", checkRole(["admin", "admin-prodi"]), KomponenEvaluasiKelasContro
 router.get("/:id/get", checkRole(["admin", "admin-prodi"]), KomponenEvaluasiKelasController.getKomponenEvaluasiKelasById);
 router.get("/kelas-kuliah/:id_kelas_kuliah/get", checkRole(["admin", "admin-prodi"]), KomponenEvaluasiKelasController.getKomponenEvaluasiKelasByKelasKuliahId);
 router.post("/kelas-kuliah/:id_kelas_kuliah/create", checkRole(["admin", "admin-prodi"]), KomponenEvaluasiKelasController.createOrUpdateKomponenEvaluasiKelas);
+router.post("/salin-komponen-evaluasi-kelas/:id_kelas_kuliah/create", checkRole(["admin", "admin-prodi"]), KomponenEvaluasiKelasController.copyKomponenEvaluasiKelasByMataKuliah);
 
 module.exports = router;

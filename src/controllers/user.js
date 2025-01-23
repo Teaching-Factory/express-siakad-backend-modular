@@ -595,6 +595,65 @@ const getUserAdminProdi = async (req, res, next) => {
   }
 };
 
+const checkingAdminProdiUser = async (req, res, next) => {
+  try {
+    const user = req.user;
+    let id_prodi_of_admin = null;
+    let nama_prodi = null;
+
+    // get role user active
+    const roleAdminProdi = await Role.findOne({
+      where: { nama_role: "admin-prodi" },
+    });
+
+    if (!roleAdminProdi) {
+      return res.status(404).json({
+        message: "Role Admin Prodi not found",
+      });
+    }
+
+    // mengecek apakah user saat ini memiliki role camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleAdminProdi.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Admin Prodi",
+      });
+    }
+
+    const adminProdi = await AdminProdi.findOne({
+      where: {
+        id_user: user.id,
+      },
+      include: [{ model: Prodi }],
+    });
+
+    if (!adminProdi) {
+      return res.status(404).json({
+        message: "Admin Prodi not found",
+      });
+    } else {
+      let prodiAdmin = await Prodi.findByPk(adminProdi.id_prodi);
+
+      if (prodiAdmin) {
+        id_prodi_of_admin = adminProdi.id_prodi;
+        nama_prodi = adminProdi.Prodi.nama_program_studi;
+      }
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== Checking Admin Prodi User Success:`,
+      id_prodi_of_admin: id_prodi_of_admin,
+      nama_prodi: nama_prodi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Fungsi untuk mengkonversi tanggal_lahir
 const convertTanggal = (tanggal_lahir) => {
   const dateParts = tanggal_lahir.split("-");
@@ -616,4 +675,5 @@ module.exports = {
   getMahasiswaDontHaveUserByProdiAndAngkatanId,
   getDosenDontHaveUser,
   getUserAdminProdi,
+  checkingAdminProdiUser,
 };

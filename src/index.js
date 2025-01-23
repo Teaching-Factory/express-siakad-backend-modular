@@ -192,8 +192,8 @@ const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
 // const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 
 const rule = new schedule.RecurrenceRule();
-rule.hour = 13;
-rule.minute = 58;
+rule.hour = 0;
+rule.minute = 0;
 
 // Atur penjadwalan tugas
 schedule.scheduleJob(rule, async function () {

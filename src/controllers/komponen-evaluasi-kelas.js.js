@@ -1,4 +1,4 @@
-const { KomponenEvaluasiKelas, JenisEvaluasi } = require("../../models");
+const { KomponenEvaluasiKelas, JenisEvaluasi, MataKuliah, KelasKuliah, RencanaEvaluasi } = require("../../models");
 
 const getAllKomponenEvaluasiKelas = async (req, res, next) => {
   try {
@@ -180,9 +180,97 @@ const createOrUpdateKomponenEvaluasiKelas = async (req, res, next) => {
   }
 };
 
+const copyKomponenEvaluasiKelasByMataKuliah = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const kelasKuliahId = req.params.id_kelas_kuliah;
+
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
+
+    // get data kelas kuliah
+    const kelasKuliah = await KelasKuliah.findOne({
+      where: {
+        id_kelas_kuliah: kelasKuliahId,
+      },
+    });
+
+    if (!kelasKuliah) {
+      return res.status(400).json({
+        message: "Kelas Kuliah not found",
+      });
+    }
+
+    // get data mata kuliah
+    const mataKuliah = await MataKuliah.findOne({
+      where: {
+        id_matkul: kelasKuliah.id_matkul,
+      },
+    });
+
+    if (!mataKuliah) {
+      return res.status(400).json({
+        message: "Mata Kuliah not found",
+      });
+    }
+
+    // get data rencana evaluasi
+    const rencanaEvaluasis = await RencanaEvaluasi.findAll({
+      where: {
+        id_matkul: mataKuliah.id_matkul,
+      },
+    });
+
+    // get komponen evaluasi kelas, jika tidak ada sama sekali, maka dapat melakukan salin
+    const komponen_evaluasi_kelas = await KomponenEvaluasiKelas.findAll({
+      where: {
+        id_kelas_kuliah: kelasKuliahId,
+      },
+    });
+
+    const processedKomponenEvaluasiKelas = [];
+
+    // pengecekan komponen evaluasi
+    if (komponen_evaluasi_kelas.length > 0) {
+      return res.status(400).json({
+        message: "Komponen evaluasi sudah ada, silahkan gunakan fungsi update",
+      });
+    } else {
+      // salin data rencana evaluasi ke dalam data komponen evaluasi kelas
+      for (const rencana of rencanaEvaluasis) {
+        // konvert bobot evaluasi
+        let bobot_penilaian = rencana.bobot_evaluasi / 100;
+
+        const newRecord = await KomponenEvaluasiKelas.create({
+          id_kelas_kuliah: kelasKuliahId,
+          id_jenis_evaluasi: rencana.id_jenis_evaluasi,
+          nomor_urut: rencana.nomor_urut,
+          nama: rencana.nama_evaluasi,
+          bobot_evaluasi: bobot_penilaian,
+          nama_inggris: rencana.deskripsi_inggris,
+        });
+        processedKomponenEvaluasiKelas.push(newRecord);
+      }
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== Salin Komponen Evaluasi Kelas By Mata Kuliah Success",
+      jumlahData: processedKomponenEvaluasiKelas.length,
+      data: processedKomponenEvaluasiKelas,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllKomponenEvaluasiKelas,
   getKomponenEvaluasiKelasById,
   getKomponenEvaluasiKelasByKelasKuliahId,
   createOrUpdateKomponenEvaluasiKelas,
+  copyKomponenEvaluasiKelasByMataKuliah,
 };
