@@ -21,6 +21,7 @@ const SyncRiwayatPendidikanMahasiswaController = require("../controllers/sync-fe
 const SyncPesertaKelasKuliahController = require("../controllers/sync-feeder/peserta-kelas-kuliah-sync");
 const SyncDetailNilaiPerkuliahanKelasController = require("../controllers/sync-feeder/detail-nilai-perkuliahan-kelas-sync");
 const SyncRencanaEvaluasiController = require("../controllers/sync-feeder/rencana-evaluasi-sync");
+const SyncKomponenEvaluasiKelasController = require("../controllers/sync-feeder/komponen-evaluasi-kelas-sync");
 
 // all routes
 router.get("/list-dosen", checkRole(["admin"]), SyncListDosenController.syncListDosen);
@@ -45,5 +46,7 @@ router.get("/:id_semester/matching-detail-nilai-perkuliahan-kelas", checkRole(["
 router.post("/sync-nilai-perkuliahan", checkRole(["admin"]), SyncDetailNilaiPerkuliahanKelasController.syncNilaiPerkuliahans);
 router.get("/:id_prodi/matching-rencana-evaluasi", checkRole(["admin"]), SyncRencanaEvaluasiController.matchingSyncDataRencanaEvaluasi);
 router.post("/sync-rencana-evaluasi", checkRole(["admin"]), SyncRencanaEvaluasiController.syncRencanaEvaluasis);
+router.get("/:id_semester/matching-komponen-evaluasi-kelas", checkRole(["admin"]), SyncKomponenEvaluasiKelasController.matchingSyncDataKomponenEvaluasiKelas);
+router.post("/sync-komponen-evaluasi-kelas", checkRole(["admin"]), SyncKomponenEvaluasiKelasController.syncKomponenEvaluasiKelas);
 
 module.exports = router;

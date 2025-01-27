@@ -1,4 +1,4 @@
-const { RencanaEvaluasiSync, KelasKuliah, Semester, MataKuliah, Prodi, JenisEvaluasi, RencanaEvaluasi } = require("../../models");
+const { RencanaEvaluasiSync, MataKuliah, Prodi, JenisEvaluasi, RencanaEvaluasi } = require("../../models");
 const { getToken } = require("./api-feeder/get-token");
 const axios = require("axios");
 
@@ -137,7 +137,7 @@ const getAllRencanaEvaluasiSyncBelumSingkronByFilter = async (req, res, next) =>
           const rencanaEvaluasiFeeder = await getRencanaEvaluasiFromFeederByID(rencana_evaluasi.id_feeder);
 
           if (!rencanaEvaluasiFeeder) {
-            throw new Error(`Data Kelas Kuliah Feeder With ID ${rencana_evaluasi.id_feeder} Not Found`);
+            throw new Error(`Data Rencana Evaluasi Kelas Feeder With ID ${rencana_evaluasi.id_feeder} Not Found`);
           }
 
           // Menambahkan properti RencanaEvaluasiFeeder ke dalam objek rencana_evaluasi
@@ -152,7 +152,7 @@ const getAllRencanaEvaluasiSyncBelumSingkronByFilter = async (req, res, next) =>
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Kelas Kuliah Sync Belum Singkron By Filter Success",
+      message: "<===== GET All Rencana Evaluasi Kelas Sync Belum Singkron By Filter Success",
       jumlahData: updatedRencanaEvaluasi.length,
       data: updatedRencanaEvaluasi,
     });
