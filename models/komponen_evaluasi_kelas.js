@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       nama_inggris: {
         type: DataTypes.STRING(50),
-        allowNull: true,
+        allowNull: false,
       },
       nomor_urut: {
         type: DataTypes.INTEGER,

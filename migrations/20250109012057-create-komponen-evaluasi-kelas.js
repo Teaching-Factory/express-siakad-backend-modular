@@ -15,7 +15,7 @@ module.exports = {
       },
       nama_inggris: {
         type: Sequelize.STRING(50),
-        allowNull: true,
+        allowNull: false,
       },
       nomor_urut: {
         type: Sequelize.INTEGER,

@@ -16,4 +16,7 @@ router.post("/:id_kelas_kuliah/penilaian-detail-perkuliahan-kelas", checkRole(["
 router.post("/:id_kelas_kuliah/import-nilai-perkuliahan", checkRole(["admin", "admin-prodi", "dosen"]), upload.single("file"), NilaiPerkuliahanController.importNilaiPerkuliahan);
 router.get("/get-nilai-perkuliahan-by-filter", checkRole(["admin", "admin-prodi", "dosen"]), NilaiPerkuliahanController.getRekapNilaiPerkuliahanByFilter);
 
+// export endpoint
+router.get("/export-peserta-kelas/:id_kelas_kuliah/get", checkRole(["admin", "admin-prodi", "dosen"]), upload.single("file"), NilaiPerkuliahanController.exportPesertaKelasByKelasKuliahId);
+
 module.exports = router;
