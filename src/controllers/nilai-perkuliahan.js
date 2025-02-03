@@ -14,6 +14,7 @@ const {
   NilaiPerkuliahan,
   UnsurPenilaian,
   KomponenEvaluasiKelas,
+  JenisEvaluasi,
 } = require("../../models");
 const ExcelJS = require("exceljs");
 const fs = require("fs").promises;
@@ -499,15 +500,26 @@ const exportPesertaKelasByKelasKuliahId = async (req, res, next) => {
       });
     }
 
+    // get data kelas kuliah
+    const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
+
+    if (!kelas_kuliah) {
+      return res.status(400).json({
+        message: "Kelas Kuliah not found",
+      });
+    }
+
     // get data komponen evaluasi kelas
     const komponenEvaluasiKelas = await KomponenEvaluasiKelas.findAll({
       where: {
         id_kelas_kuliah: kelasKuliahId,
       },
+      include: [{ model: JenisEvaluasi }],
+      order: [["nomor_urut", "ASC"]],
     });
 
     // get data peserta kelas kuliah
-    const peserta_kelas_kuliah = await PesertaKelasKuliah.findAll({
+    const peserta_kelas_kuliahs = await PesertaKelasKuliah.findAll({
       where: {
         id_kelas_kuliah: kelasKuliahId,
       },
@@ -515,111 +527,55 @@ const exportPesertaKelasByKelasKuliahId = async (req, res, next) => {
       include: [{ model: Mahasiswa, attributes: ["nama_mahasiswa", "nim"] }],
     });
 
-    // Kirim respons JSON jika berhasil
-    res.status(200).json({
-      message: `<===== Success:`,
-      jumlahData: komponenEvaluasiKelas.length,
-      data: komponenEvaluasiKelas,
+    if (!peserta_kelas_kuliahs || peserta_kelas_kuliahs.length === 0) {
+      return res.status(404).json({
+        message: `<===== Peserta Kelas Kuliah By Kelas Kuliah ID ${kelasKuliahId} Not Found:`,
+      });
+    }
+
+    // Create a new Excel workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet(`Template Penilaian Kelas ${kelas_kuliah.nama_kelas_kuliah}`);
+
+    // static column headers
+    const staticColumns = [
+      { header: "No", key: "no", width: 5 },
+      { header: "NIM", key: "nim", width: 20 },
+      { header: "Nama Mahasiswa", key: "nama_mahasiswa", width: 20 },
+      // { header: "Nilai Akhir", key: "nilai_akhir", width: 20 },
+    ];
+
+    const dynamicColumns = komponenEvaluasiKelas.map((komponen) => {
+      let nama_komponen = komponen.nama && komponen.nama.trim() !== "" ? komponen.nama : komponen.JenisEvaluasi?.nama_jenis_evaluasi || "Nama Komponen Evaluasi Kelas Belum Diisi";
+
+      let bobot = komponen.bobot_evaluasi ? ` (${parseFloat(komponen.bobot_evaluasi) * 100}%)` : ""; // Format bobot ke persen
+
+      return {
+        header: `${nama_komponen}${bobot}`,
+        key: nama_komponen.toLowerCase().replace(/\s+/g, "_"),
+        width: 25,
+      };
     });
 
-    // if (!camabas || camabas.length === 0) {
-    //   return res.status(404).json({
-    //     message: `<===== Camaba With Periode Pendaftaran ID ${periodePendaftaranId} Not Found:`,
-    //   });
-    // }
+    // Combine static and dynamic columns
+    worksheet.columns = [...staticColumns, ...dynamicColumns];
 
-    // // Create a new Excel workbook and worksheet
-    // const workbook = new ExcelJS.Workbook();
-    // const worksheet = workbook.addWorksheet("Data Calon Mahasiswa");
+    // Add data rows
+    peserta_kelas_kuliahs.forEach((peserta_kelas_kuliah, index) => {
+      worksheet.addRow({
+        no: index + 1,
+        nim: `'${peserta_kelas_kuliah.Mahasiswa.nim}`,
+        nama_mahasiswa: peserta_kelas_kuliah.Mahasiswa.nama_mahasiswa,
+      });
+    });
 
-    // // Add column headers
-    // worksheet.columns = [
-    //   { header: "No", key: "no", width: 5 },
-    //   { header: "NIM", key: "nim", width: 20 },
-    //   { header: "NISN", key: "nisn", width: 20 },
-    //   { header: "Nama Mahasiswa", key: "nama_lengkap", width: 20 },
-    //   { header: "NIK", key: "nik", width: 20 },
-    //   { header: "Tempat Lahir", key: "tempat_lahir", width: 20 },
-    //   { header: "Tanggal Lahir", key: "tanggal_lahir", width: 20 },
-    //   { header: "Jenis Kelamin", key: "jenis_kelamin", width: 20 },
-    //   { header: "No. Handphone", key: "nomor_hp", width: 20 },
-    //   { header: "Email", key: "email", width: 20 },
-    //   { header: "Kode Agama", key: "kode_agama", width: 20 },
-    //   { header: "Desa/Kelurahan", key: "kelurahan", width: 20 },
-    //   { header: "Kode Wilayah", key: "kode_wilayah", width: 20 },
-    //   { header: "Nama Ibu Kandung", key: "nama_ibu_kandung", width: 20 },
-    //   { header: "Kode Prodi", key: "kode_prodi", width: 20 },
-    //   { header: "Tanggal Masuk", key: "tanggal_masuk", width: 20 },
-    //   { header: "Semester Masuk", key: "semester_masuk", width: 20 },
-    //   { header: "Jenis Pendaftaran", key: "jenis_pendaftaran", width: 20 },
-    //   { header: "Jalur Pendaftaran", key: "jalur_pendaftaran", width: 20 },
-    //   { header: "Kode PT Asal", key: "kode_pt_asal", width: 20 },
-    //   { header: "Kode Prodi Asal", key: "kode_prodi_asal", width: 20 },
-    //   { header: "Biaya Awal Masuk", key: "biaya_awal_masuk", width: 20 },
-    //   { header: "Jenis Pembiayaan", key: "jenis_pembiayaan", width: 20 },
-    // ];
+    // Set headers for the response
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", `attachment; filename=template-penilaian-kelas-${kelas_kuliah.nama_kelas_kuliah}.xlsx`);
 
-    // // Format tanggal masuk dengan toLocaleDateString
-    // const formattedTanggalMasuk = new Date().toLocaleDateString("en-US", {
-    //   month: "numeric",
-    //   day: "numeric",
-    //   year: "numeric",
-    // });
-
-    // // Add data rows
-    // camabas.forEach((camaba, index) => {
-    //   const formattedTanggalLahir = new Date(camaba.tanggal_lahir).toLocaleDateString("en-US", {
-    //     month: "numeric",
-    //     day: "numeric",
-    //     year: "numeric",
-    //   });
-
-    //   // Format biaya_awal_masuk tanpa desimal
-    //   const formattedBiayaAwalMasuk = parseInt(periodePendaftaran.biaya_pendaftaran, 10);
-
-    //   worksheet.addRow({
-    //     no: index + 1,
-    //     nim: `'${camaba.nim}`,
-    //     nisn: `'${camaba.BiodataCamaba?.nisn || ""}`,
-    //     nama_lengkap: camaba.nama_lengkap,
-    //     nik: `'${camaba.BiodataCamaba?.nik || ""}`,
-    //     tempat_lahir: camaba.tempat_lahir,
-    //     tanggal_lahir: formattedTanggalLahir,
-    //     jenis_kelamin: camaba.jenis_kelamin === "Laki-laki" ? "L" : camaba.jenis_kelamin === "Perempuan" ? "P" : "",
-    //     nomor_hp: camaba.nomor_hp,
-    //     email: camaba.email,
-    //     kode_agama: camaba.BiodataCamaba?.Agama?.id_agama || "",
-    //     kelurahan: camaba.BiodataCamaba?.Wilayah?.nama_wilayah || "",
-    //     kode_wilayah: camaba.BiodataCamaba?.Wilayah?.id_wilayah || "",
-    //     nama_ibu_kandung: camaba.BiodataCamaba?.nama_ibu_kandung || "",
-    //     kode_prodi: camaba.Prodi?.kode_program_studi || "",
-    //     tanggal_masuk: formattedTanggalMasuk,
-    //     semester_masuk: setting_global_semester_aktif.SemesterAktif.id_semester,
-    //     jenis_pendaftaran: jenisPendaftaranPesertaDidikBaru.nama_jenis_daftar,
-    //     jalur_pendaftaran: periodePendaftaran.JalurMasuk.nama_jalur_masuk,
-    //     kode_pt_asal: "",
-    //     kode_prodi_asal: "",
-    //     biaya_awal_masuk: formattedBiayaAwalMasuk,
-    //     jenis_pembiayaan: camaba.Pembiayaan?.nama_pembiayaan || "",
-    //   });
-    // });
-
-    // // Set headers for the response
-    // res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    // res.setHeader("Content-Disposition", `attachment; filename=camaba-to-mahasiswa-periode-${periodePendaftaranId}.xlsx`);
-
-    // // update kolom status_export_mahasiswa menjadi true
-    // const promises = camabas.map(async (camaba) => {
-    //   camaba.status_export_mahasiswa = true; // Set status to true
-    //   return camaba.save(); // Save changes
-    // });
-
-    // // Wait for all promises to resolve
-    // await Promise.all(promises);
-
-    // // Write to the response
-    // await workbook.xlsx.write(res);
-    // res.end();
+    // Write to the response
+    await workbook.xlsx.write(res);
+    res.end();
   } catch (error) {
     next(error);
   }
