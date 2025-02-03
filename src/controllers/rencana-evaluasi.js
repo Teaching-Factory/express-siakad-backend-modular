@@ -1,4 +1,4 @@
-const { RencanaEvaluasi, MataKuliah, Prodi } = require("../../models");
+const { RencanaEvaluasi, MataKuliah, Prodi, JenisEvaluasi } = require("../../models");
 
 const getAllRencanaEvaluasi = async (req, res, next) => {
   try {
@@ -65,7 +65,7 @@ const getRencanaEvaluasiByMataKuliahId = async (req, res, next) => {
       where: {
         id_matkul: mataKuliahId,
       },
-      include: [{ model: MataKuliah }],
+      include: [{ model: MataKuliah }, { model: JenisEvaluasi }],
       order: [
         ["nomor_urut", "ASC"], // Urutkan berdasarkan nomor_urut secara ascending
       ],
