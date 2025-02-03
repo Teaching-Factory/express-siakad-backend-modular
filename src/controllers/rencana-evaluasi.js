@@ -1,4 +1,4 @@
-const { RencanaEvaluasi } = require("../../models");
+const { RencanaEvaluasi, MataKuliah, Prodi } = require("../../models");
 
 const getAllRencanaEvaluasi = async (req, res, next) => {
   try {
@@ -28,7 +28,9 @@ const getRencanaEvaluasiById = async (req, res, next) => {
     }
 
     // Cari data rencana_evaluasi berdasarkan ID di database
-    const rencana_evaluasi = await RencanaEvaluasi.findByPk(rencanaEvaluasiId);
+    const rencana_evaluasi = await RencanaEvaluasi.findByPk(rencanaEvaluasiId, {
+      include: [{ model: MataKuliah, include: [{ model: Prodi }] }],
+    });
 
     // Jika data tidak ditemukan, kirim respons 404
     if (!rencana_evaluasi) {
@@ -63,6 +65,7 @@ const getRencanaEvaluasiByMataKuliahId = async (req, res, next) => {
       where: {
         id_matkul: mataKuliahId,
       },
+      include: [{ model: MataKuliah }],
       order: [
         ["nomor_urut", "ASC"], // Urutkan berdasarkan nomor_urut secara ascending
       ],

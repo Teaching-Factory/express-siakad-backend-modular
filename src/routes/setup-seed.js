@@ -18,5 +18,6 @@ router.get("/get-seed-setting-global", SetupSeederController.setupSeederSettingG
 router.get("/get-seed-data-pelengkap", SetupSeederController.setupSeederDataPelengkap);
 router.get("/is-siacloud-ubi", SetupSeederController.isSiacloudUbi);
 router.get("/get-seed-admin-prodi", SetupSeederController.setupSeederAdminProdi);
+router.get("/get-seed-profil-penilaian", SetupSeederController.setupSeederProfilPenilaian);
 
 module.exports = router;

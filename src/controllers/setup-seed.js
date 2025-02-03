@@ -12,6 +12,7 @@ const RuangPerkuliahanSeeder = require("../../seeders/20241205020041-seed-ruang-
 const JenisBerkasSeeder = require("../../seeders/20241212024328-seed-jenis-berkas");
 const JenisTesSeeder = require("../../seeders/20241212025058-seed-jenis-tes");
 const AdminProdiSeeder = require("../../seeders/20250107085703-seed-admin-prodi");
+const ProfilPenilaianSeeder = require("../../seeders/20250203021231-seed-profil-penilaian");
 
 const setupSeederJabatan = async (req, res, next) => {
   try {
@@ -218,6 +219,20 @@ const setupSeederAdminProdi = async (req, res, next) => {
   }
 };
 
+const setupSeederProfilPenilaian = async (req, res, next) => {
+  try {
+    // seed data
+    await ProfilPenilaianSeeder.up(sequelize.getQueryInterface(), sequelize);
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== Setup Seeder Profil Penilaian Success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   setupSeederJabatan,
   setupSeederLaporanPMB,
@@ -231,4 +246,5 @@ module.exports = {
   setupSeederDataPelengkap,
   isSiacloudUbi,
   setupSeederAdminProdi,
+  setupSeederProfilPenilaian,
 };
