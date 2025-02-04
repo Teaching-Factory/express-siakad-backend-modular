@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 
       // relasi tabel child
       KomponenEvaluasiKelas.hasMany(models.KomponenEvaluasiKelasSync, { foreignKey: "id_komponen_evaluasi" });
+      KomponenEvaluasiKelas.hasMany(models.NilaiKomponenEvaluasiKelas, { foreignKey: "id_komponen_evaluasi" });
     }
   }
   KomponenEvaluasiKelas.init(

@@ -15,6 +15,8 @@ const {
   UnsurPenilaian,
   KomponenEvaluasiKelas,
   JenisEvaluasi,
+  ProfilPenilaian,
+  NilaiKomponenEvaluasiKelas,
 } = require("../../models");
 const ExcelJS = require("exceljs");
 const fs = require("fs").promises;
@@ -294,50 +296,73 @@ const importNilaiPerkuliahan = async (req, res, next) => {
       throw new Error("Worksheet not found in the Excel file");
     }
 
+    // inisiasi variable yang dibutuhkan
     let detailNilaiPerkuliahanKelas = [];
+    let headers = [];
+    let komponenEvaluasiMap = new Map();
 
-    // Read grading criteria
-    const gradingCriteria = [];
-    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-      if (rowNumber <= 6) {
-        const nilai_min = row.getCell(1).value;
-        const nilai_max = row.getCell(2).value;
-        const nilai_indeks = row.getCell(3).value;
-        const nilai_huruf = row.getCell(4).value;
-        gradingCriteria.push({ nilai_min, nilai_max, nilai_indeks, nilai_huruf });
-      }
+    // Ambil data komponen evaluasi kelas dari database berdasarkan kelas kuliah
+    const komponenEvaluasiKelas = await KomponenEvaluasiKelas.findAll({
+      where: {
+        id_kelas_kuliah: kelasKuliahId,
+      },
+      include: [{ model: JenisEvaluasi }],
     });
 
-    // Map nama kolom to UnsurPenilaian
-    const unsurPenilaianMap = {};
-    const headerRow = worksheet.getRow(1);
-    const startColumn = 8; // Column H
-    const endColumn = 11; // Column K
-    for (let colNumber = startColumn; colNumber <= endColumn; colNumber++) {
-      const cellValue = headerRow.getCell(colNumber).value;
-      const unsurPenilaian = await UnsurPenilaian.findOne({ where: { nama_unsur_penilaian: cellValue } });
-      if (!unsurPenilaian) {
-        return res.status(400).json({ message: `Unsur Penilaian with name '${cellValue}' not found` });
+    // Buat mapping nama komponen evaluasi ke ID dan bobot dari database
+    komponenEvaluasiKelas.forEach((komponen) => {
+      let nama_komponen =
+        komponen.nama && komponen.nama.trim() !== "" ? komponen.nama : komponen.JenisEvaluasi && komponen.JenisEvaluasi.nama_jenis_evaluasi ? komponen.JenisEvaluasi.nama_jenis_evaluasi : "Nama Komponen Evaluasi Kelas Belum Diisi";
+
+      komponenEvaluasiMap.set(nama_komponen, {
+        id_komponen_evaluasi: komponen.id_komponen_evaluasi,
+        bobot_evaluasi: komponen.bobot_evaluasi || 0, // Default ke 0 jika undefined/null
+      });
+    });
+
+    // get data profil penilaian
+    const profilPenilaians = await ProfilPenilaian.findAll({
+      order: [["id", "ASC"]],
+    });
+
+    let angkatan_mahasiswa = null;
+    let jurusan = null;
+
+    // mengambil data angkatan mahasiswa dan jurusan
+    const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
+    if (kelas_kuliah) {
+      const prodi = await Prodi.findOne({ where: { id_prodi: kelas_kuliah.id_prodi } });
+      if (prodi) {
+        const jenjang_pendidikan = await JenjangPendidikan.findOne({ where: { id_jenjang_didik: prodi.id_jenjang_pendidikan } });
+        if (jenjang_pendidikan) {
+          jurusan = jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi;
+        }
       }
-      unsurPenilaianMap[colNumber] = unsurPenilaian;
     }
 
-    let count_data_nilai = 0;
+    // Ambil header kolom dari baris pertama (header)
+    worksheet.getRow(1).eachCell((cell, colNumber) => {
+      headers[colNumber] = cell.value ? cell.value.toString().trim() : "";
+    });
 
+    // looping excel perbaris
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber > 1) {
-        const nim = row.getCell(6).value;
-        const nilai_presensi = row.getCell(8).value;
-        const nilai_tugas = row.getCell(9).value;
-        const nilai_uas = row.getCell(10).value;
-        const nilai_uts = row.getCell(11).value;
+        let nim = row.getCell(2).value;
+        // const nama_mahasiswa = row.getCell(3).value;
+
+        if (!nim) return;
 
         detailNilaiPerkuliahanKelas.push(async () => {
           let id_registrasi_mahasiswa = null;
-          let angkatan_mahasiswa = null;
-          let jurusan = null;
+          let totalNilai = 0;
+          let jumlahKomponen = 0;
 
+          // Cari mahasiswa berdasarkan NIM
           if (nim) {
+            // Menghapus tanda petik di awal
+            nim = nim.replace(/^'/, "");
+
             const mahasiswa = await Mahasiswa.findOne({ where: { nim: nim } });
             if (mahasiswa) {
               id_registrasi_mahasiswa = mahasiswa.id_registrasi_mahasiswa;
@@ -347,60 +372,118 @@ const importNilaiPerkuliahan = async (req, res, next) => {
             }
           }
 
-          const nilai_angka = (nilai_presensi + nilai_tugas + nilai_uas + nilai_uts) / 4;
+          // Loop setiap kolom setelah NIM untuk mengambil nilai komponen evaluasi kelas
+          let nilaiKomponenEvaluasiKelas = [];
 
-          // Determine grade
-          let huruf = "E";
-          let indeks = 0;
-          for (const criteria of gradingCriteria) {
-            if (nilai_angka >= criteria.nilai_min && nilai_angka <= criteria.nilai_max) {
-              huruf = criteria.nilai_huruf;
-              indeks = criteria.nilai_indeks;
-              break;
-            }
-          }
+          // start mengidentifikasi nama komponen evaluasi kelas dimulai dari kolom 4
+          for (let colNumber = 4; colNumber <= headers.length; colNumber++) {
+            let namaKomponen = headers[colNumber]; // Nama header sesuai indeks kolom
+            let nilai = row.getCell(colNumber).value; // Nilai mahasiswa di kolom tersebut
 
-          const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
-          if (kelas_kuliah) {
-            const prodi = await Prodi.findOne({ where: { id_prodi: kelas_kuliah.id_prodi } });
-            if (prodi) {
-              const jenjang_pendidikan = await JenjangPendidikan.findOne({ where: { id_jenjang_didik: prodi.id_jenjang_pendidikan } });
-              if (jenjang_pendidikan) {
-                jurusan = jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi;
+            if (namaKomponen) {
+              // Normalisasi nama komponen evaluasi dengan menghapus angka dan p  ersen
+              let namaKomponenNormalized = namaKomponen.replace(/\(\d+%\)/g, "").trim();
+
+              // Mencari kecocokan dalam komponenEvaluasiMap menggunakan pendekatan LIKE
+              let matchedKey = [...komponenEvaluasiMap.keys()].find((key) => key.toLowerCase().includes(namaKomponenNormalized.toLowerCase()));
+
+              if (!matchedKey) {
+                // Jika tidak ada kecocokan, cocokkan dengan nama_jenis_evaluasi dari relasi JenisEvaluasi
+                matchedKey = [...komponenEvaluasiMap.keys()].find((key) => key.toLowerCase().includes(namaKomponenNormalized.toLowerCase()));
+              }
+
+              if (matchedKey) {
+                let komponen = komponenEvaluasiMap.get(matchedKey); // Dapatkan objek komponen
+                let id_komponen_evaluasi = komponen.id_komponen_evaluasi;
+                let bobot_evaluasi = komponen.bobot_evaluasi || 0; // Default ke 0 jika undefined
+
+                nilaiKomponenEvaluasiKelas.push({
+                  id_komponen_evaluasi,
+                  nilai_komponen_evaluasi_kelas: nilai,
+                });
+
+                // perhitungan nilai dengan bobot evaluasi
+                let perhitunganNilaiBobot = 0;
+                perhitunganNilaiBobot = nilai * bobot_evaluasi;
+
+                totalNilai += perhitunganNilaiBobot;
+                // totalNilai += nilai ? parseFloat(nilai) : 0;
+                jumlahKomponen++;
               }
             }
           }
 
+          // Hitung nilai angka rata-rata dari semua komponen evaluasi
+          let nilai_angka = totalNilai;
+
+          // Determine grade
+          let nilai_huruf = "E";
+          let nilai_indeks = 0;
+
+          // set nilai huruf dan angka dari nilai akhir
+          for (const criteria of profilPenilaians) {
+            if (nilai_angka >= criteria.nilai_min && nilai_angka <= criteria.nilai_max) {
+              nilai_huruf = criteria.nilai_huruf;
+              nilai_indeks = criteria.nilai_indeks;
+              break;
+            }
+          }
+
+          // pengisian value data detail nilai perkuliahan
           const detail_nilai_perkuliahan = {
             angkatan: angkatan_mahasiswa,
             jurusan: jurusan,
             nilai_angka: nilai_angka,
-            nilai_indeks: indeks,
-            nilai_huruf: huruf,
+            nilai_indeks: nilai_indeks,
+            nilai_huruf: nilai_huruf,
             id_kelas_kuliah: kelasKuliahId,
             id_registrasi_mahasiswa: id_registrasi_mahasiswa,
           };
 
           if (id_registrasi_mahasiswa && angkatan_mahasiswa) {
-            const createdDetail = await DetailNilaiPerkuliahanKelas.create(detail_nilai_perkuliahan);
-            count_data_nilai++;
+            // get data detail nilai perkuliahan kelas
+            let detail_nilai_perkuliahan_temp = await DetailNilaiPerkuliahanKelas.findOne({
+              where: {
+                id_kelas_kuliah: kelasKuliahId,
+                id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+              },
+            });
 
-            // Create Nilai Perkuliahan based on the map unsur penilaian and column values
-            const nilaiPerkuliahanValues = [
-              { nilai: nilai_presensi, colNumber: 8 },
-              { nilai: nilai_tugas, colNumber: 9 },
-              { nilai: nilai_uas, colNumber: 10 },
-              { nilai: nilai_uts, colNumber: 11 },
-            ];
+            if (!detail_nilai_perkuliahan_temp) {
+              // create data detail nilai perkuliahan kelas
+              await DetailNilaiPerkuliahanKelas.create(detail_nilai_perkuliahan);
+            } else {
+              // Update data detail_nilai_perkuliahan_temp
+              detail_nilai_perkuliahan_temp.nilai_angka = nilai_angka;
+              detail_nilai_perkuliahan_temp.nilai_huruf = nilai_huruf;
+              detail_nilai_perkuliahan_temp.nilai_indeks = nilai_indeks;
 
-            for (const { nilai, colNumber } of nilaiPerkuliahanValues) {
-              const unsurPenilaian = unsurPenilaianMap[colNumber];
-              if (unsurPenilaian && nilai != null) {
-                await NilaiPerkuliahan.create({
-                  nilai: nilai,
-                  id_unsur_penilaian: unsurPenilaian.id_unsur_penilaian,
-                  id_detail_nilai_perkuliahan_kelas: createdDetail.id_detail_nilai_perkuliahan_kelas,
+              // Simpan perubahan ke dalam database
+              await detail_nilai_perkuliahan_temp.save();
+            }
+
+            for (const { id_komponen_evaluasi, nilai_komponen_evaluasi_kelas } of nilaiKomponenEvaluasiKelas) {
+              // get data nilai komponen evaluasi kelas
+              let nilai_komponen_evaluasi_kelas_temp = await NilaiKomponenEvaluasiKelas.findOne({
+                where: {
+                  id_komponen_evaluasi,
+                  id_registrasi_mahasiswa,
+                },
+              });
+
+              // pengecekan data jikalau sudah ada data nilai komponen evaluasi kelas maka update
+              if (!nilai_komponen_evaluasi_kelas_temp) {
+                await NilaiKomponenEvaluasiKelas.create({
+                  nilai_komponen_evaluasi_kelas: nilai_komponen_evaluasi_kelas,
+                  id_komponen_evaluasi: id_komponen_evaluasi,
+                  id_registrasi_mahasiswa: id_registrasi_mahasiswa,
                 });
+              } else {
+                // Update data nilai_komponen_evaluasi_kelas_temp
+                nilai_komponen_evaluasi_kelas_temp.nilai_komponen_evaluasi_kelas = nilai_komponen_evaluasi_kelas;
+
+                // Simpan perubahan ke dalam database
+                await nilai_komponen_evaluasi_kelas_temp.save();
               }
             }
           }
@@ -415,7 +498,6 @@ const importNilaiPerkuliahan = async (req, res, next) => {
 
     res.status(201).json({
       message: "Nilai Perkuliahan imported successfully",
-      dataJumlah: count_data_nilai,
     });
   } catch (error) {
     next(error);
