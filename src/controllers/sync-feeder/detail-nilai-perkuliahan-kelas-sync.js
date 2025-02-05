@@ -1,4 +1,4 @@
-const { DetailNilaiPerkuliahanKelas, DetailNilaiPerkuliahanKelasSync, Mahasiswa, RiwayatPendidikanMahasiswa, KelasKuliah } = require("../../../models");
+const { DetailNilaiPerkuliahanKelas, DetailNilaiPerkuliahanKelasSync, Mahasiswa, RiwayatPendidikanMahasiswa, KelasKuliah, NilaiKomponenEvaluasiKelas, KomponenEvaluasiKelas } = require("../../../models");
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
@@ -279,11 +279,43 @@ const updateNilaiPerkuliahan = async (id, req, res, next) => {
       return res.status(404).json({ message: "Detail Nilai Perkuliahan sync not found" });
     }
 
-    detail_nilai_perkuliahan_sync.status = true;
-    await detail_nilai_perkuliahan_sync.save();
+    // get data nilai komponen evaluasi
+    let nilai_komponen_evaluasi_kelas = await NilaiKomponenEvaluasiKelas.findAll({
+      where: {
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+      },
+      include: [
+        {
+          model: KomponenEvaluasiKelas,
+          where: {
+            id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah,
+          },
+        },
+      ],
+    });
 
-    // result
-    console.log(`Successfully update nilai perkuliahan with ID ${detail_nilai_perkuliahan_sync.id} to feeder`);
+    let requestBodyNilaiKomponenEvaluasi = null;
+
+    // perulangan singkron nilai komponen evaluasi kelas
+    for (const nilai_komponen_evaluasi of nilai_komponen_evaluasi_kelas) {
+      // request body per nilai
+      requestBodyNilaiKomponenEvaluasi = null;
+
+      requestBodyNilaiKomponenEvaluasi = {
+        act: "UpdateNilaiPerkuliahanKelasKomponenEvaluasi",
+        token: `${token}`,
+        key: {
+          id_komponen_evaluasi: nilai_komponen_evaluasi.KomponenEvaluasiKela.id_feeder,
+          id_registrasi_mahasiswa: riwayat_pendidikan_mahasiswa.id_feeder,
+        },
+        record: {
+          nilai_komponen_evaluasi: nilai_komponen_evaluasi.nilai_komponen_evaluasi_kelas,
+        },
+      };
+
+      // Menggunakan token untuk mengambil data
+      await axios.post(url_feeder, requestBodyNilaiKomponenEvaluasi);
+    }
 
     // akan update data nilai perkuliahan ke feeder
     const requestBody = {
@@ -302,6 +334,12 @@ const updateNilaiPerkuliahan = async (id, req, res, next) => {
 
     // Menggunakan token untuk mengambil data
     await axios.post(url_feeder, requestBody);
+
+    detail_nilai_perkuliahan_sync.status = true;
+    await detail_nilai_perkuliahan_sync.save();
+
+    // result
+    console.log(`Successfully update nilai perkuliahan with ID ${detail_nilai_perkuliahan_sync.id} to feeder`);
   } catch (error) {
     next(error);
   }
