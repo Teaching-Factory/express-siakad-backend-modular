@@ -11,5 +11,6 @@ router.get("/", checkRole(["admin", "admin-prodi"]), RencanaEvaluasiController.g
 router.get("/:id/get", checkRole(["admin", "admin-prodi"]), RencanaEvaluasiController.getRencanaEvaluasiById);
 router.get("/mata-kuliah/:id_matkul/get", checkRole(["admin", "admin-prodi"]), RencanaEvaluasiController.getRencanaEvaluasiByMataKuliahId);
 router.post("/mata-kuliah/:id_matkul/create", checkRole(["admin", "admin-prodi"]), RencanaEvaluasiController.createOrUpdateRencanaEvaluasi);
+router.delete("/:id_rencana_evaluasi/delete", checkRole(["admin", "admin-prodi"]), RencanaEvaluasiController.deleteRencanaEvaluasiById);
 
 module.exports = router;

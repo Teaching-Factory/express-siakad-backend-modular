@@ -168,9 +168,47 @@ const createOrUpdateRencanaEvaluasi = async (req, res, next) => {
   }
 };
 
+const deleteRencanaEvaluasiById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const rencanaEvaluasiId = req.params.id_rencana_evaluasi;
+
+    if (!rencanaEvaluasiId) {
+      return res.status(400).json({
+        message: "Rencana Evaluasi ID is required",
+      });
+    }
+
+    // Cari data rencana_evaluasi berdasarkan ID di database
+    let rencana_evaluasi = await RencanaEvaluasi.findOne({
+      where: {
+        id_rencana_evaluasi: rencanaEvaluasiId,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!rencana_evaluasi) {
+      return res.status(404).json({
+        message: `<===== Rencana Evaluasi With ID ${rencanaEvaluasiId} Not Found:`,
+      });
+    }
+
+    // Hapus data rencana_evaluasi dari database
+    await rencana_evaluasi.destroy();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== DELETE Rencana Evaluasi With ID ${rencanaEvaluasiId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRencanaEvaluasi,
   getRencanaEvaluasiById,
   getRencanaEvaluasiByMataKuliahId,
   createOrUpdateRencanaEvaluasi,
+  deleteRencanaEvaluasiById,
 };

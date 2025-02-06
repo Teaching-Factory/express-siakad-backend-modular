@@ -267,10 +267,48 @@ const copyKomponenEvaluasiKelasByMataKuliah = async (req, res, next) => {
   }
 };
 
+const deleteKomponenEvaluasiKelasById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const komponenEvaluasiKelasId = req.params.id_komponen_evaluasi;
+
+    if (!komponenEvaluasiKelasId) {
+      return res.status(400).json({
+        message: "Komponen Evaluasi Kelas ID is required",
+      });
+    }
+
+    // Cari data komponen_evaluasi_kelas berdasarkan ID di database
+    let komponen_evaluasi_kelas = await KomponenEvaluasiKelas.findOne({
+      where: {
+        id_komponen_evaluasi: komponenEvaluasiKelasId,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!komponen_evaluasi_kelas) {
+      return res.status(404).json({
+        message: `<===== Komponen Evaluasi Kelas With ID ${komponenEvaluasiKelasId} Not Found:`,
+      });
+    }
+
+    // Hapus data komponen_evaluasi_kelas dari database
+    await komponen_evaluasi_kelas.destroy();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== DELETE Komponen Evaluasi Kelas With ID ${komponenEvaluasiKelasId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllKomponenEvaluasiKelas,
   getKomponenEvaluasiKelasById,
   getKomponenEvaluasiKelasByKelasKuliahId,
   createOrUpdateKomponenEvaluasiKelas,
   copyKomponenEvaluasiKelasByMataKuliah,
+  deleteKomponenEvaluasiKelasById,
 };
