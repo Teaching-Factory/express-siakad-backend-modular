@@ -9,7 +9,7 @@ module.exports = {
         id: 1,
         nama: "Super Admin",
         username: "admin",
-        password: await bcrypt.hash("admin123", 10),
+        password: await bcrypt.hash("Merdeka00zzz", 10),
         hints: "admin123",
         email: null,
         status: true,
