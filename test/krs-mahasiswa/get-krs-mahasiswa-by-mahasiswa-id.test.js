@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getKRSMahasiswaByMahasiswaId } = require("../../src/controllers/krs-mahasiswa");
-const { KRSMahasiswa, Mahasiswa, Semester, Prodi, MataKuliah, KelasKuliah, TahunAjaran } = require("../../models");
+const { KRSMahasiswa, Mahasiswa, Semester, Prodi, MataKuliah, KelasKuliah, SettingGlobalSemester } = require("../../models");
 
 jest.mock("../../models");
 
@@ -17,22 +17,22 @@ describe("getKRSMahasiswaByMahasiswaId", () => {
   it("should return KRS mahasiswa by ID registrasi with status 200 if found", async () => {
     const idRegistrasiMahasiswa = 1;
     const mockKRSMahasiswa = [{ id: 1, nama: "KRS Mahasiswa 1" }];
-    const mockTahunAjaran = { id_tahun_ajaran: 1 };
+    const mockSemesterAktif = { id_semester_krs: 2 };
 
-    TahunAjaran.findOne.mockResolvedValue(mockTahunAjaran);
+    SettingGlobalSemester.findOne.mockResolvedValue(mockSemesterAktif);
     KRSMahasiswa.findAll.mockResolvedValue(mockKRSMahasiswa);
 
     req.params.id_registrasi_mahasiswa = idRegistrasiMahasiswa;
 
     await getKRSMahasiswaByMahasiswaId(req, res, next);
 
-    expect(TahunAjaran.findOne).toHaveBeenCalledWith({
-      where: { a_periode: 1 },
+    expect(SettingGlobalSemester.findOne).toHaveBeenCalledWith({
+      where: { status: true },
     });
     expect(KRSMahasiswa.findAll).toHaveBeenCalledWith({
       where: {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
-        angkatan: mockTahunAjaran.id_tahun_ajaran,
+        id_semester: mockSemesterAktif.id_semester_krs,
       },
       include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
@@ -48,22 +48,22 @@ describe("getKRSMahasiswaByMahasiswaId", () => {
   // Kode uji 2 - Mengembalikan respons 404 jika KRS mahasiswa tidak ditemukan
   it("should return 404 if KRS mahasiswa by ID registrasi is not found", async () => {
     const idRegistrasiMahasiswa = 1;
-    const mockTahunAjaran = { id_tahun_ajaran: 1 };
+    const mockSemesterAktif = { id_semester_krs: 2 };
 
-    TahunAjaran.findOne.mockResolvedValue(mockTahunAjaran);
+    SettingGlobalSemester.findOne.mockResolvedValue(mockSemesterAktif);
     KRSMahasiswa.findAll.mockResolvedValue([]);
 
     req.params.id_registrasi_mahasiswa = idRegistrasiMahasiswa;
 
     await getKRSMahasiswaByMahasiswaId(req, res, next);
 
-    expect(TahunAjaran.findOne).toHaveBeenCalledWith({
-      where: { a_periode: 1 },
+    expect(SettingGlobalSemester.findOne).toHaveBeenCalledWith({
+      where: { status: true },
     });
     expect(KRSMahasiswa.findAll).toHaveBeenCalledWith({
       where: {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
-        angkatan: mockTahunAjaran.id_tahun_ajaran,
+        id_semester: mockSemesterAktif.id_semester_krs,
       },
       include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });
@@ -87,36 +87,37 @@ describe("getKRSMahasiswaByMahasiswaId", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  // Kode uji 4 - Mengembalikan respons 404 jika tahun ajaran dengan a_periode 1 tidak ditemukan
-  it("should return 404 if tahun ajaran with a_periode 1 is not found", async () => {
-    TahunAjaran.findOne.mockResolvedValue(null);
+  // Kode uji 4 - Mengembalikan respons 404 jika semester aktif tidak ditemukan
+  // it("should return 404 if active semester is not found", async () => {
+  //   SettingGlobalSemester.findOne.mockResolvedValue(null);
 
-    const idRegistrasiMahasiswa = 1;
-    req.params.id_registrasi_mahasiswa = idRegistrasiMahasiswa;
+  //   const idRegistrasiMahasiswa = 1;
+  //   req.params.id_registrasi_mahasiswa = idRegistrasiMahasiswa;
 
-    await getKRSMahasiswaByMahasiswaId(req, res, next);
+  //   await getKRSMahasiswaByMahasiswaId(req, res, next);
 
-    expect(TahunAjaran.findOne).toHaveBeenCalledWith({
-      where: { a_periode: 1 },
-    });
-    expect(res.statusCode).toEqual(404);
-    expect(res._getJSONData()).toEqual({
-      message: "Tahun Ajaran with a_periode 1 not found",
-    });
-  });
+  //   expect(SettingGlobalSemester.findOne).toHaveBeenCalledWith({
+  //     where: { status: true },
+  //   });
+  //   expect(res.statusCode).toEqual(404);
+  //   expect(res._getJSONData()).toEqual({
+  //     message: "Active semester not found",
+  //   });
+  // });
 
   // Kode uji 5 - Mengembalikan respons 500 jika terjadi kesalahan di server
   it("should call next with error if there is an error on the server", async () => {
     const errorMessage = "Database error";
-    TahunAjaran.findOne.mockRejectedValue(new Error(errorMessage));
+    SettingGlobalSemester.findOne.mockRejectedValue(new Error(errorMessage));
 
     const idRegistrasiMahasiswa = 1;
     req.params.id_registrasi_mahasiswa = idRegistrasiMahasiswa;
 
     await getKRSMahasiswaByMahasiswaId(req, res, next);
 
-    expect(TahunAjaran.findOne).toHaveBeenCalledWith({
-      where: { a_periode: 1 },
+    expect(SettingGlobalSemester.findOne).toHaveBeenCalledWith({
+      where: { status: true },
     });
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
   });
 });

@@ -77,25 +77,18 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
       });
     }
 
-    // Mengambil data tahun ajaran yang kolom a_periode bernilai = 1
-    const tahunAjaran = await TahunAjaran.findOne({
+    // mengambil data semester aktif
+    const semesterAktif = await SettingGlobalSemester.findOne({
       where: {
-        a_periode: 1,
+        status: true,
       },
     });
-
-    // Jika data tahun ajaran tidak ditemukan, kirim respons 404
-    if (!tahunAjaran) {
-      return res.status(404).json({
-        message: "Tahun Ajaran with a_periode 1 not found",
-      });
-    }
 
     // Cari data krs_mahasiswa berdasarkan id_registrasi_mahasiswa dan id_tahun_ajaran di database
     const krsMahasiswa = await KRSMahasiswa.findAll({
       where: {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
-        angkatan: tahunAjaran.id_tahun_ajaran,
+        id_semester: semesterAktif.id_semester_krs,
       },
       include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
     });

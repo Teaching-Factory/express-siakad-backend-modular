@@ -646,8 +646,7 @@ const checkingAdminProdiUser = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== Checking Admin Prodi User Success:`,
-      id_prodi_of_admin: id_prodi_of_admin,
-      nama_prodi: nama_prodi,
+      data: adminProdi,
     });
   } catch (error) {
     next(error);
