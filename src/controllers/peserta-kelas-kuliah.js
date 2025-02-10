@@ -1,4 +1,4 @@
-const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas, Prodi, MataKuliah, Semester, BiodataMahasiswa, PerguruanTinggi, Agama } = require("../../models");
+const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas, Prodi, MataKuliah, Semester, BiodataMahasiswa, PerguruanTinggi, Agama, KRSMahasiswa, SettingGlobalSemester } = require("../../models");
 const { Op } = require("sequelize");
 
 const getAllPesertaKelasKuliah = async (req, res, next) => {
@@ -284,6 +284,96 @@ const getMahasiswaBelumTerdaftarDiKelasByFilter = async (req, res, next) => {
   }
 };
 
+const createPesertaKelasAndKRSByAngkatanAndKelasKuliahId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const kelasKuliahId = req.params.id_kelas_kuliah;
+    const angkatanId = req.params.id_angkatan;
+
+    // Periksa apakah ID disediakan
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
+
+    const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
+    const peserta_kelas = []; // Simpan data yang berhasil dibuat di sini
+
+    // get data kelas kuliah
+    let kelas_kuliah = await KelasKuliah.findOne({
+      where: {
+        id_kelas_kuliah: kelasKuliahId,
+      },
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!kelas_kuliah) {
+      return res.status(404).json({
+        message: `Kelas Kuliah with ID Kelas Kulah ${kelasKuliahId} Not Found:`,
+      });
+    }
+
+    // get data setting global semester
+    const setting_global_semester = await SettingGlobalSemester.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    // ambil data angkatan
+    let angkatan = await Angkatan.findByPk(angkatanId);
+
+    for (const mahasiswa of mahasiswas) {
+      const { id_registrasi_mahasiswa } = mahasiswa;
+
+      // Ambil data mahasiswa berdasarkan id_registrasi_mahasiswa
+      const data_mahasiswa = await Mahasiswa.findOne({
+        where: { id_registrasi_mahasiswa },
+      });
+
+      if (!data_mahasiswa) {
+        // Jika data mahasiswa tidak ditemukan, lanjutkan ke data mahasiswa berikutnya
+        peserta_kelas.push({ message: `Mahasiswa with id ${id_registrasi_mahasiswa} not found` });
+        continue;
+      }
+
+      // create data krs mahasiswa dengan satus tervalidasi
+      await KRSMahasiswa.create({
+        angkatan: angkatan.tahun,
+        validasi_krs: true,
+        id_registrasi_mahasiswa,
+        id_semester: setting_global_semester.id_semester_krs,
+        id_prodi: data_mahasiswa.id_prodi,
+        id_matkul: kelas_kuliah.id_matkul,
+        id_kelas: kelas_kuliah.id_kelas_kuliah,
+      });
+
+      const newPesertaKelas = await PesertaKelasKuliah.create({
+        angkatan: angkatan.tahun,
+        id_registrasi_mahasiswa: data_mahasiswa.id_registrasi_mahasiswa,
+        id_kelas_kuliah: kelasKuliahId,
+      });
+
+      peserta_kelas.push(newPesertaKelas);
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "<===== CREATE Peserta Kelas Kuliah Success",
+      jumlahData: peserta_kelas.length,
+      data: peserta_kelas,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPesertaKelasKuliah,
   getPesertaKelasKuliahById,
@@ -291,4 +381,5 @@ module.exports = {
   getPesertaKelasKuliahByKelasKuliahId,
   getPesertaKelasWithDetailNilai,
   getMahasiswaBelumTerdaftarDiKelasByFilter,
+  createPesertaKelasAndKRSByAngkatanAndKelasKuliahId,
 };
