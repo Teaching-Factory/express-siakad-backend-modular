@@ -383,6 +383,78 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id_role: 1,
+        id_permission: 83, // dashboard-info
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 96,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 97,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 98,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 99,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 100,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 101,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 102,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 103,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 104,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 105,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 1,
+        id_permission: 106,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
 
       // role mahasiswa
       {
@@ -481,6 +553,12 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id_role: 3,
+        id_permission: 83, // dashboard-info
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
 
       // role dosen
       {
@@ -540,6 +618,12 @@ module.exports = {
       {
         id_role: 2,
         id_permission: 81, // jadwal-kelas-perkuliahan-dosen
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 2,
+        id_permission: 83, // dashboard-info
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -673,30 +757,256 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id_role: 6,
+        id_permission: 83, // user-guide
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
 
-      // // role admin-prodi (belum)
-      // {
-      //   id_role: 4,
-      //   id_permission: 1, // dashboard
-      //   createdAt: new Date(),
-      //   updatedAt: new Date(),
-      // },
-      // {
-      //   id: 4,
-      //   id_role: "admin-prodi",
-      //   id_permission: "admin",
-      //   createdAt: new Date(),
-      //   updatedAt: new Date(),
-      // },
+      // role admin-prodi
+      {
+        id_role: 4,
+        id_permission: 1, // dashboard
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 83, // dashboard-info
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 3,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 4,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 6,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 7,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 8,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 9,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 10,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 11,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 96,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 12,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 13,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 14,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 15,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 16,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 17,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 18,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 19,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 27,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 28,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 28,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 30,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 35,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 36,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 37,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 38,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 39,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 40,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 41,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 4,
+        id_permission: 97,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
 
-      // // role admin-keuangan (belum)
-      // {
-      //   id: 5,
-      //   id_role: "admin-keuangan",
-      //   id_permission: "admin",
-      //   createdAt: new Date(),
-      //   updatedAt: new Date(),
-      // },
+      // role admin-keuangan
+      {
+        id_role: 5,
+        id_permission: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 5,
+        id_permission: 83, // dashboard-info
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 5,
+        id_permission: 32,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 5,
+        id_permission: 33,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 5,
+        id_permission: 3,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 5,
+        id_permission: 4,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id_role: 5,
+        id_permission: 26,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 

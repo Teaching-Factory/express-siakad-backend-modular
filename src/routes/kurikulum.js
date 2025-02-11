@@ -7,8 +7,8 @@ const KurikulumController = require("../controllers/kurikulum");
 const checkRole = require("../middlewares/check-role");
 
 // all routes
-router.get("/", checkRole(["admin"]), KurikulumController.getAllKurikulum);
-router.get("/:id/get", checkRole(["admin"]), KurikulumController.getKurikulumById);
+router.get("/", checkRole(["admin", "admin-prodi"]), KurikulumController.getAllKurikulum);
+router.get("/:id/get", checkRole(["admin", "admin-prodi"]), KurikulumController.getKurikulumById);
 router.get("/prodi/:id_prodi/get", checkRole(["admin", "admin-prodi", "dosen", "mahasiswa"]), KurikulumController.getKurikulumByProdiId);
 
 module.exports = router;

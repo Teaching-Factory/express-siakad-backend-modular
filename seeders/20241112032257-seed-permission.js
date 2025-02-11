@@ -574,6 +574,72 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id: 96,
+        nama_permission: "matakuliah",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 97,
+        nama_permission: "profil-penilaian",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 98,
+        nama_permission: "sync-data",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 99,
+        nama_permission: "sync-rencana-evaluasi",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 100,
+        nama_permission: "sync-kelas-kuliah",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 101,
+        nama_permission: "sync-komponen-evaluasi",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 102,
+        nama_permission: "sync-dosen-pengajar",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 103,
+        nama_permission: "sync-biodata-mahasiswa",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 104,
+        nama_permission: "sync-riwayat-pendidikan-mahasiswa",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 105,
+        nama_permission: "sync-peserta-kelas",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 106,
+        nama_permission: "sync-nilai-perkuliahan",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 
