@@ -80,6 +80,7 @@ const getKurikulumByProdiId = async (req, res, next) => {
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET Kurikulum By Prodi ID ${prodiId} Success:`,
+      jumlahData: kurikulum.length,
       data: kurikulum,
     });
   } catch (error) {

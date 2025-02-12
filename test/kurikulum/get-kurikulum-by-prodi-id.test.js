@@ -65,6 +65,7 @@ describe("getKurikulumByProdiId", () => {
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual({
       message: `<===== GET Kurikulum By Prodi ID 123 Success:`,
+      jumlahData: mockKurikulum.length,
       data: mockKurikulum,
     });
   });
