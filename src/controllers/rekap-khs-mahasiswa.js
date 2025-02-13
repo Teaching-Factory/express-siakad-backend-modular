@@ -366,7 +366,22 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
     });
   }
 
-  // Mendapatkan token
+  // // get rekap khs mahasiswa local
+  // let dataRekapKHSMahasiswa = await RekapKHSMahasiswa.findAll({
+  //   where: {
+  //     id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+  //   },
+  //   include: [
+  //     {
+  //       model: Periode,
+  //       where: {
+  //         periode_pelaporan: periodeId,
+  //       },
+  //     },
+  //   ],
+  // });
+
+  // Mendapatkan token (get rekap khs mahasiswa by feeder)
   const { token, url_feeder } = await getToken();
 
   const requestBody = {
@@ -397,7 +412,15 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   const ips = total_sks > 0 ? (total_sks_indeks / total_sks).toFixed(2) : "0.00";
   const formattedTotalSksIndeks = total_sks_indeks.toFixed(2);
 
-  // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK
+  // // get rekap khs mahasiswa local
+  // let dataRekapKHSMahasiswaAll = await RekapKHSMahasiswa.findAll({
+  //   where: {
+  //     id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+  //   },
+  //   include: [{ model: MataKuliah }],
+  // });
+
+  // Mendapatkan semua data KHS mahasiswa untuk menghitung IPK (dari feeder)
   const requestBodyTwo = {
     act: "GetRekapKHSMahasiswa",
     token: `${token}`,

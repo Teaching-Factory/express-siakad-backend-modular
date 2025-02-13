@@ -356,6 +356,9 @@ const generateUserByMahasiswa = async (req, res, next) => {
       ],
     });
 
+    // Ubah existingUsernames menjadi array string username
+    const existingUsernameList = existingUsernames.map((user) => user.username);
+
     for (const mahasiswa of mahasiswas) {
       const { id_registrasi_mahasiswa } = mahasiswa;
 
@@ -363,7 +366,7 @@ const generateUserByMahasiswa = async (req, res, next) => {
       const data_mahasiswa = await Mahasiswa.findOne({
         where: {
           id_registrasi_mahasiswa,
-          nim: { [Op.notIn]: Array.from(existingUsernames) }, // Hanya mahasiswa yang belum memiliki user
+          nim: { [Op.notIn]: existingUsernameList }, // Hanya mahasiswa yang belum memiliki user
         },
       });
 

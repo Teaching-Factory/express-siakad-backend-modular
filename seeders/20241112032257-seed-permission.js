@@ -640,6 +640,12 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id: 107,
+        nama_permission: "set-status-admin-prodi",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 

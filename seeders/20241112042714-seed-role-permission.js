@@ -963,6 +963,12 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id_role: 4,
+        id_permission: 107,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
 
       // role admin-keuangan
       {
