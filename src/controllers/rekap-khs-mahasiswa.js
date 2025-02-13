@@ -221,17 +221,35 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         ],
       });
 
-      // Mendapatkan token
-      const { token, url_feeder } = await getToken();
+      // get rekap khs mahasiswa local
+      let dataRekapKHSMahasiswa = await RekapKHSMahasiswa.findAll({
+        include: {
+          model: Periode,
+          where: {
+            periode_pelaporan: id_semester,
+          },
+        },
+        include: [
+          {
+            model: Mahasiswa,
+            where: {
+              nim: nim,
+            },
+          },
+        ],
+      });
 
-      const requestBody = {
-        act: "GetRekapKHSMahasiswa",
-        token: token,
-        filter: `nim='${nim}' AND id_periode='${id_semester}'`,
-      };
+      // // Mendapatkan token (get rekap khs mahasiswa by feeder)
+      // const { token, url_feeder } = await getToken();
 
-      const response = await axios.post(url_feeder, requestBody);
-      const dataRekapKHSMahasiswa = response.data.data;
+      // const requestBody = {
+      //   act: "GetRekapKHSMahasiswa",
+      //   token: token,
+      //   filter: `nim='${nim}' AND id_periode='${id_semester}'`,
+      // };
+
+      // const response = await axios.post(url_feeder, requestBody);
+      // const dataRekapKHSMahasiswa = response.data.data;
 
       res.status(200).json({
         message: "Get Rekap KHS Mahasiswa By Mahasiswa from Feeder Success",
@@ -266,17 +284,38 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         ],
       });
 
-      // Mendapatkan token
-      const { token, url_feeder } = await getToken();
+      // get rekap khs mahasiswa local
+      let dataRekapKHSMahasiswa = await RekapKHSMahasiswa.findAll({
+        where: {
+          angkatan: angkatan.tahun,
+        },
+        include: {
+          model: Periode,
+          where: {
+            periode_pelaporan: id_semester,
+          },
+        },
+        include: [
+          {
+            model: Mahasiswa,
+            where: {
+              id_prodi: id_prodi,
+            },
+          },
+        ],
+      });
 
-      const requestBody = {
-        act: "GetRekapKHSMahasiswa",
-        token: token,
-        filter: `id_prodi='${id_prodi}' AND angkatan='${angkatan.tahun}' AND id_periode='${id_semester}'`,
-      };
+      // Mendapatkan token (get rekap khs mahasiswa by feeder)
+      // const { token, url_feeder } = await getToken();
 
-      const response = await axios.post(url_feeder, requestBody);
-      const dataRekapKHSMahasiswa = response.data.data;
+      // const requestBody = {
+      //   act: "GetRekapKHSMahasiswa",
+      //   token: token,
+      //   filter: `id_prodi='${id_prodi}' AND angkatan='${angkatan.tahun}' AND id_periode='${id_semester}'`,
+      // };
+
+      // const response = await axios.post(url_feeder, requestBody);
+      // const dataRekapKHSMahasiswa = response.data.data;
 
       // Mengelompokkan data berdasarkan id_registrasi_mahasiswa
       const groupedData = dataRekapKHSMahasiswa.reduce((acc, item) => {

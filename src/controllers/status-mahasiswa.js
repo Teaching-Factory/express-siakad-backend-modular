@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize } = require("../../models");
+const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize, Role, UserRole, AdminProdi } = require("../../models");
 const { Op } = require("sequelize");
 
 const getAllStatusMahasiswa = async (req, res, next) => {
@@ -54,6 +54,88 @@ const getProdiWithCountMahasiswaBelumSetSK = async (req, res, next) => {
   try {
     // Ambil data semua prodi beserta jumlah mahasiswa yang memiliki nama_status_mahasiswa Aktif
     const prodiData = await Prodi.findAll({
+      include: {
+        model: Mahasiswa,
+        where: {
+          nama_status_mahasiswa: "Aktif",
+        },
+        required: false,
+      },
+    });
+
+    // ambil semua jumlah mahasiswa setiap prodi
+    const prodi_mahasiswas = await Prodi.findAll({
+      include: [{ model: Mahasiswa }],
+    });
+
+    // Siapkan data untuk respons
+    const result = prodiData.map((prodi) => {
+      const prodiMahasiswa = prodi_mahasiswas.find((p) => p.id_prodi === prodi.id_prodi);
+      const jumlahMahasiswa = prodiMahasiswa ? prodiMahasiswa.Mahasiswas.length : 0;
+      const jumlahMahasiswaBelumSetSK = prodi.Mahasiswas.length;
+      return {
+        id_prodi: prodi.id_prodi,
+        nama_prodi: prodi.nama_program_studi,
+        status: prodi.status,
+        jumlahMahasiswa,
+        jumlahMahasiswaBelumSetSK,
+      };
+    });
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: "GET ALL Prodi With Count Mahasiswa Belum Set SK Success",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getProdiWithCountMahasiswaBelumSetSKByAdminProdi = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // get role user active
+    const roleAdminProdi = await Role.findOne({
+      where: { nama_role: "admin-prodi" },
+    });
+
+    if (!roleAdminProdi) {
+      return res.status(404).json({
+        message: "Role Admin Prodi not found",
+      });
+    }
+
+    // mengecek apakah user saat ini memiliki role camaba
+    const userRole = await UserRole.findOne({
+      where: { id_user: user.id, id_role: roleAdminProdi.id },
+    });
+
+    if (!userRole) {
+      return res.status(404).json({
+        message: "User is not Admin Prodi",
+      });
+    }
+
+    const adminProdi = await AdminProdi.findOne({
+      where: {
+        id_user: user.id,
+      },
+      include: [{ model: Prodi }],
+    });
+
+    if (!adminProdi) {
+      return res.status(404).json({
+        message: "Admin Prodi not found",
+      });
+    }
+
+    // Ambil data prodi beserta jumlah mahasiswa yang memiliki nama_status_mahasiswa Aktif
+    const prodiData = await Prodi.findAll({
+      where: {
+        id_prodi: adminProdi.id_prodi,
+      },
       include: {
         model: Mahasiswa,
         where: {
@@ -304,6 +386,7 @@ module.exports = {
   getAllStatusMahasiswa,
   getStatusMahasiswaById,
   getProdiWithCountMahasiswaBelumSetSK,
+  getProdiWithCountMahasiswaBelumSetSKByAdminProdi,
   getPeriodeByProdiIdWithCountMahasiswa,
   setStatusAktif,
   setStatusCuti,

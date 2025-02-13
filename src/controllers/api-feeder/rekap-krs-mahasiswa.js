@@ -21,21 +21,21 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
       return res.status(400).json({ message: "Parameter angkatan is required" });
     }
 
-    // Buat filter dinamis berdasarkan parameter angkatan
-    const angkatanFilter = Array.isArray(angkatan) ? angkatan.map((year) => `angkatan = '${year}'`).join(" OR ") : `angkatan = '${angkatan}'`;
+    // Buat filter menggunakan LIKE pada id_periode
+    const periodeFilter = Array.isArray(angkatan) ? angkatan.map((year) => `id_periode LIKE '%${year}%'`).join(" OR ") : `id_periode LIKE '%${angkatan}%'`;
 
     const requestBody = {
       act: "GetRekapKRSMahasiswa",
-      token: `${token}`,
-      filter: angkatanFilter,
+      token: token,
+      filter: periodeFilter,
       order: "id_periode",
     };
 
     // Menggunakan token untuk mengambil data
     const response = await axios.post(url_feeder, requestBody);
 
-    // Tanggapan dari API
-    const dataRekapKRSMahasiswa = response.data.data;
+    // Pastikan data berbentuk array agar tidak terjadi error
+    const dataRekapKRSMahasiswa = Array.isArray(response.data.data) ? response.data.data : [];
 
     // Truncate data
     await RekapKRSMahasiswa.destroy({
