@@ -20,6 +20,7 @@ router.get("/get-dosen-dont-have-user", checkRole(["admin", "admin-prodi"]), Use
 
 // generate user by
 router.post("/mahasiswa/generate", checkRole(["admin"]), UserController.generateUserByMahasiswa);
+router.post("/mahasiswa/generate/:id_angkatan", checkRole(["admin"]), UserController.generateUserMahasiswaAllProdiByAngkatan);
 router.post("/dosen/generate", checkRole(["admin"]), UserController.generateUserByDosen);
 
 // admin prodi

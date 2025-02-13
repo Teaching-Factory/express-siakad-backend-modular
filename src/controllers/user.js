@@ -340,12 +340,31 @@ const generateUserByMahasiswa = async (req, res, next) => {
       where: { nama_role: "mahasiswa" },
     });
 
+    // Ambil semua username dari tabel User yang memiliki role "mahasiswa"
+    const existingUsernames = await User.findAll({
+      attributes: ["username"],
+      include: [
+        {
+          model: UserRole,
+          include: [
+            {
+              model: Role,
+              where: { nama_role: "mahasiswa" }, // Filter hanya yang memiliki role "mahasiswa"
+            },
+          ],
+        },
+      ],
+    });
+
     for (const mahasiswa of mahasiswas) {
       const { id_registrasi_mahasiswa } = mahasiswa;
 
       // Ambil data mahasiswa berdasarkan id_registrasi_mahasiswa
       const data_mahasiswa = await Mahasiswa.findOne({
-        where: { id_registrasi_mahasiswa },
+        where: {
+          id_registrasi_mahasiswa,
+          nim: { [Op.notIn]: Array.from(existingUsernames) }, // Hanya mahasiswa yang belum memiliki user
+        },
       });
 
       if (!data_mahasiswa) {
@@ -391,6 +410,101 @@ const generateUserByMahasiswa = async (req, res, next) => {
   }
 };
 
+const generateUserMahasiswaAllProdiByAngkatan = async (req, res, next) => {
+  try {
+    // Dapatkan ID angkatan dari parameter permintaan
+    const angkatanId = req.params.id_angkatan;
+
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID is required",
+      });
+    }
+
+    // Ambil data angkatan berdasarkan id_angkatan
+    const angkatan = await Angkatan.findOne({ where: { id: angkatanId } });
+
+    // Jika data angkatan tidak ditemukan, kirim respons 404
+    if (!angkatan) {
+      return res.status(404).json({ message: `Angkatan dengan ID ${angkatanId} tidak ditemukan` });
+    }
+
+    // Dapatkan role mahasiswa
+    const role = await Role.findOne({ where: { nama_role: "mahasiswa" } });
+
+    // Ekstrak tahun dari data angkatan
+    const tahunAngkatan = angkatan.tahun;
+
+    // Ambil semua username dari tabel User yang memiliki role "mahasiswa"
+    const existingUsernames = await User.findAll({
+      attributes: ["username"],
+      include: [
+        {
+          model: UserRole,
+          include: [
+            {
+              model: Role,
+              where: { nama_role: "mahasiswa" }, // Filter hanya yang memiliki role "mahasiswa"
+            },
+          ],
+        },
+      ],
+    });
+
+    const existingUsernameSet = new Set(existingUsernames.map((user) => user.username));
+
+    // Ambil data mahasiswa berdasarkan angkatan, tetapi hanya yang belum memiliki akun user
+    const mahasiswas = await Mahasiswa.findAll({
+      where: {
+        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
+        nim: { [Op.notIn]: Array.from(existingUsernameSet) }, // Hanya mahasiswa yang belum memiliki user
+      },
+    });
+
+    // Jika tidak ada mahasiswa baru yang perlu dibuatkan user, kirim respons
+    if (mahasiswas.length === 0) {
+      return res.status(200).json({
+        message: `Tidak ada mahasiswa baru dari angkatan ${tahunAngkatan} yang perlu dibuatkan akun.`,
+      });
+    }
+
+    // Proses pembuatan user untuk mahasiswa yang belum memiliki akun
+    for (const mahasiswa of mahasiswas) {
+      const { nama_mahasiswa, nim, tanggal_lahir } = mahasiswa;
+
+      // Konversi tanggal_lahir ke format yang diinginkan
+      const tanggal_lahir_format = convertTanggal(tanggal_lahir);
+
+      // Enkripsi tanggal_lahir untuk digunakan sebagai password
+      const hashedPassword = await bcrypt.hash(tanggal_lahir_format, 10);
+
+      // Simpan data pengguna ke dalam database
+      const newUser = await User.create({
+        nama: nama_mahasiswa,
+        username: nim,
+        password: hashedPassword,
+        hints: tanggal_lahir_format,
+        email: null,
+        status: true,
+      });
+
+      // Buat relasi user-role
+      await UserRole.create({
+        id_role: role.id,
+        id_user: newUser.id,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GENERATE User Mahasiswa untuk angkatan ${tahunAngkatan} sukses`,
+      jumlahData: mahasiswas.length,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const generateUserByDosen = async (req, res, next) => {
   try {
     const { dosens } = req.body; // Ambil data dosens dari request body
@@ -400,17 +514,38 @@ const generateUserByDosen = async (req, res, next) => {
       where: { nama_role: "dosen" },
     });
 
+    // Ambil semua username dari tabel User yang memiliki role "dosen"
+    const existingUsernames = await User.findAll({
+      attributes: ["username"],
+      include: [
+        {
+          model: UserRole,
+          include: [
+            {
+              model: Role,
+              where: { nama_role: "dosen" }, // Filter hanya yang memiliki role "dosen"
+            },
+          ],
+        },
+      ],
+    });
+
+    const existingUsernameSet = new Set(existingUsernames.map((user) => user.username));
+
     for (const dosen of dosens) {
       const { id_dosen } = dosen;
 
-      // Ambil data dosen berdasarkan id_dosen
+      // Ambil data dosen berdasarkan id_dosen dengan pengecekan nidn tidak null dan tidak ada di existingUsernameSet
       const data_dosen = await Dosen.findOne({
-        where: { id_dosen },
+        where: {
+          id_dosen,
+          nidn: { [Op.ne]: null, [Op.notIn]: Array.from(existingUsernameSet) }, // Pastikan nidn tidak null & belum ada di existingUsernameSet
+        },
       });
 
-      if (!data_dosen) {
-        // Jika data dosen tidak ditemukan, lanjutkan ke data dosen berikutnya
-        users.push({ message: `Dosen with id ${id_dosen} not found` });
+      // Pastikan data dosen ditemukan dan nidn tidak kosong
+      if (!data_dosen || !data_dosen.nidn || data_dosen.nidn.trim() === "") {
+        users.push({ message: `Dosen with id ${id_dosen} not found or has invalid NIDN` });
         continue;
       }
 
@@ -659,7 +794,7 @@ const convertTanggal = (tanggal_lahir) => {
   const tanggal = dateParts[2];
   const bulan = dateParts[1];
   const tahun = dateParts[0];
-  return `${tanggal}${bulan}${tahun}`;
+  return `${tahun}${bulan}${tanggal}`;
 };
 
 module.exports = {
@@ -675,4 +810,5 @@ module.exports = {
   getDosenDontHaveUser,
   getUserAdminProdi,
   checkingAdminProdiUser,
+  generateUserMahasiswaAllProdiByAngkatan,
 };
