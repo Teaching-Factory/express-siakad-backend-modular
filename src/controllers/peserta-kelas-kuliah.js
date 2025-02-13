@@ -303,7 +303,7 @@ const createPesertaKelasAndKRSByAngkatanAndKelasKuliahId = async (req, res, next
     }
 
     const { mahasiswas } = req.body; // Ambil data mahasiswas dari request body
-    const peserta_kelas = []; // Simpan data yang berhasil dibuat di sini
+    const krs_mahasiswas = []; // Simpan data yang berhasil dibuat di sini
 
     // get data kelas kuliah
     let kelas_kuliah = await KelasKuliah.findOne({
@@ -337,16 +337,10 @@ const createPesertaKelasAndKRSByAngkatanAndKelasKuliahId = async (req, res, next
         where: { id_registrasi_mahasiswa },
       });
 
-      if (!data_mahasiswa) {
-        // Jika data mahasiswa tidak ditemukan, lanjutkan ke data mahasiswa berikutnya
-        peserta_kelas.push({ message: `Mahasiswa with id ${id_registrasi_mahasiswa} not found` });
-        continue;
-      }
-
       // create data krs mahasiswa dengan satus tervalidasi
-      await KRSMahasiswa.create({
+      const newKrsMahasiswa = await KRSMahasiswa.create({
         angkatan: angkatan.tahun,
-        validasi_krs: true,
+        validasi_krs: false,
         id_registrasi_mahasiswa,
         id_semester: setting_global_semester.id_semester_krs,
         id_prodi: data_mahasiswa.id_prodi,
@@ -354,20 +348,14 @@ const createPesertaKelasAndKRSByAngkatanAndKelasKuliahId = async (req, res, next
         id_kelas: kelas_kuliah.id_kelas_kuliah,
       });
 
-      const newPesertaKelas = await PesertaKelasKuliah.create({
-        angkatan: angkatan.tahun,
-        id_registrasi_mahasiswa: data_mahasiswa.id_registrasi_mahasiswa,
-        id_kelas_kuliah: kelasKuliahId,
-      });
-
-      peserta_kelas.push(newPesertaKelas);
+      krs_mahasiswas.push(newKrsMahasiswa);
     }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== CREATE Peserta Kelas Kuliah Success",
-      jumlahData: peserta_kelas.length,
-      data: peserta_kelas,
+      jumlahData: krs_mahasiswas.length,
+      data: krs_mahasiswas,
     });
   } catch (error) {
     next(error);

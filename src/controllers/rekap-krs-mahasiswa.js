@@ -377,25 +377,41 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
     },
   });
 
-  // Mendapatkan token
-  const { token, url_feeder } = await getToken();
+  // get data rekap krs mahasiswa local
+  const dataRekapKRSMahasiswa = await RekapKRSMahasiswa.findAll({
+    where: {
+      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+    },
+    include: [
+      {
+        model: Periode,
+        where: {
+          periode_pelaporan: periodeId,
+        },
+      },
+      { model: MataKuliah },
+    ],
+  });
 
-  const requestBody = {
-    act: "GetRekapKRSMahasiswa",
-    token: `${token}`,
-    filter: `id_periode='${periodeId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
-  };
+  // Mendapatkan token (mendapatka rekap krs mahasiswa by feeder)
+  // const { token, url_feeder } = await getToken();
 
-  // Menggunakan token untuk mengambil data
-  const response = await axios.post(url_feeder, requestBody);
+  // const requestBody = {
+  //   act: "GetRekapKRSMahasiswa",
+  //   token: `${token}`,
+  //   filter: `id_periode='${periodeId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  // };
 
-  // Tanggapan dari API
-  const dataRekapKRSMahasiswa = response.data.data;
+  // // Menggunakan token untuk mengambil data
+  // const response = await axios.post(url_feeder, requestBody);
+
+  // // Tanggapan dari API
+  // const dataRekapKRSMahasiswa = response.data.data;
 
   // Hitung total SKS dari seluruh mata kuliah
   const total_sks = dataRekapKRSMahasiswa
     .reduce((total, mataKuliah) => {
-      return total + parseFloat(mataKuliah.sks_mata_kuliah);
+      return total + parseFloat(mataKuliah.MataKuliah.sks_mata_kuliah);
     }, 0)
     .toFixed(2); // Format dengan dua desimal
 
@@ -471,25 +487,41 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
     },
   });
 
-  // Mendapatkan token
-  const { token, url_feeder } = await getToken();
+  // get data rekap krs mahasiswa local
+  const dataRekapKRSMahasiswa = await RekapKRSMahasiswa.findAll({
+    where: {
+      id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+    },
+    include: [
+      {
+        model: Periode,
+        where: {
+          periode_pelaporan: semesterId,
+        },
+      },
+      { model: MataKuliah },
+    ],
+  });
 
-  const requestBody = {
-    act: "GetRekapKRSMahasiswa",
-    token: `${token}`,
-    filter: `id_periode='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
-  };
+  // // Mendapatkan token (mendapatkan rekap krs mahasiswa by feeder)
+  // const { token, url_feeder } = await getToken();
 
-  // Menggunakan token untuk mengambil data
-  const response = await axios.post(url_feeder, requestBody);
+  // const requestBody = {
+  //   act: "GetRekapKRSMahasiswa",
+  //   token: `${token}`,
+  //   filter: `id_periode='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  // };
 
-  // Tanggapan dari API
-  const dataRekapKRSMahasiswa = response.data.data;
+  // // Menggunakan token untuk mengambil data
+  // const response = await axios.post(url_feeder, requestBody);
+
+  // // Tanggapan dari API
+  // const dataRekapKRSMahasiswa = response.data.data;
 
   // Hitung total SKS dari seluruh mata kuliah
   const total_sks = dataRekapKRSMahasiswa
     .reduce((total, mataKuliah) => {
-      return total + parseFloat(mataKuliah.sks_mata_kuliah);
+      return total + parseFloat(mataKuliah.MataKuliah.sks_mata_kuliah);
     }, 0)
     .toFixed(2); // Format dengan dua desimal
 
