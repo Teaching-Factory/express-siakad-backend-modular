@@ -15,6 +15,8 @@ const {
   RuangPerkuliahan,
   Semester,
   SettingGlobalSemester,
+  RekapKRSMahasiswa,
+  Periode,
 } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res, next) => {
@@ -303,6 +305,7 @@ const validasiKRSMahasiswa = async (req, res, next) => {
           id_semester: semesterId,
           id_registrasi_mahasiswa: id_registrasi_mahasiswa,
         },
+        include: [{ model: Semester }],
       });
 
       // Tambahkan data KRS mahasiswa ke array krs_mahasiswas
@@ -332,14 +335,14 @@ const validasiKRSMahasiswa = async (req, res, next) => {
         continue;
       }
 
-      // Ubah nilai validasi_krs menjadi true
-      await krs_mahasiswa.update({ validasi_krs: true });
-
       let jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
         where: { id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah },
       });
 
       if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
+        // Ubah nilai validasi_krs menjadi true
+        await krs_mahasiswa.update({ validasi_krs: true });
+
         // proses penambahan data peserta kelas kuliah dari data krs milik mahasiswa
         await PesertaKelasKuliah.create({
           angkatan: tahunAwal,
@@ -347,6 +350,24 @@ const validasiKRSMahasiswa = async (req, res, next) => {
           id_kelas_kuliah: krs_mahasiswa.id_kelas,
         });
       }
+
+      // get data periode
+      let periode = await Periode.findOne({
+        where: {
+          periode_pelaporan: krs_mahasiswa.id_semester,
+        },
+      });
+
+      // menambahkan data rekap krs mahasiswa
+      await RekapKRSMahasiswa.create({
+        nama_periode: krs_mahasiswa.Semester.nama_semester,
+        angkatan: tahunAwal,
+        id_prodi: krs_mahasiswa.id_prodi,
+        id_periode: periode.id_periode,
+        id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+        id_matkul: krs_mahasiswa.id_matkul,
+        id_semester: krs_mahasiswa.id_semester,
+      });
     }
 
     // Kirim respons JSON jika berhasil

@@ -17,11 +17,6 @@ module.exports = {
         type: Sequelize.CHAR(4),
         allowNull: false,
       },
-      validasi_krs: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
-        defaultValue: false,
-      },
       id_prodi: {
         type: Sequelize.STRING(36),
         allowNull: false,

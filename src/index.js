@@ -195,8 +195,13 @@ const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
 // const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 
 const rule = new schedule.RecurrenceRule();
-rule.hour = 0;
-rule.minute = 0;
+// cronjob dijalankan ketika jam 0.00
+// rule.hour = 0;
+// rule.minute = 0;
+
+// cronjob dijalankan setiap 3 jam sekali
+rule.minute = 0; // Jalankan tepat di menit 00
+rule.hour = new schedule.Range(0, 23, 3); // Setiap 3 jam (00:00, 03:00, 06:00, dst.)
 
 // Atur penjadwalan tugas
 schedule.scheduleJob(rule, async function () {
