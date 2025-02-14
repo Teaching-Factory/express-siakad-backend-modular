@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       Semester.hasMany(models.AspekPenilaianDosen, { foreignKey: "id_semester" });
       Semester.hasMany(models.SkalaPenilaianDosen, { foreignKey: "id_semester" });
       Semester.hasMany(models.TagihanCamaba, { foreignKey: "id_semester" });
+      Semester.hasMany(models.TagihanMahasiswa, { foreignKey: "id_semester" });
     }
   }
   Semester.init(

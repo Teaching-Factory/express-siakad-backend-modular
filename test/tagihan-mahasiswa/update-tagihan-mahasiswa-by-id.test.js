@@ -21,7 +21,7 @@ describe("updateTagihanMahasiswaById", () => {
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
-      id_periode: 2,
+      id_semester: "20241",
       id_jenis_tagihan: 1,
     };
 
@@ -34,7 +34,7 @@ describe("updateTagihanMahasiswaById", () => {
       tanggal_tagihan: "2024-06-10",
       deadline_tagihan: "2024-07-10",
       status_tagihan: "Lunas",
-      id_periode: 1,
+      id_semester: "20241",
       id_jenis_tagihan: 1,
       save: jest.fn(),
     };
@@ -77,7 +77,7 @@ describe("updateTagihanMahasiswaById", () => {
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
-      id_periode: 2,
+      id_semester: "20241",
       id_registrasi_mahasiswa: 2,
       id_jenis_tagihan: 1,
     };
@@ -103,7 +103,7 @@ describe("updateTagihanMahasiswaById", () => {
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
-      id_periode: 2,
+      id_semester: "20241",
       id_registrasi_mahasiswa: 2,
       id_jenis_tagihan: 1,
     };

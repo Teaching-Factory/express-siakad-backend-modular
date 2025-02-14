@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getTagihanMahasiswaById } = require("../../src/controllers/tagihan-mahasiswa");
-const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan } = require("../../models");
+const { TagihanMahasiswa, Semester, Mahasiswa, JenisTagihan } = require("../../models");
 
 jest.mock("../../models");
 
@@ -18,11 +18,11 @@ describe("getTagihanMahasiswaById", () => {
     const tagihanMahasiswaId = 1;
     const mockTagihanMahasiswa = {
       id: tagihanMahasiswaId,
-      periodeId: 1,
+      semesterId: 1,
       mahasiswaId: 1,
       nominal_tagihan: 500000,
       status_pembayaran: "Belum Lunas",
-      Periode: { id: 1, nama: "Semester Genap 2023/2024" },
+      Semester: { id: 1, nama: "Semester Genap 2023/2024" },
       Mahasiswa: { id: 1, nama: "John Doe", nim: "A12345678" },
     };
 
@@ -32,7 +32,7 @@ describe("getTagihanMahasiswaById", () => {
     await getTagihanMahasiswaById(req, res, next);
 
     expect(TagihanMahasiswa.findByPk).toHaveBeenCalledWith(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
+      include: [{ model: Semester }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -61,7 +61,7 @@ describe("getTagihanMahasiswaById", () => {
     await getTagihanMahasiswaById(req, res, next);
 
     expect(TagihanMahasiswa.findByPk).toHaveBeenCalledWith(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
+      include: [{ model: Semester }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
@@ -80,7 +80,7 @@ describe("getTagihanMahasiswaById", () => {
     await getTagihanMahasiswaById(req, res, next);
 
     expect(TagihanMahasiswa.findByPk).toHaveBeenCalledWith(tagihanMahasiswaId, {
-      include: [{ model: Periode }, { model: Mahasiswa }, { model: JenisTagihan }],
+      include: [{ model: Semester }, { model: Mahasiswa }, { model: JenisTagihan }],
     });
     expect(next).toHaveBeenCalledWith(error);
   });

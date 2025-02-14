@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel parent
       TagihanMahasiswa.belongsTo(models.JenisTagihan, { foreignKey: "id_jenis_tagihan" });
-      TagihanMahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
+      TagihanMahasiswa.belongsTo(models.Semester, { foreignKey: "id_semester" });
       TagihanMahasiswa.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
 
       // relasi tabel child
@@ -57,15 +57,9 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      id_periode: {
-        type: DataTypes.INTEGER(10),
+      id_semester: {
+        type: DataTypes.CHAR(5),
         allowNull: false,
-        validate: {
-          isInt: {
-            args: true,
-            msg: "id_periode must be an integer",
-          },
-        },
       },
       id_registrasi_mahasiswa: {
         type: DataTypes.STRING(36),

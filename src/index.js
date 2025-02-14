@@ -185,12 +185,16 @@ app.use("/src/storage", express.static(path.join(__dirname, "storage")));
 const schedule = require("node-schedule");
 // const cleanExpiredTokens = require("./cronjobs/cronjobScheduler");
 const singkronDosen = require("./cronjobs/singkron-get/singkron-dosen-feeder");
-const singkronTahunAjaran = require("./cronjobs/singkron-get/singkron-tahun-ajaran-feeder");
 const singkronProdi = require("./cronjobs/singkron-get/singkron-prodi-feeder");
 const singkronSubstansi = require("./cronjobs/singkron-get/singkron-substansi-feeder");
 const singkronMataKuliah = require("./cronjobs/singkron-get/singkron-mata-kuliah-feeder");
+const singkronTahunAjaran = require("./cronjobs/singkron-get/singkron-tahun-ajaran-feeder");
 const singkronSemester = require("./cronjobs/singkron-get/singkron-semester-feeder");
 const singkronKurikulum = require("./cronjobs/singkron-get/singkron-kurikulum-feeder");
+// detail kurikulum
+// penugasan dosen
+// matkul kurikulum
+// aktivitas kuliah mahasiswa
 const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
 // const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 
@@ -211,12 +215,16 @@ schedule.scheduleJob(rule, async function () {
 
     // Singkron Feeder Get
     await singkronDosen();
-    await singkronTahunAjaran();
     await singkronProdi();
     await singkronSubstansi();
     await singkronMataKuliah();
+    await singkronTahunAjaran();
     await singkronSemester();
     await singkronKurikulum();
+    // detail kurikulum
+    // penugasan dosen
+    // matkul kurikulum
+    // aktivitas kuliah mahasiswa
     await singkronSekolah();
 
     // Singkron Feeder CRUD

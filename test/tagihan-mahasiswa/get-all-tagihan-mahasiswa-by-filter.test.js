@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getAllTagihanMahasiswaByFilter } = require("../../src/controllers/tagihan-mahasiswa");
-const { TagihanMahasiswa, Periode, Mahasiswa, JenisTagihan } = require("../../models");
+const { TagihanMahasiswa, Semester, Mahasiswa, JenisTagihan } = require("../../models");
 
 jest.mock("../../models");
 
@@ -18,10 +18,10 @@ describe("getAllTagihanMahasiswaByFilter", () => {
     const mockTagihanMahasiswa = [
       {
         id: "1",
-        id_periode: "2021",
+        id_semester: "2021",
         id_jenis_tagihan: "1",
         status_tagihan: "paid",
-        Periode: { id: "2021", name: "Periode 2021" },
+        Semester: { id: "2021", nama_semester: "Semester 2024/2025 Ganjil" },
         Mahasiswa: { id: "1", id_prodi: "1" },
         JenisTagihan: { id: "1", name: "Jenis Tagihan 1" },
       },
@@ -30,7 +30,7 @@ describe("getAllTagihanMahasiswaByFilter", () => {
     TagihanMahasiswa.findAll.mockResolvedValue(mockTagihanMahasiswa);
 
     req.query = {
-      id_periode: "2021",
+      id_semester: "2021",
       id_prodi: "1",
       id_jenis_tagihan: "1",
       status_tagihan: "paid",
@@ -40,12 +40,12 @@ describe("getAllTagihanMahasiswaByFilter", () => {
 
     expect(TagihanMahasiswa.findAll).toHaveBeenCalledWith({
       where: {
-        id_periode: "2021",
+        id_semester: "2021",
         id_jenis_tagihan: "1",
         status_tagihan: "paid",
       },
       include: [
-        { model: Periode },
+        { model: Semester },
         {
           model: Mahasiswa,
           where: {
@@ -71,7 +71,7 @@ describe("getAllTagihanMahasiswaByFilter", () => {
     TagihanMahasiswa.findAll.mockRejectedValue(error);
 
     req.query = {
-      id_periode: "2021",
+      id_semester: "2021",
       id_prodi: "1",
       id_jenis_tagihan: "1",
       status_tagihan: "paid",
@@ -81,12 +81,12 @@ describe("getAllTagihanMahasiswaByFilter", () => {
 
     expect(TagihanMahasiswa.findAll).toHaveBeenCalledWith({
       where: {
-        id_periode: "2021",
+        id_semester: "2021",
         id_jenis_tagihan: "1",
         status_tagihan: "paid",
       },
       include: [
-        { model: Periode },
+        { model: Semester },
         {
           model: Mahasiswa,
           where: {

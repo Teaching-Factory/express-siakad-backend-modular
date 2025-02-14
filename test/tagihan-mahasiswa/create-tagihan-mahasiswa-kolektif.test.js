@@ -30,7 +30,7 @@ describe("createTagihanMahasiswaKolektif", () => {
       tanggal_tagihan: "2024-05-15",
       deadline_tagihan: "2024-01-06",
       status_tagihan: "Belum Bayar",
-      id_periode: 1,
+      id_semester: "20241",
       mahasiswas: [],
     };
 
@@ -52,7 +52,7 @@ describe("createTagihanMahasiswaKolektif", () => {
       tanggal_tagihan: "2024-05-15",
       deadline_tagihan: "2024-01-06",
       status_tagihan: "Belum Bayar",
-      id_periode: 1,
+      id_semester: "20241",
       mahasiswas: [{ id_registrasi_mahasiswa: "3480f906-b24b-4ba2-ab58-581ca4eba214" }],
     };
 
@@ -70,7 +70,7 @@ describe("createTagihanMahasiswaKolektif", () => {
       tanggal_tagihan: "2024-05-15",
       deadline_tagihan: "2024-01-06",
       status_tagihan: "Belum Bayar",
-      id_periode: 1,
+      id_semester: "20241",
       mahasiswas: mockMahasiswas,
     };
 
@@ -80,7 +80,7 @@ describe("createTagihanMahasiswaKolektif", () => {
       tanggal_tagihan: req.body.tanggal_tagihan,
       deadline_tagihan: req.body.deadline_tagihan,
       status_tagihan: req.body.status_tagihan,
-      id_periode: req.body.id_periode,
+      id_semester: req.body.id_semester,
       id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
     }));
 
@@ -96,7 +96,7 @@ describe("createTagihanMahasiswaKolektif", () => {
         tanggal_tagihan: req.body.tanggal_tagihan,
         deadline_tagihan: req.body.deadline_tagihan,
         status_tagihan: req.body.status_tagihan,
-        id_periode: req.body.id_periode,
+        id_semester: req.body.id_semester,
         id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
       });
     });

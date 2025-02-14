@@ -43,7 +43,7 @@ const getPeriode = async (req, res, next) => {
       // Jika prodi ditemukan, lanjutkan proses penambahan data periode
       if (prodi) {
         await Periode.create({
-          id_periode: data_periode.id_periode, // belum fix
+          id_periode: data_periode.id_periode, 
           periode_pelaporan: data_periode.periode_pelaporan,
           tipe_periode: data_periode.tipe_periode,
           id_prodi: data_periode.id_prodi,
@@ -51,7 +51,7 @@ const getPeriode = async (req, res, next) => {
       } else {
         // Jika prodi tidak ditemukan, kosongkan nilai id_prodi
         await Periode.create({
-          id_periode: data_periode.id_periode, // belum fix
+          id_periode: data_periode.id_periode, 
           periode_pelaporan: data_periode.periode_pelaporan,
           tipe_periode: data_periode.tipe_periode,
           id_prodi: null,

@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
       Periode.hasMany(models.RekapJumlahMahasiswa, { foreignKey: "id_periode" });
       Periode.hasMany(models.RekapKHSMahasiswa, { foreignKey: "id_periode" });
       Periode.hasMany(models.RekapKRSMahasiswa, { foreignKey: "id_periode" });
-      Periode.hasMany(models.TagihanMahasiswa, { foreignKey: "id_periode" });
     }
   }
   Periode.init(

@@ -20,7 +20,7 @@ describe("createTagihanMahasiswa", () => {
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
-      id_periode: 1,
+      id_semester: "20241",
       id_registrasi_mahasiswa: 1,
       id_jenis_tagihan: 1,
     };
@@ -65,7 +65,7 @@ describe("createTagihanMahasiswa", () => {
       tanggal_tagihan: "2024-06-15",
       deadline_tagihan: "2024-07-15",
       status_tagihan: "Belum Lunas",
-      id_periode: 1,
+      id_semester: "20241",
       id_registrasi_mahasiswa: 1,
       id_jenis_tagihan: 1,
     };
@@ -83,7 +83,7 @@ describe("createTagihanMahasiswa", () => {
       tanggal_tagihan: mockRequestBody.tanggal_tagihan,
       deadline_tagihan: mockRequestBody.deadline_tagihan,
       status_tagihan: mockRequestBody.status_tagihan,
-      id_periode: mockRequestBody.id_periode,
+      id_semester: mockRequestBody.id_semester,
       id_registrasi_mahasiswa: mockRequestBody.id_registrasi_mahasiswa,
       id_jenis_tagihan: mockRequestBody.id_jenis_tagihan,
     });
