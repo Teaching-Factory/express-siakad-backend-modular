@@ -21,8 +21,8 @@ const getRekapKHSMahasiswa = async (req, res, next) => {
       return res.status(400).json({ message: "Parameter angkatan is required" });
     }
 
-    // Buat filter menggunakan LIKE pada id_semester
-    const semesterFilter = Array.isArray(angkatan) ? angkatan.map((year) => `id_semester LIKE '%${year}%'`).join(" OR ") : `id_semester LIKE '%${angkatan}%'`;
+    // Buat filter menggunakan LIKE pada id_periode pada feeder
+    const semesterFilter = Array.isArray(angkatan) ? angkatan.map((year) => `id_periode LIKE '%${year}%'`).join(" OR ") : `id_periode LIKE '%${angkatan}%'`;
 
     const requestBody = {
       act: "GetRekapKHSMahasiswa",
