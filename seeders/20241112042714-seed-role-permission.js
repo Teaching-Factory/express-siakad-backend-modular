@@ -791,12 +791,6 @@ module.exports = {
       },
       {
         id_role: 4,
-        id_permission: 4,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id_role: 4,
         id_permission: 5,
         createdAt: new Date(),
         updatedAt: new Date(),
