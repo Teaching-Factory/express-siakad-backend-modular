@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // relasi tabel parent
       RekapKRSMahasiswa.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
-      RekapKRSMahasiswa.belongsTo(models.Periode, { foreignKey: "id_periode" });
       RekapKRSMahasiswa.belongsTo(models.Mahasiswa, { foreignKey: "id_registrasi_mahasiswa" });
       RekapKRSMahasiswa.belongsTo(models.MataKuliah, { foreignKey: "id_matkul" });
       RekapKRSMahasiswa.belongsTo(models.Semester, { foreignKey: "id_semester" });
@@ -24,10 +23,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER(10),
       },
-      nama_periode: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-      },
       angkatan: {
         type: DataTypes.CHAR(4),
         allowNull: false,
@@ -35,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       id_prodi: {
         type: DataTypes.STRING(36),
         allowNull: false,
-      },
-      id_periode: {
-        type: DataTypes.INTEGER(10),
-        allowNull: true,
       },
       id_registrasi_mahasiswa: {
         type: DataTypes.STRING(36),

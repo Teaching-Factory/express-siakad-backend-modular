@@ -9,10 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER(10),
       },
-      nama_periode: {
-        type: Sequelize.STRING(50),
-        allowNull: false,
-      },
       angkatan: {
         type: Sequelize.CHAR(4),
         allowNull: false,
@@ -25,18 +21,6 @@ module.exports = {
             tableName: "prodis",
           },
           key: "id_prodi",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_periode: {
-        type: Sequelize.INTEGER(10),
-        allowNull: true,
-        references: {
-          model: {
-            tableName: "periodes",
-          },
-          key: "id_periode",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

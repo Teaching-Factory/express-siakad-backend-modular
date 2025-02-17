@@ -30,7 +30,7 @@ describe("cetakKRSMahasiswaActiveBySemesterId", () => {
     await cetakKRSMahasiswaActiveBySemesterId(req, res, next);
 
     expect(res.statusCode).toBe(400);
-    expect(res._getJSONData()).toEqual({ message: "Periode ID is required" });
+    expect(res._getJSONData()).toEqual({ message: "Semester ID is required" });
   });
 
   it("should return 404 if semester is not found", async () => {

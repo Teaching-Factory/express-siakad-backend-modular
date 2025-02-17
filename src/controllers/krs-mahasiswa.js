@@ -351,19 +351,10 @@ const validasiKRSMahasiswa = async (req, res, next) => {
         });
       }
 
-      // get data periode
-      let periode = await Periode.findOne({
-        where: {
-          periode_pelaporan: krs_mahasiswa.id_semester,
-        },
-      });
-
       // menambahkan data rekap krs mahasiswa
       await RekapKRSMahasiswa.create({
-        nama_periode: krs_mahasiswa.Semester.nama_semester,
         angkatan: tahunAwal,
         id_prodi: krs_mahasiswa.id_prodi,
-        id_periode: periode.id_periode,
         id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
         id_matkul: krs_mahasiswa.id_matkul,
         id_semester: krs_mahasiswa.id_semester,

@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("../api-feeder/get-token");
-const { RekapKRSMahasiswa, Periode } = require("../../../models");
+const { RekapKRSMahasiswa } = require("../../../models");
 
 const getRekapKRSMahasiswa = async (req, res, next) => {
   try {
@@ -21,14 +21,14 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
       return res.status(400).json({ message: "Parameter angkatan is required" });
     }
 
-    // Buat filter dinamis berdasarkan parameter angkatan
-    const angkatanFilter = Array.isArray(angkatan) ? angkatan.map((year) => `angkatan = '${year}'`).join(" OR ") : `angkatan = '${angkatan}'`;
+    // Buat filter menggunakan LIKE pada id_semester
+    const semesterFilter = Array.isArray(angkatan) ? angkatan.map((year) => `id_semester LIKE '%${year}%'`).join(" OR ") : `id_semester LIKE '%${angkatan}%'`;
 
     const requestBody = {
       act: "GetRekapKRSMahasiswa",
       token: `${token}`,
-      filter: angkatanFilter,
-      order: "id_periode",
+      filter: semesterFilter,
+      order: "id_semester",
     };
 
     // Menggunakan token untuk mengambil data
@@ -39,20 +39,6 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
 
     // Loop untuk menambahkan data ke dalam database
     for (const rekap_krs_mahasiswa of dataRekapKRSMahasiswa) {
-      let id_periode = null;
-
-      // Periksa apakah id_periode atau periode_pelaporan ada di Periode
-      const periode = await Periode.findOne({
-        where: {
-          periode_pelaporan: rekap_krs_mahasiswa.id_periode,
-        },
-      });
-
-      // Jika ditemukan, simpan nilainya
-      if (periode) {
-        id_periode = periode.id_periode;
-      }
-
       // Periksa apakah data sudah ada
       const existingData = await RekapKRSMahasiswa.findOne({
         where: {
@@ -60,17 +46,14 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
           angkatan: rekap_krs_mahasiswa.angkatan,
           id_matkul: rekap_krs_mahasiswa.id_matkul,
           id_semester: rekap_krs_mahasiswa.id_semester,
-          id_periode: periode.id_periode,
         },
       });
 
       if (!existingData) {
         // Jika belum ada, tambahkan data baru
         await RekapKRSMahasiswa.create({
-          nama_periode: rekap_krs_mahasiswa.nama_periode,
           angkatan: rekap_krs_mahasiswa.angkatan,
           id_prodi: rekap_krs_mahasiswa.id_prodi,
-          id_periode: id_periode,
           id_registrasi_mahasiswa: rekap_krs_mahasiswa.id_registrasi_mahasiswa,
           id_matkul: rekap_krs_mahasiswa.id_matkul,
           id_semester: rekap_krs_mahasiswa.id_semester,

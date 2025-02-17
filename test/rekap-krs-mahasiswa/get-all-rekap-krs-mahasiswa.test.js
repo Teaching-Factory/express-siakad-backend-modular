@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getAllRekapKRSMahasiswa } = require("../../src/controllers/rekap-krs-mahasiswa");
-const { RekapKRSMahasiswa, Prodi, Periode, Mahasiswa, MataKuliah, Semester } = require("../../models");
+const { RekapKRSMahasiswa, Prodi, Mahasiswa, MataKuliah, Semester } = require("../../models");
 
 jest.mock("../../models");
 
@@ -39,7 +39,7 @@ describe("getAllRekapKRSMahasiswa", () => {
     await getAllRekapKRSMahasiswa(req, res, next);
 
     expect(RekapKRSMahasiswa.findAll).toHaveBeenCalledWith({
-      include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }],
+      include: [{ model: Prodi }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({

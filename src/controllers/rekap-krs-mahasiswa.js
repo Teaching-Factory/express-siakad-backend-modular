@@ -1,7 +1,6 @@
 const {
   RekapKRSMahasiswa,
   Prodi,
-  Periode,
   Mahasiswa,
   MataKuliah,
   Semester,
@@ -15,7 +14,6 @@ const {
   RuangPerkuliahan,
   DosenWali,
   SettingGlobalSemester,
-  TahunAjaran,
   JenjangPendidikan,
 } = require("../../models");
 const axios = require("axios");
@@ -24,7 +22,7 @@ const { getToken } = require("././api-feeder/get-token");
 const getAllRekapKRSMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data rekap_krs_mahasiswa dari database
-    const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findAll({ include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }] });
+    const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findAll({ include: [{ model: Prodi }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -51,7 +49,7 @@ const getRekapKRSMahasiswaById = async (req, res, next) => {
 
     // Cari data rekap_krs_mahasiswa berdasarkan ID di database
     const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findByPk(RekapKRSMahasiswaId, {
-      include: [{ model: Prodi }, { model: Periode }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }],
+      include: [{ model: Prodi }, { model: Mahasiswa }, { model: MataKuliah }, { model: Semester }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -333,19 +331,19 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
   }
 };
 
-const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
+const getKRSMahasiswaBySemesterId = async (req, res, next) => {
   // memperoleh id
-  const periodeId = req.params.id_periode;
+  const semesterId = req.params.id_semester;
 
   // pengecekan parameter id
-  if (!periodeId) {
+  if (!semesterId) {
     return res.status(400).json({
-      message: "Periode ID is required",
+      message: "Semester ID is required",
     });
   }
 
-  // get data semester dari periode id
-  const semester = await Semester.findByPk(periodeId);
+  // get data semester dari semester id
+  const semester = await Semester.findByPk(semesterId);
 
   if (!semester) {
     return res.status(404).json({
@@ -381,16 +379,9 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
   const dataRekapKRSMahasiswa = await RekapKRSMahasiswa.findAll({
     where: {
       id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+      id_semester: semesterId,
     },
-    include: [
-      {
-        model: Periode,
-        where: {
-          periode_pelaporan: periodeId,
-        },
-      },
-      { model: MataKuliah },
-    ],
+    include: [{ model: MataKuliah }],
   });
 
   // Mendapatkan token (mendapatka rekap krs mahasiswa by feeder)
@@ -399,7 +390,7 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
   // const requestBody = {
   //   act: "GetRekapKRSMahasiswa",
   //   token: `${token}`,
-  //   filter: `id_periode='${periodeId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  //   filter: `id_semester='${semesterId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
   // };
 
   // // Menggunakan token untuk mengambil data
@@ -417,7 +408,7 @@ const getKRSMahasiswaByPeriodeId = async (req, res, next) => {
 
   // Kirim data sebagai respons
   res.status(200).json({
-    message: `Get KRS Mahasiswa By Periode ID ${periodeId} from Feeder Success`,
+    message: `Get KRS Mahasiswa By Semester ID ${semesterId} from Feeder Success`,
     total_sks: total_sks,
     mahasiswa: mahasiswa,
     dosen_wali: dosen_wali,
@@ -433,11 +424,11 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
   // pengecekan parameter id
   if (!semesterId) {
     return res.status(400).json({
-      message: "Periode ID is required",
+      message: "Semester ID is required",
     });
   }
 
-  // get data semester dari periode id
+  // get data semester dari semester id
   const semester = await Semester.findByPk(semesterId);
 
   if (!semester) {
@@ -491,16 +482,9 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
   const dataRekapKRSMahasiswa = await RekapKRSMahasiswa.findAll({
     where: {
       id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+      id_semester: semesterId,
     },
-    include: [
-      {
-        model: Periode,
-        where: {
-          periode_pelaporan: semesterId,
-        },
-      },
-      { model: MataKuliah },
-    ],
+    include: [{ model: MataKuliah }],
   });
 
   // // Mendapatkan token (mendapatkan rekap krs mahasiswa by feeder)
@@ -509,7 +493,7 @@ const cetakKRSMahasiswaActiveBySemesterId = async (req, res, next) => {
   // const requestBody = {
   //   act: "GetRekapKRSMahasiswa",
   //   token: `${token}`,
-  //   filter: `id_periode='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+  //   filter: `id_semester='${semester.id_semester}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
   // };
 
   // // Menggunakan token untuk mengambil data
@@ -546,6 +530,6 @@ module.exports = {
   getRekapKRSMahasiswaById,
   getRekapKRSMahasiswaByFilter,
   getRekapKRSMahasiswaByFilterReqBody,
-  getKRSMahasiswaByPeriodeId,
+  getKRSMahasiswaBySemesterId,
   cetakKRSMahasiswaActiveBySemesterId,
 };
