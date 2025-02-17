@@ -1,11 +1,11 @@
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen, Semester, JenjangPendidikan, Agama } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen, Semester, JenjangPendidikan, Agama } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
 
 const getAllRekapKHSMahasiswa = async (req, res, next) => {
   try {
     // Ambil semua data rekap_khs_mahasiswa dari database
-    const rekap_khs_mahasiswa = await RekapKHSMahasiswa.findAll({ include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }] });
+    const rekap_khs_mahasiswa = await RekapKHSMahasiswa.findAll({ include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }] });
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
@@ -32,7 +32,7 @@ const getRekapKHSMahasiswaById = async (req, res, next) => {
 
     // Cari data rekap_khs_mahasiswa berdasarkan ID di database
     const rekap_khs_mahasiswa = await RekapKHSMahasiswa.findByPk(RekapKHSMahasiswaId, {
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -69,7 +69,7 @@ const getRekapKHSMahasiswaByMahasiswaId = async (req, res, next) => {
       where: {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
       },
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -223,11 +223,8 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
 
       // get rekap khs mahasiswa local
       let dataRekapKHSMahasiswa = await RekapKHSMahasiswa.findAll({
-        include: {
-          model: Periode,
-          where: {
-            periode_pelaporan: id_semester,
-          },
+        where: {
+          id_semester: id_semester,
         },
         include: [
           {
@@ -288,12 +285,7 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
       let dataRekapKHSMahasiswa = await RekapKHSMahasiswa.findAll({
         where: {
           angkatan: angkatan.tahun,
-        },
-        include: {
-          model: Periode,
-          where: {
-            periode_pelaporan: id_semester,
-          },
+          id_semester: id_semester,
         },
         include: [
           {
@@ -341,13 +333,13 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
   }
 };
 
-const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
-  const periodeId = req.params.id_periode;
+const getKHSMahasiswaBySemesterId = async (req, res, next) => {
+  const semesterId = req.params.id_semester;
 
   // pengecekan parameter id
-  if (!periodeId) {
+  if (!semesterId) {
     return res.status(400).json({
-      message: "Periode ID is required",
+      message: "Semester ID is required",
     });
   }
 
@@ -370,15 +362,8 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   // let dataRekapKHSMahasiswa = await RekapKHSMahasiswa.findAll({
   //   where: {
   //     id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+  //     id_semester: semesterId,
   //   },
-  //   include: [
-  //     {
-  //       model: Periode,
-  //       where: {
-  //         periode_pelaporan: periodeId,
-  //       },
-  //     },
-  //   ],
   // });
 
   // Mendapatkan token (get rekap khs mahasiswa by feeder)
@@ -387,7 +372,7 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   const requestBody = {
     act: "GetRekapKHSMahasiswa",
     token: `${token}`,
-    filter: `id_periode='${periodeId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
+    filter: `id_periode='${semesterId}' and id_registrasi_mahasiswa='${mahasiswa.id_registrasi_mahasiswa}'`,
   };
 
   // Menggunakan token untuk mengambil data
@@ -396,7 +381,7 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   // Tanggapan dari API
   const dataRekapKHSMahasiswa = response.data.data;
 
-  // Hitung total_sks dan total_sks_indeks untuk periode tertentu
+  // Hitung total_sks dan total_sks_indeks untuk semester tertentu
   let total_sks = 0;
   let total_sks_indeks = 0;
 
@@ -408,7 +393,7 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
     total_sks_indeks += nilai.total_sks_indeks;
   });
 
-  // Hitung IPS untuk periode tertentu
+  // Hitung IPS untuk semester tertentu
   const ips = total_sks > 0 ? (total_sks_indeks / total_sks).toFixed(2) : "0.00";
   const formattedTotalSksIndeks = total_sks_indeks.toFixed(2);
 
@@ -433,29 +418,29 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   // Tanggapan dari API
   const dataRekapKHSMahasiswaAll = responseTwo.data.data;
 
-  // Mengelompokkan data KHS berdasarkan id_periode
+  // Mengelompokkan data KHS berdasarkan id_semester
   const groupedData = dataRekapKHSMahasiswaAll.reduce((acc, curr) => {
-    const periode = curr.id_periode;
-    if (!acc[periode]) {
-      acc[periode] = [];
+    const semester = curr.id_semester;
+    if (!acc[semester]) {
+      acc[semester] = [];
     }
-    acc[periode].push(curr);
+    acc[semester].push(curr);
     return acc;
   }, {});
 
-  // Hitung dan simpan nilai IPS masing-masing periode ke dalam array ips
+  // Hitung dan simpan nilai IPS masing-masing semester ke dalam array ips
   const ipsArray = [];
-  for (const periode in groupedData) {
-    let totalSksPeriode = 0;
-    let totalSksIndeksPeriode = 0;
-    groupedData[periode].forEach((nilai) => {
+  for (const semester in groupedData) {
+    let totalSksSemester = 0;
+    let totalSksIndeksSemester = 0;
+    groupedData[semester].forEach((nilai) => {
       const sks = parseFloat(nilai.sks_mata_kuliah) || 0; // Default ke 0 jika null
       const indeks = parseFloat(nilai.nilai_indeks) || 0; // Default ke 0 jika null
-      totalSksPeriode += sks;
-      totalSksIndeksPeriode += sks * indeks;
+      totalSksSemester += sks;
+      totalSksIndeksSemester += sks * indeks;
     });
-    const ipsPeriode = totalSksPeriode > 0 ? (totalSksIndeksPeriode / totalSksPeriode).toFixed(2) : "0.00";
-    ipsArray.push(parseFloat(ipsPeriode));
+    const ipsSemester = totalSksSemester > 0 ? (totalSksIndeksSemester / totalSksSemester).toFixed(2) : "0.00";
+    ipsArray.push(parseFloat(ipsSemester));
   }
 
   // Hitung IPK
@@ -465,7 +450,7 @@ const getKHSMahasiswaByPeriodeId = async (req, res, next) => {
   const ipk = validIpsArray.length > 0 ? (totalIps / validIpsArray.length).toFixed(2) : "0.00";
 
   res.json({
-    message: `Get KHS Mahasiswa By Periode ID ${periodeId} from Feeder Success`,
+    message: `Get KHS Mahasiswa By Semester ID ${semesterId} from Feeder Success`,
     mahasiswa: mahasiswa,
     total_sks: total_sks,
     total_sks_indeks: formattedTotalSksIndeks,
@@ -541,7 +526,7 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
   // Tanggapan dari API
   const dataRekapKHSMahasiswa = response.data.data || [];
 
-  // Hitung total_sks dan total_sks_indeks untuk periode tertentu
+  // Hitung total_sks dan total_sks_indeks untuk semester tertentu
   let total_sks = 0;
   let total_sks_indeks = 0;
 
@@ -554,7 +539,7 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
     total_sks_indeks += nilai.total_sks_indeks;
   });
 
-  // Hitung IPS untuk periode tertentu
+  // Hitung IPS untuk semester tertentu
   const ips = total_sks > 0 ? (total_sks_indeks / total_sks).toFixed(2) : "0.00";
   const formattedTotalSksIndeks = total_sks_indeks.toFixed(2);
 
@@ -571,30 +556,30 @@ const cetakKHSMahasiswaActiveBySemesterId = async (req, res, next) => {
   // Tanggapan dari API
   const dataRekapKHSMahasiswaAll = responseTwo.data.data || [];
 
-  // Mengelompokkan data KHS berdasarkan id_periode
+  // Mengelompokkan data KHS berdasarkan id_semester
   const groupedData = dataRekapKHSMahasiswaAll.reduce((acc, curr) => {
-    const periode = curr.id_periode;
-    if (!acc[periode]) {
-      acc[periode] = [];
+    const semester = curr.id_semester;
+    if (!acc[semester]) {
+      acc[semester] = [];
     }
-    acc[periode].push(curr);
+    acc[semester].push(curr);
     return acc;
   }, {});
 
-  // Hitung dan simpan nilai IPS masing-masing periode ke dalam array ips
+  // Hitung dan simpan nilai IPS masing-masing semester ke dalam array ips
   const ipsArray = [];
-  for (const periode in groupedData) {
-    let totalSksPeriode = 0;
-    let totalSksIndeksPeriode = 0;
-    groupedData[periode].forEach((nilai) => {
+  for (const semester in groupedData) {
+    let totalSksSemester = 0;
+    let totalSksIndeksSemester = 0;
+    groupedData[semester].forEach((nilai) => {
       const sksMataKuliah = parseFloat(nilai.sks_mata_kuliah) || 0;
       const nilaiIndeks = parseFloat(nilai.nilai_indeks) || 0;
 
-      totalSksPeriode += sksMataKuliah;
-      totalSksIndeksPeriode += sksMataKuliah * nilaiIndeks;
+      totalSksSemester += sksMataKuliah;
+      totalSksIndeksSemester += sksMataKuliah * nilaiIndeks;
     });
-    const ipsPeriode = totalSksPeriode > 0 ? (totalSksIndeksPeriode / totalSksPeriode).toFixed(2) : "0.00";
-    ipsArray.push(parseFloat(ipsPeriode));
+    const ipsSemester = totalSksSemester > 0 ? (totalSksIndeksSemester / totalSksSemester).toFixed(2) : "0.00";
+    ipsArray.push(parseFloat(ipsSemester));
   }
 
   // Hitung IPK
@@ -625,6 +610,6 @@ module.exports = {
   getRekapKHSMahasiswaByMahasiswaId,
   getRekapKHSMahasiswaByFilter,
   getRekapKHSMahasiswaByFilterReqBody,
-  getKHSMahasiswaByPeriodeId,
+  getKHSMahasiswaBySemesterId,
   cetakKHSMahasiswaActiveBySemesterId,
 };

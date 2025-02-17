@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getAllRekapKHSMahasiswa } = require("../../src/controllers/rekap-khs-mahasiswa");
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, MataKuliah, Semester } = require("../../models");
 
 jest.mock("../../models");
 
@@ -16,8 +16,8 @@ describe("getAllRekapKHSMahasiswa", () => {
   // Kode uji 1 - berhasil mendapatkan semua data rekap KHS mahasiswa
   it("should return all rekap KHS mahasiswa with status 200 if found", async () => {
     const mockRekapKHS = [
-      { id: 1, mahasiswaId: 1, prodiId: 1, periodeId: 1, mataKuliahId: 1 },
-      { id: 2, mahasiswaId: 2, prodiId: 1, periodeId: 1, mataKuliahId: 2 },
+      { id: 1, mahasiswaId: 1, prodiId: 1, id_semester: "20241", mataKuliahId: 1 },
+      { id: 2, mahasiswaId: 2, prodiId: 1, id_semester: "20241", mataKuliahId: 2 },
     ];
 
     RekapKHSMahasiswa.findAll.mockResolvedValue(mockRekapKHS);
@@ -25,7 +25,7 @@ describe("getAllRekapKHSMahasiswa", () => {
     await getAllRekapKHSMahasiswa(req, res, next);
 
     expect(RekapKHSMahasiswa.findAll).toHaveBeenCalledWith({
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -42,7 +42,7 @@ describe("getAllRekapKHSMahasiswa", () => {
     await getAllRekapKHSMahasiswa(req, res, next);
 
     expect(RekapKHSMahasiswa.findAll).toHaveBeenCalledWith({
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -61,7 +61,7 @@ describe("getAllRekapKHSMahasiswa", () => {
     await getAllRekapKHSMahasiswa(req, res, next);
 
     expect(RekapKHSMahasiswa.findAll).toHaveBeenCalledWith({
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
     expect(next).toHaveBeenCalledWith(new Error(errorMessage));
   });

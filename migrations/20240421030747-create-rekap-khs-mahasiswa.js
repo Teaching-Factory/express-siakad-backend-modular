@@ -13,10 +13,6 @@ module.exports = {
         type: Sequelize.CHAR(4),
         allowNull: false,
       },
-      nama_periode: {
-        type: Sequelize.STRING(50),
-        allowNull: false,
-      },
       nilai_angka: {
         type: Sequelize.DECIMAL(4, 1),
         allowNull: true,
@@ -45,6 +41,18 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      id_semester: {
+        type: Sequelize.CHAR(5),
+        allowNull: false,
+        references: {
+          model: {
+            tableName: "semesters",
+          },
+          key: "id_semester",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       id_prodi: {
         type: Sequelize.STRING(36),
         allowNull: false,
@@ -53,18 +61,6 @@ module.exports = {
             tableName: "prodis",
           },
           key: "id_prodi",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      id_periode: {
-        type: Sequelize.INTEGER(10),
-        allowNull: true,
-        references: {
-          model: {
-            tableName: "periodes",
-          },
-          key: "id_periode",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

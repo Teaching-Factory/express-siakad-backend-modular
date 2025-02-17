@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
 const { getRekapKHSMahasiswaByMahasiswaId } = require("../../src/controllers/rekap-khs-mahasiswa");
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, Periode, MataKuliah } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, MataKuliah, Semester } = require("../../models");
 
 jest.mock("../../models");
 
@@ -17,8 +17,8 @@ describe("getRekapKHSMahasiswaByMahasiswaId", () => {
   it("should return rekap KHS mahasiswa by ID registrasi mahasiswa with status 200 if found", async () => {
     const idRegistrasiMahasiswa = 1;
     const mockRekapKHS = [
-      { id: 1, mahasiswaId: 1, prodiId: 1, periodeId: 1, mataKuliahId: 1 },
-      { id: 2, mahasiswaId: 1, prodiId: 1, periodeId: 2, mataKuliahId: 2 },
+      { id: 1, mahasiswaId: 1, prodiId: 1, semesterId: "20241", mataKuliahId: 1 },
+      { id: 2, mahasiswaId: 1, prodiId: 1, semesterId: "20242", mataKuliahId: 2 },
     ];
 
     RekapKHSMahasiswa.findAll.mockResolvedValue(mockRekapKHS);
@@ -29,7 +29,7 @@ describe("getRekapKHSMahasiswaByMahasiswaId", () => {
 
     expect(RekapKHSMahasiswa.findAll).toHaveBeenCalledWith({
       where: { id_registrasi_mahasiswa: idRegistrasiMahasiswa },
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
@@ -51,7 +51,7 @@ describe("getRekapKHSMahasiswaByMahasiswaId", () => {
 
     expect(RekapKHSMahasiswa.findAll).toHaveBeenCalledWith({
       where: { id_registrasi_mahasiswa: idRegistrasiMahasiswa },
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
@@ -84,7 +84,7 @@ describe("getRekapKHSMahasiswaByMahasiswaId", () => {
 
     expect(RekapKHSMahasiswa.findAll).toHaveBeenCalledWith({
       where: { id_registrasi_mahasiswa: idRegistrasiMahasiswa },
-      include: [{ model: Mahasiswa }, { model: Prodi }, { model: Periode }, { model: MataKuliah }],
+      include: [{ model: Mahasiswa }, { model: Prodi }, { model: MataKuliah }, { model: Semester }],
     });
     expect(next).toHaveBeenCalledWith(new Error(errorMessage));
   });
