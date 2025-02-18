@@ -44,7 +44,7 @@ async function singkronKelasKuliah() {
 
     console.log("Cronjob singkron kelas kuliah finished");
   } catch (error) {
-    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
+    console.error("Error saat cronjob singkron kelas kuliah dijalankan:", error.message);
   }
 }
 

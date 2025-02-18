@@ -13,7 +13,7 @@ async function singkronTahunAjaran() {
 
     console.log("Cronjob singkron tahun ajaran finished");
   } catch (error) {
-    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
+    console.error("Error saat cronjob tahun ajaran dosen dijalankan:", error.message);
   }
 }
 

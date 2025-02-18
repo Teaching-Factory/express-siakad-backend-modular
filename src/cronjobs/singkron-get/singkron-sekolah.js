@@ -13,7 +13,7 @@ async function singkronSekolah() {
 
     console.log("Cronjob singkron sekolah finished");
   } catch (error) {
-    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
+    console.error("Error saat cronjob singkron sekolah dijalankan:", error.message);
   }
 }
 

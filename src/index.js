@@ -184,6 +184,8 @@ app.use("/src/storage", express.static(path.join(__dirname, "storage")));
 // Import cronjob blacklisted token
 const schedule = require("node-schedule");
 // const cleanExpiredTokens = require("./cronjobs/cronjobScheduler");
+
+// cronjob (GET)
 const singkronDosen = require("./cronjobs/singkron-get/singkron-dosen-feeder");
 const singkronProdi = require("./cronjobs/singkron-get/singkron-prodi-feeder");
 const singkronSubstansi = require("./cronjobs/singkron-get/singkron-substansi-feeder");
@@ -191,17 +193,19 @@ const singkronMataKuliah = require("./cronjobs/singkron-get/singkron-mata-kuliah
 const singkronTahunAjaran = require("./cronjobs/singkron-get/singkron-tahun-ajaran-feeder");
 const singkronSemester = require("./cronjobs/singkron-get/singkron-semester-feeder");
 const singkronKurikulum = require("./cronjobs/singkron-get/singkron-kurikulum-feeder");
-// detail kurikulum
-// penugasan dosen
-// matkul kurikulum
-// aktivitas kuliah mahasiswa
+const singkronDetailKurikulum = require("./cronjobs/singkron-get/detail-kurikulum-feeder");
+const singkronPenugasanDosen = require("./cronjobs/singkron-get/penugasan-dosen-feeder");
+const singkronMatkulKurikulum = require("./cronjobs/singkron-get/matkul-kurikulum-feeder");
+const singkronAktivitasKuliahMahasiswa = require("./cronjobs/singkron-get/aktivitas-kuliah-mahasiswa-feeder");
 const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
+
+// cronjob (CRUD)
 // const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 
 const rule = new schedule.RecurrenceRule();
 // cronjob dijalankan ketika jam 0.00
-// rule.hour = 0;
-// rule.minute = 0;
+// rule.hour = 10;
+// rule.minute = 33;
 
 // cronjob dijalankan setiap 3 jam sekali
 rule.minute = 0; // Jalankan tepat di menit 00
@@ -221,10 +225,10 @@ schedule.scheduleJob(rule, async function () {
     await singkronTahunAjaran();
     await singkronSemester();
     await singkronKurikulum();
-    // detail kurikulum
-    // penugasan dosen
-    // matkul kurikulum
-    // aktivitas kuliah mahasiswa
+    await singkronDetailKurikulum();
+    await singkronPenugasanDosen();
+    await singkronMatkulKurikulum();
+    await singkronAktivitasKuliahMahasiswa();
     await singkronSekolah();
 
     // Singkron Feeder CRUD

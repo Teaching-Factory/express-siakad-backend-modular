@@ -13,7 +13,7 @@ async function singkronProdi() {
 
     console.log("Cronjob singkron prodi finished");
   } catch (error) {
-    console.error("Error saat cronjob singkron dosen dijalankan:", error.message);
+    console.error("Error saat cronjob singkron prodi dijalankan:", error.message);
   }
 }
 
