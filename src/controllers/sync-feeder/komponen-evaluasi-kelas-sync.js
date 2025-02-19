@@ -399,6 +399,7 @@ const syncKomponenEvaluasiKelas = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingDataKomponenEvaluasiKelas,
   matchingSyncDataKomponenEvaluasiKelas,
   syncKomponenEvaluasiKelas,
 };

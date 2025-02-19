@@ -418,6 +418,7 @@ const syncDosenPengajarKelasKuliahs = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingcDataDosenPengajarKelasKuliah,
   matchingSyncDataDosenPengajarKelasKuliah,
   syncDosenPengajarKelasKuliahs,
 };

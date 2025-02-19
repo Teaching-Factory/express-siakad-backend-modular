@@ -397,6 +397,7 @@ const syncRencanaEvaluasis = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingDataRencanaEvaluasi,
   matchingSyncDataRencanaEvaluasi,
   syncRencanaEvaluasis,
 };
