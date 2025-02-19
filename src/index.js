@@ -200,12 +200,12 @@ const singkronAktivitasKuliahMahasiswa = require("./cronjobs/singkron-get/aktivi
 const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
 
 // cronjob (CRUD)
-// const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
+const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 
 const rule = new schedule.RecurrenceRule();
 // cronjob dijalankan ketika jam 0.00
-// rule.hour = 10;
-// rule.minute = 33;
+rule.hour = 0;
+rule.minute = 0;
 
 // cronjob dijalankan setiap 3 jam sekali
 rule.minute = 0; // Jalankan tepat di menit 00
@@ -231,8 +231,8 @@ schedule.scheduleJob(rule, async function () {
     await singkronAktivitasKuliahMahasiswa();
     await singkronSekolah();
 
-    // Singkron Feeder CRUD
-    // await singkronKelasKuliah();
+    // Singkron Feeder (Create ke feeder)
+    await singkronKelasKuliah();
 
     console.log("Semua Cronjob selesai dijalankan.");
   } catch (error) {

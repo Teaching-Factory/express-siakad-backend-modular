@@ -518,6 +518,7 @@ const syncKelasKuliahs = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingDataKelasKuliah,
   matchingSyncDataKelasKuliah,
   syncKelasKuliahs,
 };

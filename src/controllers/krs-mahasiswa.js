@@ -16,7 +16,6 @@ const {
   Semester,
   SettingGlobalSemester,
   RekapKRSMahasiswa,
-  Periode,
 } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res, next) => {
@@ -92,7 +91,7 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
         id_registrasi_mahasiswa: idRegistrasiMahasiswa,
         id_semester: semesterAktif.id_semester_krs,
       },
-      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah }],
+      include: [{ model: Mahasiswa }, { model: Semester }, { model: Prodi }, { model: MataKuliah }, { model: KelasKuliah, include: [{ model: DetailKelasKuliah }] }],
     });
 
     // Jika data tidak ditemukan, kirim respons 404
