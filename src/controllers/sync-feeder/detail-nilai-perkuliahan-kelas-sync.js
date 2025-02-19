@@ -380,6 +380,7 @@ const syncNilaiPerkuliahans = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingDataDetailNilaiPerkuliahanKelas,
   matchingSyncDataDetailNilaiPerkuliahanKelas,
   syncNilaiPerkuliahans,
 };

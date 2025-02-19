@@ -404,6 +404,7 @@ const syncPesertaKelasKuliahs = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingDataPesertaKelasKuliah,
   matchingSyncDataPesertaKelasKuliah,
   syncPesertaKelasKuliahs,
 };

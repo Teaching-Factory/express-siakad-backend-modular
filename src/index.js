@@ -206,8 +206,8 @@ const singkronKomponenEvaluasiKelas = require("./cronjobs/singkron-get/komponen-
 const singkronDosenPengajarKelasKuliah = require("./cronjobs/singkron-get/dosen-pengajar-kelas-kuliah-feeder");
 const singkronBiodataMahasiswa = require("./cronjobs/singkron-get/biodata-mahasiswa-feeder");
 const singkronRiwayatPendidikanMahasiswa = require("./cronjobs/singkron-get/riwayat-pendidikan-mahasiswa-feeder");
-// peserta kelas kuliah
-// detail nilai perkuliahan kelas
+const singkronPesertaKelasKuliah = require("./cronjobs/singkron-get/peserta-kelas-kuliah-feeder");
+const singkronDetailNilaiPerkuliahanKelas = require("./cronjobs/singkron-get/detail-nilai-perkuliahan-kelas-feeder");
 
 const rule = new schedule.RecurrenceRule();
 // cronjob dijalankan ketika jam 0.00
@@ -245,9 +245,8 @@ schedule.scheduleJob(rule, async function () {
     await singkronDosenPengajarKelasKuliah(); // (id_semester_krs)
     await singkronBiodataMahasiswa(); // (id_semester_krs)
     await singkronRiwayatPendidikanMahasiswa(); // (id_semester_krs)
-
-    // peserta kelas kuliah (semester krs)
-    // detail nilai perkuliahan kelas (semester nilai)
+    await singkronPesertaKelasKuliah(); // (id_angkatan dari id_semester_krs)
+    await singkronDetailNilaiPerkuliahanKelas(); // (id_semester_nilai)
 
     console.log("Semua Cronjob selesai dijalankan.");
   } catch (error) {
