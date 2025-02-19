@@ -200,12 +200,12 @@ const singkronAktivitasKuliahMahasiswa = require("./cronjobs/singkron-get/aktivi
 const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
 
 // cronjob (CRUD)
-const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 const singkronRencanaEvaluasi = require("./cronjobs/singkron-get/singkron-rencana-evaluasi-feeder");
+const singkronKelasKuliah = require("./cronjobs/singkron-get/singkron-kelas-kuliah-feeder");
 const singkronKomponenEvaluasiKelas = require("./cronjobs/singkron-get/komponen-evaluasi-kelas-feeder");
 const singkronDosenPengajarKelasKuliah = require("./cronjobs/singkron-get/dosen-pengajar-kelas-kuliah-feeder");
-// biodata mahasiswa
-// riwayat pendidikan mahasiswa
+const singkronBiodataMahasiswa = require("./cronjobs/singkron-get/biodata-mahasiswa-feeder");
+const singkronRiwayatPendidikanMahasiswa = require("./cronjobs/singkron-get/riwayat-pendidikan-mahasiswa-feeder");
 // peserta kelas kuliah
 // detail nilai perkuliahan kelas
 
@@ -239,14 +239,15 @@ schedule.scheduleJob(rule, async function () {
     await singkronSekolah();
 
     // Singkron Feeder (Create ke feeder)
-    await singkronRencanaEvaluasi();
-    await singkronKelasKuliah();
-    await singkronKomponenEvaluasiKelas();
-    await singkronDosenPengajarKelasKuliah();
-    // biodata mahasiswa
-    // riwayat pendidikan mahasiswa
-    // peserta kelas kuliah
-    // detail nilai perkuliahan kelas
+    await singkronRencanaEvaluasi(); // (seluruh prodi)
+    await singkronKelasKuliah(); // (id_semester_krs)
+    await singkronKomponenEvaluasiKelas(); // (id_semester_aktif)
+    await singkronDosenPengajarKelasKuliah(); // (id_semester_krs)
+    await singkronBiodataMahasiswa(); // (id_semester_krs)
+    await singkronRiwayatPendidikanMahasiswa(); // (id_semester_krs)
+
+    // peserta kelas kuliah (semester krs)
+    // detail nilai perkuliahan kelas (semester nilai)
 
     console.log("Semua Cronjob selesai dijalankan.");
   } catch (error) {

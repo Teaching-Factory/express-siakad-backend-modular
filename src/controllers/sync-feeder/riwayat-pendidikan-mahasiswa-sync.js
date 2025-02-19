@@ -544,6 +544,7 @@ const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingcDataRiwayatPendidikanMahasiswa,
   matchingSyncDataRiwayatPendidikanMahasiswa,
   syncRiwayatPendidikanMahasiswas,
 };

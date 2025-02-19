@@ -681,6 +681,7 @@ const syncBiodataMahasiswas = async (req, res, next) => {
 };
 
 module.exports = {
+  matchingDataBiodataMahasiswa,
   matchingSyncDataBiodataMahasiswa,
   syncBiodataMahasiswas,
 };
