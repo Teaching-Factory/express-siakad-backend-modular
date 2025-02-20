@@ -183,6 +183,65 @@ const updateDosenPengajarKelasKuliahById = async (req, res, next) => {
   }
 };
 
+const setKetuaDosenPengajarByKelasKuliahId = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const kelasKuliahId = req.params.id_kelas_kuliah;
+    const dosenPengajarId = req.params.id_aktivitas_mengajar;
+
+    if (!kelasKuliahId) {
+      return res.status(400).json({
+        message: "Kelas Kuliah ID is required",
+      });
+    }
+
+    if (!dosenPengajarId) {
+      return res.status(400).json({
+        message: "Dosen Pengajar ID is required",
+      });
+    }
+
+    // get data kelas kuliah
+    let kelas_kuliah = await KelasKuliah.findOne({
+      where: {
+        id_kelas_kuliah: kelasKuliahId,
+      },
+    });
+
+    if (!kelas_kuliah) {
+      return res.status(400).json({
+        message: "Kelas Kuliah not found",
+      });
+    }
+
+    // get data dosen pengajar kelas kuliah
+    let dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findOne({
+      where: {
+        id_aktivitas_mengajar: dosenPengajarId,
+      },
+    });
+
+    if (!dosen_pengajar_kelas_kuliah) {
+      return res.status(400).json({
+        message: "Dosen Pengajar Kelas Kuliah not found",
+      });
+    }
+
+    // Update data kelas_kuliah
+    kelas_kuliah.id_dosen = dosen_pengajar_kelas_kuliah.id_dosen;
+
+    // Simpan perubahan ke dalam database
+    await kelas_kuliah.save();
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== SET Ketua Dosen Pengajar With Kelas Kuliah ID ${kelasKuliahId} Success:`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deleteDosenPengajarKelasKuliahById = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
@@ -221,5 +280,6 @@ module.exports = {
   getDosenPengajarKelasKuliahById,
   createDosenPengajarKelasKuliah,
   updateDosenPengajarKelasKuliahById,
+  setKetuaDosenPengajarByKelasKuliahId,
   deleteDosenPengajarKelasKuliahById,
 };
