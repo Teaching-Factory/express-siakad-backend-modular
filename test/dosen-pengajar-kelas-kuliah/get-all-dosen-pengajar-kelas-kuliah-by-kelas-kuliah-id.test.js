@@ -33,11 +33,11 @@ describe("getAllDosenPengajarKelasKuliahByIdKelasKuliah", () => {
       },
     ];
 
-    DosenPengajarKelasKuliah.findOne.mockResolvedValue(mockDosenPengajarKelasKuliah);
+    DosenPengajarKelasKuliah.findAll.mockResolvedValue(mockDosenPengajarKelasKuliah);
 
     await getAllDosenPengajarKelasKuliahByIdKelasKuliah(req, res, next);
 
-    expect(DosenPengajarKelasKuliah.findOne).toHaveBeenCalledWith({
+    expect(DosenPengajarKelasKuliah.findAll).toHaveBeenCalledWith({
       where: { id_kelas_kuliah: mockKelasKuliahId },
       include: [{ model: PenugasanDosen }, { model: Dosen }, { model: KelasKuliah, include: [{ model: MataKuliah }] }, { model: Substansi }, { model: JenisEvaluasi }, { model: Prodi }, { model: Semester }],
     });
@@ -59,7 +59,7 @@ describe("getAllDosenPengajarKelasKuliahByIdKelasKuliah", () => {
     expect(res._getJSONData()).toEqual({
       message: "Kelas Kuliah ID is required",
     });
-    expect(DosenPengajarKelasKuliah.findOne).not.toHaveBeenCalled();
+    expect(DosenPengajarKelasKuliah.findAll).not.toHaveBeenCalled();
   });
 
   it("should handle errors", async () => {
@@ -69,11 +69,11 @@ describe("getAllDosenPengajarKelasKuliahByIdKelasKuliah", () => {
     const errorMessage = "Database error";
     const error = new Error(errorMessage);
 
-    DosenPengajarKelasKuliah.findOne.mockRejectedValue(error);
+    DosenPengajarKelasKuliah.findAll.mockRejectedValue(error);
 
     await getAllDosenPengajarKelasKuliahByIdKelasKuliah(req, res, next);
 
-    expect(DosenPengajarKelasKuliah.findOne).toHaveBeenCalledWith({
+    expect(DosenPengajarKelasKuliah.findAll).toHaveBeenCalledWith({
       where: { id_kelas_kuliah: mockKelasKuliahId },
       include: [{ model: PenugasanDosen }, { model: Dosen }, { model: KelasKuliah, include: [{ model: MataKuliah }] }, { model: Substansi }, { model: JenisEvaluasi }, { model: Prodi }, { model: Semester }],
     });

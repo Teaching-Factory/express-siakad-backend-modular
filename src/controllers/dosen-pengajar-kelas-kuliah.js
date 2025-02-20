@@ -12,7 +12,7 @@ const getAllDosenPengajarKelasKuliahByIdKelasKuliah = async (req, res, next) => 
     }
 
     // Ambil semua data dosen_pengajar_kelas_kuliahs dari database
-    const dosen_pengajar_kelas_kuliahs = await DosenPengajarKelasKuliah.findOne({
+    const dosen_pengajar_kelas_kuliahs = await DosenPengajarKelasKuliah.findAll({
       where: {
         id_kelas_kuliah: kelasKuliahId,
       },
@@ -24,6 +24,39 @@ const getAllDosenPengajarKelasKuliahByIdKelasKuliah = async (req, res, next) => 
       message: `<===== GET All Pengajar Kelas Kuliah By Id Kelas Kuliah ${kelasKuliahId} Success`,
       jumlahData: dosen_pengajar_kelas_kuliahs.length,
       data: dosen_pengajar_kelas_kuliahs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getDosenPengajarKelasKuliahById = async (req, res, next) => {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const dosenPengajarKelasKuliahId = req.params.id;
+
+    if (!dosenPengajarKelasKuliahId) {
+      return res.status(400).json({
+        message: "Dosen Pengajar Kelas Kuliah ID is required",
+      });
+    }
+
+    // Cari data dosen_pengajar_kelas_kuliah berdasarkan ID di database
+    const dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findByPk(dosenPengajarKelasKuliahId, {
+      include: [{ model: PenugasanDosen }, { model: Dosen }, { model: KelasKuliah, include: [{ model: MataKuliah }] }, { model: Substansi }, { model: JenisEvaluasi }, { model: Prodi }, { model: Semester }],
+    });
+
+    // Jika data tidak ditemukan, kirim respons 404
+    if (!dosen_pengajar_kelas_kuliah) {
+      return res.status(404).json({
+        message: `<===== Dosen Pengajar Kelas Kuliah With ID ${dosenPengajarKelasKuliahId} Not Found:`,
+      });
+    }
+
+    // Kirim respons JSON jika berhasil
+    res.status(200).json({
+      message: `<===== GET Dosen Pengajar Kelas Kuliah By ID ${dosenPengajarKelasKuliahId} Success:`,
+      data: dosen_pengajar_kelas_kuliah,
     });
   } catch (error) {
     next(error);
@@ -185,6 +218,7 @@ const deleteDosenPengajarKelasKuliahById = async (req, res, next) => {
 
 module.exports = {
   getAllDosenPengajarKelasKuliahByIdKelasKuliah,
+  getDosenPengajarKelasKuliahById,
   createDosenPengajarKelasKuliah,
   updateDosenPengajarKelasKuliahById,
   deleteDosenPengajarKelasKuliahById,
