@@ -169,7 +169,7 @@ const updateTagihanMahasiswaById = async (req, res, next) => {
 
       // update dan simpan status mahasiswa menjadi 'Aktif' dan ambil semester aktif baru
       mahasiswa.nama_status_mahasiswa = status_mahasiswa_a.nama_status_mahasiswa;
-      mahasiswa.id_semester = setting_global_semester.id_semester_krs;
+      // mahasiswa.id_semester = setting_global_semester.id_semester_krs;
       await mahasiswa.save();
     }
 

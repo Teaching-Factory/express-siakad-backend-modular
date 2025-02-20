@@ -360,6 +360,20 @@ const validasiKRSMahasiswa = async (req, res, next) => {
       });
     }
 
+    // Lakukan iterasi melalui setiap objek mahasiswa untuk update status mahasiswa
+    for (const mahasiswa of mahasiswas) {
+      let dataMahasiswa = await Mahasiswa.findOne({
+        where: {
+          id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        },
+      });
+
+      dataMahasiswa.nama_status_mahasiswa = "AKTIF";
+
+      // Simpan perubahan ke dalam database
+      await dataMahasiswa.save();
+    }
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== VALIDASI KRS Mahasiswa Success",
@@ -405,6 +419,7 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
 
     // Inisialisasi array untuk menyimpan data peserta kelas yang akan dihapus
     const pesertaKelasIds = [];
+    const rekapKRSMahasiswaIds = [];
 
     // Ambil data peserta kelas kuliah yang sesuai dengan setiap KRS mahasiswa
     for (const krs_mahasiswa of krs_mahasiswas) {
@@ -421,6 +436,20 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
       if (peserta_kelas) {
         pesertaKelasIds.push(peserta_kelas.id_peserta_kuliah);
       }
+
+      // mengambil data rekap krs mahasiswa
+      const rekap_krs_mahasiswa = await RekapKRSMahasiswa.findOne({
+        where: {
+          id_prodi: krs_mahasiswa.id_prodi,
+          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+          id_matkul: krs_mahasiswa.id_matkul,
+          id_semester: krs_mahasiswa.id_semester,
+        },
+      });
+
+      if (rekap_krs_mahasiswa) {
+        rekapKRSMahasiswaIds.push(rekap_krs_mahasiswa.id_rekap_krs_mahasiswa);
+      }
     }
 
     // Hapus seluruh peserta_kelas_kuliah yang ditemukan
@@ -429,6 +458,26 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
         id_peserta_kuliah: pesertaKelasIds,
       },
     });
+
+    // Hapus seluruh rekap_krs_mahasiswa yang ditemukan
+    await RekapKRSMahasiswa.destroy({
+      where: {
+        id_rekap_krs_mahasiswa: rekapKRSMahasiswaIds,
+      },
+    });
+
+    // ubah status mahasiswa ke non aktif
+    let mahasiswa = await Mahasiswa.findOne({
+      where: {
+        id_registrasi_mahasiswa: mahasiswaId,
+      },
+    });
+
+    // Simpan perubahan ke dalam database
+    if (mahasiswa) {
+      mahasiswa.nama_status_mahasiswa = "Non-Aktif";
+      await mahasiswa.save();
+    }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({

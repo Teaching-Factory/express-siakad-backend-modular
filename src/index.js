@@ -239,14 +239,14 @@ schedule.scheduleJob(rule, async function () {
     await singkronSekolah();
 
     // Singkron Feeder (Create ke feeder)
-    await singkronRencanaEvaluasi(); // (seluruh prodi)
-    await singkronKelasKuliah(); // (id_semester_krs)
-    await singkronKomponenEvaluasiKelas(); // (id_semester_aktif)
-    await singkronDosenPengajarKelasKuliah(); // (id_semester_krs)
-    await singkronBiodataMahasiswa(); // (id_semester_krs)
-    await singkronRiwayatPendidikanMahasiswa(); // (id_semester_krs)
-    await singkronPesertaKelasKuliah(); // (id_angkatan dari id_semester_krs)
-    await singkronDetailNilaiPerkuliahanKelas(); // (id_semester_nilai)
+    // await singkronRencanaEvaluasi(); // (seluruh prodi)
+    // await singkronKelasKuliah(); // (id_semester_krs)
+    // await singkronKomponenEvaluasiKelas(); // (id_semester_aktif)
+    // await singkronDosenPengajarKelasKuliah(); // (id_semester_krs)
+    // await singkronBiodataMahasiswa(); // (id_semester_krs)
+    // await singkronRiwayatPendidikanMahasiswa(); // (id_semester_krs)
+    // await singkronPesertaKelasKuliah(); // (id_angkatan dari id_semester_krs)
+    // await singkronDetailNilaiPerkuliahanKelas(); // (id_semester_nilai)
 
     console.log("Semua Cronjob selesai dijalankan.");
   } catch (error) {
