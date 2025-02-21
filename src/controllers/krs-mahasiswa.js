@@ -342,22 +342,46 @@ const validasiKRSMahasiswa = async (req, res, next) => {
         // Ubah nilai validasi_krs menjadi true
         await krs_mahasiswa.update({ validasi_krs: true });
 
-        // proses penambahan data peserta kelas kuliah dari data krs milik mahasiswa
-        await PesertaKelasKuliah.create({
-          angkatan: tahunAwal,
-          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
-          id_kelas_kuliah: krs_mahasiswa.id_kelas,
+        // pengecekan data peserta kelas agar tidak duplikat
+        pesertaKelas = await PesertaKelasKuliah.findOne({
+          where: {
+            angkatan: tahunAwal,
+            id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+            id_kelas_kuliah: krs_mahasiswa.id_kelas,
+          },
         });
+
+        if (!pesertaKelas) {
+          // proses penambahan data peserta kelas kuliah dari data krs milik mahasiswa
+          await PesertaKelasKuliah.create({
+            angkatan: tahunAwal,
+            id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+            id_kelas_kuliah: krs_mahasiswa.id_kelas,
+          });
+        }
       }
 
-      // menambahkan data rekap krs mahasiswa
-      await RekapKRSMahasiswa.create({
-        angkatan: tahunAwal,
-        id_prodi: krs_mahasiswa.id_prodi,
-        id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
-        id_matkul: krs_mahasiswa.id_matkul,
-        id_semester: krs_mahasiswa.id_semester,
+      // pengecekan data rekap krs mahasiswa agar tidak duplikat
+      let rekapKRSMahasiswa = await RekapKRSMahasiswa.findOne({
+        where: {
+          angkatan: tahunAwal,
+          id_prodi: krs_mahasiswa.id_prodi,
+          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+          id_matkul: krs_mahasiswa.id_matkul,
+          id_semester: krs_mahasiswa.id_semester,
+        },
       });
+
+      if (!rekapKRSMahasiswa) {
+        // menambahkan data rekap krs mahasiswa
+        await RekapKRSMahasiswa.create({
+          angkatan: tahunAwal,
+          id_prodi: krs_mahasiswa.id_prodi,
+          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+          id_matkul: krs_mahasiswa.id_matkul,
+          id_semester: krs_mahasiswa.id_semester,
+        });
+      }
     }
 
     // Lakukan iterasi melalui setiap objek mahasiswa untuk update status mahasiswa
