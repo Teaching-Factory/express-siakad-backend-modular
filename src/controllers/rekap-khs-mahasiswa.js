@@ -233,6 +233,9 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
               nim: nim,
             },
           },
+          { model: Prodi },
+          { model: Semester },
+          { model: MataKuliah },
         ],
       });
 
@@ -294,6 +297,9 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
               id_prodi: id_prodi,
             },
           },
+          { model: Prodi },
+          { model: Semester },
+          { model: MataKuliah },
         ],
       });
 
