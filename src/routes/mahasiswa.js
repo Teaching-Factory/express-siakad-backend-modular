@@ -25,4 +25,7 @@ router.get("/get-count-gender-mahasiswa", checkRole(["admin"]), MahasiswaControl
 // import routes
 router.post("/import-data-mahasiswa", checkRole(["admin", "admin-prodi"]), upload.single("file"), MahasiswaController.importMahasiswas);
 
+// endpoint penting jika data mahasiswa tidak ada di database
+router.post("/get-all-data-mahasiswa", checkRole(["admin"]), MahasiswaController.getAllDataMahasiswaFromFeeder);
+
 module.exports = router;
