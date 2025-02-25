@@ -775,21 +775,15 @@ const getCountGenderMahasiswa = async (req, res, next) => {
 };
 
 // api untuk get data mahasiswa yang kurang
-const getBiodataMahasiswaFromFeederByNik = async (nik, req, res, next) => {
+const getBiodataMahasiswaFromFeederByNik = async (nik) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
 
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
-
     const requestBody = {
       act: "GetBiodataMahasiswa",
-      token: `${token}`,
-      filter: `nik=${nik}`,
+      token: token,
+      filter: `nik='${nik}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -895,25 +889,18 @@ const getBiodataMahasiswaFromFeederByNik = async (nik, req, res, next) => {
     }
   } catch (error) {
     console.error("Create Biodata Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
 
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
-
     const requestBody = {
       act: "GetListMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim}`,
+      token: token,
+      filter: `nim='${nim}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -962,25 +949,18 @@ const getMahasiswaFromFeederByNim = async (nim, req, res, next) => {
     }
   } catch (error) {
     console.error("Create Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getRiwayatPendidikanMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getRiwayatPendidikanMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
 
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
-
     const requestBody = {
       act: "GetListRiwayatPendidikanMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim}`,
+      token: token,
+      filter: `nim='${nim}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1044,20 +1024,13 @@ const getRiwayatPendidikanMahasiswaFromFeederByNim = async (nim, req, res, next)
     }
   } catch (error) {
     console.error("Create Riwayat Pendidikan Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getDetailNilaiPerkuliahanKelasMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getDetailNilaiPerkuliahanKelasMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1066,17 +1039,20 @@ const getDetailNilaiPerkuliahanKelasMahasiswaFromFeederByNim = async (nim, req, 
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetDetailNilaiPerkuliahanKelas",
-      token: `${token}`,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      token: token,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1115,20 +1091,13 @@ const getDetailNilaiPerkuliahanKelasMahasiswaFromFeederByNim = async (nim, req, 
     }
   } catch (error) {
     console.error("Create Detail Nilai Perkuliahan Kelas Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getRiwayatNilaiMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getRiwayatNilaiMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1137,17 +1106,20 @@ const getRiwayatNilaiMahasiswaFromFeederByNim = async (nim, req, res, next) => {
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetRiwayatNilaiMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      token: token,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1200,20 +1172,13 @@ const getRiwayatNilaiMahasiswaFromFeederByNim = async (nim, req, res, next) => {
     }
   } catch (error) {
     console.error("Create Riwayat Nilai Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getPesertaKelasKuliahMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getPesertaKelasKuliahMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1222,17 +1187,20 @@ const getPesertaKelasKuliahMahasiswaFromFeederByNim = async (nim, req, res, next
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetPesertaKelasKuliah",
-      token: `${token}`,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      token: token,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1263,20 +1231,13 @@ const getPesertaKelasKuliahMahasiswaFromFeederByNim = async (nim, req, res, next
     }
   } catch (error) {
     console.error("Create Peserta Kelas Kuliah Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getPerkuliahanMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getPerkuliahanMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1285,17 +1246,20 @@ const getPerkuliahanMahasiswaFromFeederByNim = async (nim, req, res, next) => {
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetListPerkuliahanMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      token: token,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1340,20 +1304,13 @@ const getPerkuliahanMahasiswaFromFeederByNim = async (nim, req, res, next) => {
     }
   } catch (error) {
     console.error("Create Perkuliahan Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getDetailPerkuliahanMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getDetailPerkuliahanMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1362,17 +1319,20 @@ const getDetailPerkuliahanMahasiswaFromFeederByNim = async (nim, req, res, next)
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetDetailPerkuliahanMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      token: token,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1411,20 +1371,13 @@ const getDetailPerkuliahanMahasiswaFromFeederByNim = async (nim, req, res, next)
     }
   } catch (error) {
     console.error("Create Detail Perkuliahan Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getKRSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getKRSMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1433,17 +1386,20 @@ const getKRSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetKRSMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      token: token,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1480,20 +1436,13 @@ const getKRSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
     }
   } catch (error) {
     console.error("Create KRS Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getAktivitasKuliahMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getAktivitasKuliahMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1502,17 +1451,20 @@ const getAktivitasKuliahMahasiswaFromFeederByNim = async (nim, req, res, next) =
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetAktivitasKuliahMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      token: token,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1557,25 +1509,18 @@ const getAktivitasKuliahMahasiswaFromFeederByNim = async (nim, req, res, next) =
     }
   } catch (error) {
     console.error("Create Aktivitas Kuliah Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getAnggotaAktivitasMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getAnggotaAktivitasMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
 
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
-
     const requestBody = {
       act: "GetListAnggotaAktivitasMahasiswa",
-      token: `${token}`,
-      filter: `nim=${nim}`,
+      token: token,
+      filter: `nim='${nim}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1610,25 +1555,18 @@ const getAnggotaAktivitasMahasiswaFromFeederByNim = async (nim, req, res, next) 
     }
   } catch (error) {
     console.error("Create Anggota Aktivitas Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getKonversiKampusMerdekaMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getKonversiKampusMerdekaMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
 
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
-
     const requestBody = {
       act: "GetListKonversiKampusMerdeka",
-      token: `${token}`,
-      filter: `nim=${nim}`,
+      token: token,
+      filter: `nim='${nim}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1664,20 +1602,13 @@ const getKonversiKampusMerdekaMahasiswaFromFeederByNim = async (nim, req, res, n
     }
   } catch (error) {
     console.error("Create Konversi Kampus Merdeka Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getRekapKHSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getRekapKHSMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1686,17 +1617,20 @@ const getRekapKHSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetRekapKHSMahasiswa",
       token: token,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1739,20 +1673,13 @@ const getRekapKHSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
     }
   } catch (error) {
     console.error("Create Rekap KHS Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getRekapKRSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
+const getRekapKRSMahasiswaFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
-
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
 
     // get setting global semester aktif
     const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
@@ -1761,17 +1688,20 @@ const getRekapKRSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
       },
     });
 
-    // get data angkatan
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    // Ambil data angkatan berdasarkan tahun semester aktif yang sesuai
     const angkatan = await Angkatan.findOne({
       where: {
-        tahun: { [Op.like]: `${setting_global_semester_aktif.id_semester_aktif}/%` },
+        tahun: tahun_angkatan,
       },
     });
 
     const requestBody = {
       act: "GetRekapKRSMahasiswa",
       token: token,
-      filter: `nim=${nim} and angkatan=${angkatan.tahun}`,
+      filter: `nim='${nim}' and angkatan='${angkatan.tahun}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1806,25 +1736,18 @@ const getRekapKRSMahasiswaFromFeederByNim = async (nim, req, res, next) => {
     }
   } catch (error) {
     console.error("Create Rekap KRS Mahasiswa Failed", error.message);
-    next(error);
   }
 };
 
-const getDataLengkapMahasiswaProdiFromFeederByNim = async (nim, req, res, next) => {
+const getDataLengkapMahasiswaProdiFromFeederByNim = async (nim) => {
   try {
     // Mendapatkan token dan url_feeder
     const { token, url_feeder } = await getToken();
 
-    if (!token || !url_feeder) {
-      return res.status(500).json({
-        message: "Failed to obtain token or URL feeder",
-      });
-    }
-
     const requestBody = {
       act: "GetDataLengkapMahasiswaProdi",
-      token: `${token}`,
-      filter: `nim=${nim}`,
+      token: token,
+      filter: `nim='${nim}'`,
     };
 
     // Menggunakan token untuk mengambil data
@@ -1925,7 +1848,6 @@ const getDataLengkapMahasiswaProdiFromFeederByNim = async (nim, req, res, next) 
     }
   } catch (error) {
     console.error("Create Data Lengkap Mahasiswa Prodi Failed", error.message);
-    next(error);
   }
 };
 
@@ -1936,7 +1858,7 @@ const getAllDataMahasiswaFromFeeder = async (req, res, next) => {
     for (const mahasiswa of mahasiswas) {
       const { nim, nik } = mahasiswa;
 
-      // Ambil semua data mahasiswa dari database
+      // Ambil mahasiswa dari database
       let dataMahasiswa = await Mahasiswa.findOne({
         where: {
           nim: nim,
@@ -1951,9 +1873,7 @@ const getAllDataMahasiswaFromFeeder = async (req, res, next) => {
         ],
       });
 
-      if (dataMahasiswa) {
-        console.log("Mahasiswa sudah ditambahkan", mahasiswa.id_registrasi_mahasiswa);
-      } else {
+      if (!dataMahasiswa) {
         // get dan create data mahasiswa dari feeder ke local
         await getBiodataMahasiswaFromFeederByNik(nik); // create data biodata mahasiswa
         await getMahasiswaFromFeederByNim(nim); // create data mahasiswa
@@ -1970,6 +1890,8 @@ const getAllDataMahasiswaFromFeeder = async (req, res, next) => {
         await getRekapKHSMahasiswaFromFeederByNim(nim); // create data rekap khs mahasiswa
         await getRekapKRSMahasiswaFromFeederByNim(nim); // create data rekap krs mahasiswa
         await getDataLengkapMahasiswaProdiFromFeederByNim(nim); // create data lengkap mahasiswa prodi
+      } else if (dataMahasiswa) {
+        console.log("Mahasiswa sudah ditambahkan", mahasiswa.id_registrasi_mahasiswa);
       }
     }
 
