@@ -1,4 +1,4 @@
-const { AktivitasKuliahMahasiswa } = require("../../../models");
+const { AktivitasKuliahMahasiswa, SettingGlobalSemester } = require("../../../models");
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
@@ -11,9 +11,20 @@ async function getAktivitasKuliahMahasiswaFromFeeder() {
       throw new Error("Failed to obtain token or URL feeder");
     }
 
+    // get setting global semester aktif
+    const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
     const requestBody = {
       act: "GetAktivitasKuliahMahasiswa",
       token: token,
+      filter: `angkatan='${tahun_angkatan}'`,
     };
 
     const response = await axios.post(url_feeder, requestBody);
@@ -28,7 +39,23 @@ async function getAktivitasKuliahMahasiswaFromFeeder() {
 // Fungsi untuk mendapatkan daftar aktivitas kuliah mahasiswa dari database lokal
 async function getAktivitasKuliahMahasiswaFromLocal() {
   try {
-    return await AktivitasKuliahMahasiswa.findAll();
+    // get setting global semester aktif
+    const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    // Ambil ID Semester Aktif dan potong menjadi 4 karakter pertama
+    const tahun_angkatan = setting_global_semester_aktif.id_semester_aktif.slice(0, 4);
+
+    const aktivitas_kuliah_mahasiswa = await AktivitasKuliahMahasiswa.findAll({
+      where: {
+        angkatan: tahun_angkatan,
+      },
+    });
+
+    return aktivitas_kuliah_mahasiswa;
   } catch (error) {
     console.error("Error fetching data from local DB:", error.message);
     throw error;
