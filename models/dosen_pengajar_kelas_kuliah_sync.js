@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
       },
       jenis_singkron: {
-        type: DataTypes.ENUM(["create", "update", "delete"]),
+        type: DataTypes.ENUM(["get", "create", "update", "delete"]),
         allowNull: false,
       },
       status: {

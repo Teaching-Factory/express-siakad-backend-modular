@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       jenis_singkron: {
-        type: Sequelize.ENUM(["create", "update", "delete"]),
+        type: Sequelize.ENUM(["get", "create", "update", "delete"]),
         allowNull: false,
       },
       status: {
