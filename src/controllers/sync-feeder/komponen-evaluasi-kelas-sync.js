@@ -195,6 +195,35 @@ async function matchingDataKomponenEvaluasiKelas(req, res, next) {
       );
     }
 
+    // mengecek jikalau data komponen evaluasi kelas tidak ada di local namun ada di feeder, maka data komponen evaluasi kelas di feeder akan tercatat sebagai get
+    for (let feederKomponenEvaluasiKelasId in komponenEvaluasiKelasFeederMap) {
+      const feederKomponenEvaluasiKelas = komponenEvaluasiKelasFeederMap[feederKomponenEvaluasiKelasId];
+
+      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "get"
+      const localKomponenEvaluasiKelas = komponenEvaluasiKelasLocal.find((komponen_evaluasi_kelas) => komponen_evaluasi_kelas.id_feeder === feederKomponenEvaluasiKelasId);
+
+      if (!localKomponenEvaluasiKelas) {
+        const existingSync = await KomponenEvaluasiKelasSync.findOne({
+          where: {
+            id_feeder: feederKomponenEvaluasiKelas.id_komponen_evaluasi,
+            jenis_singkron: "get",
+            status: false,
+            id_komponen_evaluasi: null,
+          },
+        });
+
+        if (!existingSync) {
+          await KomponenEvaluasiKelasSync.create({
+            jenis_singkron: "get",
+            status: false,
+            id_feeder: feederKomponenEvaluasiKelas.id_komponen_evaluasi,
+            id_komponen_evaluasi: null,
+          });
+          console.log(`Data komponen evaluasi kelas ${feederKomponenEvaluasiKelas.id_komponen_evaluasi} ditambahkan ke sinkronisasi dengan jenis 'get'.`);
+        }
+      }
+    }
+
     console.log("Matching komponen evaluasi kelas lokal ke feeder berhasil.");
   } catch (error) {
     console.error("Error during matchingDataKomponenEvaluasiKelas:", error.message);
@@ -362,6 +391,80 @@ const updateKomponenEvaluasiKelas = async (id_komponen_evaluasi, req, res, next)
   }
 };
 
+// untuk create data feeder ke local
+const getAndCreateKomponenEvaluasiKelas = async (id_feeder, req, res, next) => {
+  try {
+    // Mendapatkan token
+    const { token, url_feeder } = await getToken();
+
+    const requestBody = {
+      act: "GetListKomponenEvaluasiKelas",
+      token: `${token}`,
+      key: {
+        id_komponen_evaluasi: id_feeder,
+      },
+    };
+
+    // Menggunakan token untuk mengambil data
+    const response = await axios.post(url_feeder, requestBody);
+
+    // Mengecek jika ada error pada respons dari server
+    if (response.data.error_code !== 0) {
+      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+    }
+
+    // Tanggapan dari API
+    const dataKomponenEvaluasiKelas = response.data.data;
+
+    // Loop untuk menambahkan data ke dalam database
+    for (const komponen_evaluasi_kelas of dataKomponenEvaluasiKelas) {
+      // Periksa apakah data sudah ada di tabel
+      const existingKomponenEvaluasiKelas = await KomponenEvaluasiKelas.findOne({
+        where: {
+          id_feeder: komponen_evaluasi_kelas.id_komponen_evaluasi,
+        },
+      });
+
+      if (!existingKomponenEvaluasiKelas) {
+        // Data belum ada, buat entri baru di database
+        await KomponenEvaluasiKelas.create({
+          id_komponen_evaluasi: komponen_evaluasi_kelas.id_komponen_evaluasi,
+          nama: komponen_evaluasi_kelas.nama,
+          nama_inggris: komponen_evaluasi_kelas.nama_inggris,
+          nomor_urut: komponen_evaluasi_kelas.nomor_urut,
+          bobot_evaluasi: komponen_evaluasi_kelas.bobot_evaluasi,
+          last_sync: new Date(),
+          id_feeder: komponen_evaluasi_kelas.id_komponen_evaluasi,
+          id_kelas_kuliah: komponen_evaluasi_kelas.id_kelas_kuliah,
+          id_jenis_evaluasi: komponen_evaluasi_kelas.id_jenis_evaluasi,
+        });
+      }
+    }
+
+    // update status pada komponen_evaluasi_kelas_sync local
+    let komponen_evaluasi_kelas_sync = await KomponenEvaluasiKelasSync.findOne({
+      where: {
+        id_feeder: id_feeder,
+        status: false,
+        jenis_singkron: "get",
+        id_komponen_evaluasi: null,
+      },
+    });
+
+    if (!komponen_evaluasi_kelas_sync) {
+      return res.status(404).json({ message: "Komponen evaluasi kelas sync not found" });
+    }
+
+    komponen_evaluasi_kelas_sync.status = true;
+    await komponen_evaluasi_kelas_sync.save();
+
+    // result
+    console.log(`Successfully inserted Komponen evaluasi kelas with ID Feeder ${komponen_evaluasi_kelas_sync.id_feeder} to feeder`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncKomponenEvaluasiKelas = async (req, res, next) => {
   try {
     const { komponen_evaluasi_kelas_syncs } = req.body;
@@ -385,6 +488,8 @@ const syncKomponenEvaluasiKelas = async (req, res, next) => {
           await insertKomponenEvaluasiKelas(data_komponen_evaluasi_kelas_sync.id_komponen_evaluasi, req, res, next);
         } else if (data_komponen_evaluasi_kelas_sync.jenis_singkron === "update") {
           await updateKomponenEvaluasiKelas(data_komponen_evaluasi_kelas_sync.id_komponen_evaluasi, req, res, next);
+        } else if (data_komponen_evaluasi_kelas_sync.jenis_singkron === "get") {
+          await getAndCreateKomponenEvaluasiKelas(data_komponen_evaluasi_kelas_sync.id_feeder, req, res, next);
         }
       } else {
         console.log(`Data Komponen Evaluasi Kelas Sync dengan ID ${data_komponen_evaluasi_kelas_sync.id} tidak valid untuk dilakukan singkron`);

@@ -480,6 +480,83 @@ const updateKelasKuliah = async (id_kelas_kuliah, req, res, next) => {
 //   }
 // };
 
+// untuk create data feeder ke local
+const getAndCreateKelasKuliah = async (id_feeder, req, res, next) => {
+  try {
+    // Mendapatkan token
+    const { token, url_feeder } = await getToken();
+
+    const requestBody = {
+      act: "GetListKelasKuliah",
+      token: `${token}`,
+      key: {
+        id_kelas_kuliah: id_feeder,
+      },
+    };
+
+    // Menggunakan token untuk mengambil data
+    const response = await axios.post(url_feeder, requestBody);
+
+    // Mengecek jika ada error pada respons dari server
+    if (response.data.error_code !== 0) {
+      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+    }
+
+    // Tanggapan dari API
+    const dataKelasKuliah = response.data.data;
+
+    for (const kelas_kuliah of dataKelasKuliah) {
+      // Periksa apakah data sudah ada di tabel
+      const existingKelasKuliah = await KelasKuliah.findOne({
+        where: {
+          id_feeder: kelas_kuliah.id_kelas_kuliah,
+        },
+      });
+
+      if (!existingKelasKuliah) {
+        // Data belum ada, buat entri baru di database
+        await KelasKuliah.create({
+          id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah,
+          nama_kelas_kuliah: kelas_kuliah.nama_kelas_kuliah,
+          sks: kelas_kuliah.sks,
+          jumlah_mahasiswa: kelas_kuliah.jumlah_mahasiswa,
+          apa_untuk_pditt: kelas_kuliah.apa_untuk_pditt,
+          lingkup: kelas_kuliah.lingkup,
+          mode: kelas_kuliah.mode,
+          last_sync: new Date(),
+          id_feeder: kelas_kuliah.id_kelas_kuliah,
+          id_prodi: kelas_kuliah.id_prodi,
+          id_semester: kelas_kuliah.id_semester,
+          id_matkul: kelas_kuliah.id_matkul,
+          id_dosen: kelas_kuliah.id_dosen,
+        });
+      }
+    }
+
+    // update status pada kelas_kuliah_sync local
+    let kelas_kuliah_sync = await KelasKuliahSync.findOne({
+      where: {
+        id_feeder: id_feeder,
+        status: false,
+        jenis_singkron: "get",
+        id_kelas_kuliah: null,
+      },
+    });
+
+    if (!kelas_kuliah_sync) {
+      return res.status(404).json({ message: "Kelas kuliah sync not found" });
+    }
+
+    kelas_kuliah_sync.status = true;
+    await kelas_kuliah_sync.save();
+
+    // result
+    console.log(`Successfully inserted kelas kuliah with ID Feeder ${kelas_kuliah_sync.id_feeder} to feeder`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncKelasKuliahs = async (req, res, next) => {
   try {
     const { kelas_kuliah_syncs } = req.body;
@@ -503,6 +580,8 @@ const syncKelasKuliahs = async (req, res, next) => {
           await insertKelasKuliah(data_kelas_kuliah_sync.id_kelas_kuliah, req, res, next);
         } else if (data_kelas_kuliah_sync.jenis_singkron === "update") {
           await updateKelasKuliah(data_kelas_kuliah_sync.id_kelas_kuliah, req, res, next);
+        } else if (data_kelas_kuliah_sync.jenis_singkron === "get") {
+          await getAndCreateKelasKuliah(data_kelas_kuliah_sync.id_feeder, req, res, next);
         }
         // dinonaktifkan
         // else if (data_kelas_kuliah_sync.jenis_singkron === "delete") {

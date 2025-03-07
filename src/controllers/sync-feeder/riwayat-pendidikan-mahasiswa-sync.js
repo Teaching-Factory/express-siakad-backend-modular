@@ -1,4 +1,4 @@
-const { RiwayatPendidikanMahasiswa, RiwayatPendidikanMahasiswaSync, BiodataMahasiswa, Mahasiswa } = require("../../../models");
+const { RiwayatPendidikanMahasiswa, RiwayatPendidikanMahasiswaSync, BiodataMahasiswa, Mahasiswa, Prodi } = require("../../../models");
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
@@ -506,6 +506,105 @@ const updateRiwayatPendidikanMahasiswa = async (id_riwayat_pend_mhs, req, res, n
 //   }
 // };
 
+// untuk create data feeder ke local
+const getAndCreateRiwayatPendidikanMahasiswa = async (id_feeder, req, res, next) => {
+  try {
+    // Mendapatkan token
+    const { token, url_feeder } = await getToken();
+
+    const requestBody = {
+      act: "GetListRiwayatPendidikanMahasiswa",
+      token: `${token}`,
+      key: {
+        id_registrasi_mahasiswa: id_feeder,
+      },
+    };
+
+    // Menggunakan token untuk mengambil data
+    const response = await axios.post(url_feeder, requestBody);
+
+    // Mengecek jika ada error pada respons dari server
+    if (response.data.error_code !== 0) {
+      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+    }
+
+    // Tanggapan dari API
+    const dataRiwayatPendidikanMahasiswa = response.data.data;
+
+    for (const riwayat_pendidikan_mahasiswa of dataRiwayatPendidikanMahasiswa) {
+      const existingRiwayatPendidikanMahasiswa = await RiwayatPendidikanMahasiswa.findOne({
+        where: {
+          id_feeder: riwayat_pendidikan_mahasiswa.id_registrasi_mahasiswa,
+        },
+      });
+
+      let tanggal_daftar;
+      let id_prodi_asal = null;
+
+      const prodi = await Prodi.findOne({
+        where: {
+          id_prodi: riwayat_pendidikan_mahasiswa.id_prodi_asal,
+        },
+      });
+
+      // Jika ditemukan, simpan nilainya
+      if (prodi) {
+        id_prodi_asal = riwayat_pendidikan_mahasiswa.id_prodi_asal;
+      }
+
+      //   melakukan pengecekan data tanggal
+      if (riwayat_pendidikan_mahasiswa.tanggal_daftar != null) {
+        const date_start = riwayat_pendidikan_mahasiswa.tanggal_daftar.split("-");
+        tanggal_daftar = `${date_start[2]}-${date_start[1]}-${date_start[0]}`;
+      }
+
+      if (!existingRiwayatPendidikanMahasiswa) {
+        await RiwayatPendidikanMahasiswa.create({
+          tanggal_daftar: tanggal_daftar,
+          keterangan_keluar: riwayat_pendidikan_mahasiswa.keterangan_keluar,
+          sks_diakui: riwayat_pendidikan_mahasiswa.sks_diakui,
+          nama_ibu_kandung: riwayat_pendidikan_mahasiswa.nama_ibu_kandung,
+          biaya_masuk: riwayat_pendidikan_mahasiswa.biaya_masuk,
+          id_registrasi_mahasiswa: riwayat_pendidikan_mahasiswa.id_registrasi_mahasiswa,
+          id_jenis_daftar: riwayat_pendidikan_mahasiswa.id_jenis_daftar,
+          id_jalur_masuk: riwayat_pendidikan_mahasiswa.id_jalur_masuk,
+          id_periode_masuk: riwayat_pendidikan_mahasiswa.id_periode_masuk,
+          id_jenis_keluar: riwayat_pendidikan_mahasiswa.id_jenis_keluar,
+          id_prodi: riwayat_pendidikan_mahasiswa.id_prodi,
+          id_pembiayaan: riwayat_pendidikan_mahasiswa.id_pembiayaan,
+          id_bidang_minat: riwayat_pendidikan_mahasiswa.id_bidang_minat,
+          id_perguruan_tinggi_asal: riwayat_pendidikan_mahasiswa.id_perguruan_tinggi_asal,
+          id_prodi_asal: id_prodi_asal,
+          last_sync: new Date(),
+          id_feeder: riwayat_pendidikan_mahasiswa.id_registrasi_mahasiswa,
+        });
+      }
+    }
+
+    // update status pada riwayat_pendidikan_mahasiswa_sync local
+    let riwayat_pendidikan_mahasiswa_sync = await RiwayatPendidikanMahasiswaSync.findOne({
+      where: {
+        id_feeder: id_feeder,
+        status: false,
+        jenis_singkron: "get",
+        id_riwayat_pend_mhs: null,
+      },
+    });
+
+    if (!riwayat_pendidikan_mahasiswa_sync) {
+      return res.status(404).json({ message: "Riwayat Pendidikan Mahasiswa sync not found" });
+    }
+
+    riwayat_pendidikan_mahasiswa_sync.status = true;
+    await riwayat_pendidikan_mahasiswa_sync.save();
+
+    // result
+    console.log(`Successfully inserted riwayat pendidikan mahasiswa with ID Feeder ${riwayat_pendidikan_mahasiswa_sync.id_feeder} to feeder`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
   try {
     const { riwayat_pendidikan_mahasiswa_syncs } = req.body;
@@ -529,6 +628,8 @@ const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
           await insertRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_riwayat_pend_mhs, req, res, next);
         } else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "update") {
           await updateRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_riwayat_pend_mhs, req, res, next);
+        } else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "get") {
+          await getAndCreateRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_feeder, req, res, next);
         }
         // dinonaktifkan
         // else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "delete") {

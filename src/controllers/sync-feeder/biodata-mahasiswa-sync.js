@@ -1,4 +1,4 @@
-const { BiodataMahasiswa, Mahasiswa, BiodataMahasiswaSync } = require("../../../models");
+const { BiodataMahasiswa, Mahasiswa, BiodataMahasiswaSync, Wilayah } = require("../../../models");
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
@@ -643,6 +643,149 @@ const updateBiodataMahasiswa = async (id_mahasiswa, req, res, next) => {
 //   }
 // };
 
+// untuk create data feeder ke local
+const getAndCreateBiodatMahasiswa = async (id_feeder, req, res, next) => {
+  try {
+    // Mendapatkan token
+    const { token, url_feeder } = await getToken();
+
+    // akan delete data biodata mahasiswa dan mahasiswa ke feeder
+    const requestBody = {
+      act: "GetBiodataMahasiswa",
+      token: `${token}`,
+      key: {
+        id_mahasiswa: id_feeder,
+      },
+    };
+
+    // Menggunakan token untuk mengambil data
+    const response = await axios.post(url_feeder, requestBody);
+
+    // Mengecek jika ada error pada respons dari server
+    if (response.data.error_code !== 0) {
+      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+    }
+
+    // Tanggapan dari API
+    const dataBiodataMahasiswa = response.data.data;
+
+    for (const biodata_mahasiswa of dataBiodataMahasiswa) {
+      // Periksa apakah data sudah ada di tabel
+      const existingBiodataMahasiswa = await BiodataMahasiswa.findOne({
+        where: {
+          id_feeder: biodata_mahasiswa.id_mahasiswa,
+        },
+      });
+
+      let id_wilayah = null;
+
+      // Periksa apakah id_wilayah Wilayah
+      const wilayah = await Wilayah.findOne({
+        where: {
+          id_wilayah: biodata_mahasiswa.id_wilayah,
+        },
+      });
+
+      // Jika ditemukan, simpan nilainya
+      if (wilayah) {
+        id_wilayah = wilayah.id_wilayah;
+      }
+
+      if (!existingBiodataMahasiswa) {
+        // Data belum ada, buat entri baru di database
+        let data_tanggal_lahir_ayah = null;
+        let data_tanggal_lahir_ibu = null;
+        let data_tanggal_lahir_wali = null;
+
+        // tanggal lahir ayah
+        if (biodata_mahasiswa.tanggal_lahir_ayah != null) {
+          const dateParts = biodata_mahasiswa.tanggal_lahir_ayah.split("-");
+          data_tanggal_lahir_ayah = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        }
+
+        // tanggal lahir ibu
+        if (biodata_mahasiswa.tanggal_lahir_ibu != null) {
+          const dateParts = biodata_mahasiswa.tanggal_lahir_ibu.split("-");
+          data_tanggal_lahir_ibu = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        }
+
+        // tanggal lahir wali
+        if (biodata_mahasiswa.tanggal_lahir_wali != null) {
+          const dateParts = biodata_mahasiswa.tanggal_lahir_wali.split("-");
+          data_tanggal_lahir_wali = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        }
+
+        await BiodataMahasiswa.create({
+          id_mahasiswa: biodata_mahasiswa.id_mahasiswa,
+          tempat_lahir: biodata_mahasiswa.tempat_lahir,
+          nik: biodata_mahasiswa.nik,
+          nisn: biodata_mahasiswa.nisn,
+          npwp: biodata_mahasiswa.npwp,
+          kewarganegaraan: biodata_mahasiswa.kewarganegaraan,
+          jalan: biodata_mahasiswa.jalan,
+          dusun: biodata_mahasiswa.dusun,
+          rt: biodata_mahasiswa.rt,
+          rw: biodata_mahasiswa.rw,
+          kelurahan: biodata_mahasiswa.kelurahan,
+          kode_pos: biodata_mahasiswa.kode_pos,
+          telepon: biodata_mahasiswa.telepon,
+          handphone: biodata_mahasiswa.handphone,
+          email: biodata_mahasiswa.email,
+          penerima_kps: biodata_mahasiswa.penerima_kps,
+          nomor_kps: biodata_mahasiswa.nomor_kps,
+          nik_ayah: biodata_mahasiswa.nik_ayah,
+          nama_ayah: biodata_mahasiswa.nama_ayah,
+          tanggal_lahir_ayah: data_tanggal_lahir_ayah,
+          nik_ibu: biodata_mahasiswa.nik_ibu,
+          nama_ibu_kandung: biodata_mahasiswa.nama_ibu_kandung,
+          tanggal_lahir_ibu: data_tanggal_lahir_ibu,
+          nama_wali: biodata_mahasiswa.nama_wali,
+          tanggal_lahir_wali: data_tanggal_lahir_wali,
+          last_sync: new Date(),
+          id_feeder: biodata_mahasiswa.id_mahasiswa,
+          id_wilayah: id_wilayah,
+          id_jenis_tinggal: biodata_mahasiswa.id_jenis_tinggal,
+          id_alat_transportasi: biodata_mahasiswa.id_alat_transportasi,
+          id_pendidikan_ayah: biodata_mahasiswa.id_pendidikan_ayah,
+          id_pekerjaan_ayah: biodata_mahasiswa.id_pekerjaan_ayah,
+          id_penghasilan_ayah: biodata_mahasiswa.id_penghasilan_ayah,
+          id_pendidikan_ibu: biodata_mahasiswa.id_pendidikan_ibu,
+          id_pekerjaan_ibu: biodata_mahasiswa.id_pekerjaan_ibu,
+          id_penghasilan_ibu: biodata_mahasiswa.id_penghasilan_ibu,
+          id_pendidikan_wali: biodata_mahasiswa.id_pendidikan_wali,
+          id_pekerjaan_wali: biodata_mahasiswa.id_pekerjaan_wali,
+          id_penghasilan_wali: biodata_mahasiswa.id_penghasilan_wali,
+          id_kebutuhan_khusus_mahasiswa: biodata_mahasiswa.id_kebutuhan_khusus_mahasiswa,
+          id_kebutuhan_khusus_ayah: biodata_mahasiswa.id_kebutuhan_khusus_ayah,
+          id_kebutuhan_khusus_ibu: biodata_mahasiswa.id_kebutuhan_khuibuayah,
+        });
+      }
+    }
+
+    // update status pada biodata_mahasiswa_sync local
+    let biodata_mahasiswa_sync = await BiodataMahasiswaSync.findOne({
+      where: {
+        id_feeder: id_feeder,
+        status: false,
+        jenis_singkron: "get",
+        id_mahasiswa: null,
+      },
+    });
+
+    if (!biodata_mahasiswa_sync) {
+      return res.status(404).json({ message: "Biodata mahasiswa sync not found" });
+    }
+
+    biodata_mahasiswa_sync.status = true;
+    await biodata_mahasiswa_sync.save();
+
+    // result
+    console.log(`Successfully inserted biodata mahasiswa with ID Feeder ${biodata_mahasiswa_sync.id_feeder} to feeder`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncBiodataMahasiswas = async (req, res, next) => {
   try {
     const { biodata_mahasiswa_syncs } = req.body;
@@ -666,6 +809,8 @@ const syncBiodataMahasiswas = async (req, res, next) => {
           await insertBiodataMahasiswa(data_biodata_mahasiswa_sync.id_mahasiswa, req, res, next);
         } else if (data_biodata_mahasiswa_sync.jenis_singkron === "update") {
           await updateBiodataMahasiswa(data_biodata_mahasiswa_sync.id_mahasiswa, req, res, next);
+        } else if (data_biodata_mahasiswa_sync.jenis_singkron === "get") {
+          await getAndCreateBiodatMahasiswa(data_biodata_mahasiswa_sync.id_feeder, req, res, next);
         }
         // dinonaktifkan
         // else if (data_biodata_mahasiswa_sync.jenis_singkron === "delete") {

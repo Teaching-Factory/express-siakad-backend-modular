@@ -359,6 +359,79 @@ const updateRencanaEvaluasi = async (id_rencana_evaluasi, req, res, next) => {
 //   }
 // };
 
+// untuk create data feeder ke local
+const getAndCreateRencanaEvaluasi = async (id_feeder, req, res, next) => {
+  try {
+    // Mendapatkan token
+    const { token, url_feeder } = await getToken();
+
+    const requestBody = {
+      act: "GetListRencanaEvaluasi",
+      token: `${token}`,
+      key: {
+        id_rencana_evaluasi: id_feeder,
+      },
+    };
+
+    // Menggunakan token untuk mengambil data
+    const response = await axios.post(url_feeder, requestBody);
+
+    // Mengecek jika ada error pada respons dari server
+    if (response.data.error_code !== 0) {
+      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+    }
+
+    // menyimpan respon data rencana evaluasi ke variabel baru
+    const dataRencanaEvaluasi = response.data.data;
+
+    for (const rencana_evaluasi of dataRencanaEvaluasi) {
+      // create data rencana evaluasi dari feeder ke local
+      const existingRencanaEvaluasi = await RencanaEvaluasi.findOne({
+        where: {
+          id_feeder: rencana_evaluasi.id_rencana_evaluasi,
+        },
+      });
+
+      if (!existingRencanaEvaluasi) {
+        await RencanaEvaluasi.create({
+          id_rencana_evaluasi: rencana_evaluasi.id_rencana_evaluasi,
+          nama_evaluasi: rencana_evaluasi.nama_evaluasi,
+          deskripsi_indonesia: rencana_evaluasi.deskripsi_indonesia,
+          deskrips_inggris: rencana_evaluasi.deskrips_inggris,
+          nomor_urut: rencana_evaluasi.nomor_urut,
+          bobot_evaluasi: rencana_evaluasi.bobot_evaluasi,
+          last_sync: new Date(),
+          id_feeder: rencana_evaluasi.id_rencana_evaluasi,
+          id_jenis_evaluasi: rencana_evaluasi.id_jenis_evaluasi,
+          id_matkul: rencana_evaluasi.id_matkul,
+        });
+      }
+    }
+
+    // update status pada rencana_evaluasi_sync local
+    let rencana_evaluasi_sync = await RencanaEvaluasiSync.findOne({
+      where: {
+        id_feeder: id_feeder,
+        status: false,
+        jenis_singkron: "get",
+        id_rencana_evaluasi: null,
+      },
+    });
+
+    if (!rencana_evaluasi_sync) {
+      return res.status(404).json({ message: "Rencana evaluasi sync not found" });
+    }
+
+    rencana_evaluasi_sync.status = true;
+    await rencana_evaluasi_sync.save();
+
+    // result
+    console.log(`Successfully inserted rencana evaluasi with ID Feeder ${rencana_evaluasi_sync.id_feeder} to feeder`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncRencanaEvaluasis = async (req, res, next) => {
   try {
     const { rencana_evaluasi_syncs } = req.body;
@@ -382,6 +455,8 @@ const syncRencanaEvaluasis = async (req, res, next) => {
           await insertRencanaEvaluasi(data_rencana_evaluasi_sync.id_rencana_evaluasi, req, res, next);
         } else if (data_rencana_evaluasi_sync.jenis_singkron === "update") {
           await updateRencanaEvaluasi(data_rencana_evaluasi_sync.id_rencana_evaluasi, req, res, next);
+        } else if (data_rencana_evaluasi_sync.jenis_singkron === "get") {
+          await getAndCreateRencanaEvaluasi(data_rencana_evaluasi_sync.id_feeder, req, res, next);
         }
         // dinonaktifkan
         // else if (data_rencana_evaluasi_sync.jenis_singkron === "delete") {
