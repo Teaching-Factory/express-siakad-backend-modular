@@ -85,6 +85,7 @@ const KRSMahasiswaUpdateController = require("../controllers/api-feeder-update/k
 const AktivitasKuliahMahasiswaUpdateController = require("../controllers/api-feeder-update/aktivitas-kuliah-mahasiswa");
 const RekapKHSMahasiswaUpdateController = require("../controllers/api-feeder-update/rekap-khs-mahasiswa");
 const RekapKRSMahasiswaUpdateController = require("../controllers/api-feeder-update/rekap-krs-mahasiswa");
+const JumlahKelasKuliahUpdateController = require("../controllers/api-feeder-update/kelas-kuliah");
 
 // all routes
 router.get("/get-agama", checkRole(["admin"]), AgamaController.getAgama);
@@ -166,5 +167,6 @@ router.get("/update-krs-mahasiswa", checkRole(["admin"]), KRSMahasiswaUpdateCont
 router.get("/update-aktivitas-kuliah-mahasiswa", checkRole(["admin"]), AktivitasKuliahMahasiswaUpdateController.getAktivitasKuliahMahasiswa);
 router.get("/update-rekap-khs-mahasiswa", checkRole(["admin"]), RekapKHSMahasiswaUpdateController.getRekapKHSMahasiswa);
 router.get("/update-rekap-krs-mahasiswa", checkRole(["admin"]), RekapKRSMahasiswaUpdateController.getRekapKRSMahasiswa);
+router.get("/update-jumlah-mahasiswa-kelas", checkRole(["admin"]), JumlahKelasKuliahUpdateController.updateJumlahMahasiswaKelasKuliah);
 
 module.exports = router;
