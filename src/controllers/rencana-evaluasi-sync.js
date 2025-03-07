@@ -43,7 +43,7 @@ const getAllRencanaEvaluasiSyncBelumSingkron = async (req, res, next) => {
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedRencanaEvaluasi = await Promise.all(
       rencana_evaluasis.map(async (rencana_evaluasi) => {
-        if (rencana_evaluasi.jenis_singkron === "delete") {
+        if (rencana_evaluasi.jenis_singkron === "get") {
           // Mendapatkan data rencana evaluasi dari feeder berdasarkan ID
           const rencanaEvaluasiFeeder = await getRencanaEvaluasiFromFeederByID(rencana_evaluasi.id_feeder);
 
@@ -132,7 +132,7 @@ const getAllRencanaEvaluasiSyncBelumSingkronByFilter = async (req, res, next) =>
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedRencanaEvaluasi = await Promise.all(
       rencana_evaluasis.map(async (rencana_evaluasi) => {
-        if (rencana_evaluasi.jenis_singkron === "delete") {
+        if (rencana_evaluasi.jenis_singkron === "get") {
           // Mendapatkan data rencana evaluasi dari feeder berdasarkan ID
           const rencanaEvaluasiFeeder = await getRencanaEvaluasiFromFeederByID(rencana_evaluasi.id_feeder);
 

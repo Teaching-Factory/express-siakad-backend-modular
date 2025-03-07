@@ -44,7 +44,7 @@ const getAllKelasKuliahSyncBelumSingkron = async (req, res, next) => {
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedKelasKuliah = await Promise.all(
       kelas_kuliahs.map(async (kelas_kuliah) => {
-        if (kelas_kuliah.jenis_singkron === "delete") {
+        if (kelas_kuliah.jenis_singkron === "get") {
           // Mendapatkan data kelas kuliah dari feeder berdasarkan ID
           const kelasKuliahFeeder = await getKelasKuliahFromFeederByID(kelas_kuliah.id_feeder);
 
@@ -135,7 +135,7 @@ const getAllKelasKuliahSyncBelumSingkronByFilter = async (req, res, next) => {
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedKelasKuliah = await Promise.all(
       kelas_kuliahs.map(async (kelas_kuliah) => {
-        if (kelas_kuliah.jenis_singkron === "delete") {
+        if (kelas_kuliah.jenis_singkron === "get") {
           // Mendapatkan data kelas kuliah dari feeder berdasarkan ID
           const kelasKuliahFeeder = await getKelasKuliahFromFeederByID(kelas_kuliah.id_feeder);
 

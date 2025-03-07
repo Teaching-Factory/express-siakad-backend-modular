@@ -129,18 +129,18 @@ async function matchingDataRencanaEvaluasi(req, res, next) {
       );
     }
 
-    // mengecek jikalau data rencana evaluasi tidak ada di local namun ada di feeder, maka data rencana evaluasi di feeder akan tercatat sebagai delete
+    // mengecek jikalau data rencana evaluasi tidak ada di local namun ada di feeder, maka data rencana evaluasi di feeder akan tercatat sebagai get
     for (let feederRencanaEvaluasiId in rencanaEvaluasiFeederMap) {
       const feederRencanaEvaluasi = rencanaEvaluasiFeederMap[feederRencanaEvaluasiId];
 
-      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "delete"
+      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "get"
       const localRencanaEvaluasi = rencanaEvaluasiLocal.find((rencana_evaluasi) => rencana_evaluasi.id_feeder === feederRencanaEvaluasiId);
 
       if (!localRencanaEvaluasi) {
         const existingSync = await RencanaEvaluasiSync.findOne({
           where: {
             id_feeder: feederRencanaEvaluasi.id_rencana_evaluasi,
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_rencana_evaluasi: null,
           },
@@ -148,12 +148,12 @@ async function matchingDataRencanaEvaluasi(req, res, next) {
 
         if (!existingSync) {
           await RencanaEvaluasiSync.create({
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_feeder: feederRencanaEvaluasi.id_rencana_evaluasi,
             id_rencana_evaluasi: null,
           });
-          console.log(`Data rencana evaluasi ${feederRencanaEvaluasi.id_rencana_evaluasi} ditambahkan ke sinkronisasi dengan jenis 'delete'.`);
+          console.log(`Data rencana evaluasi ${feederRencanaEvaluasi.id_rencana_evaluasi} ditambahkan ke sinkronisasi dengan jenis 'get'.`);
         }
       }
     }
@@ -312,51 +312,52 @@ const updateRencanaEvaluasi = async (id_rencana_evaluasi, req, res, next) => {
   }
 };
 
-const deleteRencanaEvaluasi = async (id_feeder, req, res, next) => {
-  try {
-    // Mendapatkan token
-    const { token, url_feeder } = await getToken();
+// dinonaktifkan
+// const deleteRencanaEvaluasi = async (id_feeder, req, res, next) => {
+//   try {
+//     // Mendapatkan token
+//     const { token, url_feeder } = await getToken();
 
-    // akan delete data rencana evaluasi ke feeder
-    const requestBody = {
-      act: "DeleteRencanaEvaluasi",
-      token: `${token}`,
-      key: {
-        id_rencana_evaluasi: id_feeder,
-      },
-    };
+//     // akan delete data rencana evaluasi ke feeder
+//     const requestBody = {
+//       act: "DeleteRencanaEvaluasi",
+//       token: `${token}`,
+//       key: {
+//         id_rencana_evaluasi: id_feeder,
+//       },
+//     };
 
-    // Menggunakan token untuk mengambil data
-    const response = await axios.post(url_feeder, requestBody);
+//     // Menggunakan token untuk mengambil data
+//     const response = await axios.post(url_feeder, requestBody);
 
-    // Mengecek jika ada error pada respons dari server
-    if (response.data.error_code !== 0) {
-      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
-    }
+//     // Mengecek jika ada error pada respons dari server
+//     if (response.data.error_code !== 0) {
+//       throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+//     }
 
-    // update status pada rencana_evaluasi_sync local
-    let rencana_evaluasi_sync = await RencanaEvaluasiSync.findOne({
-      where: {
-        id_feeder: id_feeder,
-        status: false,
-        jenis_singkron: "delete",
-        id_rencana_evaluasi: null,
-      },
-    });
+//     // update status pada rencana_evaluasi_sync local
+//     let rencana_evaluasi_sync = await RencanaEvaluasiSync.findOne({
+//       where: {
+//         id_feeder: id_feeder,
+//         status: false,
+//         jenis_singkron: "delete",
+//         id_rencana_evaluasi: null,
+//       },
+//     });
 
-    if (!rencana_evaluasi_sync) {
-      return res.status(404).json({ message: "Rencana evaluasi sync not found" });
-    }
+//     if (!rencana_evaluasi_sync) {
+//       return res.status(404).json({ message: "Rencana evaluasi sync not found" });
+//     }
 
-    rencana_evaluasi_sync.status = true;
-    await rencana_evaluasi_sync.save();
+//     rencana_evaluasi_sync.status = true;
+//     await rencana_evaluasi_sync.save();
 
-    // result
-    console.log(`Successfully deleted rencana evaluasi with ID Feeder ${rencana_evaluasi_sync.id_feeder} to feeder`);
-  } catch (error) {
-    next(error);
-  }
-};
+//     // result
+//     console.log(`Successfully deleted rencana evaluasi with ID Feeder ${rencana_evaluasi_sync.id_feeder} to feeder`);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 const syncRencanaEvaluasis = async (req, res, next) => {
   try {
@@ -381,9 +382,11 @@ const syncRencanaEvaluasis = async (req, res, next) => {
           await insertRencanaEvaluasi(data_rencana_evaluasi_sync.id_rencana_evaluasi, req, res, next);
         } else if (data_rencana_evaluasi_sync.jenis_singkron === "update") {
           await updateRencanaEvaluasi(data_rencana_evaluasi_sync.id_rencana_evaluasi, req, res, next);
-        } else if (data_rencana_evaluasi_sync.jenis_singkron === "delete") {
-          await deleteRencanaEvaluasi(data_rencana_evaluasi_sync.id_feeder, req, res, next);
         }
+        // dinonaktifkan
+        // else if (data_rencana_evaluasi_sync.jenis_singkron === "delete") {
+        //   await deleteRencanaEvaluasi(data_rencana_evaluasi_sync.id_feeder, req, res, next);
+        // }
       } else {
         console.log(`Data Rencana Evaluasi Sync dengan ID ${data_rencana_evaluasi_sync.id} tidak valid untuk dilakukan singkron`);
       }

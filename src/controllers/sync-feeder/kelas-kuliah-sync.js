@@ -195,18 +195,18 @@ async function matchingDataKelasKuliah(req, res, next) {
       );
     }
 
-    // mengecek jikalau data kelas kuliah tidak ada di local namun ada di feeder, maka data kelas kuliah di feeder akan tercatat sebagai delete
+    // mengecek jikalau data kelas kuliah tidak ada di local namun ada di feeder, maka data kelas kuliah di feeder akan tercatat sebagai get
     for (let feederKelasId in kelasKuliahFeederMap) {
       const feederKelas = kelasKuliahFeederMap[feederKelasId];
 
-      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "delete"
+      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "get"
       const localKelas = kelasLocal.find((kelas) => kelas.id_feeder === feederKelasId);
 
       if (!localKelas) {
         const existingSync = await KelasKuliahSync.findOne({
           where: {
             id_feeder: feederKelas.id_kelas_kuliah,
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_kelas_kuliah: null,
           },
@@ -214,12 +214,12 @@ async function matchingDataKelasKuliah(req, res, next) {
 
         if (!existingSync) {
           await KelasKuliahSync.create({
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_feeder: feederKelas.id_kelas_kuliah,
             id_kelas_kuliah: null,
           });
-          console.log(`Data kelas kuliah ${feederKelas.id_kelas_kuliah} ditambahkan ke sinkronisasi dengan jenis 'delete'.`);
+          console.log(`Data kelas kuliah ${feederKelas.id_kelas_kuliah} ditambahkan ke sinkronisasi dengan jenis 'get'.`);
         }
       }
     }
@@ -433,51 +433,52 @@ const updateKelasKuliah = async (id_kelas_kuliah, req, res, next) => {
   }
 };
 
-const deleteKelasKuliah = async (id_feeder, req, res, next) => {
-  try {
-    // Mendapatkan token
-    const { token, url_feeder } = await getToken();
+// dinonaktifkan
+// const deleteKelasKuliah = async (id_feeder, req, res, next) => {
+//   try {
+//     // Mendapatkan token
+//     const { token, url_feeder } = await getToken();
 
-    // akan delete data kelas kuliah dan detail kelas kuliah ke feeder
-    const requestBody = {
-      act: "DeleteKelasKuliah",
-      token: `${token}`,
-      key: {
-        id_kelas_kuliah: id_feeder,
-      },
-    };
+//     // akan delete data kelas kuliah dan detail kelas kuliah ke feeder
+//     const requestBody = {
+//       act: "DeleteKelasKuliah",
+//       token: `${token}`,
+//       key: {
+//         id_kelas_kuliah: id_feeder,
+//       },
+//     };
 
-    // Menggunakan token untuk mengambil data
-    const response = await axios.post(url_feeder, requestBody);
+//     // Menggunakan token untuk mengambil data
+//     const response = await axios.post(url_feeder, requestBody);
 
-    // Mengecek jika ada error pada respons dari server
-    if (response.data.error_code !== 0) {
-      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
-    }
+//     // Mengecek jika ada error pada respons dari server
+//     if (response.data.error_code !== 0) {
+//       throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+//     }
 
-    // update status pada kelas_kuliah_sync local
-    let kelas_kuliah_sync = await KelasKuliahSync.findOne({
-      where: {
-        id_feeder: id_feeder,
-        status: false,
-        jenis_singkron: "delete",
-        id_kelas_kuliah: null,
-      },
-    });
+//     // update status pada kelas_kuliah_sync local
+//     let kelas_kuliah_sync = await KelasKuliahSync.findOne({
+//       where: {
+//         id_feeder: id_feeder,
+//         status: false,
+//         jenis_singkron: "delete",
+//         id_kelas_kuliah: null,
+//       },
+//     });
 
-    if (!kelas_kuliah_sync) {
-      return res.status(404).json({ message: "Kelas kuliah sync not found" });
-    }
+//     if (!kelas_kuliah_sync) {
+//       return res.status(404).json({ message: "Kelas kuliah sync not found" });
+//     }
 
-    kelas_kuliah_sync.status = true;
-    await kelas_kuliah_sync.save();
+//     kelas_kuliah_sync.status = true;
+//     await kelas_kuliah_sync.save();
 
-    // result
-    console.log(`Successfully deleted kelas kuliah with ID Feeder ${kelas_kuliah_sync.id_feeder} to feeder`);
-  } catch (error) {
-    next(error);
-  }
-};
+//     // result
+//     console.log(`Successfully deleted kelas kuliah with ID Feeder ${kelas_kuliah_sync.id_feeder} to feeder`);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 const syncKelasKuliahs = async (req, res, next) => {
   try {
@@ -502,9 +503,11 @@ const syncKelasKuliahs = async (req, res, next) => {
           await insertKelasKuliah(data_kelas_kuliah_sync.id_kelas_kuliah, req, res, next);
         } else if (data_kelas_kuliah_sync.jenis_singkron === "update") {
           await updateKelasKuliah(data_kelas_kuliah_sync.id_kelas_kuliah, req, res, next);
-        } else if (data_kelas_kuliah_sync.jenis_singkron === "delete") {
-          await deleteKelasKuliah(data_kelas_kuliah_sync.id_feeder, req, res, next);
         }
+        // dinonaktifkan
+        // else if (data_kelas_kuliah_sync.jenis_singkron === "delete") {
+        //   await deleteKelasKuliah(data_kelas_kuliah_sync.id_feeder, req, res, next);
+        // }
       } else {
         console.log(`Data Kelas Kuliah Sync dengan ID ${data_kelas_kuliah_sync.id} tidak valid untuk dilakukan singkron`);
       }

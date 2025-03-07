@@ -184,7 +184,7 @@ async function matchingDataPesertaKelasKuliah(req, res, next) {
           where: {
             id_kelas_kuliah_feeder: feederPesertaKelasKuliah.id_kelas_kuliah,
             id_registrasi_mahasiswa_feeder: feederPesertaKelasKuliah.id_registrasi_mahasiswa,
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_peserta_kuliah: null,
           },
@@ -195,11 +195,11 @@ async function matchingDataPesertaKelasKuliah(req, res, next) {
           syncData.push({
             id_kelas_kuliah_feeder: feederPesertaKelasKuliah.id_kelas_kuliah,
             id_registrasi_mahasiswa_feeder: feederPesertaKelasKuliah.id_registrasi_mahasiswa,
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_peserta_kuliah: null,
           });
-          console.log(`Data peserta kelas kuliah dengan Kelas ID ${feederPesertaKelasKuliah.id_kelas_kuliah} dan Mahasiswa ID ${feederPesertaKelasKuliah.id_registrasi_mahasiswa} ditambahkan ke sinkronisasi dengan jenis 'delete'.`);
+          console.log(`Data peserta kelas kuliah dengan Kelas ID ${feederPesertaKelasKuliah.id_kelas_kuliah} dan Mahasiswa ID ${feederPesertaKelasKuliah.id_registrasi_mahasiswa} ditambahkan ke sinkronisasi dengan jenis 'get'.`);
         }
       }
     }
@@ -317,55 +317,56 @@ const insertPesertaKelasKuliah = async (id, req, res, next) => {
   }
 };
 
-const deletePesertaKelasKuliah = async (id_kelas_kuliah, id_registrasi_mahasiswa, req, res, next) => {
-  try {
-    // Mendapatkan token
-    const { token, url_feeder } = await getToken();
+// dinonaktifkan
+// const deletePesertaKelasKuliah = async (id_kelas_kuliah, id_registrasi_mahasiswa, req, res, next) => {
+//   try {
+//     // Mendapatkan token
+//     const { token, url_feeder } = await getToken();
 
-    // akan delete data peserta kelas kuliah ke feeder
-    const requestBody = {
-      act: "DeletePesertaKelasKuliah",
-      token: `${token}`,
-      key: {
-        id_kelas_kuliah: id_kelas_kuliah,
-        id_registrasi_mahasiswa: id_registrasi_mahasiswa,
-      },
-    };
+//     // akan delete data peserta kelas kuliah ke feeder
+//     const requestBody = {
+//       act: "DeletePesertaKelasKuliah",
+//       token: `${token}`,
+//       key: {
+//         id_kelas_kuliah: id_kelas_kuliah,
+//         id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+//       },
+//     };
 
-    // Menggunakan token untuk mengambil data
-    const response = await axios.post(url_feeder, requestBody);
+//     // Menggunakan token untuk mengambil data
+//     const response = await axios.post(url_feeder, requestBody);
 
-    // Mengecek jika ada error pada respons dari server
-    if (response.data.error_code !== 0) {
-      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
-    }
+//     // Mengecek jika ada error pada respons dari server
+//     if (response.data.error_code !== 0) {
+//       throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+//     }
 
-    // update status pada peserta_kelas_kuliah_sync local
-    let peserta_kelas_kuliah_sync = await PesertaKelasKuliahSync.findOne({
-      where: {
-        id_kelas_kuliah_feeder: id_kelas_kuliah,
-        id_registrasi_mahasiswa_feeder: id_registrasi_mahasiswa,
-        status: false,
-        jenis_singkron: "delete",
-        id_peserta_kuliah: null,
-      },
-    });
+//     // update status pada peserta_kelas_kuliah_sync local
+//     let peserta_kelas_kuliah_sync = await PesertaKelasKuliahSync.findOne({
+//       where: {
+//         id_kelas_kuliah_feeder: id_kelas_kuliah,
+//         id_registrasi_mahasiswa_feeder: id_registrasi_mahasiswa,
+//         status: false,
+//         jenis_singkron: "delete",
+//         id_peserta_kuliah: null,
+//       },
+//     });
 
-    if (!peserta_kelas_kuliah_sync) {
-      return res.status(404).json({ message: "Peserta Kelas kuliah sync not found" });
-    }
+//     if (!peserta_kelas_kuliah_sync) {
+//       return res.status(404).json({ message: "Peserta Kelas kuliah sync not found" });
+//     }
 
-    peserta_kelas_kuliah_sync.status = true;
-    await peserta_kelas_kuliah_sync.save();
+//     peserta_kelas_kuliah_sync.status = true;
+//     await peserta_kelas_kuliah_sync.save();
 
-    // result
-    console.log(
-      `Successfully deleted peserta kelas kuliah with Kelas Kuliah ID Feeder ${peserta_kelas_kuliah_sync.id_kelas_kuliah_feeder} and Riwayat Pendidikan Mahasiswa ID ${peserta_kelas_kuliah_sync.id_registrasi_mahasiswa_feeder} Feeder to feeder`
-    );
-  } catch (error) {
-    next(error);
-  }
-};
+//     // result
+//     console.log(
+//       `Successfully deleted peserta kelas kuliah with Kelas Kuliah ID Feeder ${peserta_kelas_kuliah_sync.id_kelas_kuliah_feeder} and Riwayat Pendidikan Mahasiswa ID ${peserta_kelas_kuliah_sync.id_registrasi_mahasiswa_feeder} Feeder to feeder`
+//     );
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 const syncPesertaKelasKuliahs = async (req, res, next) => {
   try {
@@ -388,9 +389,11 @@ const syncPesertaKelasKuliahs = async (req, res, next) => {
       if (data_peserta_kelas_kuliah_sync.status === false) {
         if (data_peserta_kelas_kuliah_sync.jenis_singkron === "create") {
           await insertPesertaKelasKuliah(data_peserta_kelas_kuliah_sync.id_peserta_kuliah, req, res, next);
-        } else if (data_peserta_kelas_kuliah_sync.jenis_singkron === "delete") {
-          await deletePesertaKelasKuliah(data_peserta_kelas_kuliah_sync.id_kelas_kuliah_feeder, data_peserta_kelas_kuliah_sync.id_registrasi_mahasiswa_feeder, req, res, next);
         }
+        // dinonaktifkan
+        // else if (data_peserta_kelas_kuliah_sync.jenis_singkron === "delete") {
+        //   await deletePesertaKelasKuliah(data_peserta_kelas_kuliah_sync.id_kelas_kuliah_feeder, data_peserta_kelas_kuliah_sync.id_registrasi_mahasiswa_feeder, req, res, next);
+        // }
       } else {
         console.log(`Data Peserta Kelas Kuliah Sync dengan ID ${peserta_kelas_kuliah_sync.id} tidak valid untuk dilakukan singkron`);
       }

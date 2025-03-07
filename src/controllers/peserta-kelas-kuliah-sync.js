@@ -57,7 +57,7 @@ const getAllPesertaKelasKuliahSyncBelumSingkron = async (req, res, next) => {
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedPesertaKelasKuliah = await Promise.all(
       peserta_kelas_kuliahs.map(async (peserta_kelas_kuliah) => {
-        if (peserta_kelas_kuliah.jenis_singkron === "delete") {
+        if (peserta_kelas_kuliah.jenis_singkron === "get") {
           // Mendapatkan data peserta kelas kuliah dari feeder berdasarkan ID
           const pesertaKelasKuliahFeeder = await getPesertaKelasKuliahFromFeederByFilter(peserta_kelas_kuliah.id_kelas_kuliah_feeder, peserta_kelas_kuliah.id_registrasi_mahasiswa_feeder);
 
@@ -174,7 +174,7 @@ const getAllPesertaKelasKuliahSyncBelumSingkronByFilter = async (req, res, next)
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedPesertaKelasKuliah = await Promise.all(
       peserta_kelas_kuliahs.map(async (peserta_kelas_kuliah) => {
-        if (peserta_kelas_kuliah.jenis_singkron === "delete") {
+        if (peserta_kelas_kuliah.jenis_singkron === "get") {
           // Mendapatkan data peserta kelas kuliah dari feeder berdasarkan ID
           const pesertaKelasKuliahFeeder = await getPesertaKelasKuliahFromFeederByFilter(peserta_kelas_kuliah.id_kelas_kuliah_feeder, peserta_kelas_kuliah.id_registrasi_mahasiswa_feeder);
 

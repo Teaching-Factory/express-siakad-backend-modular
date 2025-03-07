@@ -201,18 +201,18 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
       );
     }
 
-    // mengecek jikalau data riwayat pendidikan mahasiswa tidak ada di local namun ada di feeder, maka data riwayat pendidikan mahasiswa di feeder akan tercatat sebagai delete
+    // mengecek jikalau data riwayat pendidikan mahasiswa tidak ada di local namun ada di feeder, maka data riwayat pendidikan mahasiswa di feeder akan tercatat sebagai get
     for (let feederRiwayatPendMahasiswaId in riwayatPendidikanMahasiswaFeederMap) {
       const feederRiwayatPendMahasiswa = riwayatPendidikanMahasiswaFeederMap[feederRiwayatPendMahasiswaId];
 
-      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "delete"
+      // Jika data Feeder tidak ada di Lokal, tambahkan dengan jenis "get"
       const localRiwayatPendMahasiswa = riwayatPendidikanMahasiswaLocal.find((riwayat_pend_mhs) => riwayat_pend_mhs.id_feeder === feederRiwayatPendMahasiswaId);
 
       if (!localRiwayatPendMahasiswa) {
         const existingSync = await RiwayatPendidikanMahasiswaSync.findOne({
           where: {
             id_feeder: feederRiwayatPendMahasiswa.id_registrasi_mahasiswa,
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_riwayat_pend_mhs: null,
           },
@@ -221,11 +221,11 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
         if (!existingSync) {
           await RiwayatPendidikanMahasiswaSync.create({
             id_feeder: feederRiwayatPendMahasiswa.id_registrasi_mahasiswa,
-            jenis_singkron: "delete",
+            jenis_singkron: "get",
             status: false,
             id_riwayat_pend_mhs: null,
           });
-          console.log(`Data riwayat pendidikan mahasiswa ${feederRiwayatPendMahasiswa.id_registrasi_mahasiswa} ditambahkan ke sinkronisasi dengan jenis 'delete'.`);
+          console.log(`Data riwayat pendidikan mahasiswa ${feederRiwayatPendMahasiswa.id_registrasi_mahasiswa} ditambahkan ke sinkronisasi dengan jenis 'get'.`);
         }
       }
     }
@@ -459,51 +459,52 @@ const updateRiwayatPendidikanMahasiswa = async (id_riwayat_pend_mhs, req, res, n
   }
 };
 
-const deleteRiwayatPendidikanMahasiswa = async (id_feeder, req, res, next) => {
-  try {
-    // Mendapatkan token
-    const { token, url_feeder } = await getToken();
+// dinonaktifkan
+// const deleteRiwayatPendidikanMahasiswa = async (id_feeder, req, res, next) => {
+//   try {
+//     // Mendapatkan token
+//     const { token, url_feeder } = await getToken();
 
-    // akan delete data riwayat pendidikan mahasiswa ke feeder
-    const requestBody = {
-      act: "DeleteRiwayatPendidikanMahasiswa",
-      token: `${token}`,
-      key: {
-        id_registrasi_mahasiswa: id_feeder,
-      },
-    };
+//     // akan delete data riwayat pendidikan mahasiswa ke feeder
+//     const requestBody = {
+//       act: "DeleteRiwayatPendidikanMahasiswa",
+//       token: `${token}`,
+//       key: {
+//         id_registrasi_mahasiswa: id_feeder,
+//       },
+//     };
 
-    // Menggunakan token untuk mengambil data
-    const response = await axios.post(url_feeder, requestBody);
+//     // Menggunakan token untuk mengambil data
+//     const response = await axios.post(url_feeder, requestBody);
 
-    // Mengecek jika ada error pada respons dari server
-    if (response.data.error_code !== 0) {
-      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
-    }
+//     // Mengecek jika ada error pada respons dari server
+//     if (response.data.error_code !== 0) {
+//       throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+//     }
 
-    // update status pada riwayat_pendidikan_mahasiswa_sync local
-    let riwayat_pendidikan_mahasiswa_sync = await RiwayatPendidikanMahasiswaSync.findOne({
-      where: {
-        id_feeder: id_feeder,
-        status: false,
-        jenis_singkron: "delete",
-        id_riwayat_pend_mhs: null,
-      },
-    });
+//     // update status pada riwayat_pendidikan_mahasiswa_sync local
+//     let riwayat_pendidikan_mahasiswa_sync = await RiwayatPendidikanMahasiswaSync.findOne({
+//       where: {
+//         id_feeder: id_feeder,
+//         status: false,
+//         jenis_singkron: "delete",
+//         id_riwayat_pend_mhs: null,
+//       },
+//     });
 
-    if (!riwayat_pendidikan_mahasiswa_sync) {
-      return res.status(404).json({ message: "Riwayat Pendidikan Mahasiswa sync not found" });
-    }
+//     if (!riwayat_pendidikan_mahasiswa_sync) {
+//       return res.status(404).json({ message: "Riwayat Pendidikan Mahasiswa sync not found" });
+//     }
 
-    riwayat_pendidikan_mahasiswa_sync.status = true;
-    await riwayat_pendidikan_mahasiswa_sync.save();
+//     riwayat_pendidikan_mahasiswa_sync.status = true;
+//     await riwayat_pendidikan_mahasiswa_sync.save();
 
-    // result
-    console.log(`Successfully deleted riwayat pendidikan mahasiswa with ID Feeder ${riwayat_pendidikan_mahasiswa_sync.id_feeder} to feeder`);
-  } catch (error) {
-    next(error);
-  }
-};
+//     // result
+//     console.log(`Successfully deleted riwayat pendidikan mahasiswa with ID Feeder ${riwayat_pendidikan_mahasiswa_sync.id_feeder} to feeder`);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
   try {
@@ -528,9 +529,11 @@ const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
           await insertRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_riwayat_pend_mhs, req, res, next);
         } else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "update") {
           await updateRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_riwayat_pend_mhs, req, res, next);
-        } else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "delete") {
-          await deleteRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_feeder, req, res, next);
         }
+        // dinonaktifkan
+        // else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "delete") {
+        //   await deleteRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_feeder, req, res, next);
+        // }
       } else {
         console.log(`Data Riwayat Pendidikan Mahasiswa Sync dengan ID ${riwayat_pendidikan_mahasiswa_sync.id} tidak valid untuk dilakukan singkron`);
       }

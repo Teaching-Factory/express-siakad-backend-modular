@@ -49,7 +49,7 @@ const getAllRiwayatPendidikanMahasiswaSyncBelumSingkron = async (req, res, next)
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedRiwayatPendidikanMahasiswa = await Promise.all(
       riwayat_pendidikan_mahasiswas.map(async (riwayat_pendidikan_mahasiswa) => {
-        if (riwayat_pendidikan_mahasiswa.jenis_singkron === "delete") {
+        if (riwayat_pendidikan_mahasiswa.jenis_singkron === "get") {
           // Mendapatkan data riwayat pendidikan mahasiswa dari feeder berdasarkan ID
           const riwayatPendidikanMahasiswaFeeder = await getRiwayatPendidikanMahasiswaFromFeederByID(riwayat_pendidikan_mahasiswa.id_feeder);
 
@@ -150,7 +150,7 @@ const getAllRiwayatPendidikanMahasiswaSyncBelumSingkronByFilter = async (req, re
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedRiwayatPendidikanMahasiswa = await Promise.all(
       riwayat_pendidikan_mahasiswas.map(async (riwayat_pendidikan_mahasiswa) => {
-        if (riwayat_pendidikan_mahasiswa.jenis_singkron === "delete") {
+        if (riwayat_pendidikan_mahasiswa.jenis_singkron === "get") {
           // Mendapatkan data riwayat pendidikan mahasiswa dari feeder berdasarkan ID
           const riwayatPendidikanMahasiswaFeeder = await getRiwayatPendidikanMahasiswaFromFeederByID(riwayat_pendidikan_mahasiswa.id_feeder);
 

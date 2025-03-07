@@ -49,7 +49,7 @@ const getAllBiodataMahasiswaSyncBelumSingkron = async (req, res, next) => {
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedBiodataMahasiswa = await Promise.all(
       biodata_mahasiswas.map(async (biodata_mahasiswa) => {
-        if (biodata_mahasiswa.jenis_singkron === "delete") {
+        if (biodata_mahasiswa.jenis_singkron === "get") {
           // Mendapatkan data biodata mahasiswa dari feeder berdasarkan ID
           const biodataMahasiswaFeeder = await getBiodataMahasiswaFromFeederByID(biodata_mahasiswa.id_feeder);
 
@@ -150,7 +150,7 @@ const getAllBiodataMahasiswaSyncBelumSingkronByFilter = async (req, res, next) =
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
     const updatedBiodataMahasiswa = await Promise.all(
       biodata_mahasiswas.map(async (biodata_mahasiswa) => {
-        if (biodata_mahasiswa.jenis_singkron === "delete") {
+        if (biodata_mahasiswa.jenis_singkron === "get") {
           // Mendapatkan data biodata mahasiswa dari feeder berdasarkan ID
           const biodataMahasiswaFeeder = await getBiodataMahasiswaFromFeederByID(biodata_mahasiswa.id_feeder);
 
