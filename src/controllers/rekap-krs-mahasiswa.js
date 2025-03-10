@@ -310,10 +310,27 @@ const getRekapKRSMahasiswaByFilterReqBody = async (req, res, next) => {
           include: [{ model: Dosen }],
         });
 
+        // mengambil data krs mahasiswa
+        const krs_mahasiswas = await KRSMahasiswa.findAll({
+          where: {
+            id_registrasi_mahasiswa: id,
+            id_semester: id_semester,
+            id_prodi: id_prodi,
+          },
+          include: [{ model: MataKuliah }],
+        });
+
+        let total = 0;
+
+        for (let krs of krs_mahasiswas) {
+          total += Number(krs.MataKuliah.sks_mata_kuliah); // Pastikan sks diubah menjadi angka
+        }
+
         // Menambahkan data mahasiswa yang sudah digrup dan DosenWali
         finalGroupedData[id] = {
           krs_mahasiswas: groupedData[id],
           DosenWali: dosen_wali ? dosen_wali : null,
+          total_sks_krs_mahasiswa: total,
         };
       }
 
