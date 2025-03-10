@@ -489,22 +489,36 @@ const getAndCreateKelasKuliah = async (id_feeder, req, res, next) => {
     const requestBody = {
       act: "GetListKelasKuliah",
       token: `${token}`,
-      key: {
-        id_kelas_kuliah: id_feeder,
-      },
+      filter: `id_kelas_kuliah='${id_feeder}'`,
+    };
+
+    const requestBodyDetailKelas = {
+      act: "GetDetailKelasKuliah",
+      token: `${token}`,
+      filter: `id_kelas_kuliah='${id_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data
-    const response = await axios.post(url_feeder, requestBody);
+    const response = await axios.post(url_feeder, requestBody); // kelas kuliah
+
+    // Menggunakan token untuk mengambil data
+    const responseDetailKelas = await axios.post(url_feeder, requestBodyDetailKelas); // detail kelas
 
     // Mengecek jika ada error pada respons dari server
     if (response.data.error_code !== 0) {
+      throw new Error(`Error from Feeder: ${response.data.error_desc}`);
+    }
+    if (responseDetailKelas.data.error_code !== 0) {
       throw new Error(`Error from Feeder: ${response.data.error_desc}`);
     }
 
     // Tanggapan dari API
     const dataKelasKuliah = response.data.data;
 
+    // Tanggapan dari API
+    const dataDetailKelasKuliah = responseDetailKelas.data.data;
+
+    // create data kelas
     for (const kelas_kuliah of dataKelasKuliah) {
       // Periksa apakah data sudah ada di tabel
       const existingKelasKuliah = await KelasKuliah.findOne({
@@ -531,6 +545,34 @@ const getAndCreateKelasKuliah = async (id_feeder, req, res, next) => {
           id_dosen: kelas_kuliah.id_dosen,
         });
       }
+    }
+
+    // create data detail kelas
+    for (const detail_kelas_kuliah of dataDetailKelasKuliah) {
+      let tanggal_mulai, tanggal_akhir; // Deklarasikan variabel di luar blok if
+
+      //   melakukan pengecekan data tanggal
+      if (detail_kelas_kuliah.tanggal_mulai_efektif != null) {
+        const date_start = detail_kelas_kuliah.tanggal_mulai_efektif.split("-");
+        tanggal_mulai = `${date_start[2]}-${date_start[1]}-${date_start[0]}`;
+      }
+
+      if (detail_kelas_kuliah.tanggal_akhir_efektif != null) {
+        const date_end = detail_kelas_kuliah.tanggal_akhir_efektif.split("-");
+        tanggal_akhir = `${date_end[2]}-${date_end[1]}-${date_end[0]}`;
+      }
+
+      await DetailKelasKuliah.create({
+        id_detail_kelas_kuliah: detail_kelas_kuliah.id_detail_kelas_kuliah,
+        bahasan: detail_kelas_kuliah.bahasan,
+        tanggal_mulai_efektif: tanggal_mulai,
+        tanggal_akhir_efektif: tanggal_akhir,
+        kapasitas: detail_kelas_kuliah.kapasitas === null ? null : detail_kelas_kuliah.kapasitas,
+        tanggal_tutup_daftar: detail_kelas_kuliah.tanggal_tutup_daftar,
+        prodi_penyelenggara: detail_kelas_kuliah.prodi_penyelenggara,
+        perguruan_tinggi_penyelenggara: detail_kelas_kuliah.perguruan_tinggi_penyelenggara,
+        id_kelas_kuliah: detail_kelas_kuliah.id_kelas_kuliah,
+      });
     }
 
     // update status pada kelas_kuliah_sync local

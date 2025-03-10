@@ -400,9 +400,7 @@ const getAndCreateKomponenEvaluasiKelas = async (id_feeder, req, res, next) => {
     const requestBody = {
       act: "GetListKomponenEvaluasiKelas",
       token: `${token}`,
-      key: {
-        id_komponen_evaluasi: id_feeder,
-      },
+      filter: `id_komponen_evaluasi='${id_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data

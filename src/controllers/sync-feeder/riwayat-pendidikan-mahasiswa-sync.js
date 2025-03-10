@@ -515,9 +515,7 @@ const getAndCreateRiwayatPendidikanMahasiswa = async (id_feeder, req, res, next)
     const requestBody = {
       act: "GetListRiwayatPendidikanMahasiswa",
       token: `${token}`,
-      key: {
-        id_registrasi_mahasiswa: id_feeder,
-      },
+      filter: `id_registrasi_mahasiswa='${id_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data

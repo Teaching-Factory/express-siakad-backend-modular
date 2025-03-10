@@ -377,10 +377,7 @@ const getAndCreatePesertaKelasKuliah = async (id_kelas_kuliah, id_registrasi_mah
     const requestBody = {
       act: "GetPesertaKelasKuliah",
       token: `${token}`,
-      key: {
-        id_kelas_kuliah: id_kelas_kuliah,
-        id_registrasi_mahasiswa: id_registrasi_mahasiswa,
-      },
+      filter: `id_kelas_kuliah='${id_kelas_kuliah}' and id_registrasi_mahasiswa='${id_registrasi_mahasiswa}'`,
     };
 
     // Menggunakan token untuk mengambil data

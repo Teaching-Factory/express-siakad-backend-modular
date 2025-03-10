@@ -389,9 +389,7 @@ const getAndCreateDosenPengajarKelasKuliah = async (id_feeder, req, res, next) =
     const requestBody = {
       act: "GetDosenPengajarKelasKuliah",
       token: `${token}`,
-      key: {
-        id_aktivitas_mengajar: id_feeder,
-      },
+      filter: `id_aktivitas_mengajar='${id_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data

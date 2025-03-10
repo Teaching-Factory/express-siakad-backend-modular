@@ -368,9 +368,7 @@ const getAndCreateRencanaEvaluasi = async (id_feeder, req, res, next) => {
     const requestBody = {
       act: "GetListRencanaEvaluasi",
       token: `${token}`,
-      key: {
-        id_rencana_evaluasi: id_feeder,
-      },
+      filter: `id_rencana_evaluasi='${id_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data

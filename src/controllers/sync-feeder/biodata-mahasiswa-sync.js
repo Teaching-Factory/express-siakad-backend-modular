@@ -653,9 +653,7 @@ const getAndCreateBiodatMahasiswa = async (id_feeder, req, res, next) => {
     const requestBody = {
       act: "GetBiodataMahasiswa",
       token: `${token}`,
-      key: {
-        id_mahasiswa: id_feeder,
-      },
+      filter: `id_mahasiswa='${id_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data
