@@ -404,7 +404,7 @@ const getAndCreatePesertaKelasKuliah = async (id_kelas_kuliah, id_registrasi_mah
         where: {
           id_feeder: peserta_kelas_kuliah.id_registrasi_mahasiswa,
         },
-        include: [[{ model: Mahasiswa }]],
+        include: [{ model: Mahasiswa }],
       });
 
       // Periksa apakah data sudah ada di tabel

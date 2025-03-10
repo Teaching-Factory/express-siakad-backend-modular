@@ -158,6 +158,23 @@ async function matchingDataRencanaEvaluasi(req, res, next) {
       }
     }
 
+    // Mencari data yang tidak ada di Feeder
+    const dataTidakAdaDiFeeder = rencanaEvaluasiLocal.filter((item) => !rencanaEvaluasiFeederMap[item.id_feeder]);
+
+    // Jika ada data yang harus disinkronkan, lakukan bulk insert
+    if (dataTidakAdaDiFeeder.length > 0) {
+      const dataInsert = dataTidakAdaDiFeeder.map((item) => ({
+        jenis_singkron: "delete",
+        status: false,
+        id_feeder: null,
+        id_rencana_evaluasi: item.id_rencana_evaluasi,
+      }));
+
+      await RencanaEvaluasiSync.bulkCreate(dataInsert);
+
+      console.log(`${dataTidakAdaDiFeeder.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+    }
+
     console.log("Matching rencana evaluasi lokal ke feeder berhasil.");
   } catch (error) {
     console.error("Error during matchingDataRencanaEvaluasi:", error.message);
@@ -430,6 +447,25 @@ const getAndCreateRencanaEvaluasi = async (id_feeder, req, res, next) => {
   }
 };
 
+const deleteRencanaEvaluasiLocal = async (id_rencana_evaluasi, req, res, next) => {
+  try {
+    const rencana_evaluasi = await RencanaEvaluasi.findByPk(id_rencana_evaluasi);
+
+    if (!rencana_evaluasi) {
+      return res.status(400).json({
+        message: "Rencana Evaluasi not found",
+      });
+    }
+
+    // delete rencana evaluasi
+    await rencana_evaluasi.destroy();
+
+    console.log(`Successfully deleted rencana evaluasi in local with ID ${id_rencana_evaluasi} to feeder`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncRencanaEvaluasis = async (req, res, next) => {
   try {
     const { rencana_evaluasi_syncs } = req.body;
@@ -455,6 +491,8 @@ const syncRencanaEvaluasis = async (req, res, next) => {
           await updateRencanaEvaluasi(data_rencana_evaluasi_sync.id_rencana_evaluasi, req, res, next);
         } else if (data_rencana_evaluasi_sync.jenis_singkron === "get") {
           await getAndCreateRencanaEvaluasi(data_rencana_evaluasi_sync.id_feeder, req, res, next);
+        } else if (data_rencana_evaluasi_sync.jenis_singkron === "delete") {
+          await deleteRencanaEvaluasiLocal(data_rencana_evaluasi_sync.id_rencana_evaluasi, req, res, next);
         }
         // dinonaktifkan
         // else if (data_rencana_evaluasi_sync.jenis_singkron === "delete") {

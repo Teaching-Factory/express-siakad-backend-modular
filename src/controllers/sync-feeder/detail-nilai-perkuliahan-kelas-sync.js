@@ -439,7 +439,7 @@ const getAndCreateDetailNilaiPerkuliahanKelas = async (id_kelas_kuliah, id_regis
         where: {
           id_feeder: detail_nilai_perkuliahan_kelas.id_registrasi_mahasiswa,
         },
-        include: [[{ model: Mahasiswa }]],
+        include: [{ model: Mahasiswa }],
       });
 
       // Periksa apakah data sudah ada di tabel
