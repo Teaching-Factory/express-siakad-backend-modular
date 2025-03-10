@@ -101,10 +101,17 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
       });
     }
 
+    let total = 0;
+
+    for (let krs of krsMahasiswa) {
+      total += Number(krs.MataKuliah.sks_mata_kuliah); // Pastikan sks diubah menjadi angka
+    }
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: `<===== GET KRS Mahasiswa By ID ${idRegistrasiMahasiswa} Success:`,
       jumlahData: krsMahasiswa.length,
+      total_sks_mata_kuliah: total,
       data: krsMahasiswa,
     });
   } catch (error) {
