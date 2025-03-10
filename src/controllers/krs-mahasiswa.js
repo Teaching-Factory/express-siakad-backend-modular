@@ -305,6 +305,7 @@ const validasiKRSMahasiswa = async (req, res, next) => {
           id_registrasi_mahasiswa: id_registrasi_mahasiswa,
         },
         include: [{ model: Semester }],
+        order: [["validasi_krs", "DESC"]], // Urutkan validasi_krs: true (1) -> false (0)
       });
 
       // Tambahkan data KRS mahasiswa ke array krs_mahasiswas
@@ -334,68 +335,103 @@ const validasiKRSMahasiswa = async (req, res, next) => {
         continue;
       }
 
-      let jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
-        where: { id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah },
-      });
+      // pengecekan kelas kuliah jika jumlah mahasiswa adalah 0
+      if (kelas_kuliah.jumlah_mahasiswa !== 0) {
+        let jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
+          where: { id_kelas_kuliah: kelas_kuliah.id_kelas_kuliah },
+        });
 
-      if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
-        // Ubah nilai validasi_krs menjadi true
-        await krs_mahasiswa.update({ validasi_krs: true });
+        if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
+          // Ubah nilai validasi_krs menjadi true
+          await krs_mahasiswa.update({ validasi_krs: true });
 
-        // pengecekan data peserta kelas agar tidak duplikat
-        pesertaKelas = await PesertaKelasKuliah.findOne({
+          // pengecekan data peserta kelas agar tidak duplikat
+          pesertaKelas = await PesertaKelasKuliah.findOne({
+            where: {
+              angkatan: tahunAwal,
+              id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+              id_kelas_kuliah: krs_mahasiswa.id_kelas,
+            },
+          });
+
+          if (!pesertaKelas) {
+            // proses penambahan data peserta kelas kuliah dari data krs milik mahasiswa
+            await PesertaKelasKuliah.create({
+              angkatan: tahunAwal,
+              id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
+              id_kelas_kuliah: krs_mahasiswa.id_kelas,
+            });
+          }
+        }
+
+        // pengecekan data rekap krs mahasiswa agar tidak duplikat
+        let rekapKRSMahasiswa = await RekapKRSMahasiswa.findOne({
           where: {
             angkatan: tahunAwal,
+            id_prodi: krs_mahasiswa.id_prodi,
             id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
-            id_kelas_kuliah: krs_mahasiswa.id_kelas,
+            id_matkul: krs_mahasiswa.id_matkul,
+            id_semester: krs_mahasiswa.id_semester,
           },
         });
 
-        if (!pesertaKelas) {
-          // proses penambahan data peserta kelas kuliah dari data krs milik mahasiswa
-          await PesertaKelasKuliah.create({
+        if (!rekapKRSMahasiswa) {
+          // menambahkan data rekap krs mahasiswa
+          await RekapKRSMahasiswa.create({
             angkatan: tahunAwal,
+            id_prodi: krs_mahasiswa.id_prodi,
             id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
-            id_kelas_kuliah: krs_mahasiswa.id_kelas,
+            id_matkul: krs_mahasiswa.id_matkul,
+            id_semester: krs_mahasiswa.id_semester,
           });
         }
-      }
+      } else {
+        // mengubah seluruh data krs milik mahasiswa yang terdapat kelas kuliah dengan jumlah mahasiswa 0 menjadi false
+        await krs_mahasiswa.update({ validasi_krs: false });
 
-      // pengecekan data rekap krs mahasiswa agar tidak duplikat
-      let rekapKRSMahasiswa = await RekapKRSMahasiswa.findOne({
-        where: {
-          angkatan: tahunAwal,
-          id_prodi: krs_mahasiswa.id_prodi,
-          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
-          id_matkul: krs_mahasiswa.id_matkul,
-          id_semester: krs_mahasiswa.id_semester,
-        },
-      });
-
-      if (!rekapKRSMahasiswa) {
-        // menambahkan data rekap krs mahasiswa
-        await RekapKRSMahasiswa.create({
-          angkatan: tahunAwal,
-          id_prodi: krs_mahasiswa.id_prodi,
-          id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa,
-          id_matkul: krs_mahasiswa.id_matkul,
-          id_semester: krs_mahasiswa.id_semester,
-        });
+        console.log("KRS Dibatalkan karena terdapat kelas dengan jumlah 0");
       }
     }
 
     // Lakukan iterasi melalui setiap objek mahasiswa untuk update status mahasiswa
     for (const mahasiswa of mahasiswas) {
+      let krs_mahasiswas = await KRSMahasiswa.findAll({
+        where: {
+          id_prodi: prodiId,
+          id_semester: semesterId,
+          id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        },
+      });
+
+      // Mengecek apakah ada salah satu validasi_krs yang false
+      const adaKRSFalse = krs_mahasiswas.some((krs) => krs.validasi_krs === false);
+
       let dataMahasiswa = await Mahasiswa.findOne({
         where: {
           id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
         },
       });
 
-      dataMahasiswa.nama_status_mahasiswa = "AKTIF";
+      if (dataMahasiswa) {
+        if (adaKRSFalse) {
+          await KRSMahasiswa.update(
+            { validasi_krs: false },
+            {
+              where: {
+                id_prodi: prodiId,
+                id_semester: semesterId,
+                id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+              },
+            }
+          );
 
-      // Simpan perubahan ke dalam database
-      await dataMahasiswa.save();
+          dataMahasiswa.nama_status_mahasiswa = "Non-Aktif"; // Jika ada false, ubah jadi Non-Aktif
+        } else {
+          dataMahasiswa.nama_status_mahasiswa = "Aktif"; // Jika semua true, tetap Aktif
+        }
+
+        await dataMahasiswa.save(); // Simpan perubahan status mahasiswa
+      }
     }
 
     // Kirim respons JSON jika berhasil
@@ -526,6 +562,7 @@ const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
         id_semester: semesterId,
         id_prodi: prodiId,
       },
+      include: [{ model: MataKuliah }],
     });
 
     // Group data KRS by id_registrasi_mahasiswa
@@ -542,6 +579,12 @@ const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
       return krsByMahasiswa[id].every((krs) => krs.validasi_krs === true);
     });
 
+    // Hitung total SKS per mahasiswa dengan konversi ke angka
+    const totalSksPerMahasiswa = {};
+    mahasiswaIdsWithAllKRSTrue.forEach((id) => {
+      totalSksPerMahasiswa[id] = krsByMahasiswa[id].reduce((total, krs) => total + (parseFloat(krs.MataKuliah?.sks_mata_kuliah) || 0), 0);
+    });
+
     // Ambil data mahasiswa berdasarkan ID yang difilter
     const mahasiswaData = await Mahasiswa.findAll({
       where: {
@@ -552,11 +595,17 @@ const GetAllMahasiswaKRSTervalidasi = async (req, res, next) => {
       include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
+    // Tambahkan total SKS ke setiap mahasiswa
+    const mahasiswaWithSks = mahasiswaData.map((mahasiswa) => ({
+      ...mahasiswa.toJSON(),
+      total_sks_mata_kuliah: totalSksPerMahasiswa[mahasiswa.id_registrasi_mahasiswa] || 0,
+    }));
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Mahasiswa with All KRS Validated Success =====>",
-      jumlahData: mahasiswaData.length,
-      data: mahasiswaData,
+      jumlahData: mahasiswaWithSks.length,
+      data: mahasiswaWithSks,
     });
   } catch (error) {
     next(error);
@@ -575,6 +624,7 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
         id_semester: semesterId,
         id_prodi: prodiId,
       },
+      include: [{ model: MataKuliah }],
     });
 
     // Group data KRS by id_registrasi_mahasiswa
@@ -591,6 +641,12 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
       return krsByMahasiswa[id].every((krs) => krs.validasi_krs === false);
     });
 
+    // Hitung total SKS per mahasiswa dengan konversi ke angka
+    const totalSksPerMahasiswa = {};
+    mahasiswaIdsWithAllKRSFalse.forEach((id) => {
+      totalSksPerMahasiswa[id] = krsByMahasiswa[id].reduce((total, krs) => total + (parseFloat(krs.MataKuliah?.sks_mata_kuliah) || 0), 0);
+    });
+
     // Ambil data mahasiswa berdasarkan ID yang difilter
     const mahasiswaData = await Mahasiswa.findAll({
       where: {
@@ -601,11 +657,17 @@ const GetAllMahasiswaKRSBelumTervalidasi = async (req, res, next) => {
       include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
 
+    // Tambahkan total SKS ke setiap mahasiswa
+    const mahasiswaWithSks = mahasiswaData.map((mahasiswa) => ({
+      ...mahasiswa.toJSON(),
+      total_sks_mata_kuliah: totalSksPerMahasiswa[mahasiswa.id_registrasi_mahasiswa] || 0,
+    }));
+
     // Kirim respons JSON jika berhasil
     res.status(200).json({
       message: "<===== GET All Mahasiswa with All KRS Not Validated Success =====>",
-      jumlahData: mahasiswaData.length,
-      data: mahasiswaData,
+      jumlahData: mahasiswaWithSks.length,
+      data: mahasiswaWithSks,
     });
   } catch (error) {
     next(error);
