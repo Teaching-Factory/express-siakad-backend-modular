@@ -41,6 +41,11 @@ async function getDetailNilaiPerkuliahanKelasFromLocal(semesterId, req, res, nex
             id_semester: semesterId,
           },
         },
+        {
+          model: Mahasiswa,
+          attributes: ["id_registrasi_mahasiswa"],
+          include: [{ model: RiwayatPendidikanMahasiswa, attributes: ["id_feeder"] }],
+        },
       ],
     });
 
@@ -191,6 +196,9 @@ async function matchingDataDetailNilaiPerkuliahanKelas(req, res, next) {
       return !areEqualWithTolerance(localNilaiAngka, feederNilaiAngka) || localNilai.nilai_indeks !== feederNilai.nilai_indeks || localNilai.nilai_huruf !== feederNilai.nilai_huruf;
     }
 
+    // Array untuk menyimpan data yang akan ditambahkan ke PesertaKelasKuliahSync
+    let syncData = [];
+
     for (let uniqueKey in detailNilaiPerkuliahanKelasFeederMap) {
       const feederDetailNilaiPerkuliahanKelas = detailNilaiPerkuliahanKelasFeederMap[uniqueKey];
 
@@ -246,6 +254,54 @@ async function matchingDataDetailNilaiPerkuliahanKelas(req, res, next) {
             `Data detail nilai perkuliahan kelas dengan Kelas ID ${feederDetailNilaiPerkuliahanKelas.id_kelas_kuliah} dan Mahasiswa ID ${feederDetailNilaiPerkuliahanKelas.id_registrasi_mahasiswa} ditambahkan ke sinkronisasi dengan jenis 'get'.`
           );
         }
+      }
+    }
+
+    // Menyaring data yang tidak ada di Feeder
+    const dataTidakAdaDiFeeder = detailNilaiPerkuliahankelasLocal.filter((item) => {
+      const id_kelas_kuliah_feeder = item.KelasKuliah?.id_feeder; // Ambil dari KelasKuliah
+      const id_registrasi_mahasiswa_feeder = item.Mahasiswa?.RiwayatPendidikanMahasiswa?.id_feeder; // Ambil dari Mahasiswa
+
+      // Jika salah satu ID tidak ada, maka data ini tidak valid untuk dihapus
+      if (!id_kelas_kuliah_feeder || !id_registrasi_mahasiswa_feeder) return false;
+
+      const uniqueKey = `${id_kelas_kuliah_feeder}-${id_registrasi_mahasiswa_feeder}`;
+      return !detailNilaiPerkuliahanKelasFeederMap[uniqueKey]; // Jika tidak ada di Feeder, berarti harus dihapus
+    });
+
+    // Jika ada data yang harus disinkronkan sebagai delete
+    if (dataTidakAdaDiFeeder.length > 0) {
+      // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
+      const existingSyncData = await DetailNilaiPerkuliahanKelasSync.findAll({
+        where: {
+          jenis_singkron: "delete",
+          status: false,
+        },
+        attributes: ["id_kelas_kuliah_feeder", "id_registrasi_mahasiswa_feeder"],
+      });
+
+      // Buat set untuk menyimpan kombinasi id_kelas_kuliah dan id_registrasi_mahasiswa yang sudah ada di tabel sinkronisasi
+      const existingSyncIds = new Set(existingSyncData.map((item) => `${item.id_kelas_kuliah_feeder}-${item.id_registrasi_mahasiswa_feeder}`));
+
+      // Filter hanya data yang belum ada di tabel sinkronisasi
+      const dataInsert = dataTidakAdaDiFeeder
+        .filter((item) => {
+          const key = `${item.KelasKuliah?.id_feeder}-${item.Mahasiswa?.RiwayatPendidikanMahasiswa?.id_feeder}`;
+          return !existingSyncIds.has(key);
+        })
+        .map((item) => ({
+          jenis_singkron: "delete",
+          status: false,
+          id_kelas_kuliah_feeder: item.KelasKuliah?.id_feeder,
+          id_registrasi_mahasiswa_feeder: item.Mahasiswa?.RiwayatPendidikanMahasiswa?.id_feeder,
+        }));
+
+      // Jika ada data yang benar-benar baru, lakukan bulk insert
+      if (dataInsert.length > 0) {
+        await DetailNilaiPerkuliahanKelasSync.bulkCreate(dataInsert);
+        console.log(`${dataInsert.length} data detail nilai perkuliahan kelas kuliah berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      } else {
+        console.log("Tidak ada data baru untuk disinkronkan sebagai delete.");
       }
     }
 
@@ -497,6 +553,25 @@ const getAndCreateDetailNilaiPerkuliahanKelas = async (id_kelas_kuliah, id_regis
   }
 };
 
+const deleteDetailNilaiPerkuliahanKelasLocal = async (id_detail_nilai_perkuliahan_kelas, req, res, next) => {
+  try {
+    const detail_nilai_perkuliahan_kelas = await DetailNilaiPerkuliahanKelas.findByPk(id_detail_nilai_perkuliahan_kelas);
+
+    if (!detail_nilai_perkuliahan_kelas) {
+      return res.status(400).json({
+        message: "Detail Nilai Perkuliahan Kelas not found",
+      });
+    }
+
+    // delete detail nilai perkuliahan kelas
+    await detail_nilai_perkuliahan_kelas.destroy();
+
+    console.log(`Successfully deleted detail nilai perkuliahan kelas in local with ID ${id_detail_nilai_perkuliahan_kelas}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncNilaiPerkuliahans = async (req, res, next) => {
   try {
     const { nilai_perkuliahans } = req.body;
@@ -520,6 +595,8 @@ const syncNilaiPerkuliahans = async (req, res, next) => {
           await updateNilaiPerkuliahan(data_detail_nilai_perkuliahan_sync.id_detail_nilai_perkuliahan_kelas, req, res, next);
         } else if (data_detail_nilai_perkuliahan_sync.jenis_singkron === "get") {
           await getAndCreateDetailNilaiPerkuliahanKelas(data_detail_nilai_perkuliahan_sync.id_kelas_kuliah_feeder, data_detail_nilai_perkuliahan_sync.id_registrasi_mahasiswa_feeder, req, res, next);
+        } else if (data_detail_nilai_perkuliahan_sync.jenis_singkron === "delete") {
+          await deleteDetailNilaiPerkuliahanKelasLocal(data_detail_nilai_perkuliahan_sync.id_detail_nilai_perkuliahan_kelas, req, res, next);
         }
       } else {
         console.log(`Data Detail Nilai Perkuliahan Sync dengan ID ${detail_nilai_sync.id} tidak valid untuk dilakukan singkron`);

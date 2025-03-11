@@ -230,6 +230,44 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
       }
     }
 
+    // Mencari data yang tidak ada di Feeder
+    const dataTidakAdaDiFeeder = riwayatPendidikanMahasiswaLocal.filter((item) => !riwayatPendidikanMahasiswaFeederMap[item.id_feeder]);
+
+    // Jika ada data yang harus disinkronkan
+    if (dataTidakAdaDiFeeder.length > 0) {
+      // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
+      const existingSyncData = await RiwayatPendidikanMahasiswaSync.findAll({
+        where: {
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_riwayat_pend_mhs: dataTidakAdaDiFeeder.map((item) => item.id_registrasi_mahasiswa),
+        },
+        attributes: ["id_registrasi_mahasiswa"],
+      });
+
+      // Buat set untuk menyimpan id_registrasi_mahasiswa yang sudah ada di database
+      const existingSyncIds = new Set(existingSyncData.map((item) => item.id_registrasi_mahasiswa));
+
+      // Filter hanya data yang belum ada di tabel sinkronisasi
+      const dataInsert = dataTidakAdaDiFeeder
+        .filter((item) => !existingSyncIds.has(item.id_registrasi_mahasiswa))
+        .map((item) => ({
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_riwayat_pend_mhs: item.id_registrasi_mahasiswa,
+        }));
+
+      // Jika ada data yang benar-benar baru, lakukan bulk insert
+      if (dataInsert.length > 0) {
+        await RiwayatPendidikanMahasiswaSync.bulkCreate(dataInsert);
+        console.log(`${dataInsert.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      } else {
+        console.log("Tidak ada data baru untuk disinkronkan.");
+      }
+    }
+
     console.log("Matching riwayat pendidikan mahasiswa selesai.");
   } catch (error) {
     console.error("Error during matchingDataKelasKuliah:", error.message);
@@ -603,6 +641,25 @@ const getAndCreateRiwayatPendidikanMahasiswa = async (id_feeder, req, res, next)
   }
 };
 
+const deleteRiwayatPendidikanMahasiswaLocal = async (id_riwayat_pend_mhs, req, res, next) => {
+  try {
+    const riwayat_pendidikan_mahasiswa = await RiwayatPendidikanMahasiswa.findByPk(id_riwayat_pend_mhs);
+
+    if (!riwayat_pendidikan_mahasiswa) {
+      return res.status(400).json({
+        message: "Riwayat Pendidikan Mahasiswa not found",
+      });
+    }
+
+    // delete riwayat pendidikan mahasiswa
+    await riwayat_pendidikan_mahasiswa.destroy();
+
+    console.log(`Successfully deleted riwayat pendidikan mahasiswa in local with ID ${id_riwayat_pend_mhs}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
   try {
     const { riwayat_pendidikan_mahasiswa_syncs } = req.body;
@@ -628,6 +685,8 @@ const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
           await updateRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_riwayat_pend_mhs, req, res, next);
         } else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "get") {
           await getAndCreateRiwayatPendidikanMahasiswa(data_riwayat_pendidikan_mahasiswa_sync.id_feeder, req, res, next);
+        } else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "delete") {
+          await deleteRiwayatPendidikanMahasiswaLocal(data_riwayat_pendidikan_mahasiswa_sync.id_riwayat_pend_mhs, req, res, next);
         }
         // dinonaktifkan
         // else if (data_riwayat_pendidikan_mahasiswa_sync.jenis_singkron === "delete") {

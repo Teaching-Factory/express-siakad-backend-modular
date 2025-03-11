@@ -44,6 +44,17 @@ async function getPesertaKelasKuliahFromLocal(angkatanId, req, res, next) {
       where: {
         angkatan: angkatan.tahun,
       },
+      include: [
+        {
+          model: KelasKuliah,
+          attributes: ["id_feeder"],
+        },
+        {
+          model: Mahasiswa,
+          attributes: ["id_registrasi_mahasiswa"],
+          include: [{ model: RiwayatPendidikanMahasiswa, attributes: ["id_feeder"] }],
+        },
+      ],
     });
 
     return pesertaKelasKuliah;
@@ -208,6 +219,54 @@ async function matchingDataPesertaKelasKuliah(req, res, next) {
     if (syncData.length > 0) {
       await PesertaKelasKuliahSync.bulkCreate(syncData);
       console.log(`${syncData.length} data peserta kelas kuliah ditambahkan ke sinkronisasi.`);
+    }
+
+    // Menyaring data yang tidak ada di Feeder
+    const dataTidakAdaDiFeeder = pesertaKelasKuliahLocal.filter((item) => {
+      const id_kelas_kuliah_feeder = item.KelasKuliah?.id_feeder; // Ambil dari KelasKuliah
+      const id_registrasi_mahasiswa_feeder = item.Mahasiswa?.RiwayatPendidikanMahasiswa?.id_feeder; // Ambil dari Mahasiswa
+
+      // Jika salah satu ID tidak ada, maka data ini tidak valid untuk dihapus
+      if (!id_kelas_kuliah_feeder || !id_registrasi_mahasiswa_feeder) return false;
+
+      const uniqueKey = `${id_kelas_kuliah_feeder}-${id_registrasi_mahasiswa_feeder}`;
+      return !pesertaKelasKuliahFeederMap[uniqueKey]; // Jika tidak ada di Feeder, berarti harus dihapus
+    });
+
+    // Jika ada data yang harus disinkronkan sebagai delete
+    if (dataTidakAdaDiFeeder.length > 0) {
+      // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
+      const existingSyncData = await PesertaKelasKuliahSync.findAll({
+        where: {
+          jenis_singkron: "delete",
+          status: false,
+        },
+        attributes: ["id_kelas_kuliah_feeder", "id_registrasi_mahasiswa_feeder"],
+      });
+
+      // Buat set untuk menyimpan kombinasi id_kelas_kuliah dan id_registrasi_mahasiswa yang sudah ada di tabel sinkronisasi
+      const existingSyncIds = new Set(existingSyncData.map((item) => `${item.id_kelas_kuliah_feeder}-${item.id_registrasi_mahasiswa_feeder}`));
+
+      // Filter hanya data yang belum ada di tabel sinkronisasi
+      const dataInsert = dataTidakAdaDiFeeder
+        .filter((item) => {
+          const key = `${item.KelasKuliah?.id_feeder}-${item.Mahasiswa?.RiwayatPendidikanMahasiswa?.id_feeder}`;
+          return !existingSyncIds.has(key);
+        })
+        .map((item) => ({
+          jenis_singkron: "delete",
+          status: false,
+          id_kelas_kuliah_feeder: item.KelasKuliah?.id_feeder,
+          id_registrasi_mahasiswa_feeder: item.Mahasiswa?.RiwayatPendidikanMahasiswa?.id_feeder,
+        }));
+
+      // Jika ada data yang benar-benar baru, lakukan bulk insert
+      if (dataInsert.length > 0) {
+        await PesertaKelasKuliahSync.bulkCreate(dataInsert);
+        console.log(`${dataInsert.length} data peserta kelas kuliah berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      } else {
+        console.log("Tidak ada data baru untuk disinkronkan sebagai delete.");
+      }
     }
 
     console.log("Matching peserta kelas kuliah lokal ke feeder berhasil.");
@@ -458,6 +517,25 @@ const getAndCreatePesertaKelasKuliah = async (id_kelas_kuliah, id_registrasi_mah
   }
 };
 
+const deletePesertaKelasKuliahLocal = async (id_peserta_kuliah, req, res, next) => {
+  try {
+    const peserta_kelas_kuliah = await PesertaKelasKuliah.findByPk(id_peserta_kuliah);
+
+    if (!peserta_kelas_kuliah) {
+      return res.status(400).json({
+        message: "Peserta Kelas Kuliah not found",
+      });
+    }
+
+    // delete peserta kelas kuliah
+    await peserta_kelas_kuliah.destroy();
+
+    console.log(`Successfully deleted peserta kelas kuliah in local with ID ${id_peserta_kuliah}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncPesertaKelasKuliahs = async (req, res, next) => {
   try {
     const { peserta_kelas_kuliah_syncs } = req.body;
@@ -481,6 +559,8 @@ const syncPesertaKelasKuliahs = async (req, res, next) => {
           await insertPesertaKelasKuliah(data_peserta_kelas_kuliah_sync.id_peserta_kuliah, req, res, next);
         } else if (data_peserta_kelas_kuliah_sync.jenis_singkron === "get") {
           await getAndCreatePesertaKelasKuliah(data_peserta_kelas_kuliah_sync.id_kelas_kuliah_feeder, data_peserta_kelas_kuliah_sync.id_registrasi_mahasiswa_feeder, req, res, next);
+        } else if (data_peserta_kelas_kuliah_sync.jenis_singkron === "delete") {
+          await deletePesertaKelasKuliahLocal(data_peserta_kelas_kuliah_sync.id_peserta_kuliah, req, res, next);
         }
         // dinonaktifkan
         // else if (data_peserta_kelas_kuliah_sync.jenis_singkron === "delete") {

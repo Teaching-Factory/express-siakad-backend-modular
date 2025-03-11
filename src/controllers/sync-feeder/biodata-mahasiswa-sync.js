@@ -2,52 +2,52 @@ const { BiodataMahasiswa, Mahasiswa, BiodataMahasiswaSync, Wilayah } = require("
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
 
-// async function getBiodataMahasiswaFromFeeder(req, res, next) {
-//   try {
-//     const { token, url_feeder } = await getToken();
+async function getBiodataMahasiswaFromFeeder(req, res, next) {
+  try {
+    const { token, url_feeder } = await getToken();
 
-//     if (!token || !url_feeder) {
-//       throw new Error("Failed to obtain token or URL feeder");
-//     }
+    if (!token || !url_feeder) {
+      throw new Error("Failed to obtain token or URL feeder");
+    }
 
-//     const requestBody = {
-//       act: "GetBiodataMahasiswa",
-//       token: token,
-//     };
+    const requestBody = {
+      act: "GetBiodataMahasiswa",
+      token: token,
+    };
 
-//     console.log("Waiting for getting all biodata mahasiswa from feeder ...");
+    console.log("Waiting for getting all biodata mahasiswa from feeder ...");
 
-//     const response = await axios.post(url_feeder, requestBody);
+    const response = await axios.post(url_feeder, requestBody);
 
-//     if (response.data && Array.isArray(response.data.data)) {
-//       return response.data.data;
-//     } else {
-//       console.error("Feeder API tidak mengembalikan array:", response.data);
-//       return []; // Mengembalikan array kosong agar tidak error
-//     }
-//   } catch (error) {
-//     console.error("Error fetching data from Feeder:", error.message);
-//     throw error;
-//   }
-// }
+    if (response.data && Array.isArray(response.data.data)) {
+      return response.data.data;
+    } else {
+      console.error("Feeder API tidak mengembalikan array:", response.data);
+      return []; // Mengembalikan array kosong agar tidak error
+    }
+  } catch (error) {
+    console.error("Error fetching data from Feeder:", error.message);
+    throw error;
+  }
+}
 
-// async function getBiodataMahasiswaFromLocal(semesterId, req, res, next) {
-//   try {
-//     return await BiodataMahasiswa.findAll({
-//       include: [
-//         {
-//           model: Mahasiswa,
-//           where: {
-//             id_semester: semesterId,
-//           },
-//         },
-//       ],
-//     });
-//   } catch (error) {
-//     console.error("Error fetching data from local DB:", error.message);
-//     throw error;
-//   }
-// }
+async function getBiodataMahasiswaFromLocal(semesterId, req, res, next) {
+  try {
+    return await BiodataMahasiswa.findAll({
+      include: [
+        {
+          model: Mahasiswa,
+          where: {
+            id_semester: semesterId,
+          },
+        },
+      ],
+    });
+  } catch (error) {
+    console.error("Error fetching data from local DB:", error.message);
+    throw error;
+  }
+}
 
 async function getMahasiswaFromLocal(semesterId, req, res, next) {
   try {
@@ -177,14 +177,14 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
 
     // get mahasiswa local dan bioodata mahasiswa feeder
     const mahasiswaLocal = await getMahasiswaFromLocal(semesterId);
-    // const biodataMahasiswaLocal = await getBiodataMahasiswaFromLocal(semesterId);
-    // const biodataMahasiswaFeeder = await getBiodataMahasiswaFromFeeder();
+    const biodataMahasiswaLocal = await getBiodataMahasiswaFromLocal(semesterId);
+    const biodataMahasiswaFeeder = await getBiodataMahasiswaFromFeeder();
 
-    // // biodata mahasiswa feeder map
-    // const biodataMahasiswaFeederMap = biodataMahasiswaFeeder.reduce((map, biodata_mahasiswa) => {
-    //   map[biodata_mahasiswa.id_mahasiswa] = biodata_mahasiswa;
-    //   return map;
-    // }, {});
+    // biodata mahasiswa feeder map
+    const biodataMahasiswaFeederMap = biodataMahasiswaFeeder.reduce((map, biodata_mahasiswa) => {
+      map[biodata_mahasiswa.id_mahasiswa] = biodata_mahasiswa;
+      return map;
+    }, {});
 
     // get data mahasiswa feeder sesuai semesterId
     const mahasiswaFeeder = await getMahasiswaFromFeederBySemesterId(semesterId);
@@ -400,42 +400,42 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
     }
 
     // Mencari data yang tidak ada di Feeder
-    // const dataTidakAdaDiFeeder = biodataMahasiswaLocal.filter((item) => !biodataMahasiswaFeederMap[item.id_feeder]);
+    const dataTidakAdaDiFeeder = biodataMahasiswaLocal.filter((item) => !biodataMahasiswaFeederMap[item.id_feeder]);
 
-    // // Jika ada data yang harus disinkronkan
-    // if (dataTidakAdaDiFeeder.length > 0) {
-    //   // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
-    //   const existingSyncData = await BiodataMahasiswaSync.findAll({
-    //     where: {
-    //       jenis_singkron: "delete",
-    //       status: false,
-    //       id_feeder: null,
-    //       id_mahasiswa: dataTidakAdaDiFeeder.map((item) => item.id_mahasiswa),
-    //     },
-    //     attributes: ["id_mahasiswa"],
-    //   });
+    // Jika ada data yang harus disinkronkan
+    if (dataTidakAdaDiFeeder.length > 0) {
+      // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
+      const existingSyncData = await BiodataMahasiswaSync.findAll({
+        where: {
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_mahasiswa: dataTidakAdaDiFeeder.map((item) => item.id_mahasiswa),
+        },
+        attributes: ["id_mahasiswa"],
+      });
 
-    //   // Buat set untuk menyimpan id_mahasiswa yang sudah ada di database
-    //   const existingSyncIds = new Set(existingSyncData.map((item) => item.id_mahasiswa));
+      // Buat set untuk menyimpan id_mahasiswa yang sudah ada di database
+      const existingSyncIds = new Set(existingSyncData.map((item) => item.id_mahasiswa));
 
-    //   // Filter hanya data yang belum ada di tabel sinkronisasi
-    //   const dataInsert = dataTidakAdaDiFeeder
-    //     .filter((item) => !existingSyncIds.has(item.id_mahasiswa))
-    //     .map((item) => ({
-    //       jenis_singkron: "delete",
-    //       status: false,
-    //       id_feeder: null,
-    //       id_mahasiswa: item.id_mahasiswa,
-    //     }));
+      // Filter hanya data yang belum ada di tabel sinkronisasi
+      const dataInsert = dataTidakAdaDiFeeder
+        .filter((item) => !existingSyncIds.has(item.id_mahasiswa))
+        .map((item) => ({
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_mahasiswa: item.id_mahasiswa,
+        }));
 
-    //   // Jika ada data yang benar-benar baru, lakukan bulk insert
-    //   if (dataInsert.length > 0) {
-    //     await BiodataMahasiswaSync.bulkCreate(dataInsert);
-    //     console.log(`${dataInsert.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
-    //   } else {
-    //     console.log("Tidak ada data baru untuk disinkronkan.");
-    //   }
-    // }
+      // Jika ada data yang benar-benar baru, lakukan bulk insert
+      if (dataInsert.length > 0) {
+        await BiodataMahasiswaSync.bulkCreate(dataInsert);
+        console.log(`${dataInsert.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      } else {
+        console.log("Tidak ada data baru untuk disinkronkan.");
+      }
+    }
 
     console.log("Matching biodata mahasiswa lokal ke feeder berhasil.");
   } catch (error) {
@@ -913,6 +913,25 @@ const getAndCreateBiodatMahasiswa = async (id_feeder, req, res, next) => {
   }
 };
 
+const deleteBiodataMahasiswaLocal = async (id_mahasiswa, req, res, next) => {
+  try {
+    const biodata_mahasiswa = await BiodataMahasiswa.findByPk(id_mahasiswa);
+
+    if (!biodata_mahasiswa) {
+      return res.status(400).json({
+        message: "Biodata Mahasiswa not found",
+      });
+    }
+
+    // delete biodata mahasiswa
+    await biodata_mahasiswa.destroy();
+
+    console.log(`Successfully deleted biodata mahasiswa in local with ID ${id_mahasiswa}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncBiodataMahasiswas = async (req, res, next) => {
   try {
     const { biodata_mahasiswa_syncs } = req.body;
@@ -938,6 +957,8 @@ const syncBiodataMahasiswas = async (req, res, next) => {
           await updateBiodataMahasiswa(data_biodata_mahasiswa_sync.id_mahasiswa, req, res, next);
         } else if (data_biodata_mahasiswa_sync.jenis_singkron === "get") {
           await getAndCreateBiodatMahasiswa(data_biodata_mahasiswa_sync.id_feeder, req, res, next);
+        } else if (data_biodata_mahasiswa_sync.jenis_singkron === "delete") {
+          await deleteBiodataMahasiswaLocal(data_biodata_mahasiswa_sync.id_mahasiswa, req, res, next);
         }
         // dinonaktifkan
         // else if (data_biodata_mahasiswa_sync.jenis_singkron === "delete") {
