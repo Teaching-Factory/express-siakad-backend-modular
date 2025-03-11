@@ -161,18 +161,39 @@ async function matchingDataRencanaEvaluasi(req, res, next) {
     // Mencari data yang tidak ada di Feeder
     const dataTidakAdaDiFeeder = rencanaEvaluasiLocal.filter((item) => !rencanaEvaluasiFeederMap[item.id_feeder]);
 
-    // Jika ada data yang harus disinkronkan, lakukan bulk insert
+    // Jika ada data yang harus disinkronkan
     if (dataTidakAdaDiFeeder.length > 0) {
-      const dataInsert = dataTidakAdaDiFeeder.map((item) => ({
-        jenis_singkron: "delete",
-        status: false,
-        id_feeder: null,
-        id_rencana_evaluasi: item.id_rencana_evaluasi,
-      }));
+      // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
+      const existingSyncData = await RencanaEvaluasiSync.findAll({
+        where: {
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_rencana_evaluasi: dataTidakAdaDiFeeder.map((item) => item.id_rencana_evaluasi),
+        },
+        attributes: ["id_rencana_evaluasi"],
+      });
 
-      await RencanaEvaluasiSync.bulkCreate(dataInsert);
+      // Buat set untuk menyimpan id_rencana_evaluasi yang sudah ada di database
+      const existingSyncIds = new Set(existingSyncData.map((item) => item.id_rencana_evaluasi));
 
-      console.log(`${dataTidakAdaDiFeeder.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      // Filter hanya data yang belum ada di tabel sinkronisasi
+      const dataInsert = dataTidakAdaDiFeeder
+        .filter((item) => !existingSyncIds.has(item.id_rencana_evaluasi))
+        .map((item) => ({
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_rencana_evaluasi: item.id_rencana_evaluasi,
+        }));
+
+      // Jika ada data yang benar-benar baru, lakukan bulk insert
+      if (dataInsert.length > 0) {
+        await RencanaEvaluasiSync.bulkCreate(dataInsert);
+        console.log(`${dataInsert.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      } else {
+        console.log("Tidak ada data baru untuk disinkronkan.");
+      }
     }
 
     console.log("Matching rencana evaluasi lokal ke feeder berhasil.");
