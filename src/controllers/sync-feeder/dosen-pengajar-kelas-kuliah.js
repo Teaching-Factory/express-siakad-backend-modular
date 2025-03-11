@@ -165,6 +165,44 @@ async function matchingcDataDosenPengajarKelasKuliah(req, res, next) {
       }
     }
 
+    // Mencari data yang tidak ada di Feeder
+    const dataTidakAdaDiFeeder = dosenPengajarKelasKuliahLocal.filter((item) => !dosenPengajarKelasKuliahFeederMap[item.id_feeder]);
+
+    // Jika ada data yang harus disinkronkan
+    if (dataTidakAdaDiFeeder.length > 0) {
+      // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
+      const existingSyncData = await DosenPengajarKelasKuliahSync.findAll({
+        where: {
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_aktivitas_mengajar: dataTidakAdaDiFeeder.map((item) => item.id_aktivitas_mengajar),
+        },
+        attributes: ["id_aktivitas_mengajar"],
+      });
+
+      // Buat set untuk menyimpan id_aktivitas_mengajar yang sudah ada di database
+      const existingSyncIds = new Set(existingSyncData.map((item) => item.id_aktivitas_mengajar));
+
+      // Filter hanya data yang belum ada di tabel sinkronisasi
+      const dataInsert = dataTidakAdaDiFeeder
+        .filter((item) => !existingSyncIds.has(item.id_aktivitas_mengajar))
+        .map((item) => ({
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_aktivitas_mengajar: item.id_aktivitas_mengajar,
+        }));
+
+      // Jika ada data yang benar-benar baru, lakukan bulk insert
+      if (dataInsert.length > 0) {
+        await DosenPengajarKelasKuliahSync.bulkCreate(dataInsert);
+        console.log(`${dataInsert.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      } else {
+        console.log("Tidak ada data baru untuk disinkronkan.");
+      }
+    }
+
     console.log("Matching dosen pengajar kelas kuliah selesai.");
   } catch (error) {
     console.error("Error during matchingDataKelasKuliah:", error.message);
@@ -495,6 +533,25 @@ const getAndCreateDosenPengajarKelasKuliah = async (id_feeder, req, res, next) =
   }
 };
 
+const deleteDosenPengajarKelasKuliahLocal = async (id_aktivitas_mengajar, req, res, next) => {
+  try {
+    const dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findByPk(id_aktivitas_mengajar);
+
+    if (!dosen_pengajar_kelas_kuliah) {
+      return res.status(400).json({
+        message: "Dosen Pengajar Kelas Kuliah not found",
+      });
+    }
+
+    // delete dosen pengajar kelas kuliah
+    await dosen_pengajar_kelas_kuliah.destroy();
+
+    console.log(`Successfully deleted dosen pengajar kelas kuliah in local with ID ${id_aktivitas_mengajar}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncDosenPengajarKelasKuliahs = async (req, res, next) => {
   try {
     const { dosen_pengajar_kelas_kuliah_syncs } = req.body;
@@ -520,6 +577,8 @@ const syncDosenPengajarKelasKuliahs = async (req, res, next) => {
           await updateDosenPengajarKelasKuliah(data_dosen_pengajar_kelas_kuliah_sync.id_aktivitas_mengajar, req, res, next);
         } else if (data_dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "get") {
           await getAndCreateDosenPengajarKelasKuliah(data_dosen_pengajar_kelas_kuliah_sync.id_feeder, req, res, next);
+        } else if (data_dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "delete") {
+          await deleteDosenPengajarKelasKuliahLocal(data_dosen_pengajar_kelas_kuliah_sync.id_aktivitas_mengajar, req, res, next);
         }
         // dinonaktifkan
         // else if (data_dosen_pengajar_kelas_kuliah_sync.jenis_singkron === "delete") {

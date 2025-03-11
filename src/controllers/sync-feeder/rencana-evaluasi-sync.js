@@ -481,7 +481,7 @@ const deleteRencanaEvaluasiLocal = async (id_rencana_evaluasi, req, res, next) =
     // delete rencana evaluasi
     await rencana_evaluasi.destroy();
 
-    console.log(`Successfully deleted rencana evaluasi in local with ID ${id_rencana_evaluasi} to feeder`);
+    console.log(`Successfully deleted rencana evaluasi in local with ID ${id_rencana_evaluasi}`);
   } catch (error) {
     next(error);
   }

@@ -224,6 +224,44 @@ async function matchingDataKomponenEvaluasiKelas(req, res, next) {
       }
     }
 
+    // Mencari data yang tidak ada di Feeder
+    const dataTidakAdaDiFeeder = komponenEvaluasiKelasLocal.filter((item) => !komponenEvaluasiKelasFeederMap[item.id_feeder]);
+
+    // Jika ada data yang harus disinkronkan
+    if (dataTidakAdaDiFeeder.length > 0) {
+      // Ambil semua data yang sudah ada di tabel sinkronisasi untuk mencegah duplikasi
+      const existingSyncData = await KomponenEvaluasiKelasSync.findAll({
+        where: {
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_komponen_evaluasi: dataTidakAdaDiFeeder.map((item) => item.id_komponen_evaluasi),
+        },
+        attributes: ["id_komponen_evaluasi"],
+      });
+
+      // Buat set untuk menyimpan id_komponen_evaluasi yang sudah ada di database
+      const existingSyncIds = new Set(existingSyncData.map((item) => item.id_komponen_evaluasi));
+
+      // Filter hanya data yang belum ada di tabel sinkronisasi
+      const dataInsert = dataTidakAdaDiFeeder
+        .filter((item) => !existingSyncIds.has(item.id_komponen_evaluasi))
+        .map((item) => ({
+          jenis_singkron: "delete",
+          status: false,
+          id_feeder: null,
+          id_komponen_evaluasi: item.id_komponen_evaluasi,
+        }));
+
+      // Jika ada data yang benar-benar baru, lakukan bulk insert
+      if (dataInsert.length > 0) {
+        await KomponenEvaluasiKelasSync.bulkCreate(dataInsert);
+        console.log(`${dataInsert.length} data baru berhasil ditambahkan ke sinkron sementara dengan jenis delete.`);
+      } else {
+        console.log("Tidak ada data baru untuk disinkronkan.");
+      }
+    }
+
     console.log("Matching komponen evaluasi kelas lokal ke feeder berhasil.");
   } catch (error) {
     console.error("Error during matchingDataKomponenEvaluasiKelas:", error.message);
@@ -463,6 +501,25 @@ const getAndCreateKomponenEvaluasiKelas = async (id_feeder, req, res, next) => {
   }
 };
 
+const deleteKomponenEvaluasiKelasLocal = async (id_komponen_evaluasi, req, res, next) => {
+  try {
+    const komponen_evaluasi_kelas = await KomponenEvaluasiKelas.findByPk(id_komponen_evaluasi);
+
+    if (!komponen_evaluasi_kelas) {
+      return res.status(400).json({
+        message: "Komponen Evaluasi Kelas not found",
+      });
+    }
+
+    // delete komponen evaluasi kelas
+    await komponen_evaluasi_kelas.destroy();
+
+    console.log(`Successfully deleted komponen evaluasi kelas in local with ID ${id_komponen_evaluasi}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const syncKomponenEvaluasiKelas = async (req, res, next) => {
   try {
     const { komponen_evaluasi_kelas_syncs } = req.body;
@@ -488,6 +545,8 @@ const syncKomponenEvaluasiKelas = async (req, res, next) => {
           await updateKomponenEvaluasiKelas(data_komponen_evaluasi_kelas_sync.id_komponen_evaluasi, req, res, next);
         } else if (data_komponen_evaluasi_kelas_sync.jenis_singkron === "get") {
           await getAndCreateKomponenEvaluasiKelas(data_komponen_evaluasi_kelas_sync.id_feeder, req, res, next);
+        } else if (data_komponen_evaluasi_kelas_sync.jenis_singkron === "delete") {
+          await deleteKomponenEvaluasiKelasLocal(data_komponen_evaluasi_kelas_sync.id_komponen_evaluasi, req, res, next);
         }
       } else {
         console.log(`Data Komponen Evaluasi Kelas Sync dengan ID ${data_komponen_evaluasi_kelas_sync.id} tidak valid untuk dilakukan singkron`);
