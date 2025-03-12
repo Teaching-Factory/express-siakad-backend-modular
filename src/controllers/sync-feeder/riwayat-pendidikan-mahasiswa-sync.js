@@ -1,5 +1,6 @@
 const { RiwayatPendidikanMahasiswa, RiwayatPendidikanMahasiswaSync, BiodataMahasiswa, Mahasiswa, Prodi } = require("../../../models");
 const { getToken } = require("../api-feeder/get-token");
+const { getAllDataMahasiswaFromFeeder } = require("../mahasiswa");
 const axios = require("axios");
 
 async function getRiwayatPendidikanMahasiswaFromFeeder(semesterId, req, res, next) {
@@ -60,6 +61,35 @@ async function getListMahasiswaById(id_mahasiswa, req, res, next) {
 
     const requestBody = {
       act: "GetListMahasiswa",
+      token: token,
+      filter: `id_mahasiswa='${id_mahasiswa}'`,
+    };
+
+    const response = await axios.post(url_feeder, requestBody);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching data from Feeder:", error.message);
+    throw error;
+  }
+}
+
+async function getBiodataMahasiswaById(id_mahasiswa, req, res, next) {
+  try {
+    if (!id_mahasiswa) {
+      return res.status(400).json({
+        message: "Mahasiswa ID is required",
+      });
+    }
+
+    const { token, url_feeder } = await getToken();
+
+    if (!token || !url_feeder) {
+      throw new Error("Failed to obtain token or URL feeder");
+    }
+
+    const requestBody = {
+      act: "GetBiodataMahasiswa",
       token: token,
       filter: `id_mahasiswa='${id_mahasiswa}'`,
     };
@@ -175,13 +205,6 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
       let idPembiayaanLocal = String(localRiwayatPendMahasiswa.id_pembiayaan);
       const formattedBiayaMasuk = localRiwayatPendMahasiswa.biaya_masuk.toFixed(2);
 
-      // Kirim respons JSON jika berhasil
-      // res.status(200).json({
-      //   message: `Success:`,
-      //   formattedBiayaMasuk: formattedBiayaMasuk,
-      //   biayaMasukFeeder: feederRiwayatPendMahasiswa.biaya_masuk,
-      // });
-
       return (
         biodataMahasiswaLocal.id_feeder !== feederRiwayatPendMahasiswa.id_mahasiswa ||
         localRiwayatPendMahasiswa.id_jenis_daftar !== feederRiwayatPendMahasiswa.id_jenis_daftar ||
@@ -230,6 +253,44 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
       }
     }
 
+    console.log("Matching riwayat pendidikan mahasiswa selesai.");
+  } catch (error) {
+    console.error("Error during matchingDataKelasKuliah:", error.message);
+    throw error;
+  }
+}
+
+const matchingSyncDataRiwayatPendidikanMahasiswa = async (req, res, next) => {
+  try {
+    await matchingcDataRiwayatPendidikanMahasiswa(req, res, next);
+    res.status(200).json({ message: "Matching riwayat pendidikan mahasiswa lokal ke feeder berhasil." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// matching khusus untuk delete
+async function matchingcDataRiwayatPendidikanMahasiswaDelete(req, res, next) {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+
+    // get riwayat pendidikan mahasiswa dari local dan feeder
+    const riwayatPendidikanMahasiswaFeeder = await getRiwayatPendidikanMahasiswaFromFeeder(semesterId);
+    const riwayatPendidikanMahasiswaLocal = await getRiwayatPendidikanMahasiswaFromLocal(semesterId);
+
+    // Buat map untuk data Feeder
+    const riwayatPendidikanMahasiswaFeederMap = riwayatPendidikanMahasiswaFeeder.reduce((map, riwayatPendMahasiswa) => {
+      map[riwayatPendMahasiswa.id_registrasi_mahasiswa] = riwayatPendMahasiswa;
+      return map;
+    }, {});
+
     // Mencari data yang tidak ada di Feeder
     const dataTidakAdaDiFeeder = riwayatPendidikanMahasiswaLocal.filter((item) => !riwayatPendidikanMahasiswaFeederMap[item.id_feeder]);
 
@@ -268,17 +329,17 @@ async function matchingcDataRiwayatPendidikanMahasiswa(req, res, next) {
       }
     }
 
-    console.log("Matching riwayat pendidikan mahasiswa selesai.");
+    console.log("Matching riwayat pendidikan mahasiswa delete selesai.");
   } catch (error) {
     console.error("Error during matchingDataKelasKuliah:", error.message);
     throw error;
   }
 }
 
-const matchingSyncDataRiwayatPendidikanMahasiswa = async (req, res, next) => {
+const matchingSyncDataRiwayatPendidikanMahasiswaDelete = async (req, res, next) => {
   try {
-    await matchingcDataRiwayatPendidikanMahasiswa(req, res, next);
-    res.status(200).json({ message: "Matching riwayat pendidikan mahasiswa lokal ke feeder berhasil." });
+    await matchingcDataRiwayatPendidikanMahasiswaDelete(req, res, next);
+    res.status(200).json({ message: "Matching riwayat pendidikan mahasiswa delete lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }
@@ -567,6 +628,9 @@ const getAndCreateRiwayatPendidikanMahasiswa = async (id_feeder, req, res, next)
     // Tanggapan dari API
     const dataRiwayatPendidikanMahasiswa = response.data.data;
 
+    // Menyiapkan array untuk request body
+    const mahasiswaList = [];
+
     for (const riwayat_pendidikan_mahasiswa of dataRiwayatPendidikanMahasiswa) {
       const existingRiwayatPendidikanMahasiswa = await RiwayatPendidikanMahasiswa.findOne({
         where: {
@@ -574,47 +638,26 @@ const getAndCreateRiwayatPendidikanMahasiswa = async (id_feeder, req, res, next)
         },
       });
 
-      let tanggal_daftar;
-      let id_prodi_asal = null;
-
-      const prodi = await Prodi.findOne({
-        where: {
-          id_prodi: riwayat_pendidikan_mahasiswa.id_prodi_asal,
-        },
-      });
-
-      // Jika ditemukan, simpan nilainya
-      if (prodi) {
-        id_prodi_asal = riwayat_pendidikan_mahasiswa.id_prodi_asal;
-      }
-
-      //   melakukan pengecekan data tanggal
-      if (riwayat_pendidikan_mahasiswa.tanggal_daftar != null) {
-        const date_start = riwayat_pendidikan_mahasiswa.tanggal_daftar.split("-");
-        tanggal_daftar = `${date_start[2]}-${date_start[1]}-${date_start[0]}`;
-      }
-
       if (!existingRiwayatPendidikanMahasiswa) {
-        await RiwayatPendidikanMahasiswa.create({
-          tanggal_daftar: tanggal_daftar,
-          keterangan_keluar: riwayat_pendidikan_mahasiswa.keterangan_keluar,
-          sks_diakui: riwayat_pendidikan_mahasiswa.sks_diakui,
-          nama_ibu_kandung: riwayat_pendidikan_mahasiswa.nama_ibu_kandung,
-          biaya_masuk: riwayat_pendidikan_mahasiswa.biaya_masuk,
-          id_registrasi_mahasiswa: riwayat_pendidikan_mahasiswa.id_registrasi_mahasiswa,
-          id_jenis_daftar: riwayat_pendidikan_mahasiswa.id_jenis_daftar,
-          id_jalur_masuk: riwayat_pendidikan_mahasiswa.id_jalur_masuk,
-          id_periode_masuk: riwayat_pendidikan_mahasiswa.id_periode_masuk,
-          id_jenis_keluar: riwayat_pendidikan_mahasiswa.id_jenis_keluar,
-          id_prodi: riwayat_pendidikan_mahasiswa.id_prodi,
-          id_pembiayaan: riwayat_pendidikan_mahasiswa.id_pembiayaan,
-          id_bidang_minat: riwayat_pendidikan_mahasiswa.id_bidang_minat,
-          id_perguruan_tinggi_asal: riwayat_pendidikan_mahasiswa.id_perguruan_tinggi_asal,
-          id_prodi_asal: id_prodi_asal,
-          last_sync: new Date(),
-          id_feeder: riwayat_pendidikan_mahasiswa.id_registrasi_mahasiswa,
-        });
+        // memanggil data biodata mahasiswa dari feeder untuk mengisi data nik
+        let biodataMmahasiswaFeeder = await getBiodataMahasiswaById(riwayat_pendidikan_mahasiswa.id_mahasiswa);
+
+        if (biodataMmahasiswaFeeder) {
+          mahasiswaList.push({
+            nim: riwayat_pendidikan_mahasiswa.nim,
+            nik: biodataMmahasiswaFeeder[0].nik,
+          });
+        }
       }
+    }
+
+    // Jika ada mahasiswa yang belum ada di lokal, panggil fungsi getAllDataMahasiswaFromFeeder
+    if (mahasiswaList.length > 0) {
+      // Membuat objek request tiruan dengan body yang sesuai
+      const fakeReq = { body: { mahasiswas: mahasiswaList } };
+
+      // Memanggil fungsi dengan fakeReq dan menangani response secara manual
+      await getAllDataMahasiswaFromFeeder(fakeReq, res, next);
     }
 
     // update status pada riwayat_pendidikan_mahasiswa_sync local
@@ -698,7 +741,7 @@ const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
     }
 
     // return
-    res.status(200).json({ message: "Singkron riwayat pendidikan mahasiswa lokal ke feeder berhasil." });
+    return res.status(200).json({ message: "Singkron riwayat pendidikan mahasiswa lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }
@@ -707,5 +750,6 @@ const syncRiwayatPendidikanMahasiswas = async (req, res, next) => {
 module.exports = {
   matchingcDataRiwayatPendidikanMahasiswa,
   matchingSyncDataRiwayatPendidikanMahasiswa,
+  matchingSyncDataRiwayatPendidikanMahasiswaDelete,
   syncRiwayatPendidikanMahasiswas,
 };

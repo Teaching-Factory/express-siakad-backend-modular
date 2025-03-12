@@ -590,7 +590,7 @@ const syncDosenPengajarKelasKuliahs = async (req, res, next) => {
     }
 
     // return
-    res.status(200).json({ message: "Singkron dosen pengajar kelas kuliah lokal ke feeder berhasil." });
+    return res.status(200).json({ message: "Singkron dosen pengajar kelas kuliah lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }

@@ -1006,6 +1006,7 @@ const getRiwayatPendidikanMahasiswaFromFeederByNim = async (nim) => {
           nama_ibu_kandung: riwayat_pendidikan_mahasiswa.nama_ibu_kandung,
           biaya_masuk: riwayat_pendidikan_mahasiswa.biaya_masuk,
           id_registrasi_mahasiswa: riwayat_pendidikan_mahasiswa.id_registrasi_mahasiswa,
+          id_jalur_daftar: riwayat_pendidikan_mahasiswa.id_jalur_daftar,
           id_jenis_daftar: riwayat_pendidikan_mahasiswa.id_jenis_daftar,
           id_jalur_masuk: riwayat_pendidikan_mahasiswa.id_jalur_masuk,
           id_periode_masuk: riwayat_pendidikan_mahasiswa.id_periode_masuk,

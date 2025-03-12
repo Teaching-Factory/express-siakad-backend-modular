@@ -37,8 +37,10 @@ router.get("/:id_semester/matching-dosen-pengajar-kelas-kuliah", checkRole(["adm
 router.post("/sync-dosen-pengajar-kelas-kuliah", checkRole(["admin"]), SyncDosenPengajarKelasKuliahController.syncDosenPengajarKelasKuliahs);
 router.get("/sync-sekolah", checkRole(["admin"]), SyncSekolahController.syncSekolah);
 router.get("/:id_semester/matching-biodata-mahasiswa", checkRole(["admin"]), SyncBiodataMahasiswaController.matchingSyncDataBiodataMahasiswa);
+router.get("/:id_semester/matching-biodata-mahasiswa-delete", checkRole(["admin"]), SyncBiodataMahasiswaController.matchingSyncDataBiodataMahasiswaDelete);
 router.post("/sync-biodata-mahasiswa", checkRole(["admin"]), SyncBiodataMahasiswaController.syncBiodataMahasiswas);
 router.get("/:id_semester/matching-riwayat-pendidikan-mahasiswa", checkRole(["admin"]), SyncRiwayatPendidikanMahasiswaController.matchingSyncDataRiwayatPendidikanMahasiswa);
+router.get("/:id_semester/matching-riwayat-pendidikan-mahasiswa-delete", checkRole(["admin"]), SyncRiwayatPendidikanMahasiswaController.matchingSyncDataRiwayatPendidikanMahasiswaDelete);
 router.post("/sync-riwayat-pendidikan-mahasiswa", checkRole(["admin"]), SyncRiwayatPendidikanMahasiswaController.syncRiwayatPendidikanMahasiswas);
 router.get("/:id_angkatan/matching-peserta-kelas-kuliah", checkRole(["admin"]), SyncPesertaKelasKuliahController.matchingSyncDataPesertaKelasKuliah);
 router.post("/sync-peserta-kelas-kuliah", checkRole(["admin"]), SyncPesertaKelasKuliahController.syncPesertaKelasKuliahs);

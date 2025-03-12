@@ -604,7 +604,7 @@ const syncNilaiPerkuliahans = async (req, res, next) => {
     }
 
     // return
-    res.status(200).json({ message: "Singkron nilai perkuliahan lokal ke feeder berhasil." });
+    return res.status(200).json({ message: "Singkron nilai perkuliahan lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }

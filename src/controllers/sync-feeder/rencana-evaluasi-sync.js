@@ -525,7 +525,7 @@ const syncRencanaEvaluasis = async (req, res, next) => {
     }
 
     // return
-    res.status(200).json({ message: "Singkron rencana evaluasi lokal ke feeder berhasil." });
+    return res.status(200).json({ message: "Singkron rencana evaluasi lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }

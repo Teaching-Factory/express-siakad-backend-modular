@@ -554,7 +554,7 @@ const syncKomponenEvaluasiKelas = async (req, res, next) => {
     }
 
     // return
-    res.status(200).json({ message: "Singkron komponen evaluasi kelas lokal ke feeder berhasil." });
+    return res.status(200).json({ message: "Singkron komponen evaluasi kelas lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }

@@ -399,6 +399,44 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
       }
     }
 
+    console.log("Matching biodata mahasiswa lokal ke feeder berhasil.");
+  } catch (error) {
+    console.error("Error during matchingDataBiodataMahasiswa:", error.message);
+    throw error;
+  }
+}
+
+const matchingSyncDataBiodataMahasiswa = async (req, res, next) => {
+  try {
+    await matchingDataBiodataMahasiswa(req, res, next);
+    res.status(200).json({ message: "Matching biodata mahasiswa lokal ke feeder berhasil." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// matching khusus untuk delete
+async function matchingDataBiodataMahasiswaDelete(req, res, next) {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID is required",
+      });
+    }
+
+    // get mahasiswa local dan bioodata mahasiswa feeder
+    const biodataMahasiswaLocal = await getBiodataMahasiswaFromLocal(semesterId);
+    const biodataMahasiswaFeeder = await getBiodataMahasiswaFromFeeder();
+
+    // biodata mahasiswa feeder map
+    const biodataMahasiswaFeederMap = biodataMahasiswaFeeder.reduce((map, biodata_mahasiswa) => {
+      map[biodata_mahasiswa.id_mahasiswa] = biodata_mahasiswa;
+      return map;
+    }, {});
+
     // Mencari data yang tidak ada di Feeder
     const dataTidakAdaDiFeeder = biodataMahasiswaLocal.filter((item) => !biodataMahasiswaFeederMap[item.id_feeder]);
 
@@ -437,17 +475,17 @@ async function matchingDataBiodataMahasiswa(req, res, next) {
       }
     }
 
-    console.log("Matching biodata mahasiswa lokal ke feeder berhasil.");
+    console.log("Matching biodata mahasiswa  delete lokal ke feeder berhasil.");
   } catch (error) {
     console.error("Error during matchingDataBiodataMahasiswa:", error.message);
     throw error;
   }
 }
 
-const matchingSyncDataBiodataMahasiswa = async (req, res, next) => {
+const matchingSyncDataBiodataMahasiswaDelete = async (req, res, next) => {
   try {
-    await matchingDataBiodataMahasiswa(req, res, next);
-    res.status(200).json({ message: "Matching biodata mahasiswa lokal ke feeder berhasil." });
+    await matchingDataBiodataMahasiswaDelete(req, res, next);
+    res.status(200).json({ message: "Matching biodata mahasiswa delete lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }
@@ -970,7 +1008,7 @@ const syncBiodataMahasiswas = async (req, res, next) => {
     }
 
     // return
-    res.status(200).json({ message: "Singkron biodata mahasiswa lokal ke feeder berhasil." });
+    return res.status(200).json({ message: "Singkron biodata mahasiswa lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }
@@ -979,5 +1017,6 @@ const syncBiodataMahasiswas = async (req, res, next) => {
 module.exports = {
   matchingDataBiodataMahasiswa,
   matchingSyncDataBiodataMahasiswa,
+  matchingSyncDataBiodataMahasiswaDelete,
   syncBiodataMahasiswas,
 };
