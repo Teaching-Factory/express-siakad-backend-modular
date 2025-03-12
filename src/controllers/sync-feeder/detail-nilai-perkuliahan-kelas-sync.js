@@ -257,6 +257,44 @@ async function matchingDataDetailNilaiPerkuliahanKelas(req, res, next) {
       }
     }
 
+    console.log("Matching detail nilai perkuliahan kelas lokal ke feeder berhasil.");
+  } catch (error) {
+    console.error("Error during matchingDataDetailNilaiPerkuliahanKelas:", error.message);
+    throw error;
+  }
+}
+
+const matchingSyncDataDetailNilaiPerkuliahanKelas = async (req, res, next) => {
+  try {
+    await matchingDataDetailNilaiPerkuliahanKelas(req, res, next);
+    res.status(200).json({ message: "Matching detail nilai perkuliahan kelas lokal ke feeder berhasil." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// matching khusus untuk delete
+async function matchingDataDetailNilaiPerkuliahanKelasDelete(req, res, next) {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const semesterId = req.params.id_semester;
+
+    if (!semesterId) {
+      return res.status(400).json({
+        message: "Semester ID required",
+      });
+    }
+
+    // get detail nilai perkuliahan kelas local dan feeder
+    const detailNilaiPerkuliahanKelasFeeder = await getDetailNilaiPerkuliahanKelasFromFeeder(semesterId);
+    const detailNilaiPerkuliahankelasLocal = await getDetailNilaiPerkuliahanKelasFromLocal(semesterId);
+
+    let detailNilaiPerkuliahanKelasFeederMap = detailNilaiPerkuliahanKelasFeeder.reduce((map, detail_nilai) => {
+      let uniqueKey = `${detail_nilai.id_kelas_kuliah}-${detail_nilai.id_registrasi_mahasiswa}`;
+      map[uniqueKey] = detail_nilai;
+      return map;
+    }, {});
+
     // Menyaring data yang tidak ada di Feeder
     const dataTidakAdaDiFeeder = detailNilaiPerkuliahankelasLocal.filter((item) => {
       const id_kelas_kuliah_feeder = item.KelasKuliah?.id_feeder; // Ambil dari KelasKuliah
@@ -305,17 +343,17 @@ async function matchingDataDetailNilaiPerkuliahanKelas(req, res, next) {
       }
     }
 
-    console.log("Matching detail nilai perkuliahan kelas lokal ke feeder berhasil.");
+    console.log("Matching detail nilai perkuliahan kelas delete lokal ke feeder berhasil.");
   } catch (error) {
     console.error("Error during matchingDataDetailNilaiPerkuliahanKelas:", error.message);
     throw error;
   }
 }
 
-const matchingSyncDataDetailNilaiPerkuliahanKelas = async (req, res, next) => {
+const matchingSyncDataDetailNilaiPerkuliahanKelasDelete = async (req, res, next) => {
   try {
-    await matchingDataDetailNilaiPerkuliahanKelas(req, res, next);
-    res.status(200).json({ message: "Matching detail nilai perkuliahan kelas lokal ke feeder berhasil." });
+    await matchingDataDetailNilaiPerkuliahanKelasDelete(req, res, next);
+    res.status(200).json({ message: "Matching detail nilai perkuliahan kelas delete lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }
@@ -613,5 +651,6 @@ const syncNilaiPerkuliahans = async (req, res, next) => {
 module.exports = {
   matchingDataDetailNilaiPerkuliahanKelas,
   matchingSyncDataDetailNilaiPerkuliahanKelas,
+  matchingSyncDataDetailNilaiPerkuliahanKelasDelete,
   syncNilaiPerkuliahans,
 };

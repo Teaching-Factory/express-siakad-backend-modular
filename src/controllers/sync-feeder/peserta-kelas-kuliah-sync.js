@@ -221,6 +221,44 @@ async function matchingDataPesertaKelasKuliah(req, res, next) {
       console.log(`${syncData.length} data peserta kelas kuliah ditambahkan ke sinkronisasi.`);
     }
 
+    console.log("Matching peserta kelas kuliah lokal ke feeder berhasil.");
+  } catch (error) {
+    console.error("Error during matchingDataPesertaKelasKuliah:", error.message);
+    throw error;
+  }
+}
+
+const matchingSyncDataPesertaKelasKuliah = async (req, res, next) => {
+  try {
+    await matchingDataPesertaKelasKuliah(req, res, next);
+    res.status(200).json({ message: "Matching peserta kelas kuliah lokal ke feeder berhasil." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// matching khusus untuk delete
+async function matchingDataPesertaKelasKuliahDelete(req, res, next) {
+  try {
+    // Dapatkan ID dari parameter permintaan
+    const angkatanId = req.params.id_angkatan;
+
+    if (!angkatanId) {
+      return res.status(400).json({
+        message: "Angkatan ID required",
+      });
+    }
+
+    // get peserta kelas kuliah local dan feeder
+    const pesertaKelasKuliahFeeder = await getPesertaKelasKuliahFromFeeder(angkatanId);
+    const pesertaKelasKuliahLocal = await getPesertaKelasKuliahFromLocal(angkatanId);
+
+    let pesertaKelasKuliahFeederMap = pesertaKelasKuliahFeeder.reduce((map, peserta_kelas) => {
+      let uniqueKey = `${peserta_kelas.id_kelas_kuliah}-${peserta_kelas.id_registrasi_mahasiswa}`;
+      map[uniqueKey] = peserta_kelas;
+      return map;
+    }, {});
+
     // Menyaring data yang tidak ada di Feeder
     const dataTidakAdaDiFeeder = pesertaKelasKuliahLocal.filter((item) => {
       const id_kelas_kuliah_feeder = item.KelasKuliah?.id_feeder; // Ambil dari KelasKuliah
@@ -269,17 +307,17 @@ async function matchingDataPesertaKelasKuliah(req, res, next) {
       }
     }
 
-    console.log("Matching peserta kelas kuliah lokal ke feeder berhasil.");
+    console.log("Matching peserta kelas kuliah delete lokal ke feeder berhasil.");
   } catch (error) {
     console.error("Error during matchingDataPesertaKelasKuliah:", error.message);
     throw error;
   }
 }
 
-const matchingSyncDataPesertaKelasKuliah = async (req, res, next) => {
+const matchingSyncDataPesertaKelasKuliahDelete = async (req, res, next) => {
   try {
-    await matchingDataPesertaKelasKuliah(req, res, next);
-    res.status(200).json({ message: "Matching peserta kelas kuliah lokal ke feeder berhasil." });
+    await matchingDataPesertaKelasKuliahDelete(req, res, next);
+    res.status(200).json({ message: "Matching peserta kelas kuliah delete lokal ke feeder berhasil." });
   } catch (error) {
     next(error);
   }
@@ -581,5 +619,6 @@ const syncPesertaKelasKuliahs = async (req, res, next) => {
 module.exports = {
   matchingDataPesertaKelasKuliah,
   matchingSyncDataPesertaKelasKuliah,
+  matchingSyncDataPesertaKelasKuliahDelete,
   syncPesertaKelasKuliahs,
 };
