@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("../api-feeder/get-token");
-const { AktivitasKuliahMahasiswa } = require("../../../models");
+const { AktivitasKuliahMahasiswa, Mahasiswa, Semester, Prodi, StatusMahasiswa } = require("../../../models");
 
 const getAktivitasKuliahMahasiswa = async (req, res, next) => {
   try {
@@ -39,6 +39,28 @@ const getAktivitasKuliahMahasiswa = async (req, res, next) => {
 
     // Loop untuk menambahkan data ke dalam database
     for (const aktivitas_kuliah_mahasiswa of dataAktivitasKuliahMahasiswa) {
+      // Periksa apakah id_registrasi_mahasiswa, id_semester, id_prodi dan id_status_mahasiswa ada di database
+      const mahasiswaExists = await Mahasiswa.findOne({
+        where: { id_registrasi_mahasiswa: detail.id_registrasi_mahasiswa },
+      });
+
+      const semesterExist = await Semester.findOne({
+        where: { id_semester: detail.id_semester },
+      });
+
+      const prodiExist = await Prodi.findOne({
+        where: { id_prodi: detail.id_prodi },
+      });
+
+      const statusMahasiswaExist = await StatusMahasiswa.findOne({
+        where: { id_status_mahasiswa: detail.id_status_mahasiswa },
+      });
+
+      // Jika salah satu tidak ditemukan, lanjut ke iterasi berikutnya
+      if (!mahasiswaExists || !semesterExist || !prodiExist || !statusMahasiswaExist) {
+        continue;
+      }
+
       // Periksa apakah data sudah ada
       const existingData = await AktivitasKuliahMahasiswa.findOne({
         where: {

@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { getToken } = require("../api-feeder/get-token");
-const { KRSMahasiswa } = require("../../../models");
+const { KRSMahasiswa, Mahasiswa, Semester, Prodi, MataKuliah, KelasKuliah } = require("../../../models");
 
 const getKRSMahasiswa = async (req, res, next) => {
   try {
@@ -39,6 +39,32 @@ const getKRSMahasiswa = async (req, res, next) => {
 
     // Loop untuk menambahkan data ke dalam database
     for (const krs_mahasiswa of dataKRSMahasiswa) {
+      // Periksa apakah id_registrasi_mahasiswa, id_periode, id_prodi, id_matkul dan id_kelas ada di database
+      const mahasiswaExists = await Mahasiswa.findOne({
+        where: { id_registrasi_mahasiswa: krs_mahasiswa.id_registrasi_mahasiswa },
+      });
+
+      const semesterExist = await Semester.findOne({
+        where: { id_semester: krs_mahasiswa.id_periode },
+      });
+
+      const prodiExist = await Prodi.findOne({
+        where: { id_prodi: krs_mahasiswa.id_prodi },
+      });
+
+      const mataKuliahExist = await MataKuliah.findOne({
+        where: { id_matkul: krs_mahasiswa.id_matkul },
+      });
+
+      const kelasExists = await KelasKuliah.findOne({
+        where: { id_kelas_kuliah: krs_mahasiswa.id_kelas },
+      });
+
+      // Jika salah satu tidak ditemukan, lanjut ke iterasi berikutnya
+      if (!mahasiswaExists || !semesterExist || !prodiExist || !mataKuliahExist || !kelasExists) {
+        continue;
+      }
+
       // Periksa apakah data sudah ada
       const existingData = await KRSMahasiswa.findOne({
         where: {
