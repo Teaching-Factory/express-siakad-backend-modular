@@ -1,5 +1,6 @@
 const { SettingGlobalSemester, DetailNilaiPerkuliahanKelasSync } = require("../../../models");
 const { matchingDataDetailNilaiPerkuliahanKelas, syncNilaiPerkuliahans } = require("../../controllers/sync-feeder/detail-nilai-perkuliahan-kelas-sync");
+const { Op } = require("sequelize");
 
 async function singkronDetailNilaiPerkuliahanKelas() {
   console.log("Cronjob singkron detail nilai perkuliahan kelas started");
@@ -36,7 +37,9 @@ async function singkronDetailNilaiPerkuliahanKelas() {
     // get data detail nilai perkuliahan kelas sync yang belum di singkron dengan jenis singkron create dan delete
     const nilai_perkuliahans = await DetailNilaiPerkuliahanKelasSync.findAll({
       where: {
-        jenis_singkron: ["create"], // hanya jenis singkron create yang dikirimkan
+        jenis_singkron: {
+          [Op.in]: ["create", "get"], // Memfilter hanya "create" dan "get"
+        },
         status: false,
       },
       attributes: ["id"],

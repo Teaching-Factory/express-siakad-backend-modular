@@ -1,5 +1,6 @@
 const { SettingGlobalSemester, RiwayatPendidikanMahasiswaSync } = require("../../../models");
 const { matchingcDataRiwayatPendidikanMahasiswa, syncRiwayatPendidikanMahasiswas } = require("../../controllers/sync-feeder/riwayat-pendidikan-mahasiswa-sync");
+const { Op } = require("sequelize");
 
 async function singkronRiwayatPendidikanMahasiswa() {
   console.log("Cronjob singkron riwayat pendidikan mahasiswa started");
@@ -36,7 +37,9 @@ async function singkronRiwayatPendidikanMahasiswa() {
     // get data riwayat pendidikan mahasiswa sync yang belum di singkron dengan jenis singkron create dan delete
     const riwayat_pendidikan_mahasiswa_syncs = await RiwayatPendidikanMahasiswaSync.findAll({
       where: {
-        jenis_singkron: ["create"], // hanya jenis singkron create yang dikirimkan
+        jenis_singkron: {
+          [Op.in]: ["create", "get"], // Memfilter hanya "create" dan "get"
+        },
         status: false,
       },
       attributes: ["id"],

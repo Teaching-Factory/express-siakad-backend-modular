@@ -1,5 +1,6 @@
 const { SettingGlobalSemester, KomponenEvaluasiKelasSync } = require("../../../models");
 const { matchingDataKomponenEvaluasiKelas, syncKomponenEvaluasiKelas } = require("../../controllers/sync-feeder/komponen-evaluasi-kelas-sync");
+const { Op } = require("sequelize");
 
 async function singkronKomponenEvaluasiKelas() {
   console.log("Cronjob singkron komponen evaluasi kelas started");
@@ -36,7 +37,9 @@ async function singkronKomponenEvaluasiKelas() {
     // get data komponen evaluasi kelas sync yang belum di singkron dengan jenis singkron create dan delete
     const komponen_evaluasi_kelas_syncs = await KomponenEvaluasiKelasSync.findAll({
       where: {
-        jenis_singkron: ["create"], // hanya jenis singkron create yang dikirimkan
+        jenis_singkron: {
+          [Op.in]: ["create", "get"], // Memfilter hanya "create" dan "get"
+        },
         status: false,
       },
       attributes: ["id"],

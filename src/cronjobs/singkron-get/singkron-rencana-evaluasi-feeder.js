@@ -1,5 +1,6 @@
 const { Prodi, RencanaEvaluasiSync } = require("../../../models");
 const { matchingDataRencanaEvaluasi, syncRencanaEvaluasis } = require("../../controllers/sync-feeder/rencana-evaluasi-sync");
+const { Op } = require("sequelize");
 
 async function singkronRencanaEvaluasi() {
   console.log("Cronjob singkron rencana evaluasi started");
@@ -28,7 +29,9 @@ async function singkronRencanaEvaluasi() {
       // get data rencana evaluasi sync yang belum di singkron dengan jenis singkron create dan delete
       const rencana_evaluasi_syncs = await RencanaEvaluasiSync.findAll({
         where: {
-          jenis_singkron: ["create"], // hanya jenis singkron create yang dikirimkan
+          jenis_singkron: {
+            [Op.in]: ["create", "get"], // Memfilter hanya "create" dan "get"
+          },
           status: false,
         },
         attributes: ["id"],

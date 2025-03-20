@@ -1,5 +1,6 @@
 const { SettingGlobalSemester, BiodataMahasiswaSync } = require("../../../models");
 const { matchingDataBiodataMahasiswa, syncBiodataMahasiswas } = require("../../controllers/sync-feeder/biodata-mahasiswa-sync");
+const { Op } = require("sequelize");
 
 async function singkronBiodataMahasiswa() {
   console.log("Cronjob singkron biodata mahasiswa started");
@@ -36,7 +37,9 @@ async function singkronBiodataMahasiswa() {
     // get data biodata mahasiswa sync yang belum di singkron dengan jenis singkron create dan delete
     const biodata_mahasiswa_syncs = await BiodataMahasiswaSync.findAll({
       where: {
-        jenis_singkron: ["create"], // hanya jenis singkron create yang dikirimkan
+        jenis_singkron: {
+          [Op.in]: ["create", "get"], // Memfilter hanya "create" dan "get"
+        },
         status: false,
       },
       attributes: ["id"],
