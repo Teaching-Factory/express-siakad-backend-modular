@@ -97,7 +97,13 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
         { model: Semester },
         { model: Prodi },
         { model: MataKuliah },
-        { model: KelasKuliah, include: [{ model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }, { model: DosenPengajarKelasKuliah }] },
+        {
+          model: KelasKuliah,
+          include: [
+            { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] },
+            { model: DosenPengajarKelasKuliah, include: [{ model: Dosen }] },
+          ],
+        },
       ],
     });
 
