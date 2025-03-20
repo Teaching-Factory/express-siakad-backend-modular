@@ -41,19 +41,19 @@ const getAktivitasKuliahMahasiswa = async (req, res, next) => {
     for (const aktivitas_kuliah_mahasiswa of dataAktivitasKuliahMahasiswa) {
       // Periksa apakah id_registrasi_mahasiswa, id_semester, id_prodi dan id_status_mahasiswa ada di database
       const mahasiswaExists = await Mahasiswa.findOne({
-        where: { id_registrasi_mahasiswa: detail.id_registrasi_mahasiswa },
+        where: { id_registrasi_mahasiswa: aktivitas_kuliah_mahasiswa.id_registrasi_mahasiswa },
       });
 
       const semesterExist = await Semester.findOne({
-        where: { id_semester: detail.id_semester },
+        where: { id_semester: aktivitas_kuliah_mahasiswa.id_semester },
       });
 
       const prodiExist = await Prodi.findOne({
-        where: { id_prodi: detail.id_prodi },
+        where: { id_prodi: aktivitas_kuliah_mahasiswa.id_prodi },
       });
 
       const statusMahasiswaExist = await StatusMahasiswa.findOne({
-        where: { id_status_mahasiswa: detail.id_status_mahasiswa },
+        where: { id_status_mahasiswa: aktivitas_kuliah_mahasiswa.id_status_mahasiswa },
       });
 
       // Jika salah satu tidak ditemukan, lanjut ke iterasi berikutnya

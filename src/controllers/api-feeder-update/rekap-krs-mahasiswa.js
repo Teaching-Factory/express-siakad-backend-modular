@@ -40,20 +40,20 @@ const getRekapKRSMahasiswa = async (req, res, next) => {
     // Loop untuk menambahkan data ke dalam database
     for (const rekap_krs_mahasiswa of dataRekapKRSMahasiswa) {
       // Periksa apakah id_prodi, id_registrasi_mahasiswa, id_matkul, dan id_periode  ada di database
-      const prodiExist = await Semester.findOne({
-        where: { id_prodi: detail.id_prodi },
+      const prodiExist = await Prodi.findOne({
+        where: { id_prodi: rekap_krs_mahasiswa.id_prodi },
       });
 
       const mahasiswaExists = await Mahasiswa.findOne({
-        where: { id_registrasi_mahasiswa: detail.id_registrasi_mahasiswa },
+        where: { id_registrasi_mahasiswa: rekap_krs_mahasiswa.id_registrasi_mahasiswa },
       });
 
       const mataKuliahExist = await MataKuliah.findOne({
-        where: { id_matkul: detail.id_matkul },
+        where: { id_matkul: rekap_krs_mahasiswa.id_matkul },
       });
 
       const semesterExist = await Semester.findOne({
-        where: { id_semester: detail.id_semester },
+        where: { id_semester: rekap_krs_mahasiswa.id_semester },
       });
 
       // Jika salah satu tidak ditemukan, lanjut ke iterasi berikutnya

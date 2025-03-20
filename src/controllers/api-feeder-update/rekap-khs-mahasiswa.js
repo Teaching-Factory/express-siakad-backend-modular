@@ -41,19 +41,19 @@ const getRekapKHSMahasiswa = async (req, res, next) => {
     for (const rekap_khs_mahasiswa of dataRekapKHSMahasiswa) {
       // Periksa apakah id_registrasi_mahasiswa, id_periode, id_prodi, dan id_matkul ada di database
       const mahasiswaExists = await Mahasiswa.findOne({
-        where: { id_registrasi_mahasiswa: detail.id_registrasi_mahasiswa },
+        where: { id_registrasi_mahasiswa: rekap_khs_mahasiswa.id_registrasi_mahasiswa },
       });
 
       const semesterExist = await Semester.findOne({
-        where: { id_semester: detail.id_periode },
+        where: { id_semester: rekap_khs_mahasiswa.id_periode },
       });
 
-      const prodiExist = await Semester.findOne({
-        where: { id_prodi: detail.id_prodi },
+      const prodiExist = await Prodi.findOne({
+        where: { id_prodi: rekap_khs_mahasiswa.id_prodi },
       });
 
       const mataKuliahExist = await MataKuliah.findOne({
-        where: { id_matkul: detail.id_matkul },
+        where: { id_matkul: rekap_khs_mahasiswa.id_matkul },
       });
 
       // Jika salah satu tidak ditemukan, lanjut ke iterasi berikutnya
