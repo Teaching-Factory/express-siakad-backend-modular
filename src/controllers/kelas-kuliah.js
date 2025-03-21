@@ -306,10 +306,12 @@ const updateKelasKuliahById = async (req, res, next) => {
     }
 
     // Cari data kelas kuliah berdasarkan ID di database
-    let dataKelasKuliah = await KelasKuliah.findByPk(kelasKuliahId);
+    let dataKelasKuliah = await KelasKuliah.findByPk(kelasKuliahId, {
+      include: [{ model: MataKuliah }],
+    });
 
     // Melakukan update ketika data id_dosen berubah untuk data dosen pengajar kelas kuliah
-    if (kelasKuliahId.id_dosen != id_dosen) {
+    if (dataKelasKuliah.id_dosen !== id_dosen) {
       // update data dosen pengajar kelas kuliah
       const dosen_pengajar_kelas_kuliah = await DosenPengajarKelasKuliah.findOne({
         where: {
@@ -317,31 +319,54 @@ const updateKelasKuliahById = async (req, res, next) => {
         },
       });
 
-      // Jika data tidak ditemukan, kirim respons 404
+      // jika data dosen pengajar masih belum ada
       if (!dosen_pengajar_kelas_kuliah) {
-        return res.status(404).json({
-          message: `<===== Dosen Pengajar Kelas Kuliah With ID ${dataKelasKuliah.id_kelas_kuliah} Not Found:`,
+        // get data penugasan dosen dari id_dosen
+        const penugasan_dosen = await PenugasanDosen.findOne({
+          where: {
+            id_dosen: id_dosen,
+          },
         });
-      }
 
-      // get data penugasan dosen
-      const penugasan_dosen = await PenugasanDosen.findOne({
-        where: {
+        if (!penugasan_dosen) {
+          return res.status(400).json({
+            message: "Penugasan Dosen not found",
+          });
+        }
+
+        // create dosen pengajar kelas kuliah
+        await DosenPengajarKelasKuliah.create({
+          sks_substansi_total: dataKelasKuliah.MataKuliah.sks_mata_kuliah,
+          rencana_minggu_pertemuan: 16,
+          realisasi_minggu_pertemuan: 0,
+          id_registrasi_dosen: penugasan_dosen.id_registrasi_dosen,
           id_dosen: id_dosen,
-        },
-      });
-
-      // Jika data tidak ditemukan, kirim respons 404
-      if (!penugasan_dosen) {
-        return res.status(404).json({
-          message: `<===== Penugasan Dosen With ID ${dataKelasKuliah.id_kelas_kuliah} Not Found:`,
+          id_kelas_kuliah: dataKelasKuliah.id_kelas_kuliah,
+          id_substansi: null,
+          id_jenis_evaluasi: 1,
+          id_prodi: dataKelasKuliah.id_prodi,
+          id_semester: dataKelasKuliah.id_semester,
         });
+      } else {
+        // get data penugasan dosen
+        const penugasan_dosen = await PenugasanDosen.findOne({
+          where: {
+            id_dosen: id_dosen,
+          },
+        });
+
+        // Jika data tidak ditemukan, kirim respons 404
+        if (!penugasan_dosen) {
+          return res.status(404).json({
+            message: `<===== Penugasan Dosen With ID ${dataKelasKuliah.id_kelas_kuliah} Not Found:`,
+          });
+        }
+
+        dosen_pengajar_kelas_kuliah.id_dosen = id_dosen;
+        dosen_pengajar_kelas_kuliah.id_registrasi_dosen = penugasan_dosen.id_registrasi_dosen;
+
+        await dosen_pengajar_kelas_kuliah.save();
       }
-
-      dosen_pengajar_kelas_kuliah.id_dosen = id_dosen;
-      dosen_pengajar_kelas_kuliah.id_registrasi_dosen = penugasan_dosen.id_registrasi_dosen;
-
-      await dosen_pengajar_kelas_kuliah.save();
     }
 
     // Update data kelas kuliah
