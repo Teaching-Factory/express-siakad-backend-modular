@@ -38,7 +38,7 @@ async function singkronKomponenEvaluasiKelas() {
     const komponen_evaluasi_kelas_syncs = await KomponenEvaluasiKelasSync.findAll({
       where: {
         jenis_singkron: {
-          [Op.in]: ["create", "get"], // Memfilter hanya "create" dan "get"
+          [Op.in]: ["create", "get", "update"], // Memfilter hanya "create", "get" dan "update"
         },
         status: false,
       },

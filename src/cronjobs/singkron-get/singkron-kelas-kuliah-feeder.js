@@ -38,7 +38,7 @@ async function singkronKelasKuliah() {
     const kelas_kuliah_syncs = await KelasKuliahSync.findAll({
       where: {
         jenis_singkron: {
-          [Op.in]: ["create", "get"], // Memfilter hanya "create" dan "get"
+          [Op.in]: ["create", "get", "update"], // Memfilter hanya "create", "get" dan "update"
         },
         status: false,
       },
