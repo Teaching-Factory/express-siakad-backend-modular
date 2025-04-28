@@ -17,6 +17,8 @@ const {
   SettingGlobalSemester,
   RekapKRSMahasiswa,
   DosenPengajarKelasKuliah,
+  PerkuliahanMahasiswa,
+  StatusMahasiswa,
 } = require("../../models");
 
 const getAllKRSMahasiswa = async (req, res, next) => {
@@ -413,6 +415,32 @@ const validasiKRSMahasiswa = async (req, res, next) => {
       }
     }
 
+    // get data setting global semester
+    const setting_global_semester = await SettingGlobalSemester.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    if (!setting_global_semester) {
+      return res.status(404).json({
+        message: "Setting Global Semester Aktif not found",
+      });
+    }
+
+    // get data status mahasiswa non aktif
+    const statusMahasiswaAktif = await StatusMahasiswa.findOne({
+      where: {
+        nama_status_mahasiswa: "Aktif",
+      },
+    });
+
+    if (!statusMahasiswaAktif) {
+      return res.status(400).json({
+        message: "Status Mahasiswa Aktif not found",
+      });
+    }
+
     // Lakukan iterasi melalui setiap objek mahasiswa untuk update status mahasiswa
     for (const mahasiswa of mahasiswas) {
       let krs_mahasiswas = await KRSMahasiswa.findAll({
@@ -421,7 +449,17 @@ const validasiKRSMahasiswa = async (req, res, next) => {
           id_semester: semesterId,
           id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
         },
+        include: [{ model: MataKuliah }],
       });
+
+      // mengambil data sks semester sekarang
+      let sksSemester = 0;
+
+      // menghitung total krs semester sekarang
+      for (const krs of krs_mahasiswas) {
+        let sks = Number(krs.MataKuliah.sks_mata_kuliah);
+        sksSemester += sks;
+      }
 
       // Mengecek apakah ada salah satu validasi_krs yang false
       const adaKRSFalse = krs_mahasiswas.some((krs) => krs.validasi_krs === false);
@@ -445,9 +483,79 @@ const validasiKRSMahasiswa = async (req, res, next) => {
             }
           );
 
-          dataMahasiswa.nama_status_mahasiswa = "Non-Aktif"; // Jika ada false, ubah jadi Non-Aktif
+          dataMahasiswa.nama_status_mahasiswa = "Non-Aktif"; // Jika ada data krs yang false, ubah jadi Non-Aktif
         } else {
           dataMahasiswa.nama_status_mahasiswa = "Aktif"; // Jika semua true, tetap Aktif
+
+          let angkatan = null;
+          angkatan = dataMahasiswa.nama_periode_masuk.substring(0, 4);
+
+          // get data perkuliahan mahasiswa paling akhir (id_semester terbesar)
+          const lastPerkuliahanMahasiswa = await PerkuliahanMahasiswa.findOne({
+            where: {
+              id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+            },
+            order: [["id_semester", "DESC"]],
+          });
+
+          // jikalau validasi krs sudah selesai dan status aktif, maka update data perkuliahan mahasiswa
+          let perkuliahanMahasiswa = await PerkuliahanMahasiswa.findOne({
+            where: {
+              id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+              id_semester: setting_global_semester.id_semester_krs,
+            },
+          });
+
+          // jika tidak ada maka akan dibuatkan yang baru
+          if (!perkuliahanMahasiswa) {
+            if (!lastPerkuliahanMahasiswa) {
+              // jika mahasiswa baru, maka cukup ubah data sks semester, sks total, dan status mahasiswa
+              await PerkuliahanMahasiswa.create({
+                angkatan: angkatan,
+                ips: 0,
+                ipk: 0,
+                sks_semester: sksSemester,
+                sks_total: sksSemester,
+                biaya_kuliah_smt: 0,
+                id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+                id_semester: setting_global_semester.id_semester_krs,
+                id_status_mahasiswa: statusMahasiswaAktif.id_status_mahasiswa,
+                id_pembiayaan: null,
+              });
+            } else {
+              // jika mahasiswa lama, update sks semester, sks total, dan status mahasiswa
+              await PerkuliahanMahasiswa.create({
+                angkatan: angkatan,
+                ips: lastPerkuliahanMahasiswa.ips,
+                ipk: lastPerkuliahanMahasiswa.ipk,
+                sks_semester: sksSemester,
+                sks_total: Number(lastPerkuliahanMahasiswa.sks_total) + Number(sksSemester),
+                biaya_kuliah_smt: 0,
+                id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+                id_semester: setting_global_semester.id_semester_krs,
+                id_status_mahasiswa: statusMahasiswaAktif.id_status_mahasiswa,
+                id_pembiayaan: null,
+              });
+            }
+          } else {
+            if (!lastPerkuliahanMahasiswa) {
+              // jikalau mahasiswa baru
+              perkuliahanMahasiswa.sks_semester = sksSemester;
+              perkuliahanMahasiswa.sks_total = sksSemester;
+              perkuliahanMahasiswa.id_status_mahasiswa = statusMahasiswaAktif.id_status_mahasiswa;
+
+              // Simpan perubahan ke dalam database
+              await perkuliahanMahasiswa.save();
+            } else {
+              // jikalau mahasiswa lama
+              perkuliahanMahasiswa.sks_semester = sksSemester;
+              perkuliahanMahasiswa.sks_total = Number(lastPerkuliahanMahasiswa.sks_total) + Number(sksSemester);
+              perkuliahanMahasiswa.id_status_mahasiswa = statusMahasiswaAktif.id_status_mahasiswa;
+
+              // Simpan perubahan ke dalam database
+              await perkuliahanMahasiswa.save();
+            }
+          }
         }
 
         await dataMahasiswa.save(); // Simpan perubahan status mahasiswa
@@ -495,11 +603,61 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
         id_semester: semesterId,
         id_registrasi_mahasiswa: mahasiswaId,
       },
+      include: [{ model: MataKuliah }],
     });
 
     // Inisialisasi array untuk menyimpan data peserta kelas yang akan dihapus
     const pesertaKelasIds = [];
     const rekapKRSMahasiswaIds = [];
+
+    // get data setting global semester
+    const setting_global_semester = await SettingGlobalSemester.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    if (!setting_global_semester) {
+      return res.status(404).json({
+        message: "Setting Global Semester Aktif not found",
+      });
+    }
+
+    // get data status mahasiswa non aktif
+    const statusMahasiswaNonAktif = await StatusMahasiswa.findOne({
+      where: {
+        nama_status_mahasiswa: "Non-Aktif",
+      },
+    });
+
+    if (!statusMahasiswaNonAktif) {
+      return res.status(400).json({
+        message: "Status Mahasiswa Non Aktif not found",
+      });
+    }
+
+    // get data perkuliahan mahasiswa
+    const perkuliahanMahasiswa = await PerkuliahanMahasiswa.findOne({
+      where: {
+        id_registrasi_mahasiswa: mahasiswaId,
+        id_semester: setting_global_semester.id_semester_krs,
+      },
+    });
+
+    // mengambil data sks semester sekarang
+    let sksSemester = 0;
+
+    // menghitung total krs semester sekarang
+    for (const krs of krs_mahasiswas) {
+      let sks = Number(krs.MataKuliah.sks_mata_kuliah);
+      sksSemester += sks;
+    }
+
+    perkuliahanMahasiswa.sks_semester = 0;
+    perkuliahanMahasiswa.sks_total = Number(perkuliahanMahasiswa.sks_total) - Number(sksSemester);
+    perkuliahanMahasiswa.id_status_mahasiswa = statusMahasiswaNonAktif.id_status_mahasiswa;
+
+    await perkuliahanMahasiswa.save();
 
     // Ambil data peserta kelas kuliah yang sesuai dengan setiap KRS mahasiswa
     for (const krs_mahasiswa of krs_mahasiswas) {
@@ -831,16 +989,8 @@ const createKRSMahasiswa = async (req, res, next) => {
       });
     }
 
-    // Mengambil tahun ajaran yang sesuai dengan kondisi
-    const tahunAjaran = await TahunAjaran.findOne({
-      where: {
-        a_periode: 1,
-      },
-    });
-
-    if (!tahunAjaran) {
-      return res.status(404).json({ message: "Tahun Ajaran not found" });
-    }
+    // angkatan krs diperoleh berdasarkan angkatan mahasiswa
+    const angkatanMahasiswa = mahasiswa.nama_periode_masuk.substring(0, 4);
 
     // Inisialisasi array untuk menyimpan data KRS yang akan dibuat
     const krsEntries = [];
@@ -866,7 +1016,7 @@ const createKRSMahasiswa = async (req, res, next) => {
 
         if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
           krsEntries.push({
-            angkatan: tahunAjaran.id_tahun_ajaran,
+            angkatan: angkatanMahasiswa,
             validasi_krs: false,
             id_registrasi_mahasiswa,
             id_semester: setting_global_semester.id_semester_krs,
@@ -914,9 +1064,9 @@ const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
     }
 
     // mengecek apakah status mahasiswa aktif atau tidak
-    if (mahasiswa.nama_status_mahasiswa !== "Aktif" && mahasiswa.nama_status_mahasiswa !== "AKTIF") {
-      return res.status(404).json({ message: "Status Mahasiswa Tidak Aktif" });
-    }
+    // if (mahasiswa.nama_status_mahasiswa !== "Aktif" && mahasiswa.nama_status_mahasiswa !== "AKTIF") {
+    //   return res.status(404).json({ message: "Status Mahasiswa Tidak Aktif" });
+    // }
 
     // get data setting global semester
     const setting_global_semester = await SettingGlobalSemester.findOne({
@@ -931,19 +1081,18 @@ const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
       });
     }
 
-    // Mengambil tahun ajaran yang sesuai dengan kondisi
-    const tahunAjaran = await TahunAjaran.findOne({
-      where: {
-        a_periode: 1,
-      },
-    });
-
-    if (!tahunAjaran) {
-      return res.status(404).json({ message: "Tahun Ajaran not found" });
-    }
+    // angkatan krs diperoleh berdasarkan angkatan mahasiswa
+    const angkatanMahasiswa = mahasiswa.nama_periode_masuk.substring(0, 4);
 
     // Inisialisasi array untuk menyimpan data KRS yang akan dibuat
     const krsEntries = [];
+
+    // get data krs mahasiswa
+    const krsMahasiswas = await KRSMahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+      },
+    });
 
     // Iterasi melalui data kelas_kuliahs dari request body
     for (const kelas of kelas_kuliahs) {
@@ -966,7 +1115,7 @@ const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
 
         if (jumlahPesertaKelasKuliah < kelas_kuliah.jumlah_mahasiswa) {
           krsEntries.push({
-            angkatan: tahunAjaran.id_tahun_ajaran,
+            angkatan: angkatanMahasiswa,
             validasi_krs: false,
             id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
             id_semester: setting_global_semester.id_semester_krs,

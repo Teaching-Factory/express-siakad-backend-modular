@@ -26,21 +26,21 @@ describe("createKRSMahasiswaByMahasiswaActive", () => {
     expect(res._getJSONData()).toEqual({ message: "Mahasiswa not found" });
   });
 
-  it("should return 404 if mahasiswa is not active", async () => {
-    const user = { username: "123456" };
-    req.user = user;
-    req.body = { kelas_kuliahs: [{ id_kelas_kuliah: "1" }] };
+  // it("should return 404 if mahasiswa is not active", async () => {
+  //   const user = { username: "123456" };
+  //   req.user = user;
+  //   req.body = { kelas_kuliahs: [{ id_kelas_kuliah: "1" }] };
 
-    Mahasiswa.findOne.mockResolvedValue({
-      nim: user.username,
-      nama_status_mahasiswa: "Tidak Aktif",
-    });
+  //   Mahasiswa.findOne.mockResolvedValue({
+  //     nim: user.username,
+  //     nama_status_mahasiswa: "Tidak Aktif",
+  //   });
 
-    await createKRSMahasiswaByMahasiswaActive(req, res, next);
+  //   await createKRSMahasiswaByMahasiswaActive(req, res, next);
 
-    expect(res.statusCode).toBe(404);
-    expect(res._getJSONData()).toEqual({ message: "Status Mahasiswa Tidak Aktif" });
-  });
+  //   expect(res.statusCode).toBe(404);
+  //   expect(res._getJSONData()).toEqual({ message: "Status Mahasiswa Tidak Aktif" });
+  // });
 
   it("should handle errors", async () => {
     const user = { username: "123456" };
