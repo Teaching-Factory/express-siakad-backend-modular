@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize, Role, UserRole, AdminProdi } = require("../../models");
+const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize, Role, UserRole, AdminProdi, PerkuliahanMahasiswa, SettingGlobalSemester } = require("../../models");
 const { Op } = require("sequelize");
 
 const getAllStatusMahasiswa = async (req, res, next) => {
@@ -57,7 +57,7 @@ const getProdiWithCountMahasiswaBelumSetSK = async (req, res, next) => {
       include: {
         model: Mahasiswa,
         where: {
-          nama_status_mahasiswa: "Aktif",
+          [Op.or]: [{ nama_status_mahasiswa: "Aktif" }, { nama_status_mahasiswa: "AKTIF" }],
         },
         required: false,
       },
@@ -203,7 +203,7 @@ const getPeriodeByProdiIdWithCountMahasiswa = async (req, res, next) => {
         };
       }
       acc[tahunAngkatan].mahasiswa.push(mahasiswa);
-      if (mahasiswa.nama_status_mahasiswa === "Aktif") {
+      if (mahasiswa.nama_status_mahasiswa === "Aktif" || mahasiswa.nama_status_mahasiswa === "AKTIF") {
         acc[tahunAngkatan].jumlahMahasiswaBelumSetSK++;
       }
       return acc;
@@ -371,6 +371,86 @@ const updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId = async (req, res, ne
         },
       }
     );
+
+    // get data periode semester krs
+    const setting_global_semester_aktif = await SettingGlobalSemester.findOne({
+      where: {
+        status: true,
+      },
+    });
+
+    if (!setting_global_semester_aktif) {
+      return res.status(400).json({
+        message: "Setting Global Semester not found",
+      });
+    }
+
+    // get data status mahasiswa non aktif
+    const statusMahasiswaNonAktif = await StatusMahasiswa.findOne({
+      where: {
+        nama_status_mahasiswa: "Non-Aktif",
+      },
+    });
+
+    if (!statusMahasiswaNonAktif) {
+      return res.status(400).json({
+        message: "Status Mahasiswa Non Aktif not found",
+      });
+    }
+
+    // membuat data perkuliahan mahasiswa sesuai dengan periode semester krs
+    for (const mahasiswa of mahasiswas) {
+      let perkuliahanMahasiswa = await PerkuliahanMahasiswa.findOne({
+        where: {
+          id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+          id_semester: setting_global_semester_aktif.id_semester_krs,
+        },
+      });
+
+      // jika tidak ada perkuliahan mahasiswa untuk periode semester krs, maka akan dibuatkan data baru
+      if (!perkuliahanMahasiswa) {
+        // konversi dari periode masuk agar untuk angkatan
+        let angkatan = null;
+        angkatan = mahasiswa.nama_periode_masuk.substring(0, 4);
+
+        // get data perkuliahan mahasiswa paling akhir (id_semester terbesar)
+        const lastPerkuliahanMahasiswa = await PerkuliahanMahasiswa.findOne({
+          where: {
+            id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+          },
+          order: [["id_semester", "DESC"]],
+        });
+
+        // jika mahasiswa baru maka buatkan 0 semua untuk ips ipk dan sks total
+        if (!lastPerkuliahanMahasiswa) {
+          await PerkuliahanMahasiswa.create({
+            angkatan: angkatan,
+            ips: 0, // sesuai semester sebelumnya
+            ipk: 0, // sesuai semester sebelumnya
+            sks_semester: 0,
+            sks_total: 0, // pakai semester sebelumnya
+            biaya_kuliah_smt: 0,
+            id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+            id_semester: setting_global_semester_aktif.id_semester_krs,
+            id_status_mahasiswa: statusMahasiswaNonAktif.id_status_mahasiswa,
+            id_pembiayaan: null,
+          });
+        } else {
+          await PerkuliahanMahasiswa.create({
+            angkatan: angkatan,
+            ips: lastPerkuliahanMahasiswa.ips,
+            ipk: lastPerkuliahanMahasiswa.ipk,
+            sks_semester: 0,
+            sks_total: lastPerkuliahanMahasiswa.sks_total,
+            biaya_kuliah_smt: 0,
+            id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+            id_semester: setting_global_semester_aktif.id_semester_krs,
+            id_status_mahasiswa: statusMahasiswaNonAktif.id_status_mahasiswa,
+            id_pembiayaan: null,
+          });
+        }
+      }
+    }
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({

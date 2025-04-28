@@ -1,6 +1,7 @@
 const httpMocks = require("node-mocks-http");
 const { getProdiWithCountMahasiswaBelumSetSK } = require("../../src/controllers/status-mahasiswa");
 const { Prodi, Mahasiswa } = require("../../models");
+const { Op } = require("sequelize");
 
 jest.mock("../../models");
 
@@ -56,7 +57,7 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
       include: {
         model: Mahasiswa,
         where: {
-          nama_status_mahasiswa: "Aktif",
+          [Op.or]: [{ nama_status_mahasiswa: "Aktif" }, { nama_status_mahasiswa: "AKTIF" }],
         },
         required: false,
       },
@@ -99,7 +100,7 @@ describe("getProdiWithCountMahasiswaBelumSetSK", () => {
       include: {
         model: Mahasiswa,
         where: {
-          nama_status_mahasiswa: "Aktif",
+          [Op.or]: [{ nama_status_mahasiswa: "Aktif" }, { nama_status_mahasiswa: "AKTIF" }],
         },
         required: false,
       },
