@@ -487,10 +487,11 @@ const updatePerkuliahanMahasiswa = async (id_perkuliahan_mahasiswa, id_registras
       },
       record: {
         id_status_mahasiswa: perkuliahan_mahasiswa.id_status_mahasiswa,
+        id_pembiayaan: perkuliahan_mahasiswa.id_pembiayaan,
         ips: perkuliahan_mahasiswa.ips,
         ipk: perkuliahan_mahasiswa.ipk,
         sks_semester: perkuliahan_mahasiswa.sks_semester,
-        sks_total: perkuliahan_mahasiswa.sks_total,
+        total_sks: perkuliahan_mahasiswa.sks_total,
         biaya_kuliah_smt: perkuliahan_mahasiswa.biaya_kuliah_smt,
       },
     };
@@ -537,11 +538,13 @@ const getAndCreatePerkuliahanMahasiswa = async (id_perkuliahan_mahasiswa, id_sem
     const requestBody = {
       act: "GetListPerkuliahanMahasiswa",
       token: `${token}`,
-      filter: `id_semester='${id_semester_feeder} and id_registrasi_mahasiswa='${id_registrasi_mahasiswa_feeder}`,
+      filter: `id_registrasi_mahasiswa='${id_registrasi_mahasiswa_feeder}' and id_semester='${id_semester_feeder}'`,
     };
 
     // Menggunakan token untuk mengambil data
     const response = await axios.post(url_feeder, requestBody);
+
+    console.log(requestBody);
 
     // Mengecek jika ada error pada respons dari server
     if (response.data.error_code !== 0) {

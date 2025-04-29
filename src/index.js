@@ -161,6 +161,7 @@ const komponenEvaluasiKelasRoutes = require("./routes/komponen-evaluasi-kelas");
 const rencanaEvaluasiSyncRoutes = require("./routes/rencana-evaluasi-sync");
 const komponenEvaluasiKelasSyncRoutes = require("./routes/komponen-evaluasi-kelas-sync");
 const profilPenilaianRoutes = require("./routes/profil-penilaian");
+const perkuliahanMahasiswaSyncRoutes = require("./routes/perkuliahan-mahasiswa-sync");
 
 // route api local not done yet
 // -
@@ -430,6 +431,7 @@ app.use("/komponen-evaluasi-kelas", checkToken, komponenEvaluasiKelasRoutes);
 app.use("/rencana-evaluasi-sync", checkToken, rencanaEvaluasiSyncRoutes);
 app.use("/komponen-evaluasi-kelas-sync", checkToken, komponenEvaluasiKelasSyncRoutes);
 app.use("/profil-penilaian", checkToken, profilPenilaianRoutes);
+app.use("/perkuliahan-mahasiswa-sync", checkToken, perkuliahanMahasiswaSyncRoutes);
 
 // route api local not done yet
 // -
