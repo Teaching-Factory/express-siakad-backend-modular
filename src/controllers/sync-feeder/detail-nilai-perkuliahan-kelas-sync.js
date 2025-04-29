@@ -196,7 +196,7 @@ async function matchingDataDetailNilaiPerkuliahanKelas(req, res, next) {
       return !areEqualWithTolerance(localNilaiAngka, feederNilaiAngka) || localNilai.nilai_indeks !== feederNilai.nilai_indeks || localNilai.nilai_huruf !== feederNilai.nilai_huruf;
     }
 
-    // Array untuk menyimpan data yang akan ditambahkan ke PesertaKelasKuliahSync
+    // Array untuk menyimpan data yang akan ditambahkan ke DetailNilaiPerkuliahanKelasSync
     let syncData = [];
 
     for (let uniqueKey in detailNilaiPerkuliahanKelasFeederMap) {
