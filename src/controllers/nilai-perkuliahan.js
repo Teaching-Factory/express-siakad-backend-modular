@@ -17,9 +17,12 @@ const {
   JenisEvaluasi,
   ProfilPenilaian,
   NilaiKomponenEvaluasiKelas,
+  PerkuliahanMahasiswa,
+  SettingGlobalSemester,
 } = require("../../models");
 const ExcelJS = require("exceljs");
 const fs = require("fs").promises;
+const { Op } = require("sequelize");
 
 const getPesertaKelasKuliahByKelasKuliahId = async (req, res, next) => {
   try {
@@ -100,183 +103,236 @@ const getPesertaKelasKuliahByKelasKuliahId = async (req, res, next) => {
   }
 };
 
-const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
-  try {
-    const kelasKuliahId = req.params.id_kelas_kuliah;
-    const { penilaians } = req.body;
+  const createOrUpdatePenilaianByKelasKuliahId = async (req, res, next) => {
+    try {
+      const kelasKuliahId = req.params.id_kelas_kuliah;
+      const { penilaians } = req.body;
 
-    if (!kelasKuliahId) {
-      return res.status(400).json({ message: "Kelas Kuliah ID is required" });
-    }
+      if (!kelasKuliahId) {
+        return res.status(400).json({ message: "Kelas Kuliah ID is required" });
+      }
 
-    if (!penilaians || !Array.isArray(penilaians) || penilaians.length === 0) {
-      return res.status(400).json({ message: "Invalid or empty penilaians data" });
-    }
+      if (!penilaians || !Array.isArray(penilaians) || penilaians.length === 0) {
+        return res.status(400).json({ message: "Invalid or empty penilaians data" });
+      }
 
-    const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
+      const settingGlobalSemesterActive = await SettingGlobalSemester.findOne({
+        where: {
+          status: true,
+        },
+      });
 
-    if (!kelas_kuliah) {
-      return res.status(404).json({ message: "Kelas Kuliah not found" });
-    }
+      if (!settingGlobalSemesterActive) {
+        return res.status(400).json({ message: "Setting Global Semester Active not found" });
+      }
 
-    const prodi = await Prodi.findOne({
-      where: {
-        id_prodi: kelas_kuliah.id_prodi,
-      },
-    });
+      const kelas_kuliah = await KelasKuliah.findByPk(kelasKuliahId);
 
-    if (!prodi) {
-      return res.status(404).json({ message: "Prodi not found" });
-    }
+      if (!kelas_kuliah) {
+        return res.status(404).json({ message: "Kelas Kuliah not found" });
+      }
 
-    const jenjang_pendidikan = await JenjangPendidikan.findOne({
-      where: {
-        id_jenjang_didik: prodi.id_jenjang_pendidikan,
-      },
-    });
+      const prodi = await Prodi.findOne({
+        where: {
+          id_prodi: kelas_kuliah.id_prodi,
+        },
+      });
 
-    if (!jenjang_pendidikan) {
-      return res.status(404).json({ message: "Jenjang Pendidikan not found" });
-    }
+      if (!prodi) {
+        return res.status(404).json({ message: "Prodi not found" });
+      }
 
-    const createdOrUpdatedDetails = [];
-    let totalNilai = 0;
+      const jenjang_pendidikan = await JenjangPendidikan.findOne({
+        where: {
+          id_jenjang_didik: prodi.id_jenjang_pendidikan,
+        },
+      });
 
-    for (const penilaian of penilaians) {
-      const { id_registrasi_mahasiswa, nilai_komponen_evaluasis } = penilaian;
+      if (!jenjang_pendidikan) {
+        return res.status(404).json({ message: "Jenjang Pendidikan not found" });
+      }
+
+      const createdOrUpdatedDetails = [];
+      let totalNilai = 0;
 
       for (const penilaian of penilaians) {
         const { id_registrasi_mahasiswa, nilai_komponen_evaluasis } = penilaian;
 
-        for (const dataNilai of nilai_komponen_evaluasis) {
-          // get data nilai komponen evaluasi
-          let nilaiKomponenEvaluasiKelas = null;
-          nilaiKomponenEvaluasiKelas = await NilaiKomponenEvaluasiKelas.findOne({
+        for (const penilaian of penilaians) {
+          const { id_registrasi_mahasiswa, nilai_komponen_evaluasis } = penilaian;
+
+          for (const dataNilai of nilai_komponen_evaluasis) {
+            // get data nilai komponen evaluasi
+            let nilaiKomponenEvaluasiKelas = null;
+            nilaiKomponenEvaluasiKelas = await NilaiKomponenEvaluasiKelas.findOne({
+              where: {
+                id_komponen_evaluasi: dataNilai.id_komponen_evaluasi,
+                id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+              },
+            });
+
+            if (nilaiKomponenEvaluasiKelas) {
+              // Jika sudah ada, lakukan pembaruan
+              await nilaiKomponenEvaluasiKelas.update({
+                nilai_komponen_evaluasi_kelas: dataNilai.nilai,
+              });
+            } else {
+              // Jika belum ada, buat yang baru
+              nilaiKomponenEvaluasiKelas = await NilaiKomponenEvaluasiKelas.create({
+                id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+                id_komponen_evaluasi: dataNilai.id_komponen_evaluasi,
+                nilai_komponen_evaluasi_kelas: dataNilai.nilai,
+              });
+            }
+          }
+        }
+
+        for (const komponen_evaluasi_kelas of nilai_komponen_evaluasis) {
+          const komponenEvaluasiKelas = await KomponenEvaluasiKelas.findOne({
             where: {
-              id_komponen_evaluasi: dataNilai.id_komponen_evaluasi,
-              id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+              id_komponen_evaluasi: komponen_evaluasi_kelas.id_komponen_evaluasi,
+              id_kelas_kuliah: kelasKuliahId,
             },
           });
 
-          if (nilaiKomponenEvaluasiKelas) {
-            // Jika sudah ada, lakukan pembaruan
-            await nilaiKomponenEvaluasiKelas.update({
-              nilai_komponen_evaluasi_kelas: dataNilai.nilai,
-            });
+          if (!komponenEvaluasiKelas) {
+            return res.status(404).json({ message: `Komponen Evaluasi Kelas with ID ${komponen_evaluasi_kelas.id_komponen_evaluasi} not found` });
+          }
+
+          // get data nilai komponen evaluasi
+          const nilaiKomponenEvaluasi = await NilaiKomponenEvaluasiKelas.findOne({
+            where: {
+              id_registrasi_mahasiswa,
+              id_komponen_evaluasi: komponen_evaluasi_kelas.id_komponen_evaluasi,
+            },
+          });
+
+          // perhitungan nilai dengan bobot evaluasi
+          let perhitunganNilaiBobot = 0;
+
+          if (nilaiKomponenEvaluasi) {
+            perhitunganNilaiBobot = nilaiKomponenEvaluasi.nilai_komponen_evaluasi_kelas * komponenEvaluasiKelas.bobot_evaluasi;
           } else {
-            // Jika belum ada, buat yang baru
-            nilaiKomponenEvaluasiKelas = await NilaiKomponenEvaluasiKelas.create({
-              id_registrasi_mahasiswa: id_registrasi_mahasiswa,
-              id_komponen_evaluasi: dataNilai.id_komponen_evaluasi,
-              nilai_komponen_evaluasi_kelas: dataNilai.nilai,
-            });
+            perhitunganNilaiBobot = komponen_evaluasi_kelas.nilai * komponenEvaluasiKelas.bobot_evaluasi;
+          }
+
+          totalNilai += perhitunganNilaiBobot;
+          // console.log(komponenEvaluasiKelas.bobot_evaluasi);
+        }
+
+        let nilai_angka = totalNilai;
+
+        // Determine grade
+        let nilai_huruf = "E";
+        let nilai_indeks = 0;
+
+        // get data profil penilaian
+        const profilPenilaians = await ProfilPenilaian.findAll({
+          order: [["id", "ASC"]],
+        });
+
+        // set nilai huruf dan angka dari nilai akhir
+        for (const criteria of profilPenilaians) {
+          if (nilai_angka >= criteria.nilai_min && nilai_angka <= criteria.nilai_max) {
+            nilai_huruf = criteria.nilai_huruf;
+            nilai_indeks = criteria.nilai_indeks;
+            break;
           }
         }
-      }
 
-      for (const komponen_evaluasi_kelas of nilai_komponen_evaluasis) {
-        const komponenEvaluasiKelas = await KomponenEvaluasiKelas.findOne({
+        let mahasiswa = await Mahasiswa.findOne({
           where: {
-            id_komponen_evaluasi: komponen_evaluasi_kelas.id_komponen_evaluasi,
+            id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+          },
+        });
+
+        if (!mahasiswa) {
+          return res.status(404).json({ message: `Mahasiswa with ID ${id_registrasi_mahasiswa} not found` });
+        }
+
+        let angkatan_mahasiswa = mahasiswa.nama_periode_masuk.substring(0, 4);
+
+        let detailNilai = await DetailNilaiPerkuliahanKelas.findOne({
+          where: {
             id_kelas_kuliah: kelasKuliahId,
-          },
-        });
-
-        if (!komponenEvaluasiKelas) {
-          return res.status(404).json({ message: `Komponen Evaluasi Kelas with ID ${komponen_evaluasi_kelas.id_komponen_evaluasi} not found` });
-        }
-
-        // get data nilai komponen evaluasi
-        const nilaiKomponenEvaluasi = await NilaiKomponenEvaluasiKelas.findOne({
-          where: {
             id_registrasi_mahasiswa,
-            id_komponen_evaluasi: komponen_evaluasi_kelas.id_komponen_evaluasi,
           },
         });
 
-        // perhitungan nilai dengan bobot evaluasi
-        let perhitunganNilaiBobot = 0;
-
-        if (nilaiKomponenEvaluasi) {
-          perhitunganNilaiBobot = nilaiKomponenEvaluasi.nilai_komponen_evaluasi_kelas * komponenEvaluasiKelas.bobot_evaluasi;
+        if (detailNilai) {
+          detailNilai.jurusan = jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi;
+          detailNilai.angkatan = angkatan_mahasiswa;
+          detailNilai.nilai_angka = parseFloat(nilai_angka);
+          detailNilai.nilai_huruf = nilai_huruf;
+          detailNilai.nilai_indeks = nilai_indeks;
+          await detailNilai.save();
         } else {
-          perhitunganNilaiBobot = komponen_evaluasi_kelas.nilai * komponenEvaluasiKelas.bobot_evaluasi;
+          detailNilai = await DetailNilaiPerkuliahanKelas.create({
+            jurusan: jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi,
+            angkatan: angkatan_mahasiswa,
+            nilai_angka: parseFloat(nilai_angka),
+            nilai_huruf,
+            nilai_indeks,
+            id_kelas_kuliah: kelasKuliahId,
+            id_registrasi_mahasiswa,
+          });
         }
 
-        totalNilai += perhitunganNilaiBobot;
-        // console.log(komponenEvaluasiKelas.bobot_evaluasi);
-      }
-
-      let nilai_angka = totalNilai;
-
-      // Determine grade
-      let nilai_huruf = "E";
-      let nilai_indeks = 0;
-
-      // get data profil penilaian
-      const profilPenilaians = await ProfilPenilaian.findAll({
-        order: [["id", "ASC"]],
-      });
-
-      // set nilai huruf dan angka dari nilai akhir
-      for (const criteria of profilPenilaians) {
-        if (nilai_angka >= criteria.nilai_min && nilai_angka <= criteria.nilai_max) {
-          nilai_huruf = criteria.nilai_huruf;
-          nilai_indeks = criteria.nilai_indeks;
-          break;
-        }
-      }
-
-      let mahasiswa = await Mahasiswa.findOne({
-        where: {
-          id_registrasi_mahasiswa: id_registrasi_mahasiswa,
-        },
-      });
-
-      if (!mahasiswa) {
-        return res.status(404).json({ message: `Mahasiswa with ID ${id_registrasi_mahasiswa} not found` });
-      }
-
-      let angkatan_mahasiswa = mahasiswa.nama_periode_masuk.substring(0, 4);
-
-      let detailNilai = await DetailNilaiPerkuliahanKelas.findOne({
-        where: {
-          id_kelas_kuliah: kelasKuliahId,
-          id_registrasi_mahasiswa,
-        },
-      });
-
-      if (detailNilai) {
-        detailNilai.jurusan = jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi;
-        detailNilai.angkatan = angkatan_mahasiswa;
-        detailNilai.nilai_angka = parseFloat(nilai_angka);
-        detailNilai.nilai_huruf = nilai_huruf;
-        detailNilai.nilai_indeks = nilai_indeks;
-        await detailNilai.save();
-      } else {
-        detailNilai = await DetailNilaiPerkuliahanKelas.create({
-          jurusan: jenjang_pendidikan.nama_jenjang_didik + " " + prodi.nama_program_studi,
-          angkatan: angkatan_mahasiswa,
-          nilai_angka: parseFloat(nilai_angka),
-          nilai_huruf,
-          nilai_indeks,
-          id_kelas_kuliah: kelasKuliahId,
-          id_registrasi_mahasiswa,
+        // update data AKM atau perkuliahan mahasiswa
+        let perkuliahanMahasiswaSekarang = await PerkuliahanMahasiswa.findOne({
+          where: {
+            id_semester: settingGlobalSemesterActive.id_semester_nilai,
+            id_registrasi_mahasiswa,
+          },
         });
+
+        // get semua perkuliahan mahasiswa seluruhnya
+        let perkuliahanMahasiswaPenuh = await PerkuliahanMahasiswa.findAll({
+          where: {
+            id_registrasi_mahasiswa: id_registrasi_mahasiswa,
+            ips: {
+              [Op.ne]: 0, // ambil hanya yang ips ≠ 0
+            },
+          },
+          order: [["id_semester", "ASC"]],
+        });
+
+        if (perkuliahanMahasiswaSekarang) {
+          let totalSks = 0;
+          let totalIpsXSKS = 0;
+
+          for (const akm of perkuliahanMahasiswaPenuh) {
+            if (akm.ips > 0 && akm.sks_semester > 0) {
+              totalIpsXSKS += akm.ips * akm.sks_semester;
+              // console.log(totalIpsXSKS, "Total IPS x SKS hitungan");
+              totalSks += Number(akm.sks_semester);
+              // console.log(totalSks, "Total SKS hitungan");
+            }
+          }
+
+          // console.log("Hasil total IPS x SKS ", totalIpsXSKS);
+          // console.log("Hasil total SKS ", totalSks);
+          const ipk = totalSks > 0 ? totalIpsXSKS / totalSks : 0;
+
+          // Update IPS dan IPK pada semester sekarang
+          perkuliahanMahasiswaSekarang.ips = detailNilai.nilai_indeks;
+          perkuliahanMahasiswaSekarang.ipk = parseFloat(ipk.toFixed(2)); // bulatkan ke 2 desimal
+
+          await perkuliahanMahasiswaSekarang.save();
+        }
+
+        createdOrUpdatedDetails.push(detailNilai);
       }
 
-      createdOrUpdatedDetails.push(detailNilai);
+      res.status(201).json({
+        message: "Penilaian created or updated successfully",
+        dataJumlah: createdOrUpdatedDetails.length,
+        data: createdOrUpdatedDetails,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    res.status(201).json({
-      message: "Penilaian created or updated successfully",
-      dataJumlah: createdOrUpdatedDetails.length,
-      data: createdOrUpdatedDetails,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  };
 
 const importNilaiPerkuliahan = async (req, res, next) => {
   try {
