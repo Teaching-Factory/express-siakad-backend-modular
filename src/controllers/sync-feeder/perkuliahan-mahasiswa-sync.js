@@ -544,8 +544,6 @@ const getAndCreatePerkuliahanMahasiswa = async (id_perkuliahan_mahasiswa, id_sem
     // Menggunakan token untuk mengambil data
     const response = await axios.post(url_feeder, requestBody);
 
-    console.log(requestBody);
-
     // Mengecek jika ada error pada respons dari server
     if (response.data.error_code !== 0) {
       throw new Error(`Error from Feeder: ${response.data.error_desc}`);
