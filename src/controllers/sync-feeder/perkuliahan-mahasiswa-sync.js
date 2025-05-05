@@ -419,12 +419,12 @@ const insertPerkuliahanMahasiswa = async (id_perkuliahan_mahasiswa, req, res, ne
         id_registrasi_mahasiswa: riwayat_pendidikan_mahasiswa.id_feeder,
         id_semester: perkuliahan_mahasiswa.id_semester,
         id_status_mahasiswa: perkuliahan_mahasiswa.id_status_mahasiswa,
-        id_pembiayaan: perkuliahan_mahasiswa.id_pembiayaan,
+        id_pembiayaan: perkuliahan_mahasiswa.id_pembiayaan ?? 1,
         ips: perkuliahan_mahasiswa.ips,
         ipk: perkuliahan_mahasiswa.ipk,
         sks_semester: perkuliahan_mahasiswa.sks_semester,
-        sks_total: perkuliahan_mahasiswa.sks_total,
-        biaya_kuliah_smt: perkuliahan_mahasiswa.biaya_kuliah_smt,
+        total_sks: perkuliahan_mahasiswa.sks_total,
+        biaya_kuliah_smt: perkuliahan_mahasiswa.biaya_kuliah_smt === null || perkuliahan_mahasiswa.biaya_kuliah_smt === undefined || perkuliahan_mahasiswa.biaya_kuliah_smt === 0 ? 100 : perkuliahan_mahasiswa.biaya_kuliah_smt,
       },
     };
 
