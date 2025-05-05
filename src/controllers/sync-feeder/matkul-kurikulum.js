@@ -47,16 +47,26 @@ async function syncDataMatkulKurikulum() {
       return map;
     }, {});
 
+    let tanggal_dibuat;
+
     // Sinkronisasi data dari Feeder ke Lokal (get dan update ke lokal)
     for (let feederMatkulKurikulum of matkulKurikulumFeeder) {
       let uniqueKey = `${feederMatkulKurikulum.id_kurikulum}-${feederMatkulKurikulum.id_matkul}`;
+
+      tanggal_dibuat = null;
+
+      //   melakukan pengecekan data tanggal
+      if (feederMatkulKurikulum.tgl_create != null) {
+        const date_create = feederMatkulKurikulum.tgl_create.split("-");
+        tanggal_dibuat = `${date_create[2]}-${date_create[1]}-${date_create[0]}`;
+      }
 
       if (!localMap[uniqueKey]) {
         // Buat entri baru matkul kurikulum
         await MatkulKurikulum.create({
           semester: feederMatkulKurikulum.semester,
           apakah_wajib: feederMatkulKurikulum.apakah_wajib,
-          tgl_create: feederMatkulKurikulum.tgl_create,
+          tgl_create: tanggal_dibuat,
           id_kurikulum: feederMatkulKurikulum.id_kurikulum,
           id_matkul: feederMatkulKurikulum.id_matkul,
         });
@@ -70,7 +80,7 @@ async function syncDataMatkulKurikulum() {
         if (
           feederMatkulKurikulum.semester !== localMatkulKurikulum.semester ||
           feederMatkulKurikulum.apakah_wajib !== localMatkulKurikulum.apakah_wajib ||
-          feederMatkulKurikulum.tgl_create !== localMatkulKurikulum.tgl_create ||
+          feederMatkulKurikulum.tgl_create !== tanggal_dibuat ||
           feederMatkulKurikulum.id_kurikulum !== localMatkulKurikulum.id_kurikulum ||
           feederMatkulKurikulum.id_matkul !== localMatkulKurikulum.id_matkul
         ) {
@@ -78,7 +88,7 @@ async function syncDataMatkulKurikulum() {
             {
               semester: feederMatkulKurikulum.semester,
               apakah_wajib: feederMatkulKurikulum.apakah_wajib,
-              tgl_create: feederMatkulKurikulum.tgl_create,
+              tgl_create: tanggal_dibuat,
               id_kurikulum: feederMatkulKurikulum.id_kurikulum,
               id_matkul: feederMatkulKurikulum.id_matkul,
             },

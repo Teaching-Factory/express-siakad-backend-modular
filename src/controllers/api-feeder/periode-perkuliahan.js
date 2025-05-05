@@ -33,7 +33,7 @@ const getPeriodePerkuliahan = async (req, res, next) => {
 
     // Loop untuk menambahkan data ke dalam database
     for (const periode_perkuliahan of dataPeriodePerkuliahan) {
-      let tanggal_mulai, tanggal_akhir; // Deklarasikan variabel di luar blok if
+      let tanggal_mulai, tanggal_akhir, tanggal_dibuat, tanggal_update; // Deklarasikan variabel di luar blok if
 
       //   melakukan pengecekan data tanggal
       if (periode_perkuliahan.tanggal_awal_perkuliahan != null) {
@@ -44,6 +44,16 @@ const getPeriodePerkuliahan = async (req, res, next) => {
       if (periode_perkuliahan.tanggal_akhir_perkuliahan != null) {
         const date_end = periode_perkuliahan.tanggal_akhir_perkuliahan.split("-");
         tanggal_akhir = `${date_end[2]}-${date_end[1]}-${date_end[0]}`;
+      }
+
+      if (periode_perkuliahan.tgl_create != null) {
+        const date_create = periode_perkuliahan.tgl_create.split("-");
+        tanggal_dibuat = `${date_create[2]}-${date_create[1]}-${date_create[0]}`;
+      }
+
+      if (periode_perkuliahan.last_update != null) {
+        const date_update = periode_perkuliahan.last_update.split("-");
+        tanggal_update = `${date_update[2]}-${date_update[1]}-${date_update[0]}`;
       }
 
       await PeriodePerkuliahan.create({
@@ -58,8 +68,8 @@ const getPeriodePerkuliahan = async (req, res, next) => {
         jml_mgu_kul: periode_perkuliahan.jml_mgu_kul,
         metode_kul: periode_perkuliahan.metode_kul,
         metode_kul_eks: periode_perkuliahan.metode_kul_eks,
-        tgl_create: periode_perkuliahan.tgl_create,
-        last_update: periode_perkuliahan.last_update,
+        tgl_create: tanggal_dibuat,
+        last_update: tanggal_update,
         id_prodi: periode_perkuliahan.id_prodi,
         id_semester: periode_perkuliahan.id_semester,
       });
