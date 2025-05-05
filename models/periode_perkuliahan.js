@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       // relasi tabel parent
       PeriodePerkuliahan.belongsTo(models.Prodi, { foreignKey: "id_prodi" });
       PeriodePerkuliahan.belongsTo(models.Semester, { foreignKey: "id_semester" });
+
+      // relasi tabel child
+      PeriodePerkuliahan.hasMany(models.MahasiswaLulusDO, { foreignKey: "id_periode_keluar" });
     }
   }
   PeriodePerkuliahan.init(
