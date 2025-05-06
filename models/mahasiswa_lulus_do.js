@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_periode_keluar: {
         type: DataTypes.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

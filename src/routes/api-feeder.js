@@ -74,6 +74,7 @@ const MahasiswaBimbinganDosenController = require("../controllers/api-feeder/mah
 const UjiMahasiswaController = require("../controllers/api-feeder/uji-mahasiswa");
 const RencanaEvaluasiController = require("../controllers/api-feeder/rencana-evaluasi");
 const KomponenEvaluasiKelasController = require("../controllers/api-feeder/komponen-evaluasi-kelas");
+const MahasiswaLulusDOController = require("../controllers/api-feeder/mahasiswa-lulus-do");
 
 // controller for api-feeder-update (data)
 const DetailNilaiPerkuliahanKelasUpdateController = require("../controllers/api-feeder-update/detail-nilai-perkuliahan-kelas");
@@ -156,6 +157,7 @@ router.get("/get-mahasiswa-bimbingan-dosen", checkRole(["admin"]), MahasiswaBimb
 router.get("/get-uji-mahasiswa", checkRole(["admin"]), UjiMahasiswaController.getUjiMahasiswa);
 router.get("/get-rencana-evaluasi", checkRole(["admin"]), RencanaEvaluasiController.getRencanaEvaluasi);
 router.get("/get-komponen-evaluasi-kelas", checkRole(["admin"]), KomponenEvaluasiKelasController.getKomponenEvaluasiKelas);
+router.get("/get-mahasiswa-lulus-do", checkRole(["admin"]), MahasiswaLulusDOController.getMahasiswaLulusDO);
 
 // routes for api-feeder-update (data)
 router.get("/update-detail-nilai-perkuliahan-kelas", checkRole(["admin"]), DetailNilaiPerkuliahanKelasUpdateController.getDetailNilaiPerkuliahanKelas);

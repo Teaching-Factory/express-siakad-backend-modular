@@ -41,6 +41,14 @@ module.exports = {
         type: Sequelize.STRING(128),
         allowNull: true,
       },
+      bulan_awal_bimbingan: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
+      bulan_akhir_bimbingan: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
       id_registrasi_mahasiswa: {
         type: Sequelize.STRING(36),
         allowNull: false,
@@ -67,7 +75,7 @@ module.exports = {
       },
       id_periode_keluar: {
         type: Sequelize.INTEGER(10),
-        allowNull: false,
+        allowNull: true,
         references: {
           model: {
             tableName: "periode_perkuliahans",
