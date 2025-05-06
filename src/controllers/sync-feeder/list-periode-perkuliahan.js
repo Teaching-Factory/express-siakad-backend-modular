@@ -93,7 +93,7 @@ async function syncDataPeriodePerkuliahan() {
           metode_kul: feederPeriodePerkuliahan.metode_kul,
           metode_kul_eks: feederPeriodePerkuliahan.metode_kul_eks,
           tgl_create: tanggal_dibuat,
-          last_update: tanggal_update,
+          last_update: tanggal_update ?? new Date(),
           id_prodi: feederPeriodePerkuliahan.id_prodi,
           id_semester: feederPeriodePerkuliahan.id_semester,
         });
@@ -133,7 +133,7 @@ async function syncDataPeriodePerkuliahan() {
               metode_kul: feederPeriodePerkuliahan.metode_kul,
               metode_kul_eks: feederPeriodePerkuliahan.metode_kul_eks,
               tgl_create: tanggal_dibuat,
-              last_update: tanggal_update,
+              last_update: tanggal_update ?? new Date(),
               id_prodi: feederPeriodePerkuliahan.id_prodi,
               id_semester: feederPeriodePerkuliahan.id_semester,
             },

@@ -1,6 +1,7 @@
-const { PerkuliahanMahasiswa, PerkuliahanMahasiswaSync, Semester, Mahasiswa, RiwayatPendidikanMahasiswa } = require("../../../models");
+const { PerkuliahanMahasiswa, PerkuliahanMahasiswaSync, Semester, Mahasiswa, RiwayatPendidikanMahasiswa, MahasiswaLulusDO } = require("../../../models");
 const { getToken } = require("../api-feeder/get-token");
 const axios = require("axios");
+const { fetchAllMahasiswaLulusDOIds } = require("../mahasiswa-lulus-do");
 
 async function getPerkuliahanMahasiswaFromFeeder(semesterId, req, res, next) {
   try {
@@ -32,6 +33,9 @@ async function getPerkuliahanMahasiswaFromFeeder(semesterId, req, res, next) {
 
 async function getPerkuliahanMahasiswaFromLocal(semesterId, req, res, next) {
   try {
+    // Ambil semua mahasiswa DO/lulus
+    const mahasiswaLulusIds = await fetchAllMahasiswaLulusDOIds();
+
     // Dapatkan data perkuliahan mahasiswa berdasarkan angkatan
     const perkuliahanMahasiswa = await PerkuliahanMahasiswa.findAll({
       where: {
@@ -46,7 +50,10 @@ async function getPerkuliahanMahasiswaFromLocal(semesterId, req, res, next) {
       ],
     });
 
-    return perkuliahanMahasiswa;
+    // Filter agar mahasiswa yang lulus tidak ikut
+    const filtered = perkuliahanMahasiswa.filter((pm) => !mahasiswaLulusIds.includes(pm.Mahasiswa?.id_registrasi_mahasiswa));
+
+    return filtered;
   } catch (error) {
     console.error("Error fetching data from local DB:", error.message);
     throw error;
