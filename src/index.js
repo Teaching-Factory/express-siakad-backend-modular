@@ -199,6 +199,7 @@ const singkronPenugasanDosen = require("./cronjobs/singkron-get/penugasan-dosen-
 const singkronMatkulKurikulum = require("./cronjobs/singkron-get/matkul-kurikulum-feeder");
 const singkronAktivitasKuliahMahasiswa = require("./cronjobs/singkron-get/aktivitas-kuliah-mahasiswa-feeder");
 const singkronPeriodePerkuliahan = require("./cronjobs/singkron-get/periode-perkuliahan-feeder");
+const singkronMahasiswaLulusDO = require("./cronjobs/singkron-get/mahasiswa-lulus-do-feeder");
 const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
 
 // cronjob (CRUD)
@@ -241,6 +242,7 @@ schedule.scheduleJob(rule, async function () {
     await singkronAktivitasKuliahMahasiswa();
     await singkronSekolah();
     await singkronPeriodePerkuliahan();
+    await singkronMahasiswaLulusDO(); // (id_semester_aktif)
 
     // Singkron Feeder (Create ke feeder)
     // await singkronRencanaEvaluasi(); // (seluruh prodi)
