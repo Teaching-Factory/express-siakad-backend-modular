@@ -1,6 +1,7 @@
 const { Sequelize } = require("sequelize");
 const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize, Role, UserRole, AdminProdi, PerkuliahanMahasiswa, SettingGlobalSemester } = require("../../models");
 const { Op } = require("sequelize");
+const { fetchAllMahasiswaLulusDOIds } = require("../controllers/mahasiswa-lulus-do");
 
 const getAllStatusMahasiswa = async (req, res, next) => {
   try {
@@ -342,6 +343,9 @@ const updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId = async (req, res, ne
       });
     }
 
+    // Ambil semua mahasiswa DO/lulus
+    const mahasiswaLulusIds = await fetchAllMahasiswaLulusDOIds();
+
     const angkatan = await Angkatan.findByPk(angkatanId);
 
     // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList
@@ -352,15 +356,18 @@ const updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId = async (req, res, ne
       },
     });
 
+    // Filter agar hanya mahasiswa aktif (tidak termasuk DO/lulus)
+    const filteredMahasiswas = mahasiswas.filter((mhs) => !mahasiswaLulusIds.includes(mhs.id_registrasi_mahasiswa));
+
     // Jika data mahasiswa tidak ditemukan, kirim respons 404
-    if (!mahasiswas || mahasiswas.length === 0) {
+    if (!filteredMahasiswas || filteredMahasiswas.length === 0) {
       return res.status(404).json({
         message: `Mahasiswa dengan prodi ID ${prodiId} dan Angkatan ID ${angkatanId} tidak ditemukan`,
       });
     }
 
-    // Ambil ID dari data mahasiswa yang ditemukan
-    const mahasiswaIds = mahasiswas.map((mahasiswa) => mahasiswa.id_registrasi_mahasiswa);
+    // Ambil ID dari mahasiswa yang sudah difilter
+    const mahasiswaIds = filteredMahasiswas.map((mhs) => mhs.id_registrasi_mahasiswa);
 
     // Update status mahasiswa menjadi "Non-Aktif"
     const [updatedCount] = await Mahasiswa.update(

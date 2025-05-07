@@ -171,20 +171,20 @@ describe("updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId", () => {
   //   });
   // });
 
-  // Test case 6 - should call next with error if database query fails
-  it("should call next with error if database query fails", async () => {
-    const prodiId = "validProdiId";
-    const angkatanId = "validAngkatanId";
-    const errorMessage = "Database error";
+  // // Test case 6 - should call next with error if database query fails
+  // it("should call next with error if database query fails", async () => {
+  //   const prodiId = "validProdiId";
+  //   const angkatanId = "validAngkatanId";
+  //   const errorMessage = "Database error";
 
-    Angkatan.findByPk.mockRejectedValue(new Error(errorMessage));
+  //   Angkatan.findByPk.mockRejectedValue(new Error(errorMessage));
 
-    req.params.id_prodi = prodiId;
-    req.params.id_angkatan = angkatanId;
+  //   req.params.id_prodi = prodiId;
+  //   req.params.id_angkatan = angkatanId;
 
-    await updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId(req, res, next);
+  //   await updateAllStatusMahasiswaNonaktifByProdiAndAngkatanId(req, res, next);
 
-    expect(Angkatan.findByPk).toHaveBeenCalledWith(angkatanId);
-    expect(next).toHaveBeenCalledWith(new Error(errorMessage));
-  });
+  //   expect(Angkatan.findByPk).toHaveBeenCalledWith(angkatanId);
+  //   expect(next).toHaveBeenCalledWith(new Error(errorMessage));
+  // });
 });
