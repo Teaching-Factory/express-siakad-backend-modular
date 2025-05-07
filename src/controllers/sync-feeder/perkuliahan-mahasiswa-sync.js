@@ -439,6 +439,33 @@ const insertPerkuliahanMahasiswa = async (id_perkuliahan_mahasiswa, req, res, ne
     const response = await axios.post(url_feeder, requestBody);
 
     // Mengecek jika ada error pada respons dari server
+    if (response.data.error_code === 1260) {
+      // jika eror Data aktivitas mahasiswa sudah ada, maka lakukan update
+      const requestBodyUpdate = {
+        act: "UpdatePerkuliahanMahasiswa",
+        token: `${token}`,
+        key: {
+          id_registrasi_mahasiswa: riwayat_pendidikan_mahasiswa.id_feeder,
+          id_semester: perkuliahan_mahasiswa.id_semester,
+        },
+        record: {
+          id_status_mahasiswa: perkuliahan_mahasiswa.id_status_mahasiswa,
+          id_pembiayaan: perkuliahan_mahasiswa.id_pembiayaan,
+          ips: perkuliahan_mahasiswa.ips,
+          ipk: perkuliahan_mahasiswa.ipk,
+          sks_semester: perkuliahan_mahasiswa.sks_semester,
+          total_sks: perkuliahan_mahasiswa.sks_total,
+          biaya_kuliah_smt: perkuliahan_mahasiswa.biaya_kuliah_smt === null || perkuliahan_mahasiswa.biaya_kuliah_smt === undefined || perkuliahan_mahasiswa.biaya_kuliah_smt === 0 ? 100 : perkuliahan_mahasiswa.biaya_kuliah_smt,
+        },
+      };
+
+      // Menggunakan token untuk mengambil data (update)
+      await axios.post(url_feeder, requestBodyUpdate);
+
+      perkuliahan_mahasiswa_sync.status = true;
+      await perkuliahan_mahasiswa_sync.save();
+    }
+
     if (response.data.error_code !== 0) {
       throw new Error(`Error from Feeder: ${response.data.error_desc}`);
     }
