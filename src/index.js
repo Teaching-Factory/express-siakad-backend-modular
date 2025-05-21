@@ -214,6 +214,17 @@ const singkronPesertaKelasKuliah = require("./cronjobs/singkron-get/peserta-kela
 const singkronDetailNilaiPerkuliahanKelas = require("./cronjobs/singkron-get/detail-nilai-perkuliahan-kelas-feeder");
 const singkronPerkuliahanMahasiswa = require("./cronjobs/singkron-get/perkuliahan-mahasiswa-feeder");
 
+// cronjob (Delete)
+const deleteBiodataMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-biodata-mahasiswa-syncs");
+const deleteDetailNilaiPerkuliahanKelasSyncs = require("./cronjobs/delete-syncs/delete-detail-nilai-perkuliahan-kelas-syncs");
+const deleteDosenPengajarKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-dosen-pengajar-kelas-kuliah-syncs");
+const deleteKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-kelas-kuliah-syncs");
+const deleteKomponenEvaluasiKelasSyncs = require("./cronjobs/delete-syncs/delete-komponen-evaluasi-kelas-syncs");
+const deletePerkuliahanMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-perkuliahan-mahasiswa-syncs");
+const deletePesertaKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-peserta-kelas-kuliah-syncs");
+const deleteRencanaEvaluasiSyncs = require("./cronjobs/delete-syncs/delete-rencana-evaluasi-syncs");
+const deleteRiwayatPendidikanMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-riwayat-pendidikan-mahasiswa-syncs");
+
 const rule = new schedule.RecurrenceRule();
 // cronjob dijalankan ketika jam 0.00
 // rule.hour = 0;
@@ -259,6 +270,32 @@ schedule.scheduleJob(rule, async function () {
     console.log("Semua Cronjob selesai dijalankan.");
   } catch (error) {
     console.error("Error during cronjob execution:", error);
+  }
+});
+
+// cronjob setiap jam 1 malam (menghapus seluruh data singkron sementara yang berhasil di singkron ke feeder)
+const ruleAt1AM = new schedule.RecurrenceRule();
+ruleAt1AM.hour = 1;
+ruleAt1AM.minute = 0;
+
+schedule.scheduleJob(ruleAt1AM, async function () {
+  try {
+    console.log("Menjalankan cronjob pembersihan pada pukul 01.00...");
+
+    // cronjob delete singkron sementara
+    await deleteBiodataMahasiswaSyncs();
+    await deleteDetailNilaiPerkuliahanKelasSyncs();
+    await deleteDosenPengajarKelasKuliahSyncs();
+    await deleteKelasKuliahSyncs();
+    await deleteKomponenEvaluasiKelasSyncs();
+    await deletePerkuliahanMahasiswaSyncs();
+    await deletePesertaKelasKuliahSyncs();
+    await deleteRencanaEvaluasiSyncs();
+    await deleteRiwayatPendidikanMahasiswaSyncs();
+
+    console.log("Cronjob Pembersihan data selesai.");
+  } catch (error) {
+    console.error("Error pada cronjob 01.00:", error);
   }
 });
 
