@@ -18,71 +18,78 @@ async function singkronPesertaKelasKuliah() {
       return;
     }
 
-    // Ambil 4 digit pertama dari id_semester_krs
-    const tahunAngkatan = setting_global_semester_aktif.id_semester_krs.slice(0, 4);
+    // Ambil 4 digit pertama dari id_semester_krs dan konversi ke integer
+    const tahunSekarang = parseInt(setting_global_semester_aktif.id_semester_krs.slice(0, 4), 10);
 
-    const angkatan = await Angkatan.findOne({
+    // Hitung tahun awal (4 tahun ke belakang)
+    const tahunAwal = tahunSekarang - 4;
+
+    const angkatans = await Angkatan.findAll({
       where: {
-        tahun: tahunAngkatan, // Cocokkan dengan tahun hasil pemotongan
+        tahun: {
+          [Op.between]: [tahunAwal, tahunSekarang],
+        },
       },
       order: [["createdAt", "DESC"]],
     });
 
-    console.log(angkatan);
+    for (const angkatan of angkatans) {
+      console.log(`Proses sinkron angkatan tahun ${angkatan.tahun} (id: ${angkatan.id})`);
 
-    // Buat objek request palsu untuk pemanggilan internal tanpa API
-    const fakeReq = {
-      params: {
-        id_angkatan: angkatan.id,
-      },
-    };
-
-    // Objek response kosong agar tidak mempengaruhi output
-    const fakeRes = {
-      status: () => ({
-        json: () => {},
-      }),
-    };
-
-    await matchingDataPesertaKelasKuliah(fakeReq, fakeRes, () => {});
-
-    // get data peserta kelas kuliah sync yang belum di singkron dengan jenis singkron create dan delete
-    const peserta_kelas_kuliah_syncs = await PesertaKelasKuliahSync.findAll({
-      where: {
-        jenis_singkron: {
-          [Op.in]: ["create", "get", "update"], // Memfilter hanya "create", "get" dan "update"
+      // Buat objek request palsu untuk pemanggilan internal tanpa API
+      const fakeReq = {
+        params: {
+          id_angkatan: angkatan.id,
         },
-        status: false,
-      },
-      attributes: ["id"],
-    });
+      };
 
-    if (peserta_kelas_kuliah_syncs.length === 0) {
-      console.log("Tidak ada data peserta kelas kuliah yang perlu disinkron.");
-      return;
-    }
+      // Objek response kosong agar tidak mempengaruhi output
+      const fakeRes = {
+        status: () => ({
+          json: () => {},
+        }),
+      };
 
-    // **Format request body sesuai dengan kebutuhan API**
-    const formattedData = { peserta_kelas_kuliah_syncs: peserta_kelas_kuliah_syncs.map((peserta_kelas) => ({ id: peserta_kelas.id })) };
+      await matchingDataPesertaKelasKuliah(fakeReq, fakeRes, () => {});
 
-    // Buat objek request palsu untuk `syncPesertaKelasKuliahs`
-    const fakeSyncReq = {
-      body: formattedData,
-    };
+      // get data peserta kelas kuliah sync yang belum di singkron dengan jenis singkron create dan delete
+      const peserta_kelas_kuliah_syncs = await PesertaKelasKuliahSync.findAll({
+        where: {
+          jenis_singkron: {
+            [Op.in]: ["create", "get", "update"], // Memfilter hanya "create", "get" dan "update"
+          },
+          status: false,
+        },
+        attributes: ["id"],
+      });
 
-    // Simulasi response kosong agar tidak mempengaruhi output
-    const fakeSyncRes = {
-      status: () => ({
-        json: () => {},
-      }),
-    };
-
-    // Panggil fungsi `syncPesertaKelasKuliahs`
-    await syncPesertaKelasKuliahs(fakeSyncReq, fakeSyncRes, (error) => {
-      if (error) {
-        console.error("Error during syncPesertaKelasKuliahs:", error.message);
+      if (peserta_kelas_kuliah_syncs.length === 0) {
+        console.log("Tidak ada data peserta kelas kuliah yang perlu disinkron.");
+        return;
       }
-    });
+
+      // **Format request body sesuai dengan kebutuhan API**
+      const formattedData = { peserta_kelas_kuliah_syncs: peserta_kelas_kuliah_syncs.map((peserta_kelas) => ({ id: peserta_kelas.id })) };
+
+      // Buat objek request palsu untuk `syncPesertaKelasKuliahs`
+      const fakeSyncReq = {
+        body: formattedData,
+      };
+
+      // Simulasi response kosong agar tidak mempengaruhi output
+      const fakeSyncRes = {
+        status: () => ({
+          json: () => {},
+        }),
+      };
+
+      // Panggil fungsi `syncPesertaKelasKuliahs`
+      await syncPesertaKelasKuliahs(fakeSyncReq, fakeSyncRes, (error) => {
+        if (error) {
+          console.error("Error during syncPesertaKelasKuliahs:", error.message);
+        }
+      });
+    }
 
     console.log("Cronjob singkron peserta kelas kuliah finished");
   } catch (error) {
