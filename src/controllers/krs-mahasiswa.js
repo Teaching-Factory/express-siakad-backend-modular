@@ -120,6 +120,13 @@ const getKRSMahasiswaByMahasiswaId = async (req, res, next) => {
 
     for (let krs of krsMahasiswa) {
       total += Number(krs.MataKuliah.sks_mata_kuliah); // Pastikan sks diubah menjadi angka
+
+      const kelas = krs.KelasKuliah;
+
+      const isIncomplete = !kelas.nama_kelas_kuliah || !kelas.sks || !kelas.jumlah_mahasiswa || kelas.jumlah_mahasiswa === 0 || !kelas.lingkup || !kelas.mode || !kelas.id_prodi || !kelas.id_semester || !kelas.id_matkul || !kelas.id_dosen;
+
+      // Tambahkan status_kelas di objek krs
+      krs.setDataValue("status_kelas", isIncomplete ? "Kelas Belum Lengkap" : "Kelas Sudah Lengkap");
     }
 
     // Kirim respons JSON jika berhasil
