@@ -10,7 +10,19 @@ jest.mock("../../models", () => ({
   Angkatan: {
     findOne: jest.fn(),
   },
+  BiodataMahasiswa: jest.fn(),
+  PerguruanTinggi: jest.fn(),
+  Agama: jest.fn(),
+  Semester: jest.fn(),
+  Prodi: jest.fn(),
 }));
+
+// Mock function helper yang digunakan di controller
+jest.mock("../../src/controllers/mahasiswa-lulus-do.js", () => ({
+  fetchAllMahasiswaLulusDOIds: jest.fn(),
+}));
+
+const { fetchAllMahasiswaLulusDOIds } = require("../../src/controllers/mahasiswa-lulus-do.js");
 
 describe("getMahasiswaByProdiAndAngkatanId", () => {
   let req, res, next;
@@ -28,7 +40,7 @@ describe("getMahasiswaByProdiAndAngkatanId", () => {
   it("should return 400 if Prodi ID is not provided", async () => {
     await getMahasiswaByProdiAndAngkatanId(req, res, next);
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toBe(400);
     expect(res._getJSONData()).toEqual({
       message: "Prodi ID is required",
     });
@@ -41,7 +53,7 @@ describe("getMahasiswaByProdiAndAngkatanId", () => {
 
     await getMahasiswaByProdiAndAngkatanId(req, res, next);
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toBe(400);
     expect(res._getJSONData()).toEqual({
       message: "Angkatan ID is required",
     });
@@ -51,16 +63,15 @@ describe("getMahasiswaByProdiAndAngkatanId", () => {
 
   it("should return 404 if Angkatan not found", async () => {
     const angkatanId = "123";
-    Angkatan.findOne.mockResolvedValue(null);
-
     req.params = { id_prodi: "456", id_angkatan: angkatanId };
+    Angkatan.findOne.mockResolvedValue(null);
 
     await getMahasiswaByProdiAndAngkatanId(req, res, next);
 
     expect(Angkatan.findOne).toHaveBeenCalledWith({
       where: { id: angkatanId },
     });
-    expect(res.statusCode).toEqual(404);
+    expect(res.statusCode).toBe(404);
     expect(res._getJSONData()).toEqual({
       message: `Angkatan dengan ID ${angkatanId} tidak ditemukan`,
     });
@@ -70,57 +81,54 @@ describe("getMahasiswaByProdiAndAngkatanId", () => {
   it("should return 404 if no Mahasiswa found for the given Prodi ID and Angkatan ID", async () => {
     const prodiId = "456";
     const angkatanId = "123";
-    const mockAngkatan = { id: angkatanId, tahun: "2020" };
-    Angkatan.findOne.mockResolvedValue(mockAngkatan);
-    Mahasiswa.findAll.mockResolvedValue([]);
+    const tahunAngkatan = "2020";
+    const mockAngkatan = { id: angkatanId, tahun: tahunAngkatan };
+    const mockLulusDoIds = ["mhs1", "mhs2"];
 
     req.params = { id_prodi: prodiId, id_angkatan: angkatanId };
 
+    Angkatan.findOne.mockResolvedValue(mockAngkatan);
+    fetchAllMahasiswaLulusDOIds.mockResolvedValue(mockLulusDoIds);
+    Mahasiswa.findAll.mockResolvedValue([]);
+
     await getMahasiswaByProdiAndAngkatanId(req, res, next);
 
-    expect(Angkatan.findOne).toHaveBeenCalledWith({
-      where: { id: angkatanId },
-    });
+    expect(Angkatan.findOne).toHaveBeenCalledWith({ where: { id: angkatanId } });
+    expect(fetchAllMahasiswaLulusDOIds).toHaveBeenCalled();
     expect(Mahasiswa.findAll).toHaveBeenCalledWith({
       where: {
         id_prodi: prodiId,
-        nama_periode_masuk: { [Op.like]: "2020/%" },
+        nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
+        id_registrasi_mahasiswa: { [Op.notIn]: mockLulusDoIds },
       },
       include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
-    expect(res.statusCode).toEqual(404);
+    expect(res.statusCode).toBe(404);
     expect(res._getJSONData()).toEqual({
-      message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan 2020 tidak ditemukan`,
+      message: `Mahasiswa dengan Prodi ID ${prodiId} dan tahun angkatan ${tahunAngkatan} tidak ditemukan`,
     });
   });
 
-  it("should get Mahasiswa by Prodi ID and Angkatan ID successfully", async () => {
-    const prodiId = "7d061c5d-829d-4c7d-ade2-52610155fab0";
-    const angkatanId = "44";
-    const mockAngkatan = { id: angkatanId, tahun: "2020" };
+  it("should return 200 and data if Mahasiswa found", async () => {
+    const prodiId = "789";
+    const angkatanId = "321";
+    const tahunAngkatan = "2019";
+    const mockAngkatan = { id: angkatanId, tahun: tahunAngkatan };
+    const mockLulusDoIds = ["mhs1"];
     const mockMahasiswa = [
-      { id: 1, name: "Mahasiswa 1" },
-      { id: 2, name: "Mahasiswa 2" },
+      { id: "mhs2", name: "Mahasiswa 1" },
+      { id: "mhs3", name: "Mahasiswa 2" },
     ];
-
-    Angkatan.findOne.mockResolvedValue(mockAngkatan);
-    Mahasiswa.findAll.mockResolvedValue(mockMahasiswa);
 
     req.params = { id_prodi: prodiId, id_angkatan: angkatanId };
 
+    Angkatan.findOne.mockResolvedValue(mockAngkatan);
+    fetchAllMahasiswaLulusDOIds.mockResolvedValue(mockLulusDoIds);
+    Mahasiswa.findAll.mockResolvedValue(mockMahasiswa);
+
     await getMahasiswaByProdiAndAngkatanId(req, res, next);
 
-    expect(Angkatan.findOne).toHaveBeenCalledWith({
-      where: { id: angkatanId },
-    });
-    expect(Mahasiswa.findAll).toHaveBeenCalledWith({
-      where: {
-        id_prodi: prodiId,
-        nama_periode_masuk: { [Op.like]: "2020/%" },
-      },
-      include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
-    });
-    expect(res.statusCode).toEqual(200);
+    expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual({
       message: `GET Mahasiswa By Prodi ID ${prodiId} dan Angkatan ID ${angkatanId} Success`,
       jumlahData: mockMahasiswa.length,
@@ -128,11 +136,11 @@ describe("getMahasiswaByProdiAndAngkatanId", () => {
     });
   });
 
-  it("should handle errors", async () => {
-    const mockError = new Error("Test error");
-    Angkatan.findOne.mockRejectedValue(mockError);
+  it("should handle internal server errors and call next with error", async () => {
+    const mockError = new Error("Database error");
+    req.params = { id_prodi: "999", id_angkatan: "888" };
 
-    req.params = { id_prodi: "456", id_angkatan: "123" };
+    Angkatan.findOne.mockRejectedValue(mockError);
 
     await getMahasiswaByProdiAndAngkatanId(req, res, next);
 

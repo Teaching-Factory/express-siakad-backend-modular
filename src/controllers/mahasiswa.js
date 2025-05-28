@@ -40,6 +40,7 @@ const {
 } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
+const { fetchAllMahasiswaLulusDOIds } = require("././mahasiswa-lulus-do");
 
 const getAllMahasiswa = async (req, res, next) => {
   try {
@@ -265,11 +266,15 @@ const getMahasiswaByProdiAndAngkatanId = async (req, res, next) => {
     // Ekstrak tahun dari data angkatan
     const tahunAngkatan = angkatan.tahun;
 
+    // Ambil daftar ID mahasiswa yang sudah lulus atau DO
+    const mahasiswaLulusDoIds = await fetchAllMahasiswaLulusDOIds();
+
     // Cari data mahasiswa berdasarkan id_periode yang ada dalam periodeIdList dan tahun angkatan
     const mahasiswas = await Mahasiswa.findAll({
       where: {
         id_prodi: prodiId,
         nama_periode_masuk: { [Op.like]: `${tahunAngkatan}/%` },
+        id_registrasi_mahasiswa: { [Op.notIn]: mahasiswaLulusDoIds },
       },
       include: [{ model: BiodataMahasiswa }, { model: PerguruanTinggi }, { model: Agama }, { model: Semester }, { model: Prodi }],
     });
