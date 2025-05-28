@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 5000;
 const cors = require("cors");
 const express = require("express");
 const path = require("path");
-// const helmet = require("helmet");
+const helmet = require("helmet");
 
 // import routes
 // route api feeder dikti
@@ -177,8 +177,19 @@ const checkToken = require("./middlewares/check-token");
 // running express server
 const app = express();
 
-// Gunakan Helmet untuk mengamankan aplikasi
-// app.use(helmet());
+// Gunakan Helmet sekali saja, dengan konfigurasi lengkap
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Menonaktifkan CSP agar gambar/file bisa dipanggil dari frontend
+    crossOriginResourcePolicy: false, // Mengizinkan akses resource dari domain berbeda (misal: frontend di localhost:5173)
+  })
+);
+
+// Tambahan header manual untuk memastikan file bisa diakses lintas origin
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  next();
+});
 
 // Middleware untuk melayani file statis
 app.use("/src/storage", express.static(path.join(__dirname, "storage")));
