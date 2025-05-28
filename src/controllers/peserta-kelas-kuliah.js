@@ -58,6 +58,7 @@ const getPesertaKelasKuliahById = async (req, res, next) => {
   }
 };
 
+// tidak digunakan
 const createPesertaKelasByAngkatanAndKelasKuliahId = async (req, res, next) => {
   try {
     // Dapatkan ID dari parameter permintaan
@@ -326,9 +327,6 @@ const createPesertaKelasAndKRSByAngkatanAndKelasKuliahId = async (req, res, next
       },
     });
 
-    // ambil data angkatan
-    let angkatan = await Angkatan.findByPk(angkatanId);
-
     for (const mahasiswa of mahasiswas) {
       const { id_registrasi_mahasiswa } = mahasiswa;
 
@@ -337,9 +335,24 @@ const createPesertaKelasAndKRSByAngkatanAndKelasKuliahId = async (req, res, next
         where: { id_registrasi_mahasiswa },
       });
 
-      // create data krs mahasiswa dengan satus tervalidasi
+      // angkatan krs diperoleh berdasarkan angkatan mahasiswa
+      const angkatanMahasiswa = data_mahasiswa.nama_periode_masuk.substring(0, 4);
+
+      // Cek apakah KRS untuk mahasiswa ini dan kelas kuliah ini sudah ada
+      const existingKRS = await KRSMahasiswa.findOne({
+        where: {
+          id_registrasi_mahasiswa,
+          id_kelas: kelas_kuliah.id_kelas_kuliah,
+          id_semester: setting_global_semester.id_semester_krs,
+        },
+      });
+
+      // Jika sudah ada, skip agar tidak duplikat
+      if (existingKRS) continue;
+
+      // Jika belum ada, maka lakukan create data krs mahasiswa dengan satus tervalidasi
       const newKrsMahasiswa = await KRSMahasiswa.create({
-        angkatan: angkatan.tahun,
+        angkatan: angkatanMahasiswa,
         validasi_krs: false,
         id_registrasi_mahasiswa,
         id_semester: setting_global_semester.id_semester_krs,

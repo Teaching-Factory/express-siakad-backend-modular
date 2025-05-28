@@ -177,7 +177,7 @@ const checkToken = require("./middlewares/check-token");
 // running express server
 const app = express();
 
-// Gunakan Helmet sekali saja, dengan konfigurasi lengkap
+// Penggunaan Helmet, dengan konfigurasi lengkap
 app.use(
   helmet({
     contentSecurityPolicy: false, // Menonaktifkan CSP agar gambar/file bisa dipanggil dari frontend

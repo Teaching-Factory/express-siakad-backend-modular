@@ -979,9 +979,9 @@ const createKRSMahasiswa = async (req, res, next) => {
     }
 
     // mengecek apakah status mahasiswa aktif atau tidak
-    if (mahasiswa.nama_status_mahasiswa !== "Aktif" && mahasiswa.nama_status_mahasiswa !== "AKTIF") {
-      return res.status(404).json({ message: "Status Mahasiswa Tidak Aktif" });
-    }
+    // if (mahasiswa.nama_status_mahasiswa !== "Aktif" && mahasiswa.nama_status_mahasiswa !== "AKTIF") {
+    //   return res.status(404).json({ message: "Status Mahasiswa Tidak Aktif" });
+    // }
 
     // get data setting global semester
     const setting_global_semester = await SettingGlobalSemester.findOne({
@@ -1002,6 +1002,17 @@ const createKRSMahasiswa = async (req, res, next) => {
     // Inisialisasi array untuk menyimpan data KRS yang akan dibuat
     const krsEntries = [];
 
+    // get data krs mahasiswa
+    const existingKRS = await KRSMahasiswa.findAll({
+      where: {
+        id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        id_semester: setting_global_semester.id_semester_krs,
+      },
+      attributes: ["id_kelas"],
+    });
+
+    const existingKelasIds = existingKRS.map((krs) => krs.id_kelas);
+
     // Iterasi melalui data kelas_kuliahs dari request body
     for (const kelas of kelas_kuliahs) {
       // Mengambil data kelas kuliah berdasarkan id_kelas
@@ -1015,6 +1026,11 @@ const createKRSMahasiswa = async (req, res, next) => {
         return res.status(404).json({ message: "Kelas Kuliah not found" });
       }
 
+      // Lewati jika sudah pernah diambil sebelumnya
+      if (existingKelasIds.includes(kelas_kuliah.id_kelas_kuliah)) {
+        continue; // lewati kelas
+      }
+
       // Jika kelas kuliah ditemukan, tambahkan ke krsEntries
       if (kelas_kuliah) {
         const jumlahPesertaKelasKuliah = await PesertaKelasKuliah.count({
@@ -1025,17 +1041,13 @@ const createKRSMahasiswa = async (req, res, next) => {
           krsEntries.push({
             angkatan: angkatanMahasiswa,
             validasi_krs: false,
-            id_registrasi_mahasiswa,
+            id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
             id_semester: setting_global_semester.id_semester_krs,
             id_prodi: mahasiswa.id_prodi,
             id_matkul: kelas_kuliah.id_matkul,
             id_kelas: kelas_kuliah.id_kelas_kuliah,
           });
-        } else {
-          return res.status(404).json({ message: "Bug 1" });
         }
-      } else {
-        return res.status(404).json({ message: "Bug 2" });
       }
     }
 
@@ -1095,11 +1107,15 @@ const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
     const krsEntries = [];
 
     // get data krs mahasiswa
-    const krsMahasiswas = await KRSMahasiswa.findAll({
+    const existingKRS = await KRSMahasiswa.findAll({
       where: {
         id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        id_semester: setting_global_semester.id_semester_krs,
       },
+      attributes: ["id_kelas"],
     });
+
+    const existingKelasIds = existingKRS.map((krs) => krs.id_kelas);
 
     // Iterasi melalui data kelas_kuliahs dari request body
     for (const kelas of kelas_kuliahs) {
@@ -1112,6 +1128,11 @@ const createKRSMahasiswaByMahasiswaActive = async (req, res, next) => {
 
       if (!kelas_kuliah) {
         return res.status(404).json({ message: "Kelas Kuliah not found" });
+      }
+
+      // Lewati jika sudah pernah diambil sebelumnya
+      if (existingKelasIds.includes(kelas_kuliah.id_kelas_kuliah)) {
+        continue; // lewati kelas
       }
 
       // Jika kelas kuliah ditemukan, tambahkan ke krsEntries
