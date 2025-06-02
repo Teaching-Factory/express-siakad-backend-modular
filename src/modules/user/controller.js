@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const { Op } = require("sequelize");
-const { User, Dosen, Role, UserRole, Mahasiswa, Angkatan, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, StatusKeaktifanPegawai, Semester, AdminProdi } = require("../../models");
+const { User, Dosen, Role, UserRole, Mahasiswa, Angkatan, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, StatusKeaktifanPegawai, Semester, AdminProdi } = require("../../../models");
 
 const getAllUser = async (req, res, next) => {
   try {
