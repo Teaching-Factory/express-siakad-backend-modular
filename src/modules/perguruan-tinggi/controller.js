@@ -1,4 +1,4 @@
-const { PerguruanTinggi, SettingWSFeeder, ProfilPT } = require("../../models");
+const { PerguruanTinggi, SettingWSFeeder, ProfilPT } = require("../../../models");
 
 const getAllPerguruanTinggi = async (req, res, next) => {
   try {

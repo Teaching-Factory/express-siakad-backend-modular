@@ -1,4 +1,4 @@
-const { Negara } = require("../../models");
+const { Negara } = require("../../../models");
 
 const getAllNegaras = async (req, res, next) => {
   try {

@@ -1,4 +1,4 @@
-const { Wilayah, Negara } = require("../../models");
+const { Wilayah, Negara } = require("../../../models");
 
 const getAllWilayahs = async (req, res, next) => {
   try {

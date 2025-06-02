@@ -25,9 +25,6 @@ const helmet = require("helmet");
 const routeRegister = require("../routes");
 
 // route api local done
-// const negaraRoutes = require("./routes/negara");
-// const wilayahRoutes = require("./routes/wilayah");
-// const perguruanTinggiRoutes = require("./routes/perguruan_tinggi");
 // const profilPTRoutes = require("./routes/profil-pt");
 // const jalurMasukRoutes = require("./routes/jalur-masuk");
 // const jenisPendaftaranRoutes = require("./routes/jenis-pendaftaran");
@@ -347,9 +344,6 @@ app.use(express.json());
 app.use("/", routeRegister);
 
 // route api local done
-// app.use("/negara", checkToken, negaraRoutes);
-// app.use("/wilayah", checkToken, wilayahRoutes);
-// app.use("/perguruan-tinggi", checkToken, perguruanTinggiRoutes);
 // app.use("/profil-pt", checkToken, profilPTRoutes);
 // app.use("/jalur-masuk", checkToken, jalurMasukRoutes);
 // app.use("/jenis-pendaftaran", checkToken, jenisPendaftaranRoutes);
