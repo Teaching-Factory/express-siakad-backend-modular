@@ -1,7 +1,5 @@
 // Import model Role tanpa kurung kurawal
-const { Role } = require("../../models");
-const { Permission } = require("../../models");
-const { RolePermission } = require("../../models");
+const { Role, Permission, RolePermission } = require("../../../models");
 
 // role
 const getAllRoles = async (req, res, next) => {

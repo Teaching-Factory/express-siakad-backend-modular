@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const RolePermissionController = require("../controllers/role-permission");
-const checkRole = require("../middlewares/check-role");
+const RolePermissionController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 // role

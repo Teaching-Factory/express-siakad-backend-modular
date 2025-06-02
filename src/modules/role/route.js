@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const RolePermissionController = require("../controllers/role");
-const checkRole = require("../middlewares/check-role");
+const RolePermissionController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin"]), RolePermissionController.getAllRoles);

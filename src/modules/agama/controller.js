@@ -1,4 +1,4 @@
-const { Agama } = require("../../models");
+const { Agama } = require("../../../models");
 
 const getAllAgamas = async (req, res, next) => {
   try {

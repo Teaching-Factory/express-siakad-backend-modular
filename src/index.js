@@ -25,9 +25,6 @@ const helmet = require("helmet");
 const routeRegister = require("../routes");
 
 // route api local done
-// const roleRoutes = require("./routes/role");
-// const rolePermissionRoutes = require("./routes/role-permission");
-// const agamaRoutes = require("./routes/agama");
 // const negaraRoutes = require("./routes/negara");
 // const wilayahRoutes = require("./routes/wilayah");
 // const perguruanTinggiRoutes = require("./routes/perguruan_tinggi");
@@ -350,9 +347,6 @@ app.use(express.json());
 app.use("/", routeRegister);
 
 // route api local done
-// app.use("/role", checkToken, roleRoutes);
-// app.use("/role-permission", checkToken, rolePermissionRoutes);
-// app.use("/agama", checkToken, agamaRoutes);
 // app.use("/negara", checkToken, negaraRoutes);
 // app.use("/wilayah", checkToken, wilayahRoutes);
 // app.use("/perguruan-tinggi", checkToken, perguruanTinggiRoutes);
