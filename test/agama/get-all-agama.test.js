@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllAgamas } = require("../../src/controllers/agama");
+const { getAllAgamas } = require("../../src/modules/agama/controller");
 const { Agama } = require("../../models");
 
 jest.mock("../../models");

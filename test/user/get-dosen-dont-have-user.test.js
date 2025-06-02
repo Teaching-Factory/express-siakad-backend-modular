@@ -1,4 +1,4 @@
-const { getDosenDontHaveUser } = require("../../src/controllers/user");
+const { getDosenDontHaveUser } = require("../../src/modules/user/controller");
 const { Dosen, User } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

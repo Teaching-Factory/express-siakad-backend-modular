@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { doLogout } = require("../../src/controllers/auth");
+const { doLogout } = require("../../src/modules/auth/controller");
 
 describe("doLogout", () => {
   let req, res, next;

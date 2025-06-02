@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { manageRolePermission } = require("../../src/controllers/role-permission");
+const { manageRolePermission } = require("../../src/modules/role-permission/controller");
 const { Role, RolePermission } = require("../../models");
 
 jest.mock("../../models");

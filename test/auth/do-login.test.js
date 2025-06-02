@@ -1,4 +1,4 @@
-const { doLogin, generateToken } = require("../../src/controllers/auth");
+const { doLogin, generateToken } = require("../../src/modules/auth/controller");
 const { User, UserRole, Role, RolePermission, Permission, Mahasiswa, SettingGlobal } = require("../../models");
 const bcrypt = require("bcrypt");
 const httpMocks = require("node-mocks-http");
@@ -6,9 +6,9 @@ const axios = require("axios");
 
 jest.mock("bcrypt");
 jest.mock("axios");
-jest.mock("../../src/controllers/auth", () => ({
-  ...jest.requireActual("../../src/controllers/auth"),
-  generateToken: jest.fn()
+jest.mock("../../src/modules/auth/controller", () => ({
+  ...jest.requireActual("../../src/modules/auth/controller"),
+  generateToken: jest.fn(),
 }));
 
 describe("doLogin", () => {

@@ -1,4 +1,4 @@
-const { doLogout } = require("../../src/controllers/auth");
+const { doLogout } = require("../../src/modules/auth/controller");
 const { BlacklistedToken } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

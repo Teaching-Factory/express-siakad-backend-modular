@@ -1,4 +1,4 @@
-const { getAllUser } = require("../../src/controllers/user");
+const { getAllUser } = require("../../src/modules/user/controller");
 const { User } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

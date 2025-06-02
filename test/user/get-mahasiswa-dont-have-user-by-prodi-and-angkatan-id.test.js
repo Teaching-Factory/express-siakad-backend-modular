@@ -1,4 +1,4 @@
-const { getMahasiswaDontHaveUserByProdiAndAngkatanId } = require("../../src/controllers/user");
+const { getMahasiswaDontHaveUserByProdiAndAngkatanId } = require("../../src/modules/user/controller");
 const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, Semester, Angkatan, User } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const { Op } = require("sequelize");

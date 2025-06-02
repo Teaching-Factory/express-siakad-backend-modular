@@ -1,4 +1,4 @@
-const { updateUserById } = require("../../src/controllers/user");
+const { updateUserById } = require("../../src/modules/user/controller");
 const { User, Role, UserRole } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const bcrypt = require("bcrypt");

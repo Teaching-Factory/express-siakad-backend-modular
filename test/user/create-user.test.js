@@ -1,4 +1,4 @@
-const { createUser } = require("../../src/controllers/user");
+const { createUser } = require("../../src/modules/user/controller");
 const { User, Role, UserRole } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

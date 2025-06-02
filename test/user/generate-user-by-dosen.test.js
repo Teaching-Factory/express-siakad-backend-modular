@@ -1,4 +1,4 @@
-const { generateUserByDosen } = require("../../src/controllers/user");
+const { generateUserByDosen } = require("../../src/modules/user/controller");
 const { User, UserRole, Role, Dosen } = require("../../models");
 const bcrypt = require("bcrypt");
 const httpMocks = require("node-mocks-http");

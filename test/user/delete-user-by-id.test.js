@@ -1,4 +1,4 @@
-const { deleteUserById } = require("../../src/controllers/user");
+const { deleteUserById } = require("../../src/modules/user/controller");
 const { User } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { updateRoleById } = require("../../src/controllers/role");
+const { updateRoleById } = require("../../src/modules/role/controller");
 const { Role } = require("../../models");
 
 jest.mock("../../models");
