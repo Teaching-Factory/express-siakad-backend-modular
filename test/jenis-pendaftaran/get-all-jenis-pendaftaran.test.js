@@ -1,4 +1,4 @@
-const { getAllJenisPendaftaran } = require("../../src/controllers/jenis-pendaftaran");
+const { getAllJenisPendaftaran } = require("../../src/modules/jenis-pendaftaran/controller");
 const { JenisPendaftaran } = require("../../models");
 
 jest.mock("../../models");

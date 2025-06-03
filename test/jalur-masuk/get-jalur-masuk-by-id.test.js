@@ -1,4 +1,4 @@
-const { getJalurMasukById } = require("../../src/controllers/jalur-masuk");
+const { getJalurMasukById } = require("../../src/modules/jalur-masuk/controller");
 const { JalurMasuk } = require("../../models");
 
 jest.mock("../../models");

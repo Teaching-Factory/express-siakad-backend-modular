@@ -25,10 +25,6 @@ const helmet = require("helmet");
 const routeRegister = require("../routes");
 
 // route api local done
-// const profilPTRoutes = require("./routes/profil-pt");
-// const jalurMasukRoutes = require("./routes/jalur-masuk");
-// const jenisPendaftaranRoutes = require("./routes/jenis-pendaftaran");
-// const jenisTinggalRoutes = require("./routes/jenis-tinggal");
 // const alatTransportasiRoutes = require("./routes/alat-transportasi");
 // const statusMahasiswaRoutes = require("./routes/status-mahasiswa");
 // const kebutuhanKhususRoutes = require("./routes/kebutuhan-khusus");
@@ -344,10 +340,6 @@ app.use(express.json());
 app.use("/", routeRegister);
 
 // route api local done
-// app.use("/profil-pt", checkToken, profilPTRoutes);
-// app.use("/jalur-masuk", checkToken, jalurMasukRoutes);
-// app.use("/jenis-pendaftaran", checkToken, jenisPendaftaranRoutes);
-// app.use("/jenis-tinggal", checkToken, jenisTinggalRoutes);
 // app.use("/alat-transportasi", checkToken, alatTransportasiRoutes);
 // app.use("/status-mahasiswa", checkToken, statusMahasiswaRoutes);
 // app.use("/kebutuhan-khusus", checkToken, kebutuhanKhususRoutes);

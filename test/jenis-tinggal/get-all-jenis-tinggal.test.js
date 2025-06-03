@@ -1,4 +1,4 @@
-const { getAllJenisTinggal } = require("../../src/controllers/jenis-tinggal");
+const { getAllJenisTinggal } = require("../../src/modules/jenis-tinggal/controller");
 const { JenisTinggal } = require("../../models");
 
 jest.mock("../../models");

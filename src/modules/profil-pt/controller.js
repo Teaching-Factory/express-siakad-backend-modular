@@ -1,4 +1,4 @@
-const { ProfilPT, PerguruanTinggi, Wilayah } = require("../../models");
+const { ProfilPT, PerguruanTinggi, Wilayah } = require("../../../models");
 const fs = require("fs"); // untuk menghapus file
 const path = require("path");
 

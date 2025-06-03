@@ -1,4 +1,4 @@
-const { getAllProfilPT } = require("../../src/controllers/profil-pt");
+const { getAllProfilPT } = require("../../src/modules/profil-pt/controller");
 const { ProfilPT, PerguruanTinggi, Wilayah } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

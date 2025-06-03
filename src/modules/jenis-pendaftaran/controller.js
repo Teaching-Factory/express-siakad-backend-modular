@@ -1,4 +1,4 @@
-const { JenisPendaftaran } = require("../../models");
+const { JenisPendaftaran } = require("../../../models");
 
 const getAllJenisPendaftaran = async (req, res, next) => {
   try {

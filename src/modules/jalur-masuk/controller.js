@@ -1,4 +1,4 @@
-const { JalurMasuk } = require("../../models");
+const { JalurMasuk } = require("../../../models");
 
 const getAllJalurMasuk = async (req, res, next) => {
   try {

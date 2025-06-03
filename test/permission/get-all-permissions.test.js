@@ -1,4 +1,4 @@
-const { getAllPermissions } = require("../../src/controllers/role-permission");
+const { getAllPermissions } = require("../../src/modules/role-permission/controller");
 const { Permission } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

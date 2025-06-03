@@ -1,4 +1,4 @@
-const { getAllJalurMasuk } = require("../../src/controllers/jalur-masuk");
+const { getAllJalurMasuk } = require("../../src/modules/jalur-masuk/controller");
 const { JalurMasuk } = require("../../models");
 
 jest.mock("../../models");

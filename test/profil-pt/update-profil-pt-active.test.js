@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { updateProfilPTActive } = require("../../src/controllers/profil-pt");
+const { updateProfilPTActive } = require("../../src/modules/profil-pt/controller");
 const { ProfilPT, PerguruanTinggi } = require("../../models");
 
 jest.mock("../../models");
