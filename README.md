@@ -230,6 +230,13 @@ Install Paket :
 
 ```
 
+- Instal Plugin Commander :
+
+```bash
+  npm install commander
+
+```
+
 - Memperbaiki Plugin yang corrupt (Optional) :
 
 ```bash

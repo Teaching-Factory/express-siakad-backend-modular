@@ -1,0 +1,62 @@
+{
+  "auth": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "user": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "role": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "role-permission": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "agama": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "negara": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "wilayah": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "perguruan-tinggi": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "profil-pt": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "jalur-masuk": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "jenis-pendaftaran": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "jenis-tinggal": {
+    "enabled": true,
+    "createdAt": "2025-06-02T06:00:00.000Z",
+    "updatedAt": "2025-06-03T06:00:00.000Z"
+  }
+}
