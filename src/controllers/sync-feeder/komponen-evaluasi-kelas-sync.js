@@ -1,5 +1,5 @@
 const { KomponenEvaluasiKelas, KomponenEvaluasiKelasSync, KelasKuliah } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { getToken } = require("../../modules/api-feeder/data-feeder/get-token");
 const axios = require("axios");
 
 async function getKelasKuliahFromFeeder(semesterId, req, res, next) {

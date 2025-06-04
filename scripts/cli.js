@@ -183,8 +183,8 @@ program
     }
 
     console.log("Daftar Module yang Terdaftar:\n");
-    console.log("No. | Nama Modul           | Status     ");
-    console.log("----|----------------------|------------");
+    console.log("No. | Nama Modul             | Status     ");
+    console.log("----|------------------------|------------");
 
     moduleNames.forEach((mod, index) => {
       const status = modulesData[mod].enabled ? "ENABLED " : "DISABLED";

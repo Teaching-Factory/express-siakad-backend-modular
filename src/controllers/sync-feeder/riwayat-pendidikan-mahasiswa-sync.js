@@ -1,5 +1,5 @@
 const { RiwayatPendidikanMahasiswa, RiwayatPendidikanMahasiswaSync, BiodataMahasiswa, Mahasiswa, Prodi } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { getToken } = require("../../modules/api-feeder/data-feeder/get-token");
 const { getAllDataMahasiswaFromFeeder } = require("../mahasiswa");
 const axios = require("axios");
 

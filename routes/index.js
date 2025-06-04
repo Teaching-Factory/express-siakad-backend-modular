@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 // route api local (modular)
+const apiFeederRoutes = require("../src/modules/api-feeder");
+const apiFeederUpdateRoutes = require("../src/modules/api-feeder-update");
 const userRoutes = require("../src/modules/user");
 const authRoutes = require("../src/modules/auth");
 const roleRoutes = require("../src/modules/role");
@@ -24,6 +26,8 @@ const checkToken = require("../src/middlewares/check-token");
 const checkModuleStatus = require("../src/middlewares/check-module-status");
 
 // endpoint api local (modular)
+router.use("/api-feeder", checkToken, checkModuleStatus("api-feeder"), apiFeederRoutes);
+router.use("/api-feeder-update", checkToken, checkModuleStatus("api-feeder-update"), apiFeederUpdateRoutes);
 router.use("/user", checkToken, checkModuleStatus("user"), userRoutes);
 router.use("/auth", checkModuleStatus("auth"), authRoutes);
 router.use("/role", checkToken, checkModuleStatus("role"), roleRoutes);
