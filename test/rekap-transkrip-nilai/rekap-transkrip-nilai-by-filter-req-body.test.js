@@ -3,7 +3,7 @@ const { getRekapTranskripNilaiByFilterReqBody } = require("../../src/controllers
 const { Mahasiswa } = require("../../models");
 
 jest.mock("../../models");
-jest.mock("../../src/controllers/api-feeder/get-token");
+jest.mock("../../src/modules/api-feeder/data-feeder/get-token.js");
 jest.mock("axios");
 
 describe("getRekapTranskripNilaiByFilterReqBody", () => {

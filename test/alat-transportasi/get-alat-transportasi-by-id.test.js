@@ -1,4 +1,4 @@
-const { getAlatTransportasiById } = require("../../src/controllers/alat-transportasi");
+const { getAlatTransportasiById } = require("../../src/modules/alat-transportasi/controller");
 const { AlatTransportasi } = require("../../models");
 
 jest.mock("../../models");

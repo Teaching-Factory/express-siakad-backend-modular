@@ -3,7 +3,7 @@ const { Mahasiswa } = require("../../models");
 const axios = require("axios");
 jest.mock("../../models");
 jest.mock("axios");
-jest.mock("../../src/controllers/api-feeder/get-token", () => ({
+jest.mock("../../src/modules/api-feeder/data-feeder/get-token.js", () => ({
   getToken: jest.fn().mockResolvedValue("mockedToken"),
 }));
 

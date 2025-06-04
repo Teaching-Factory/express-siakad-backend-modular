@@ -1,4 +1,4 @@
-const { getAllAlatTransportasi } = require("../../src/controllers/alat-transportasi");
+const { getAllAlatTransportasi } = require("../../src/modules/alat-transportasi/controller");
 const { AlatTransportasi } = require("../../models");
 
 jest.mock("../../models");

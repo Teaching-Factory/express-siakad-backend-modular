@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getPeriodeByProdiIdWithCountMahasiswa } = require("../../src/controllers/status-mahasiswa");
+const { getPeriodeByProdiIdWithCountMahasiswa } = require("../../src/modules/status-mahasiswa/controller");
 const { Mahasiswa, Angkatan } = require("../../models");
 const { Op, fn, col } = require("sequelize");
 
