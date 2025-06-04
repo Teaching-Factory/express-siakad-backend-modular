@@ -19,6 +19,13 @@ const jenisTinggalRoutes = require("../src/modules/jenis-tinggal");
 const alatTransportasiRoutes = require("../src/modules/alat-transportasi");
 const statusMahasiswaRoutes = require("../src/modules/status-mahasiswa");
 const mahasiswaLulusDORoutes = require("../src/modules/mahasiswa-lulus-do");
+const kebutuhanKhususRoutes = require("../src/modules/kebutuhan-khusus");
+const penghasilanRoutes = require("../src/modules/penghasilan");
+const jenisSMSRoutes = require("../src/modules/jenis-sms");
+const lembagaPengangkatanRoutes = require("../src/modules/lembaga-pengangkatan");
+const statusKeaktifanPegawaiRoutes = require("../src/modules/status-keaktifan-pegawai");
+const pangkatGolonganRoutes = require("../src/modules/pangkat-golongan");
+const pekerjaanRoutes = require("../src/modules/pekerjaan");
 // some new routes will be here ...
 
 // import middleware
@@ -43,6 +50,13 @@ router.use("/jenis-tinggal", checkToken, checkModuleStatus("jenis-tinggal"), jen
 router.use("/alat-transportasi", checkToken, checkModuleStatus("alat-transportasi"), alatTransportasiRoutes);
 router.use("/status-mahasiswa", checkToken, checkModuleStatus("status-mahasiswa"), statusMahasiswaRoutes);
 router.use("/mahasiswa-lulus-do", checkToken, checkModuleStatus("mahasiswa-lulus-do"), mahasiswaLulusDORoutes);
+router.use("/kebutuhan-khusus", checkToken, checkModuleStatus("kebutuhan-khusus"), kebutuhanKhususRoutes);
+router.use("/penghasilan", checkToken, checkModuleStatus("penghasilan"), penghasilanRoutes);
+router.use("/jenis-sms", checkToken, checkModuleStatus("jenis-sms"), jenisSMSRoutes);
+router.use("/lembaga-pengangkatan", checkToken, checkModuleStatus("lembaga-pengangkatan"), lembagaPengangkatanRoutes);
+router.use("/status-keaktifan-pegawai", checkToken, checkModuleStatus("status-keaktifan-pegawai"), statusKeaktifanPegawaiRoutes);
+router.use("/pangkat-golongan", checkToken, checkModuleStatus("pangkat-golongan"), pangkatGolonganRoutes);
+router.use("/pekerjaan", checkToken, checkModuleStatus("pekerjaan"), pekerjaanRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const { PangkatGolongan } = require("../../models");
+const { PangkatGolongan } = require("../../../models");
 
 const getAllPangkatGolongan = async (req, res, next) => {
   try {

@@ -1,4 +1,4 @@
-const { KebutuhanKhusus } = require("../../models");
+const { KebutuhanKhusus } = require("../../../models");
 
 const getAllKebutuhanKhusus = async (req, res, next) => {
   try {

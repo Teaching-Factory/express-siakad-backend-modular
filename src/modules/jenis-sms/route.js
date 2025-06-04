@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const JenisSMSController = require("../controllers/jenis-sms");
-const checkRole = require("../middlewares/check-role");
+const JenisSMSController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin"]), JenisSMSController.getAllJenisSMS);

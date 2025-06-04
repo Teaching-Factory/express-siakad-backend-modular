@@ -1,4 +1,4 @@
-const { LembagaPengangkatan } = require("../../models");
+const { LembagaPengangkatan } = require("../../../models");
 
 const getAllLembagaPengangkatan = async (req, res, next) => {
   try {

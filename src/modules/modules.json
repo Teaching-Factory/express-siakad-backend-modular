@@ -83,5 +83,40 @@
     "enabled": true,
     "createdAt": "2025-06-04T02:44:19.399Z",
     "updatedAt": "2025-06-04T02:44:19.400Z"
+  },
+  "kebutuhan-khusus": {
+    "enabled": true,
+    "createdAt": "2025-06-04T05:51:30.875Z",
+    "updatedAt": "2025-06-04T05:51:30.876Z"
+  },
+  "penghasilan": {
+    "enabled": true,
+    "createdAt": "2025-06-04T05:54:05.164Z",
+    "updatedAt": "2025-06-04T05:54:05.164Z"
+  },
+  "jenis-sms": {
+    "enabled": true,
+    "createdAt": "2025-06-04T05:56:43.957Z",
+    "updatedAt": "2025-06-04T05:56:43.958Z"
+  },
+  "lembaga-pengangkatan": {
+    "enabled": true,
+    "createdAt": "2025-06-04T05:58:48.792Z",
+    "updatedAt": "2025-06-04T05:58:48.793Z"
+  },
+  "status-keaktifan-pegawai": {
+    "enabled": true,
+    "createdAt": "2025-06-04T06:01:31.075Z",
+    "updatedAt": "2025-06-04T06:01:31.075Z"
+  },
+  "pangkat-golongan": {
+    "enabled": true,
+    "createdAt": "2025-06-04T06:03:57.822Z",
+    "updatedAt": "2025-06-04T06:03:57.823Z"
+  },
+  "pekerjaan": {
+    "enabled": true,
+    "createdAt": "2025-06-04T06:06:20.356Z",
+    "updatedAt": "2025-06-04T06:06:20.357Z"
   }
 }

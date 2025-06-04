@@ -1,4 +1,4 @@
-const { StatusKeaktifanPegawai } = require("../../models");
+const { StatusKeaktifanPegawai } = require("../../../models");
 
 const getAllStatusKeaktifanPegawai = async (req, res, next) => {
   try {

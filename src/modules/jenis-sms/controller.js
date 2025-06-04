@@ -1,4 +1,4 @@
-const { JenisSMS } = require("../../models");
+const { JenisSMS } = require("../../../models");
 
 const getAllJenisSMS = async (req, res, next) => {
   try {
