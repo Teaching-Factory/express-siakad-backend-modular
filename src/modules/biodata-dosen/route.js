@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const BiodataDosenController = require("../controllers/biodata-dosen");
-const checkRole = require("../middlewares/check-role");
+const BiodataDosenController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "dosen", "admin-prodi"]), BiodataDosenController.getAllBiodataDosen);

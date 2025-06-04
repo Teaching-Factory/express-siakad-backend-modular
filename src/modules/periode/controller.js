@@ -1,4 +1,4 @@
-const { Periode, Prodi } = require("../../models");
+const { Periode, Prodi } = require("../../../models");
 
 const getAllPeriode = async (req, res, next) => {
   try {

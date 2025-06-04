@@ -26,6 +26,15 @@ const lembagaPengangkatanRoutes = require("../src/modules/lembaga-pengangkatan")
 const statusKeaktifanPegawaiRoutes = require("../src/modules/status-keaktifan-pegawai");
 const pangkatGolonganRoutes = require("../src/modules/pangkat-golongan");
 const pekerjaanRoutes = require("../src/modules/pekerjaan");
+const dosenRoutes = require("../src/modules/dosen");
+const biodataDosenRoutes = require("../src/modules/biodata-dosen");
+const jenjangPendidikanRoutes = require("../src/modules/jenjang-pendidikan");
+const prodiRoutes = require("../src/modules/prodi");
+const prodiGuestRoutes = require("../src/modules/prodi-guest");
+const periodeRoutes = require("../src/modules/periode");
+const jenisSubstansiRoutes = require("../src/modules/jenis-substansi");
+const substansiRoutes = require("../src/modules/substansi");
+const substansiKuliahRoutes = require("../src/modules/substansi-kuliah");
 // some new routes will be here ...
 
 // import middleware
@@ -57,6 +66,15 @@ router.use("/lembaga-pengangkatan", checkToken, checkModuleStatus("lembaga-penga
 router.use("/status-keaktifan-pegawai", checkToken, checkModuleStatus("status-keaktifan-pegawai"), statusKeaktifanPegawaiRoutes);
 router.use("/pangkat-golongan", checkToken, checkModuleStatus("pangkat-golongan"), pangkatGolonganRoutes);
 router.use("/pekerjaan", checkToken, checkModuleStatus("pekerjaan"), pekerjaanRoutes);
+router.use("/dosen", checkToken, checkModuleStatus("dosen"), dosenRoutes);
+router.use("/biodata-dosen", checkToken, checkModuleStatus("biodata-dosen"), biodataDosenRoutes);
+router.use("/jenjang-pendidikan", checkToken, checkModuleStatus("jenjang-pendidikan"), jenjangPendidikanRoutes);
+router.use("/prodi", checkToken, checkModuleStatus("prodi"), prodiRoutes);
+router.use("/prodi-guest", checkModuleStatus("prodi-guest"), prodiGuestRoutes);
+router.use("/periode", checkToken, checkModuleStatus("periode"), periodeRoutes);
+router.use("/jenis-substansi", checkToken, checkModuleStatus("jenis-substansi"), jenisSubstansiRoutes);
+router.use("/substansi", checkToken, checkModuleStatus("substansi"), substansiRoutes);
+router.use("/substansi-kuliah", checkToken, checkModuleStatus("substansi-kuliah"), substansiKuliahRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

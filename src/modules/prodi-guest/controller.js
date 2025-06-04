@@ -1,4 +1,4 @@
-const { Prodi, JenjangPendidikan } = require("../../models");
+const { Prodi, JenjangPendidikan } = require("../../../models");
 
 const getAllProdiByGuest = async (req, res, next) => {
   try {

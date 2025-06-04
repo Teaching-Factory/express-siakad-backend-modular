@@ -1,4 +1,4 @@
-const { Substansi, Prodi, JenisSubstansi } = require("../../models");
+const { Substansi, Prodi, JenisSubstansi } = require("../../../models");
 
 const getAllSubstansi = async (req, res, next) => {
   try {
