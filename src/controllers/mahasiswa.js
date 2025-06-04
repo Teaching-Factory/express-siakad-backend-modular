@@ -40,7 +40,7 @@ const {
 } = require("../../models");
 const axios = require("axios");
 const { getToken } = require("././api-feeder/get-token");
-const { fetchAllMahasiswaLulusDOIds } = require("././mahasiswa-lulus-do");
+// const { fetchAllMahasiswaLulusDOIds } = require("././mahasiswa-lulus-do");
 
 const getAllMahasiswa = async (req, res, next) => {
   try {

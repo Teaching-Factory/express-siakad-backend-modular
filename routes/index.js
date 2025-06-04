@@ -14,6 +14,10 @@ const profilPTRoutes = require("../src/modules/profil-pt");
 const jalurMasukRoutes = require("../src/modules/jalur-masuk");
 const jenisPendaftaranRoutes = require("../src/modules/jenis-pendaftaran");
 const jenisTinggalRoutes = require("../src/modules/jenis-tinggal");
+const alatTransportasiRoutes = require("../src/modules/alat-transportasi");
+const statusMahasiswaRoutes = require("../src/modules/status-mahasiswa");
+const mahasiswaLulusDORoutes = require("../src/modules/mahasiswa-lulus-do");
+// some new routes will be here ...
 
 // import middleware
 const checkToken = require("../src/middlewares/check-token");
@@ -32,5 +36,9 @@ router.use("/profil-pt", checkToken, checkModuleStatus("profil-pt"), profilPTRou
 router.use("/jalur-masuk", checkToken, checkModuleStatus("jalur-masuk"), jalurMasukRoutes);
 router.use("/jenis-pendaftaran", checkToken, checkModuleStatus("jenis-pendaftaran"), jenisPendaftaranRoutes);
 router.use("/jenis-tinggal", checkToken, checkModuleStatus("jenis-tinggal"), jenisTinggalRoutes);
+router.use("/alat-transportasi", checkToken, checkModuleStatus("alat-transportasi"), alatTransportasiRoutes);
+router.use("/status-mahasiswa", checkToken, checkModuleStatus("status-mahasiswa"), statusMahasiswaRoutes);
+router.use("/mahasiswa-lulus-do", checkToken, checkModuleStatus("mahasiswa-lulus-do"), mahasiswaLulusDORoutes);
+// some new endpoint will be here ...
 
 module.exports = router;

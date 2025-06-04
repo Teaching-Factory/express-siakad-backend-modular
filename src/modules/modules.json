@@ -58,5 +58,20 @@
     "enabled": true,
     "createdAt": "2025-06-02T06:00:00.000Z",
     "updatedAt": "2025-06-03T06:00:00.000Z"
+  },
+  "alat-transportasi": {
+    "enabled": true,
+    "createdAt": "2025-06-04T02:36:38.218Z",
+    "updatedAt": "2025-06-04T02:36:38.219Z"
+  },
+  "status-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-04T02:40:54.660Z",
+    "updatedAt": "2025-06-04T02:40:54.661Z"
+  },
+  "mahasiswa-lulus-do": {
+    "enabled": true,
+    "createdAt": "2025-06-04T02:44:19.399Z",
+    "updatedAt": "2025-06-04T02:44:19.400Z"
   }
 }

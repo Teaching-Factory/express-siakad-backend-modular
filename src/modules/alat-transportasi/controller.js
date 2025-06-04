@@ -1,4 +1,4 @@
-const { AlatTransportasi } = require("../../models");
+const { AlatTransportasi } = require("../../../models");
 
 const getAllAlatTransportasi = async (req, res, next) => {
   try {

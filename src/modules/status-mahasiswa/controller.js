@@ -1,7 +1,7 @@
 const { Sequelize } = require("sequelize");
-const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize, Role, UserRole, AdminProdi, PerkuliahanMahasiswa, SettingGlobalSemester } = require("../../models");
+const { StatusMahasiswa, Mahasiswa, Prodi, Angkatan, sequelize, Role, UserRole, AdminProdi, PerkuliahanMahasiswa, SettingGlobalSemester } = require("../../../models");
 const { Op } = require("sequelize");
-const { fetchAllMahasiswaLulusDOIds } = require("../controllers/mahasiswa-lulus-do");
+const { fetchAllMahasiswaLulusDOIds } = require("../mahasiswa-lulus-do/controller");
 
 const getAllStatusMahasiswa = async (req, res, next) => {
   try {
