@@ -17,19 +17,20 @@ const jenisTinggalRoutes = require("../src/modules/jenis-tinggal");
 
 // import middleware
 const checkToken = require("../src/middlewares/check-token");
+const checkModuleStatus = require("../src/middlewares/check-module-status");
 
 // endpoint api local (modular)
-router.use("/user", checkToken, userRoutes);
-router.use("/auth", authRoutes);
-router.use("/role", checkToken, roleRoutes);
-router.use("/role-permission", checkToken, rolePermissionRoutes);
-router.use("/agama", checkToken, agamaRoutes);
-router.use("/negara", checkToken, negaraRoutes);
-router.use("/wilayah", checkToken, wilayahRoutes);
-router.use("/perguruan-tinggi", checkToken, perguruanTinggiRoutes);
-router.use("/profil-pt", checkToken, profilPTRoutes);
-router.use("/jalur-masuk", checkToken, jalurMasukRoutes);
-router.use("/jenis-pendaftaran", checkToken, jenisPendaftaranRoutes);
-router.use("/jenis-tinggal", checkToken, jenisTinggalRoutes);
+router.use("/user", checkToken, checkModuleStatus("user"), userRoutes);
+router.use("/auth", checkModuleStatus("auth"), authRoutes);
+router.use("/role", checkToken, checkModuleStatus("role"), roleRoutes);
+router.use("/role-permission", checkToken, checkModuleStatus("role-permission"), rolePermissionRoutes);
+router.use("/agama", checkToken, checkModuleStatus("agama"), agamaRoutes);
+router.use("/negara", checkToken, checkModuleStatus("negara"), negaraRoutes);
+router.use("/wilayah", checkToken, checkModuleStatus("wilayah"), wilayahRoutes);
+router.use("/perguruan-tinggi", checkToken, checkModuleStatus("perguruan-tinggi"), perguruanTinggiRoutes);
+router.use("/profil-pt", checkToken, checkModuleStatus("profil-pt"), profilPTRoutes);
+router.use("/jalur-masuk", checkToken, checkModuleStatus("jalur-masuk"), jalurMasukRoutes);
+router.use("/jenis-pendaftaran", checkToken, checkModuleStatus("jenis-pendaftaran"), jenisPendaftaranRoutes);
+router.use("/jenis-tinggal", checkToken, checkModuleStatus("jenis-tinggal"), jenisTinggalRoutes);
 
 module.exports = router;
