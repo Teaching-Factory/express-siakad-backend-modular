@@ -253,5 +253,40 @@
     "enabled": true,
     "createdAt": "2025-06-05T02:16:22.215Z",
     "updatedAt": "2025-06-05T02:16:22.216Z"
+  },
+  "detail-nilai-perkuliahan-kelas": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:22:48.903Z",
+    "updatedAt": "2025-06-05T02:22:48.905Z"
+  },
+  "skala-nilai-prodi": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:25:29.397Z",
+    "updatedAt": "2025-06-05T02:25:29.398Z"
+  },
+  "riwayat-nilai-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:27:35.658Z",
+    "updatedAt": "2025-06-05T02:27:35.659Z"
+  },
+  "perkuliahan-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:29:18.892Z",
+    "updatedAt": "2025-06-05T02:29:18.892Z"
+  },
+  "detail-perkuliahan-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:31:31.534Z",
+    "updatedAt": "2025-06-05T02:31:31.536Z"
+  },
+  "periode-perkuliahan": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:35:46.342Z",
+    "updatedAt": "2025-06-05T02:35:46.343Z"
+  },
+  "detail-periode-perkuliahan": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:37:48.830Z",
+    "updatedAt": "2025-06-05T02:37:48.832Z"
   }
 }

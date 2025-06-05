@@ -1,4 +1,4 @@
-const { DetailNilaiPerkuliahanKelas, KelasKuliah, Mahasiswa } = require("../../models");
+const { DetailNilaiPerkuliahanKelas, KelasKuliah, Mahasiswa } = require("../../../models");
 
 const getAllDetailNilaiPerkuliahanKelas = async (req, res, next) => {
   try {

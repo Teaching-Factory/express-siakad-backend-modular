@@ -1,4 +1,4 @@
-const { SkalaNilaiProdi, Prodi } = require("../../models");
+const { SkalaNilaiProdi, Prodi } = require("../../../models");
 
 const getAllSkalaNilaiProdi = async (req, res, next) => {
   try {
