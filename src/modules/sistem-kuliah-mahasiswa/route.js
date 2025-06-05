@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const SistemKuliahMahasiswaController = require("../controllers/sistem-kuliah-mahasiswa");
-const checkRole = require("../middlewares/check-role");
+const SistemKuliahMahasiswaController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.post("/:id_sistem_kuliah/create", checkRole(["admin", "admin-prodi"]), SistemKuliahMahasiswaController.createSistemKuliahMahasiswaBySistemKuliahId);

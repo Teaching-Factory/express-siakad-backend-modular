@@ -1,4 +1,4 @@
-const { UnitJabatan, Jabatan, Dosen, Prodi } = require("../../models");
+const { UnitJabatan, Jabatan, Dosen, Prodi } = require("../../../models");
 
 const getAllUnitJabatan = async (req, res, next) => {
   try {

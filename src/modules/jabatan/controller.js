@@ -1,4 +1,4 @@
-const { Jabatan } = require("../../models");
+const { Jabatan } = require("../../../models");
 
 const getAllJabatan = async (req, res, next) => {
   try {

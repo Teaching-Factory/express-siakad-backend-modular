@@ -1,6 +1,6 @@
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen, Semester, JenjangPendidikan, Agama, AktivitasKuliahMahasiswa, SettingGlobalSemester } = require("../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen, Semester, JenjangPendidikan, Agama, AktivitasKuliahMahasiswa, SettingGlobalSemester } = require("../../../models");
 const axios = require("axios");
-const { getToken } = require("././api-feeder/get-token");
+const { getToken } = require("../api-feeder/data-feeder/get-token");
 
 const getAllRekapKHSMahasiswa = async (req, res, next) => {
   try {

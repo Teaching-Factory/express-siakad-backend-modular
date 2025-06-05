@@ -333,5 +333,50 @@
     "enabled": true,
     "createdAt": "2025-06-05T03:13:26.141Z",
     "updatedAt": "2025-06-05T03:13:26.142Z"
+  },
+  "rekap-jumlah-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:29:43.897Z",
+    "updatedAt": "2025-06-05T03:29:43.898Z"
+  },
+  "rekap-krs-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:31:35.198Z",
+    "updatedAt": "2025-06-05T03:31:35.199Z"
+  },
+  "rekap-khs-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:37:49.541Z",
+    "updatedAt": "2025-06-05T03:37:49.542Z"
+  },
+  "angkatan": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:40:54.247Z",
+    "updatedAt": "2025-06-05T03:40:54.249Z"
+  },
+  "angkatan-guest": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:42:39.531Z",
+    "updatedAt": "2025-06-05T03:42:39.532Z"
+  },
+  "jabatan": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:45:02.288Z",
+    "updatedAt": "2025-06-05T03:45:02.289Z"
+  },
+  "unit-jabatan": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:47:35.883Z",
+    "updatedAt": "2025-06-05T03:47:35.884Z"
+  },
+  "sistem-kuliah": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:49:31.522Z",
+    "updatedAt": "2025-06-05T03:49:31.524Z"
+  },
+  "sistem-kuliah-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:51:25.688Z",
+    "updatedAt": "2025-06-05T03:51:25.689Z"
   }
 }

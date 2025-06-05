@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const UnitJabatanController = require("../controllers/unit-jabatan");
-const checkRole = require("../middlewares/check-role");
+const UnitJabatanController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "admin-prodi"]), UnitJabatanController.getAllUnitJabatan);

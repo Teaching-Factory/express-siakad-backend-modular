@@ -15,9 +15,9 @@ const {
   DosenWali,
   SettingGlobalSemester,
   JenjangPendidikan,
-} = require("../../models");
+} = require("../../../models");
 const axios = require("axios");
-const { getToken } = require("././api-feeder/get-token");
+const { getToken } = require("../api-feeder/data-feeder/get-token");
 
 const getAllRekapKRSMahasiswa = async (req, res, next) => {
   try {

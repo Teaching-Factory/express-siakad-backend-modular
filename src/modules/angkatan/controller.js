@@ -1,4 +1,4 @@
-const { Angkatan } = require("../../models");
+const { Angkatan } = require("../../../models");
 
 const getAllAngkatan = async (req, res, next) => {
   try {

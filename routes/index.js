@@ -69,6 +69,15 @@ const aktivitasMahasiswaRoutes = require("../src/modules/aktivitas-mahasiswa");
 const anggotaAktivitasMahasiswaRoutes = require("../src/modules/anggota-aktivitas-mahasiswa");
 const konversiKampusMerdekaRoutes = require("../src/modules/konversi-kampus-merdeka");
 const tranrkipMahasiswaRoutes = require("../src/modules/transkrip-mahasiswa");
+const rekapJumlahMahasiswaRoutes = require("../src/modules/rekap-jumlah-mahasiswa");
+const rekapKRSMahasiswaRoutes = require("../src/modules/rekap-krs-mahasiswa");
+const rekapKHSMahasiswaRoutes = require("../src/modules/rekap-khs-mahasiswa");
+const angkatanRoutes = require("../src/modules/angkatan");
+const angkatanGuestRoutes = require("../src/modules/angkatan-guest");
+const jabatanRoutes = require("../src/modules/jabatan");
+const unitJabatanRoutes = require("../src/modules/unit-jabatan");
+const sistemKuliahRoutes = require("../src/modules/sistem-kuliah");
+const sistemKuliahMahasiswaRoutes = require("../src/modules/sistem-kuliah-mahasiswa");
 // some new routes will be here ...
 
 // import middleware
@@ -143,6 +152,15 @@ router.use("/aktivitas-mahasiswa", checkToken, checkModuleStatus("aktivitas-maha
 router.use("/anggota-aktivitas-mahasiswa", checkToken, checkModuleStatus("anggota-aktivitas-mahasiswa"), anggotaAktivitasMahasiswaRoutes);
 router.use("/konversi-kampus-merdeka", checkToken, checkModuleStatus("konversi-kampus-merdeka"), konversiKampusMerdekaRoutes);
 router.use("/transkrip-mahasiswa", checkToken, checkModuleStatus("transkrip-mahasiswa"), tranrkipMahasiswaRoutes);
+router.use("/rekap-jumlah-mahasiswa", checkToken, checkModuleStatus("rekap-jumlah-mahasiswa"), rekapJumlahMahasiswaRoutes);
+router.use("/rekap-krs-mahasiswa", checkToken, checkModuleStatus("rekap-krs-mahasiswa"), rekapKRSMahasiswaRoutes);
+router.use("/rekap-khs-mahasiswa", checkToken, checkModuleStatus("rekap-khs-mahasiswa"), rekapKHSMahasiswaRoutes);
+router.use("/angkatan", checkToken, checkModuleStatus("angkatan"), angkatanRoutes);
+router.use("/angkatan-guest", checkModuleStatus("angkatan-guest"), angkatanGuestRoutes);
+router.use("/jabatan", checkToken, checkModuleStatus("jabatan"), jabatanRoutes);
+router.use("/unit-jabatan", checkToken, checkModuleStatus("unit-jabatan"), unitJabatanRoutes);
+router.use("/sistem-kuliah", checkToken, checkModuleStatus("sistem-kuliah"), sistemKuliahRoutes);
+router.use("/sistem-kuliah-mahasiswa", checkToken, checkModuleStatus("sistem-kuliah-mahasiswa"), sistemKuliahMahasiswaRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

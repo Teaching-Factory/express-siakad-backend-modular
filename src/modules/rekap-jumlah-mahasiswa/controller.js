@@ -1,4 +1,4 @@
-const { RekapJumlahMahasiswa, Periode, Prodi } = require("../../models");
+const { RekapJumlahMahasiswa, Periode, Prodi } = require("../../../models");
 
 const getAllRekapJumlahMahasiswa = async (req, res, next) => {
   try {

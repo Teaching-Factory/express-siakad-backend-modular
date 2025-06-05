@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { SistemKuliah, Mahasiswa, SistemKuliahMahasiswa, Prodi, BiodataMahasiswa } = require("../../models");
+const { SistemKuliah, Mahasiswa, SistemKuliahMahasiswa, Prodi, BiodataMahasiswa } = require("../../../models");
 
 const getAllSistemKuliah = async (req, res, next) => {
   try {
