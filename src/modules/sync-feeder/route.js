@@ -3,26 +3,26 @@ const express = require("express");
 const router = express.Router();
 
 // import middleware
-const checkRole = require("../middlewares/check-role");
+const checkRole = require("../../middlewares/check-role");
 
 // import controllers
-const SyncListDosenController = require("../controllers/sync-feeder/list-dosen");
-const SyncTahunAjaranController = require("../controllers/sync-feeder/tahun-ajaran");
-const SyncProdiController = require("../controllers/sync-feeder/prodi");
-const SyncSubstansiController = require("../controllers/sync-feeder/substansi");
-const SyncListMataKuliahController = require("../controllers/sync-feeder/list-mata-kuliah");
-const SyncSemesterController = require("../controllers/sync-feeder/semester");
-const SyncKurikulumController = require("../controllers/sync-feeder/kurikulum");
-const SyncKelasKuliahController = require("../controllers/sync-feeder/kelas-kuliah-sync");
-const SyncDosenPengajarKelasKuliahController = require("../controllers/sync-feeder/dosen-pengajar-kelas-kuliah");
-const SyncSekolahController = require("../controllers/sync-feeder/sekolah");
-const SyncBiodataMahasiswaController = require("../controllers/sync-feeder/biodata-mahasiswa-sync");
-const SyncRiwayatPendidikanMahasiswaController = require("../controllers/sync-feeder/riwayat-pendidikan-mahasiswa-sync");
-const SyncPesertaKelasKuliahController = require("../controllers/sync-feeder/peserta-kelas-kuliah-sync");
-const SyncDetailNilaiPerkuliahanKelasController = require("../controllers/sync-feeder/detail-nilai-perkuliahan-kelas-sync");
-const SyncRencanaEvaluasiController = require("../controllers/sync-feeder/rencana-evaluasi-sync");
-const SyncKomponenEvaluasiKelasController = require("../controllers/sync-feeder/komponen-evaluasi-kelas-sync");
-const SyncPerkuliahanMahasiswaController = require("../controllers/sync-feeder/perkuliahan-mahasiswa-sync");
+const SyncListDosenController = require("./data-feeder/list-dosen");
+const SyncTahunAjaranController = require("./data-feeder/tahun-ajaran");
+const SyncProdiController = require("./data-feeder/prodi");
+const SyncSubstansiController = require("./data-feeder/substansi");
+const SyncListMataKuliahController = require("./data-feeder/list-mata-kuliah");
+const SyncSemesterController = require("./data-feeder/semester");
+const SyncKurikulumController = require("./data-feeder/kurikulum");
+const SyncKelasKuliahController = require("./data-feeder/kelas-kuliah-sync");
+const SyncDosenPengajarKelasKuliahController = require("./data-feeder/dosen-pengajar-kelas-kuliah");
+const SyncSekolahController = require("./data-feeder/sekolah");
+const SyncBiodataMahasiswaController = require("./data-feeder/biodata-mahasiswa-sync");
+const SyncRiwayatPendidikanMahasiswaController = require("./data-feeder/riwayat-pendidikan-mahasiswa-sync");
+const SyncPesertaKelasKuliahController = require("./data-feeder/peserta-kelas-kuliah-sync");
+const SyncDetailNilaiPerkuliahanKelasController = require("./data-feeder/detail-nilai-perkuliahan-kelas-sync");
+const SyncRencanaEvaluasiController = require("./data-feeder/rencana-evaluasi-sync");
+const SyncKomponenEvaluasiKelasController = require("./data-feeder/komponen-evaluasi-kelas-sync");
+const SyncPerkuliahanMahasiswaController = require("./data-feeder/perkuliahan-mahasiswa-sync");
 
 // all routes
 router.get("/list-dosen", checkRole(["admin"]), SyncListDosenController.syncListDosen);

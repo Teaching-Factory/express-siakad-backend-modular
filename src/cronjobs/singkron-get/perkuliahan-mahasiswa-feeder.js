@@ -1,5 +1,5 @@
 const { SettingGlobalSemester, PerkuliahanMahasiswaSync } = require("../../../models");
-const { matchingPerkuliahanMahasiswa, syncPerkuliahanMahasiswas } = require("../../controllers/sync-feeder/perkuliahan-mahasiswa-sync");
+const { matchingPerkuliahanMahasiswa, syncPerkuliahanMahasiswas } = require("../../modules/sync-feeder/data-feeder/perkuliahan-mahasiswa-sync");
 const { Op } = require("sequelize");
 
 async function singkronPerkuliahanMahasiswa() {

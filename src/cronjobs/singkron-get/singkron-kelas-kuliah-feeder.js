@@ -1,5 +1,5 @@
 const { SettingGlobalSemester, KelasKuliahSync } = require("../../../models");
-const { matchingDataKelasKuliah, syncKelasKuliahs } = require("../../controllers/sync-feeder/kelas-kuliah-sync");
+const { matchingDataKelasKuliah, syncKelasKuliahs } = require("../../modules/sync-feeder/data-feeder/kelas-kuliah-sync");
 const { Op } = require("sequelize");
 
 async function singkronKelasKuliah() {

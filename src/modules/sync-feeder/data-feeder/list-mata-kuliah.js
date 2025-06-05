@@ -1,5 +1,5 @@
-const { MataKuliah } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { MataKuliah } = require("../../../../models");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 const axios = require("axios");
 
 // Fungsi untuk mendapatkan daftar mata kuliah dari Feeder

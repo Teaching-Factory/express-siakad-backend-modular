@@ -1,5 +1,5 @@
 const { SettingGlobalSemester, KomponenEvaluasiKelasSync } = require("../../../models");
-const { matchingDataKomponenEvaluasiKelas, syncKomponenEvaluasiKelas } = require("../../controllers/sync-feeder/komponen-evaluasi-kelas-sync");
+const { matchingDataKomponenEvaluasiKelas, syncKomponenEvaluasiKelas } = require("../../modules/sync-feeder/data-feeder/komponen-evaluasi-kelas-sync");
 const { Op } = require("sequelize");
 
 async function singkronKomponenEvaluasiKelas() {

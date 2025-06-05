@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { Sekolah } = require("../../../models");
+const { Sekolah } = require("../../../../models");
 
 const syncDataSekolah = async (req, res, next) => {
   try {

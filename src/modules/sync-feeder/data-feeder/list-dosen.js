@@ -1,5 +1,5 @@
-const { Dosen, User, UserRole, Role, BiodataDosen } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { Dosen, User, UserRole, Role, BiodataDosen } = require("../../../../models");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 

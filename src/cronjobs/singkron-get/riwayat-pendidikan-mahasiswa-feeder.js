@@ -1,5 +1,5 @@
 const { SettingGlobalSemester, RiwayatPendidikanMahasiswaSync } = require("../../../models");
-const { matchingcDataRiwayatPendidikanMahasiswa, syncRiwayatPendidikanMahasiswas } = require("../../controllers/sync-feeder/riwayat-pendidikan-mahasiswa-sync");
+const { matchingcDataRiwayatPendidikanMahasiswa, syncRiwayatPendidikanMahasiswas } = require("../../modules/sync-feeder/data-feeder/riwayat-pendidikan-mahasiswa-sync");
 const { Op } = require("sequelize");
 
 async function singkronRiwayatPendidikanMahasiswa() {

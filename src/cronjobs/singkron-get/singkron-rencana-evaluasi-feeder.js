@@ -1,5 +1,5 @@
 const { Prodi, RencanaEvaluasiSync } = require("../../../models");
-const { matchingDataRencanaEvaluasi, syncRencanaEvaluasis } = require("../../controllers/sync-feeder/rencana-evaluasi-sync");
+const { matchingDataRencanaEvaluasi, syncRencanaEvaluasis } = require("../../modules/sync-feeder/data-feeder/rencana-evaluasi-sync");
 const { Op } = require("sequelize");
 
 async function singkronRencanaEvaluasi() {

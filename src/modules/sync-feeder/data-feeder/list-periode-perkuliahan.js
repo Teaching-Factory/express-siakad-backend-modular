@@ -1,5 +1,5 @@
-const { PeriodePerkuliahan } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { PeriodePerkuliahan } = require("../../../../models");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 const axios = require("axios");
 
 // Fungsi untuk mendapatkan daftar periode perkuliahan dari Feeder

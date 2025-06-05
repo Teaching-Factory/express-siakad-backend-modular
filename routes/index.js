@@ -8,6 +8,7 @@ const apiExternalRoutes = require("../src/modules/api-external");
 const performanceTestingRoutes = require("../src/modules/performance-testing");
 const setupGuestRoutes = require("../src/modules/setup-guest");
 const setupSeedRoutes = require("../src/modules/setup-seed");
+const syncFeederRoutes = require("../src/modules/sync-feeder");
 const userRoutes = require("../src/modules/user");
 const authRoutes = require("../src/modules/auth");
 const roleRoutes = require("../src/modules/role");
@@ -102,6 +103,7 @@ router.use("/api-external", checkToken, checkModuleStatus("api-external"), apiEx
 router.use("/performance-testing", checkToken, checkModuleStatus("performance-testing"), performanceTestingRoutes);
 router.use("/setup-guest", checkToken, checkModuleStatus("setup-guest"), setupGuestRoutes);
 router.use("/setup-seed", checkToken, checkModuleStatus("setup-seed"), setupSeedRoutes);
+router.use("/sync-feeder", checkToken, checkModuleStatus("sync-feeder"), syncFeederRoutes);
 router.use("/user", checkToken, checkModuleStatus("user"), userRoutes);
 router.use("/auth", checkModuleStatus("auth"), authRoutes);
 router.use("/role", checkToken, checkModuleStatus("role"), roleRoutes);

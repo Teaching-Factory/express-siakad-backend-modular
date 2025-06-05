@@ -8,24 +8,11 @@ const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
 
-// import routes
 // const apiSyncFeederRoutes = require("./routes/api-sync-feeder");
 
-// kumpulan route api v1
+// import routes
+// kumpulan route api v1 (local)
 const routeRegister = require("../routes");
-
-// route api local done
-// const prodiGuestRoutes = require("./routes/prodi-guest");
-// const perguruanTinggiGuestRoutes = require("./routes/perguruan-tinggi-guest");
-// const periodePendaftaranGuestRoutes = require("./routes/periode-pendaftaran-guest");
-// const sumberPeriodePendaftaranGuestRoutes = require("./routes/sumber-periode-pendaftaran-guest");
-// const prodiPeriodePendaftaranGuestRoutes = require("./routes/prodi-periode-pendaftaran-guest");
-// const userGuidePMBGuestRoutes = require("./routes/user-guide-pmb-guest");
-// const camabaGuestRoutes = require("./routes/camaba-guest");
-// const angkatanGuestRoutes = require("./routes/angkatan-guest");
-
-// route api local not done yet
-// -
 
 // import middleware
 const middlewareLogRequest = require("./middlewares/logs");
@@ -55,7 +42,8 @@ app.use("/src/storage", express.static(path.join(__dirname, "storage")));
 
 // Import cronjob blacklisted token
 const schedule = require("node-schedule");
-// const cleanExpiredTokens = require("./cronjobs/cronjobScheduler");
+
+// const cleanExpiredTokens = require("./cronjobs/cronjobScheduler"); // not used
 
 // cronjob (GET)
 // const singkronDosen = require("./cronjobs/singkron-get/singkron-dosen-feeder");
@@ -196,21 +184,8 @@ app.use(express.json());
 // route api feeder dikti
 // app.use("/sync-feeder", checkToken, apiSyncFeederRoutes);
 
-// modular routes call
+// modular routes call (local)
 app.use("/", routeRegister);
-
-// route api local done
-// app.use("/prodi-guest", prodiGuestRoutes);
-// app.use("/perguruan-tinggi-guest", perguruanTinggiGuestRoutes);
-// app.use("/periode-pendaftaran-guest", periodePendaftaranGuestRoutes);
-// app.use("/sumber-periode-pendaftaran-guest", sumberPeriodePendaftaranGuestRoutes);
-// app.use("/prodi-periode-pendaftaran-guest", prodiPeriodePendaftaranGuestRoutes);
-// app.use("/user-guide-pmb-guest", userGuidePMBGuestRoutes);
-// app.use("/camaba-guest", camabaGuestRoutes);
-// app.use("/angkatan-guest", angkatanGuestRoutes);
-
-// route api local not done yet
-// -
 
 app.use(errHandler);
 

@@ -1,5 +1,5 @@
-const { MahasiswaLulusDO, PeriodePerkuliahan, SettingGlobalSemester } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { MahasiswaLulusDO, PeriodePerkuliahan, SettingGlobalSemester } = require("../../../../models");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 const axios = require("axios");
 
 // Fungsi untuk mendapatkan daftar mahasiswa lulus do dari Feeder

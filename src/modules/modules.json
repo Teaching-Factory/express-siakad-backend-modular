@@ -29,6 +29,11 @@
     "createdAt": "2025-06-05T07:00:09.845Z",
     "updatedAt": "2025-06-05T07:00:09.850Z"
   },
+  "sync-feeder": {
+    "enabled": true,
+    "createdAt": "2025-06-05T07:17:31.150Z",
+    "updatedAt": "2025-06-05T07:17:31.151Z"
+  },
   "auth": {
     "enabled": true,
     "createdAt": "2025-06-02T06:00:00.000Z",

@@ -1,6 +1,6 @@
-const { RiwayatPendidikanMahasiswa, RiwayatPendidikanMahasiswaSync, BiodataMahasiswa, Mahasiswa, Prodi } = require("../../../models");
-const { getToken } = require("../../modules/api-feeder/data-feeder/get-token");
-const { getAllDataMahasiswaFromFeeder } = require("../../modules/mahasiswa/controller");
+const { RiwayatPendidikanMahasiswa, RiwayatPendidikanMahasiswaSync, BiodataMahasiswa, Mahasiswa, Prodi } = require("../../../../models");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
+const { getAllDataMahasiswaFromFeeder } = require("../../mahasiswa/controller");
 const axios = require("axios");
 
 async function getRiwayatPendidikanMahasiswaFromFeeder(semesterId, req, res, next) {

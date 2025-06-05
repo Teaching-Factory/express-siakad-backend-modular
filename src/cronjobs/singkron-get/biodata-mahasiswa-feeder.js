@@ -1,5 +1,5 @@
 const { SettingGlobalSemester, BiodataMahasiswaSync } = require("../../../models");
-const { matchingDataBiodataMahasiswa, syncBiodataMahasiswas } = require("../../controllers/sync-feeder/biodata-mahasiswa-sync");
+const { matchingDataBiodataMahasiswa, syncBiodataMahasiswas } = require("../../modules/sync-feeder/data-feeder/biodata-mahasiswa-sync");
 const { Op } = require("sequelize");
 
 async function singkronBiodataMahasiswa() {

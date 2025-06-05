@@ -1,5 +1,5 @@
-const { Kurikulum } = require("../../../models");
-const { getToken } = require("../api-feeder/get-token");
+const { Kurikulum } = require("../../../../models");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 const axios = require("axios");
 
 // Fungsi untuk mendapatkan daftar kurikulum dari Feeder

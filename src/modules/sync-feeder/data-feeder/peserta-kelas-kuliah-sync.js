@@ -1,5 +1,5 @@
-const { PesertaKelasKuliah, PesertaKelasKuliahSync, Mahasiswa, RiwayatPendidikanMahasiswa, Angkatan, KelasKuliah } = require("../../../models");
-const { getToken } = require("../../modules/api-feeder/data-feeder/get-token");
+const { PesertaKelasKuliah, PesertaKelasKuliahSync, Mahasiswa, RiwayatPendidikanMahasiswa, Angkatan, KelasKuliah } = require("../../../../models");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 const axios = require("axios");
 
 async function getPesertaKelasKuliahFromFeeder(angkatanId, req, res, next) {
