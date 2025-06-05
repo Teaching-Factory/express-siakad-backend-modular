@@ -1,4 +1,4 @@
-const { DetailKurikulum, Kurikulum } = require("../../models");
+const { DetailKurikulum, Kurikulum } = require("../../../models");
 
 const getAllDetailKurikulum = async (req, res, next) => {
   try {

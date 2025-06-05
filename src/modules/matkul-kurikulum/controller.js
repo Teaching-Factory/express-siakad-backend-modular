@@ -1,4 +1,4 @@
-const { MatkulKurikulum, Kurikulum, MataKuliah } = require("../../models");
+const { MatkulKurikulum, Kurikulum, MataKuliah } = require("../../../models");
 
 const getAllMatkulKurikulum = async (req, res, next) => {
   try {

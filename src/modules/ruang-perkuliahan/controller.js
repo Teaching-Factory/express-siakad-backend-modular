@@ -1,4 +1,4 @@
-const { RuangPerkuliahan } = require("../../models");
+const { RuangPerkuliahan } = require("../../../models");
 
 const getAllRuangPerkuliahan = async (req, res, next) => {
   try {

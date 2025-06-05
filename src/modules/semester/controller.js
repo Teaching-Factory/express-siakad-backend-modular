@@ -1,4 +1,4 @@
-const { Semester, TahunAjaran } = require("../../models");
+const { Semester, TahunAjaran } = require("../../../models");
 
 const getAllSemester = async (req, res, next) => {
   try {

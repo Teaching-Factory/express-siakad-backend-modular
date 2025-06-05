@@ -1,4 +1,4 @@
-const { MataKuliah, Prodi } = require("../../models");
+const { MataKuliah, Prodi } = require("../../../models");
 
 const getAllMataKuliah = async (req, res, next) => {
   try {

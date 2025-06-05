@@ -35,6 +35,15 @@ const periodeRoutes = require("../src/modules/periode");
 const jenisSubstansiRoutes = require("../src/modules/jenis-substansi");
 const substansiRoutes = require("../src/modules/substansi");
 const substansiKuliahRoutes = require("../src/modules/substansi-kuliah");
+const mataKuliahRoutes = require("../src/modules/mata-kuliah");
+const tahunAjaranRoutes = require("../src/modules/tahun-ajaran");
+const fakultasRoutes = require("../src/modules/fakultas");
+const semesterRoutes = require("../src/modules/semester");
+const kurikulumRoutes = require("../src/modules/kurikulum");
+const detailKurikulumRoutes = require("../src/modules/detail-kurikulum");
+const penugasanDosenRoutes = require("../src/modules/penugasan-dosen");
+const matkulKurikulumRoutes = require("../src/modules/matkul-kurikulum");
+const ruangPerkuliahanRoutes = require("../src/modules/ruang-perkuliahan");
 // some new routes will be here ...
 
 // import middleware
@@ -75,6 +84,15 @@ router.use("/periode", checkToken, checkModuleStatus("periode"), periodeRoutes);
 router.use("/jenis-substansi", checkToken, checkModuleStatus("jenis-substansi"), jenisSubstansiRoutes);
 router.use("/substansi", checkToken, checkModuleStatus("substansi"), substansiRoutes);
 router.use("/substansi-kuliah", checkToken, checkModuleStatus("substansi-kuliah"), substansiKuliahRoutes);
+router.use("/mata-kuliah", checkToken, checkModuleStatus("mata-kuliah"), mataKuliahRoutes);
+router.use("/tahun-ajaran", checkToken, checkModuleStatus("tahun-ajaran"), tahunAjaranRoutes);
+router.use("/fakultas", checkToken, checkModuleStatus("fakultas"), fakultasRoutes);
+router.use("/semester", checkToken, checkModuleStatus("semester"), semesterRoutes);
+router.use("/kurikulum", checkToken, checkModuleStatus("kurikulum"), kurikulumRoutes);
+router.use("/detail-kurikulum", checkToken, checkModuleStatus("detail-kurikulum"), detailKurikulumRoutes);
+router.use("/penugasan-dosen", checkToken, checkModuleStatus("penugasan-dosen"), penugasanDosenRoutes);
+router.use("/matkul-kurikulum", checkToken, checkModuleStatus("matkul-kurikulum"), matkulKurikulumRoutes);
+router.use("/ruang-perkuliahan", checkToken, checkModuleStatus("ruang-perkuliahan"), ruangPerkuliahanRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;
