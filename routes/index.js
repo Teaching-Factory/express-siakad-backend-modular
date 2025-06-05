@@ -60,6 +60,15 @@ const perkuliahanMahasiswaRoutes = require("../src/modules/perkuliahan-mahasiswa
 const detailPerkuliahanMahasiswaRoutes = require("../src/modules/detail-perkuliahan-mahasiswa");
 const periodePerkuliahanRoutes = require("../src/modules/periode-perkuliahan");
 const detailPeriodePerkuliahanRoutes = require("../src/modules/detail-periode-perkuliahan");
+const krsMahasiswaRoutes = require("../src/modules/krs-mahasiswa");
+const pesertaKelasKuliahRoutes = require("../src/modules/peserta-kelas-kuliah");
+const aktivitasKuliahMahasiswaRoutes = require("../src/modules/aktivitas-kuliah-mahasiswa");
+const jenisAktivitasMahasiswaRoutes = require("../src/modules/jenis-aktivitas-mahasiswa");
+const dataLengkapMahasiswaProdiRoutes = require("../src/modules/data-lengkap-mahasiswa-prodi");
+const aktivitasMahasiswaRoutes = require("../src/modules/aktivitas-mahasiswa");
+const anggotaAktivitasMahasiswaRoutes = require("../src/modules/anggota-aktivitas-mahasiswa");
+const konversiKampusMerdekaRoutes = require("../src/modules/konversi-kampus-merdeka");
+const tranrkipMahasiswaRoutes = require("../src/modules/transkrip-mahasiswa");
 // some new routes will be here ...
 
 // import middleware
@@ -125,6 +134,15 @@ router.use("/perkuliahan-mahasiswa", checkToken, checkModuleStatus("perkuliahan-
 router.use("/detail-perkuliahan-mahasiswa", checkToken, checkModuleStatus("detail-perkuliahan-mahasiswa"), detailPerkuliahanMahasiswaRoutes);
 router.use("/periode-perkuliahan", checkToken, checkModuleStatus("periode-perkuliahan"), periodePerkuliahanRoutes);
 router.use("/detail-periode-perkuliahan", checkToken, checkModuleStatus("detail-periode-perkuliahan"), detailPeriodePerkuliahanRoutes);
+router.use("/krs-mahasiswa", checkToken, checkModuleStatus("krs-mahasiswa"), krsMahasiswaRoutes);
+router.use("/peserta-kelas-kuliah", checkToken, checkModuleStatus("peserta-kelas-kuliah"), pesertaKelasKuliahRoutes);
+router.use("/aktivitas-kuliah-mahasiswa", checkToken, checkModuleStatus("aktivitas-kuliah-mahasiswa"), aktivitasKuliahMahasiswaRoutes);
+router.use("/jenis-aktivitas-mahasiswa", checkToken, checkModuleStatus("jenis-aktivitas-mahasiswa"), jenisAktivitasMahasiswaRoutes);
+router.use("/data-lengkap-mahasiswa-prodi", checkToken, checkModuleStatus("data-lengkap-mahasiswa-prodi"), dataLengkapMahasiswaProdiRoutes);
+router.use("/aktivitas-mahasiswa", checkToken, checkModuleStatus("aktivitas-mahasiswa"), aktivitasMahasiswaRoutes);
+router.use("/anggota-aktivitas-mahasiswa", checkToken, checkModuleStatus("anggota-aktivitas-mahasiswa"), anggotaAktivitasMahasiswaRoutes);
+router.use("/konversi-kampus-merdeka", checkToken, checkModuleStatus("konversi-kampus-merdeka"), konversiKampusMerdekaRoutes);
+router.use("/transkrip-mahasiswa", checkToken, checkModuleStatus("transkrip-mahasiswa"), tranrkipMahasiswaRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

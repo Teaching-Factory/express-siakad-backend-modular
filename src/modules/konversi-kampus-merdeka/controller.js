@@ -1,4 +1,4 @@
-const { KonversiKampusMerdeka, MataKuliah } = require("../../models");
+const { KonversiKampusMerdeka, MataKuliah } = require("../../../models");
 
 const getAllKonversiKampusMerdeka = async (req, res, next) => {
   try {

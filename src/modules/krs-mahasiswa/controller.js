@@ -19,7 +19,7 @@ const {
   DosenPengajarKelasKuliah,
   PerkuliahanMahasiswa,
   StatusMahasiswa,
-} = require("../../models");
+} = require("../../../models");
 
 const getAllKRSMahasiswa = async (req, res, next) => {
   try {

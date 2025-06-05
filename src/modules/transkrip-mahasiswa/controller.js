@@ -1,4 +1,4 @@
-const { TranskripMahasiswa, Mahasiswa, MataKuliah, KelasKuliah, KonversiKampusMerdeka } = require("../../models");
+const { TranskripMahasiswa, Mahasiswa, MataKuliah, KelasKuliah, KonversiKampusMerdeka } = require("../../../models");
 
 // overload data
 const getAllTranskripMahasiswa = async (req, res, next) => {

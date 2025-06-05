@@ -1,6 +1,6 @@
 const ExcelJS = require("exceljs");
 const fs = require("fs").promises;
-const { AktivitasMahasiswa, Prodi, JenisAktivitasMahasiswa, Semester } = require("../../models");
+const { AktivitasMahasiswa, Prodi, JenisAktivitasMahasiswa, Semester } = require("../../../models");
 
 const getAllAktivitasMahasiswa = async (req, res, next) => {
   try {

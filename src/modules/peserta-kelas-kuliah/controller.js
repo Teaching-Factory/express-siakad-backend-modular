@@ -1,4 +1,4 @@
-const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas, Prodi, MataKuliah, Semester, BiodataMahasiswa, PerguruanTinggi, Agama, KRSMahasiswa, SettingGlobalSemester } = require("../../models");
+const { PesertaKelasKuliah, Angkatan, Mahasiswa, KelasKuliah, DetailNilaiPerkuliahanKelas, Prodi, MataKuliah, Semester, BiodataMahasiswa, PerguruanTinggi, Agama, KRSMahasiswa, SettingGlobalSemester } = require("../../../models");
 const { Op } = require("sequelize");
 
 const getAllPesertaKelasKuliah = async (req, res, next) => {

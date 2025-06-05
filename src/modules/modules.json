@@ -288,5 +288,50 @@
     "enabled": true,
     "createdAt": "2025-06-05T02:37:48.830Z",
     "updatedAt": "2025-06-05T02:37:48.832Z"
+  },
+  "krs-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:42:18.361Z",
+    "updatedAt": "2025-06-05T02:42:18.362Z"
+  },
+  "peserta-kelas-kuliah": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:44:07.826Z",
+    "updatedAt": "2025-06-05T02:44:07.827Z"
+  },
+  "aktivitas-kuliah-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:46:40.226Z",
+    "updatedAt": "2025-06-05T02:46:40.229Z"
+  },
+  "jenis-aktivitas-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:55:51.256Z",
+    "updatedAt": "2025-06-05T02:55:51.257Z"
+  },
+  "data-lengkap-mahasiswa-prodi": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:57:49.155Z",
+    "updatedAt": "2025-06-05T02:57:49.157Z"
+  },
+  "aktivitas-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:59:40.157Z",
+    "updatedAt": "2025-06-05T02:59:40.157Z"
+  },
+  "anggota-aktivitas-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:01:48.820Z",
+    "updatedAt": "2025-06-05T03:01:48.821Z"
+  },
+  "konversi-kampus-merdeka": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:04:12.266Z",
+    "updatedAt": "2025-06-05T03:04:12.267Z"
+  },
+  "transkrip-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:13:26.141Z",
+    "updatedAt": "2025-06-05T03:13:26.142Z"
   }
 }
