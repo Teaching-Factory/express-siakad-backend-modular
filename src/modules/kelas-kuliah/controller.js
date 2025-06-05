@@ -1,4 +1,4 @@
-const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah, RuangPerkuliahan, SettingGlobalSemester, DosenPengajarKelasKuliah, PenugasanDosen } = require("../../models");
+const { KelasKuliah, MataKuliah, DetailKelasKuliah, Prodi, Semester, Dosen, Mahasiswa, PesertaKelasKuliah, RuangPerkuliahan, SettingGlobalSemester, DosenPengajarKelasKuliah, PenugasanDosen } = require("../../../models");
 
 const getAllKelasKuliah = async (req, res, next) => {
   try {

@@ -1,4 +1,4 @@
-const { Pembiayaan } = require("../../models");
+const { Pembiayaan } = require("../../../models");
 
 const getAllPembiayaan = async (req, res, next) => {
   try {

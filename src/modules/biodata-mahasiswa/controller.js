@@ -1,4 +1,4 @@
-const { BiodataMahasiswa, Wilayah, JenisTinggal, AlatTransportasi, JenjangPendidikan, Pekerjaan, Penghasilan, KebutuhanKhusus, Mahasiswa, PerguruanTinggi, Semester, Prodi, Agama } = require("../../models");
+const { BiodataMahasiswa, Wilayah, JenisTinggal, AlatTransportasi, JenjangPendidikan, Pekerjaan, Penghasilan, KebutuhanKhusus, Mahasiswa, PerguruanTinggi, Semester, Prodi, Agama } = require("../../../models");
 
 const getAllBiodataMahasiswa = async (req, res, next) => {
   try {

@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const PerhitunganSKSController = require("../controllers/perhitungan-sks");
-const checkRole = require("../middlewares/check-role");
+const PerhitunganSKSController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "admin-prodi"]), PerhitunganSKSController.getAllPerhitunganSKS);

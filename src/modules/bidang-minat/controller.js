@@ -1,4 +1,4 @@
-const { BidangMinat, Prodi } = require("../../models");
+const { BidangMinat, Prodi } = require("../../../models");
 
 const getAllBidangMinat = async (req, res, next) => {
   try {

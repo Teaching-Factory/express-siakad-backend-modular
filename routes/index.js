@@ -44,6 +44,15 @@ const detailKurikulumRoutes = require("../src/modules/detail-kurikulum");
 const penugasanDosenRoutes = require("../src/modules/penugasan-dosen");
 const matkulKurikulumRoutes = require("../src/modules/matkul-kurikulum");
 const ruangPerkuliahanRoutes = require("../src/modules/ruang-perkuliahan");
+const kelasKuliahRoutes = require("../src/modules/kelas-kuliah");
+const detailKelasKuliahRoutes = require("../src/modules/detail-kelas-kuliah");
+const perhitunganSKSRoutes = require("../src/modules/perhitungan-sks");
+const biodataMahasiswaRoutes = require("../src/modules/biodata-mahasiswa");
+const mahasiswaRoutes = require("../src/modules/mahasiswa");
+const jenisKeluarRoutes = require("../src/modules/jenis-keluar");
+const pembiayaanRoutes = require("../src/modules/pembiayaan");
+const bidangMinatRoutes = require("../src/modules/bidang-minat");
+const riwayatPendidikanMahasiswaRoutes = require("../src/modules/riwayat-pendidikan-mahasiswa");
 // some new routes will be here ...
 
 // import middleware
@@ -93,6 +102,15 @@ router.use("/detail-kurikulum", checkToken, checkModuleStatus("detail-kurikulum"
 router.use("/penugasan-dosen", checkToken, checkModuleStatus("penugasan-dosen"), penugasanDosenRoutes);
 router.use("/matkul-kurikulum", checkToken, checkModuleStatus("matkul-kurikulum"), matkulKurikulumRoutes);
 router.use("/ruang-perkuliahan", checkToken, checkModuleStatus("ruang-perkuliahan"), ruangPerkuliahanRoutes);
+router.use("/kelas-kuliah", checkToken, checkModuleStatus("kelas-kuliah"), kelasKuliahRoutes);
+router.use("/detail-kelas-kuliah", checkToken, checkModuleStatus("detail-kelas-kuliah"), detailKelasKuliahRoutes);
+router.use("/perhitungan-sks", checkToken, checkModuleStatus("perhitungan-sks"), perhitunganSKSRoutes);
+router.use("/biodata-mahasiswa", checkToken, checkModuleStatus("biodata-mahasiswa"), biodataMahasiswaRoutes);
+router.use("/mahasiswa", checkToken, checkModuleStatus("mahasiswa"), mahasiswaRoutes);
+router.use("/jenis-keluar", checkToken, checkModuleStatus("jenis-keluar"), jenisKeluarRoutes);
+router.use("/pembiayaan", checkToken, checkModuleStatus("pembiayaan"), pembiayaanRoutes);
+router.use("/bidang-minat", checkToken, checkModuleStatus("bidang-minat"), bidangMinatRoutes);
+router.use("/riwayat-pendidikan-mahasiswa", checkToken, checkModuleStatus("riwayat-pendidikan-mahasiswa"), riwayatPendidikanMahasiswaRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

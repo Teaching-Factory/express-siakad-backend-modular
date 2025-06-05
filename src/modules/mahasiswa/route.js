@@ -4,8 +4,8 @@ const multer = require("multer");
 const router = express.Router();
 
 // import controller dan middleware
-const MahasiswaController = require("../controllers/mahasiswa");
-const checkRole = require("../middlewares/check-role");
+const MahasiswaController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // Setup multer for file upload
 const upload = multer({ dest: "uploads/" });

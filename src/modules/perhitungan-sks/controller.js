@@ -1,4 +1,4 @@
-const { PerhitunganSKS, KelasKuliah, PenugasanDosen, Substansi } = require("../../models");
+const { PerhitunganSKS, KelasKuliah, PenugasanDosen, Substansi } = require("../../../models");
 
 const getAllPerhitunganSKS = async (req, res, next) => {
   try {

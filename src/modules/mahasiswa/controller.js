@@ -37,10 +37,10 @@ const {
   RekapKHSMahasiswa,
   RekapKRSMahasiswa,
   DataLengkapMahasiswaProdi,
-} = require("../../models");
+} = require("../../../models");
 const axios = require("axios");
-const { getToken } = require("../modules/api-feeder/data-feeder/get-token");
-// const { fetchAllMahasiswaLulusDOIds } = require("././mahasiswa-lulus-do");
+const { getToken } = require("../api-feeder/data-feeder/get-token");
+const { fetchAllMahasiswaLulusDOIds } = require("../mahasiswa-lulus-do/controller");
 
 const getAllMahasiswa = async (req, res, next) => {
   try {

@@ -208,5 +208,50 @@
     "enabled": true,
     "createdAt": "2025-06-05T01:42:50.505Z",
     "updatedAt": "2025-06-05T01:42:50.506Z"
+  },
+  "kelas-kuliah": {
+    "enabled": true,
+    "createdAt": "2025-06-05T01:48:43.652Z",
+    "updatedAt": "2025-06-05T01:48:43.653Z"
+  },
+  "detail-kelas-kuliah": {
+    "enabled": true,
+    "createdAt": "2025-06-05T01:51:21.130Z",
+    "updatedAt": "2025-06-05T01:51:21.131Z"
+  },
+  "perhitungan-sks": {
+    "enabled": true,
+    "createdAt": "2025-06-05T01:53:13.542Z",
+    "updatedAt": "2025-06-05T01:53:13.543Z"
+  },
+  "biodata-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T01:56:02.207Z",
+    "updatedAt": "2025-06-05T01:56:02.209Z"
+  },
+  "mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T01:58:01.651Z",
+    "updatedAt": "2025-06-05T01:58:01.653Z"
+  },
+  "jenis-keluar": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:09:12.939Z",
+    "updatedAt": "2025-06-05T02:09:12.940Z"
+  },
+  "pembiayaan": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:11:16.452Z",
+    "updatedAt": "2025-06-05T02:11:16.454Z"
+  },
+  "bidang-minat": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:13:45.158Z",
+    "updatedAt": "2025-06-05T02:13:45.159Z"
+  },
+  "riwayat-pendidikan-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T02:16:22.215Z",
+    "updatedAt": "2025-06-05T02:16:22.216Z"
   }
 }
