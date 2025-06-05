@@ -1,12 +1,12 @@
 const express = require("express");
-const multer = require("multer"); // library utnuk upload file
+const multer = require("multer"); // library untuk upload file
 const path = require("path");
 
 const router = express.Router();
 
 // import controller dan middleware
-const PembayaranMahasiswaController = require("../controllers/pembayaran-mahasiswa");
-const checkRole = require("../middlewares/check-role");
+const PembayaranMahasiswaController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // fungsi untuk menyimpan upload file ke dalam penyimpanan local project
 const storage = multer.diskStorage({

@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { DosenWali, Prodi, Angkatan, TahunAjaran, Dosen, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Semester } = require("../../models");
+const { DosenWali, Prodi, Angkatan, TahunAjaran, Dosen, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Semester } = require("../../../models");
 
 const getAllDosenWaliByDosenAndTahunAjaranId = async (req, res, next) => {
   try {

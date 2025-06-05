@@ -78,6 +78,13 @@ const jabatanRoutes = require("../src/modules/jabatan");
 const unitJabatanRoutes = require("../src/modules/unit-jabatan");
 const sistemKuliahRoutes = require("../src/modules/sistem-kuliah");
 const sistemKuliahMahasiswaRoutes = require("../src/modules/sistem-kuliah-mahasiswa");
+const unsurPenilaianRoutes = require("../src/modules/unsur-penilaian");
+const bobotPenilaianRoutes = require("../src/modules/bobot-penilaian");
+const jenisTagihanRoutes = require("../src/modules/jenis-tagihan");
+const tagihanMahasiswaRoutes = require("../src/modules/tagihan-mahasiswa");
+const pembayaranMahasiswaRoutes = require("../src/modules/pembayaran-mahasiswa");
+const beritaRoutes = require("../src/modules/berita");
+const dosenWaliRoutes = require("../src/modules/dosen-wali");
 // some new routes will be here ...
 
 // import middleware
@@ -161,6 +168,13 @@ router.use("/jabatan", checkToken, checkModuleStatus("jabatan"), jabatanRoutes);
 router.use("/unit-jabatan", checkToken, checkModuleStatus("unit-jabatan"), unitJabatanRoutes);
 router.use("/sistem-kuliah", checkToken, checkModuleStatus("sistem-kuliah"), sistemKuliahRoutes);
 router.use("/sistem-kuliah-mahasiswa", checkToken, checkModuleStatus("sistem-kuliah-mahasiswa"), sistemKuliahMahasiswaRoutes);
+router.use("/unsur-penilaian", checkToken, checkModuleStatus("unsur-penilaian"), unsurPenilaianRoutes);
+router.use("/bobot-penilaian", checkToken, checkModuleStatus("bobot-penilaian"), bobotPenilaianRoutes);
+router.use("/jenis-tagihan", checkToken, checkModuleStatus("jenis-tagihan"), jenisTagihanRoutes);
+router.use("/tagihan-mahasiswa", checkToken, checkModuleStatus("tagihan-mahasiswa"), tagihanMahasiswaRoutes);
+router.use("/pembayaran-mahasiswa", checkToken, checkModuleStatus("pembayaran-mahasiswa"), pembayaranMahasiswaRoutes);
+router.use("/berita", checkToken, checkModuleStatus("berita"), beritaRoutes);
+router.use("/dosen-wali", checkToken, checkModuleStatus("dosen-wali"), dosenWaliRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

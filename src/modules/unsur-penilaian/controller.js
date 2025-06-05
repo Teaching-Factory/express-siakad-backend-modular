@@ -1,4 +1,4 @@
-const { UnsurPenilaian } = require("../../models");
+const { UnsurPenilaian } = require("../../../models");
 
 const getAllUnsurPenilaian = async (req, res, next) => {
   try {

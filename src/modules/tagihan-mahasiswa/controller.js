@@ -1,4 +1,4 @@
-const { TagihanMahasiswa, Semester, Mahasiswa, JenisTagihan, StatusMahasiswa, SettingGlobalSemester } = require("../../models");
+const { TagihanMahasiswa, Semester, Mahasiswa, JenisTagihan, StatusMahasiswa, SettingGlobalSemester } = require("../../../models");
 
 const getAllTagihanMahasiswa = async (req, res, next) => {
   try {

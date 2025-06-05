@@ -1,4 +1,4 @@
-const { JenisTagihan } = require("../../models");
+const { JenisTagihan } = require("../../../models");
 
 const getAllJenisTagihan = async (req, res, next) => {
   try {

@@ -1,4 +1,4 @@
-const { BobotPenilaian, Prodi, UnsurPenilaian } = require("../../models");
+const { BobotPenilaian, Prodi, UnsurPenilaian } = require("../../../models");
 
 const getAllBobotPenilaian = async (req, res, next) => {
   try {

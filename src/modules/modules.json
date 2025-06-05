@@ -378,5 +378,40 @@
     "enabled": true,
     "createdAt": "2025-06-05T03:51:25.688Z",
     "updatedAt": "2025-06-05T03:51:25.689Z"
+  },
+  "unsur-penilaian": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:56:13.733Z",
+    "updatedAt": "2025-06-05T03:56:13.734Z"
+  },
+  "bobot-penilaian": {
+    "enabled": true,
+    "createdAt": "2025-06-05T03:58:01.749Z",
+    "updatedAt": "2025-06-05T03:58:01.750Z"
+  },
+  "jenis-tagihan": {
+    "enabled": true,
+    "createdAt": "2025-06-05T04:00:10.494Z",
+    "updatedAt": "2025-06-05T04:00:10.496Z"
+  },
+  "tagihan-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T04:02:17.751Z",
+    "updatedAt": "2025-06-05T04:02:17.752Z"
+  },
+  "pembayaran-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-05T04:04:16.396Z",
+    "updatedAt": "2025-06-05T04:04:16.397Z"
+  },
+  "berita": {
+    "enabled": true,
+    "createdAt": "2025-06-05T04:06:51.316Z",
+    "updatedAt": "2025-06-05T04:06:51.317Z"
+  },
+  "dosen-wali": {
+    "enabled": true,
+    "createdAt": "2025-06-05T04:08:53.487Z",
+    "updatedAt": "2025-06-05T04:08:53.488Z"
   }
 }

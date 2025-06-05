@@ -5,8 +5,8 @@ const path = require("path");
 const router = express.Router();
 
 // import controller dan middleware
-const BeritaController = require("../controllers/berita");
-const checkRole = require("../middlewares/check-role");
+const BeritaController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // fungsi untuk menyimpan upload file ke dalam penyimpanan lokal project
 const storage = multer.diskStorage({
