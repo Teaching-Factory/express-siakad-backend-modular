@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const SetupUserGuestController = require("../controllers/setup-guest");
+const SetupUserGuestController = require("./controller");
 
 // all routes
 router.get("/get-started", SetupUserGuestController.setupSeeder);

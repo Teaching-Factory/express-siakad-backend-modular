@@ -1,18 +1,19 @@
-const { sequelize, ProfilPT, PerguruanTinggi } = require("../../models");
-const JabatanSeeder = require("../../seeders/20240905041020-seed-jabatan");
-const LaporanPMBSeeder = require("../../seeders/20240905041024-seed-laporan-pmb");
-const CPPMBSeeder = require("../../seeders/20240905063929-seed-contact-person-pmb");
-const SumberSeeder = require("../../seeders/20240909060852-seed-sumber");
-const SistemKuliahSeeder = require("../../seeders/20240909073147-seed-sistem-kuliah");
-const UserGuideSeeder = require("../../seeders/20240910034158-seed-user-guide-pmb");
-const PengaturanPMBSeeder = require("../../seeders/20240919031343-seed-pengaturan-pmb");
-const JenisTagihanSeeder = require("../../seeders/20240919070327-seed-jenis-tagihan");
-const SettingGlobalSeeder = require("../../seeders/20241002080630-seed-setting-global");
-const RuangPerkuliahanSeeder = require("../../seeders/20241205020041-seed-ruang-perkuliahan");
-const JenisBerkasSeeder = require("../../seeders/20241212024328-seed-jenis-berkas");
-const JenisTesSeeder = require("../../seeders/20241212025058-seed-jenis-tes");
-const AdminProdiSeeder = require("../../seeders/20250107085703-seed-admin-prodi");
-const ProfilPenilaianSeeder = require("../../seeders/20250203021231-seed-profil-penilaian");
+const { sequelize, ProfilPT, PerguruanTinggi } = require("../../../models");
+
+const JabatanSeeder = require("../../../seeders/20240905041020-seed-jabatan");
+const LaporanPMBSeeder = require("../../../seeders/20240905041024-seed-laporan-pmb");
+const CPPMBSeeder = require("../../../seeders/20240905063929-seed-contact-person-pmb");
+const SumberSeeder = require("../../../seeders/20240909060852-seed-sumber");
+const SistemKuliahSeeder = require("../../../seeders/20240909073147-seed-sistem-kuliah");
+const UserGuideSeeder = require("../../../seeders/20240910034158-seed-user-guide-pmb");
+const PengaturanPMBSeeder = require("../../../seeders/20240919031343-seed-pengaturan-pmb");
+const JenisTagihanSeeder = require("../../../seeders/20240919070327-seed-jenis-tagihan");
+const SettingGlobalSeeder = require("../../../seeders/20241002080630-seed-setting-global");
+const RuangPerkuliahanSeeder = require("../../../seeders/20241205020041-seed-ruang-perkuliahan");
+const JenisBerkasSeeder = require("../../../seeders/20241212024328-seed-jenis-berkas");
+const JenisTesSeeder = require("../../../seeders/20241212025058-seed-jenis-tes");
+const AdminProdiSeeder = require("../../../seeders/20250107085703-seed-admin-prodi");
+const ProfilPenilaianSeeder = require("../../../seeders/20250203021231-seed-profil-penilaian");
 
 const setupSeederJabatan = async (req, res, next) => {
   try {

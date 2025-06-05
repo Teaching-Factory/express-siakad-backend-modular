@@ -1,11 +1,11 @@
 const bcrypt = require("bcrypt");
 const { exec } = require("child_process");
-const { User, Role, UserRole, sequelize, SeederStatus } = require("../../models");
-const { doLogin } = require("../controllers/auth");
-const RoleSeeder = require("../../seeders/20240509025858-seed-role");
-const PermissionSeeder = require("../../seeders/20241112032257-seed-permission");
-const RolePermissionSeeder = require("../../seeders/20241112042714-seed-role-permission");
-const AngkatanSeeder = require("../../seeders/20240514065136-seed-angkatan");
+const { User, Role, UserRole, sequelize, SeederStatus } = require("../../../models");
+const { doLogin } = require("../auth/controller");
+const RoleSeeder = require("../../../seeders/20240509025858-seed-role");
+const PermissionSeeder = require("../../../seeders/20241112032257-seed-permission");
+const RolePermissionSeeder = require("../../../seeders/20241112042714-seed-role-permission");
+const AngkatanSeeder = require("../../../seeders/20240514065136-seed-angkatan");
 
 const setupSeeder = async (req, res, next) => {
   try {

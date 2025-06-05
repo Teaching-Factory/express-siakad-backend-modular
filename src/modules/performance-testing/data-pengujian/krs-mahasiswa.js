@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { getToken } = require("../api-feeder/get-token");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 
 const GetKRSMahasiswa = async (req, res, next) => {
   try {

@@ -9,17 +9,7 @@ const path = require("path");
 const helmet = require("helmet");
 
 // import routes
-// route api feeder dikti
-// const apiFeederRoutes = require("./routes/api-feeder");
-// const apiExternalRoutes = require("./routes/api-external");
 // const apiSyncFeederRoutes = require("./routes/api-sync-feeder");
-
-// route endpoint pengujian performa
-// const pengujianPerformaRoutes = require("./routes/pengujian-performa");
-
-// route api setup for installation
-// const setupGuestRoutes = require("./routes/setup-guest");
-// const setupSeedRoutes = require("./routes/setup-seed");
 
 // kumpulan route api v1
 const routeRegister = require("../routes");
@@ -41,7 +31,7 @@ const routeRegister = require("../routes");
 const middlewareLogRequest = require("./middlewares/logs");
 const middlewareDatabaseConnection = require("./middlewares/database");
 const errHandler = require("./middlewares/error-handler");
-// const checkBlacklist = require("./middlewares/checkBlacklist"); // not use
+// const checkBlacklist = require("./middlewares/checkBlacklist"); // not used
 
 // running express server
 const app = express();
@@ -204,16 +194,7 @@ middlewareDatabaseConnection
 app.use(express.json());
 
 // route api feeder dikti
-// app.use("/api-feeder", checkToken, apiFeederRoutes);
-// app.use("/api-external", checkToken, apiExternalRoutes);
 // app.use("/sync-feeder", checkToken, apiSyncFeederRoutes);
-
-// route api pengujian performa
-// app.use("/pengujian-performa", checkToken, pengujianPerformaRoutes);
-
-// route api setup for installation
-// app.use("/setup-guest", setupGuestRoutes);
-// app.use("/setup-seed", setupSeedRoutes);
 
 // modular routes call
 app.use("/", routeRegister);

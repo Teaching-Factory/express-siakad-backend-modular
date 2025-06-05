@@ -3,14 +3,14 @@ const express = require("express");
 const router = express.Router();
 
 // import middleware
-const checkRole = require("../middlewares/check-role");
+const checkRole = require("../../middlewares/check-role");
 
 // daftar controller pengujian performa
-const MahasiswaController = require("../controllers/pengujian-performa/mahasiswa");
-const WilayahController = require("../controllers/pengujian-performa/wilayah");
-const KelasKuliahController = require("../controllers/pengujian-performa/kelas-kuliah");
-const DetailNilaiPerkuliahanKelas = require("../controllers/pengujian-performa/detail-nilai-perkuliahan-kelas");
-const KrsMahasiswaController = require("../controllers/pengujian-performa/krs-mahasiswa");
+const MahasiswaController = require("../performance-testing/data-pengujian/mahasiswa");
+const WilayahController = require("../performance-testing/data-pengujian/wilayah");
+const KelasKuliahController = require("../performance-testing/data-pengujian/kelas-kuliah");
+const DetailNilaiPerkuliahanKelas = require("../performance-testing/data-pengujian/detail-nilai-perkuliahan-kelas");
+const KrsMahasiswaController = require("../performance-testing/data-pengujian/krs-mahasiswa");
 
 // endpoint API mahasiswa
 router.get("/mahasiswa/get-list-mahasiswa", checkRole(["admin"]), MahasiswaController.getListMahasiswa);

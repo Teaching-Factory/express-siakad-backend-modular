@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const SetupSeederController = require("../controllers/setup-seed");
+const SetupSeederController = require("./controller");
 
 // all routes
 router.get("/get-seed-jabatan", SetupSeederController.setupSeederJabatan);

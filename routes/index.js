@@ -4,6 +4,10 @@ const router = express.Router();
 // route api local (modular)
 const apiFeederRoutes = require("../src/modules/api-feeder");
 const apiFeederUpdateRoutes = require("../src/modules/api-feeder-update");
+const apiExternalRoutes = require("../src/modules/api-external");
+const performanceTestingRoutes = require("../src/modules/performance-testing");
+const setupGuestRoutes = require("../src/modules/setup-guest");
+const setupSeedRoutes = require("../src/modules/setup-seed");
 const userRoutes = require("../src/modules/user");
 const authRoutes = require("../src/modules/auth");
 const roleRoutes = require("../src/modules/role");
@@ -94,6 +98,10 @@ const checkModuleStatus = require("../src/middlewares/check-module-status");
 // endpoint api local (modular)
 router.use("/api-feeder", checkToken, checkModuleStatus("api-feeder"), apiFeederRoutes);
 router.use("/api-feeder-update", checkToken, checkModuleStatus("api-feeder-update"), apiFeederUpdateRoutes);
+router.use("/api-external", checkToken, checkModuleStatus("api-external"), apiExternalRoutes);
+router.use("/performance-testing", checkToken, checkModuleStatus("performance-testing"), performanceTestingRoutes);
+router.use("/setup-guest", checkToken, checkModuleStatus("setup-guest"), setupGuestRoutes);
+router.use("/setup-seed", checkToken, checkModuleStatus("setup-seed"), setupSeedRoutes);
 router.use("/user", checkToken, checkModuleStatus("user"), userRoutes);
 router.use("/auth", checkModuleStatus("auth"), authRoutes);
 router.use("/role", checkToken, checkModuleStatus("role"), roleRoutes);

@@ -1,28 +1,28 @@
 const axios = require("axios");
-const { getToken } = require("../api-feeder/get-token");
+const { getToken } = require("../../api-feeder/data-feeder/get-token");
 
-const getWilayah = async (req, res, next) => {
+const getListMahasiswa = async (req, res, next) => {
   try {
     // Mendapatkan token
     const { token, url_feeder } = await getToken();
 
     const requestBody = {
-      act: "GetWilayah",
+      act: "GetListMahasiswa",
       token: `${token}`,
-      order: "id_wilayah",
+      order: "id_registrasi_mahasiswa",
     };
 
     // Menggunakan token untuk mengambil data
     const response = await axios.post(url_feeder, requestBody);
 
     // Tanggapan dari API
-    const dataWilayah = response.data.data;
+    const dataMahasiswa = response.data.data;
 
     // Kirim data sebagai respons
     res.status(200).json({
-      message: "Get Wilayah Success",
-      totalData: dataWilayah.length,
-      dataWilayah: dataWilayah,
+      message: "Get List Mahasiswa Success",
+      totalData: dataMahasiswa.length,
+      dataMahasiswa: dataMahasiswa,
     });
   } catch (error) {
     next(error);
@@ -30,5 +30,5 @@ const getWilayah = async (req, res, next) => {
 };
 
 module.exports = {
-  getWilayah,
+  getListMahasiswa,
 };

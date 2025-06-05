@@ -3,10 +3,10 @@ const express = require("express");
 const router = express.Router();
 
 // import middleware
-const checkRole = require("../middlewares/check-role");
+const checkRole = require("../../middlewares/check-role");
 
 // import controllers
-const SekolahController = require("../controllers/api-external/sekolah");
+const SekolahController = require("../api-external/data-api-external/sekolah");
 
 // all routes
 router.get("/sekolah/smk/get", checkRole(["admin"]), SekolahController.getSekolahSMK);
