@@ -1,4 +1,4 @@
-const { RekapKHSMahasiswa, Mahasiswa, Prodi, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen, Semester, JenjangPendidikan, Agama, AktivitasKuliahMahasiswa, SettingGlobalSemester } = require("../../../models");
+const { RekapKHSMahasiswa, Mahasiswa, Prodi, MataKuliah, Angkatan, UnitJabatan, Jabatan, Dosen, Semester, JenjangPendidikan, Agama, AktivitasKuliahMahasiswa, SettingGlobalSemester, PerkuliahanMahasiswa } = require("../../../models");
 const axios = require("axios");
 const { getToken } = require("../api-feeder/data-feeder/get-token");
 
@@ -239,6 +239,27 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
         ],
       });
 
+      // ambil semua data perkuliahan mahasiswa untuk mahasiswa tertentu (hanya mengambil id_semester)
+      const latestPerkuliahan = await PerkuliahanMahasiswa.findOne({
+        where: {
+          id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+        },
+        order: [["id_semester", "DESC"]], // ambil semester terakhir
+        attributes: ["id_semester"], // ambil hanya id_semester
+      });
+
+      if (!latestPerkuliahan) {
+        return res.status(404).json({ message: "Perkuliahan mahasiswa tidak ditemukan" });
+      }
+
+      // mengambil data perkuliahan mahasiswa (akm) untuk semester paling terbaru
+      const perkuliahanMahasiswa = await PerkuliahanMahasiswa.findOne({
+        where: {
+          id_registrasi_mahasiswa: mahasiswa.id_registrasi_mahasiswa,
+          id_semester: latestPerkuliahan.id_semester, // pakai semester terbaru
+        },
+      });
+
       // // Mendapatkan token (get rekap khs mahasiswa by feeder)
       // const { token, url_feeder } = await getToken();
 
@@ -252,8 +273,9 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
       // const dataRekapKHSMahasiswa = response.data.data;
 
       res.status(200).json({
-        message: "Get Rekap KHS Mahasiswa By Mahasiswa from Feeder Success",
+        message: "Get Rekap KHS Mahasiswa By Mahasiswa Success",
         mahasiswa: mahasiswa,
+        perkuliahanMahasiswa: perkuliahanMahasiswa,
         unitJabatan: unit_jabatan,
         tanggalPenandatanganan: tanggal_penandatanganan,
         format: format,
@@ -315,18 +337,42 @@ const getRekapKHSMahasiswaByFilterReqBody = async (req, res, next) => {
       // const response = await axios.post(url_feeder, requestBody);
       // const dataRekapKHSMahasiswa = response.data.data;
 
-      // Mengelompokkan data berdasarkan id_registrasi_mahasiswa
+      // Ambil id_registrasi_mahasiswa unik dari rekap
+      const uniqueMahasiswaIds = [...new Set(dataRekapKHSMahasiswa.map((item) => item.id_registrasi_mahasiswa))];
+
+      // Buat objek untuk menyimpan perkuliahan terakhir per mahasiswa
+      const perkuliahanMahasiswaMap = {};
+
+      // Looping untuk mendapatkan data perkuliahan terakhir per mahasiswa
+      for (const id_registrasi of uniqueMahasiswaIds) {
+        const latestPerkuliahan = await PerkuliahanMahasiswa.findOne({
+          where: { id_registrasi_mahasiswa: id_registrasi },
+          order: [["id_semester", "DESC"]],
+        });
+
+        if (latestPerkuliahan) {
+          perkuliahanMahasiswaMap[id_registrasi] = latestPerkuliahan;
+        }
+      }
+
+      // Kelompokkan data berdasarkan mahasiswa, sekaligus tambahkan perkuliahan terakhirnya
       const groupedData = dataRekapKHSMahasiswa.reduce((acc, item) => {
         const id = item.id_registrasi_mahasiswa;
+
         if (!acc[id]) {
-          acc[id] = [];
+          acc[id] = {
+            mahasiswa: item.Mahasiswa,
+            rekap: [],
+            perkuliahanMahasiswa: perkuliahanMahasiswaMap[id] || null,
+          };
         }
-        acc[id].push(item);
+
+        acc[id].rekap.push(item);
         return acc;
       }, {});
 
       res.status(200).json({
-        message: "Get Rekap KHS Mahasiswa By Angkatan from Feeder Success",
+        message: "Get Rekap KHS Mahasiswa By Angkatan Success",
         unitJabatan: unit_jabatan,
         tanggalPenandatanganan: tanggal_penandatanganan,
         format: format,
