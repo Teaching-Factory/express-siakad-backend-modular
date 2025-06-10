@@ -1,4 +1,4 @@
-const { SettingGlobalSemester, Semester } = require("../../models");
+const { SettingGlobalSemester, Semester } = require("../../../models");
 
 const getAllSettingGlobalSemester = async (req, res, next) => {
   try {

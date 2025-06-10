@@ -1,4 +1,4 @@
-const { SettingWSFeeder } = require("../../models");
+const { SettingWSFeeder } = require("../../../models");
 
 const getAllSettingWSFeeder = async (req, res, next) => {
   try {

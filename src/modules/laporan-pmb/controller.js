@@ -1,4 +1,4 @@
-const { LaporanPMB } = require("../../models");
+const { LaporanPMB } = require("../../../models");
 
 const getAllLaporanPMB = async (req, res, next) => {
   try {

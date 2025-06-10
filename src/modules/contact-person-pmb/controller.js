@@ -1,4 +1,4 @@
-const { ContactPersonPMB } = require("../../models");
+const { ContactPersonPMB } = require("../../../models");
 
 const getAllContactPersonPMB = async (req, res, next) => {
   try {

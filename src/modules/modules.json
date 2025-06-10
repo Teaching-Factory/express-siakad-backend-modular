@@ -503,5 +503,50 @@
     "enabled": true,
     "createdAt": "2025-06-10T02:41:11.205Z",
     "updatedAt": "2025-06-10T02:41:11.206Z"
+  },
+  "setting-global-semester": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:47:16.838Z",
+    "updatedAt": "2025-06-10T02:47:16.839Z"
+  },
+  "setting-ws-feeder": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:49:40.348Z",
+    "updatedAt": "2025-06-10T02:49:40.349Z"
+  },
+  "jenis-tes": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:52:30.013Z",
+    "updatedAt": "2025-06-10T02:52:30.014Z"
+  },
+  "jenis-berkas": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:54:31.339Z",
+    "updatedAt": "2025-06-10T02:54:31.340Z"
+  },
+  "laporan-pmb": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:57:54.694Z",
+    "updatedAt": "2025-06-10T02:57:54.696Z"
+  },
+  "contact-person-pmb": {
+    "enabled": true,
+    "createdAt": "2025-06-10T03:00:36.539Z",
+    "updatedAt": "2025-06-10T03:00:36.540Z"
+  },
+  "sumber": {
+    "enabled": true,
+    "createdAt": "2025-06-10T03:02:52.206Z",
+    "updatedAt": "2025-06-10T03:02:52.207Z"
+  },
+  "periode-pendaftaran": {
+    "enabled": true,
+    "createdAt": "2025-06-10T03:04:26.313Z",
+    "updatedAt": "2025-06-10T03:04:26.314Z"
+  },
+  "periode-pendaftaran-guest": {
+    "enabled": true,
+    "createdAt": "2025-06-10T03:06:01.906Z",
+    "updatedAt": "2025-06-10T03:06:01.907Z"
   }
 }

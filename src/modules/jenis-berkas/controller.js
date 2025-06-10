@@ -1,4 +1,4 @@
-const { JenisBerkas } = require("../../models");
+const { JenisBerkas } = require("../../../models");
 
 const getAllJenisBerkas = async (req, res, next) => {
   try {

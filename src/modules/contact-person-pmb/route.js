@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const ContactPersonPMBController = require("../controllers/contact-person-pmb");
-const checkRole = require("../middlewares/check-role");
+const ContactPersonPMBController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "admin-pmb"]), ContactPersonPMBController.getAllContactPersonPMB);

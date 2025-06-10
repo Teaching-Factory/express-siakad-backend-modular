@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const SettingGlobalSemesterController = require("../controllers/setting-global-semester");
-const checkRole = require("../middlewares/check-role");
+const SettingGlobalSemesterController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "admin-prodi", "dosen", "mahasiswa", "admin-keuangan", "camaba", "admin-pmb"]), SettingGlobalSemesterController.getAllSettingGlobalSemester);

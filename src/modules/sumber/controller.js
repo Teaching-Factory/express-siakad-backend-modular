@@ -1,4 +1,4 @@
-const { Sumber } = require("../../models");
+const { Sumber } = require("../../../models");
 
 const getAllSumber = async (req, res, next) => {
   try {

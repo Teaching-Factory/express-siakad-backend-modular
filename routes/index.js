@@ -103,6 +103,15 @@ const rekapTranskripNilaiRoutes = require("../src/modules/rekap-transkrip-nilai"
 const rekapMahasiswaBelumKRSRoutes = require("../src/modules/rekap-mahasiswa-belum-krs");
 const rekapJadwalKuliahRoutes = require("../src/modules/rekap-jadwal-kuliah");
 const rekapPresensiKelasRoutes = require("../src/modules/rekap-presensi-kelas");
+const settingGlobalSemesterRoutes = require("../src/modules/setting-global-semester");
+const settingWSFeederRoutes = require("../src/modules/setting-ws-feeder");
+const jenisTesRoutes = require("../src/modules/jenis-tes");
+const jenisBerkasRoutes = require("../src/modules/jenis-berkas");
+const laporanPMBRoutes = require("../src/modules/laporan-pmb");
+const contactPersonPMBRoutes = require("../src/modules/contact-person-pmb");
+const sumberRoutes = require("../src/modules/sumber");
+const periodePendaftaranRoutes = require("../src/modules/periode-pendaftaran");
+const periodePendaftaranGuestRoutes = require("../src/modules/periode-pendaftaran-guest");
 // some new routes will be here ...
 
 // import middleware
@@ -211,6 +220,15 @@ router.use("/rekap-transkrip-nilai", checkToken, checkModuleStatus("rekap-transk
 router.use("/rekap-mahasiswa-belum-krs", checkToken, checkModuleStatus("rekap-mahasiswa-belum-krs"), rekapMahasiswaBelumKRSRoutes);
 router.use("/rekap-jadwal-kuliah", checkToken, checkModuleStatus("rekap-jadwal-kuliah"), rekapJadwalKuliahRoutes);
 router.use("/rekap-presensi-kelas", checkToken, checkModuleStatus("rekap-presensi-kelas"), rekapPresensiKelasRoutes);
+router.use("/setting-global-semester", checkToken, checkModuleStatus("setting-global-semester"), settingGlobalSemesterRoutes);
+router.use("/setting-ws-feeder", checkToken, checkModuleStatus("setting-ws-feeder"), settingWSFeederRoutes);
+router.use("/jenis-tes", checkToken, checkModuleStatus("jenis-tes"), jenisTesRoutes);
+router.use("/jenis-berkas", checkToken, checkModuleStatus("jenis-berkas"), jenisBerkasRoutes);
+router.use("/laporan-pmb", checkToken, checkModuleStatus("laporan-pmb"), laporanPMBRoutes);
+router.use("/contact-person-pmb", checkToken, checkModuleStatus("contact-person-pmb"), contactPersonPMBRoutes);
+router.use("/sumber", checkToken, checkModuleStatus("sumber"), sumberRoutes);
+router.use("/periode-pendaftaran", checkToken, checkModuleStatus("periode-pendaftaran"), periodePendaftaranRoutes);
+router.use("/periode-pendaftaran-guest", checkModuleStatus("periode-pendaftaran-guest"), periodePendaftaranGuestRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;
