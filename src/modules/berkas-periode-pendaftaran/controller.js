@@ -1,4 +1,4 @@
-const { BerkasPeriodePendaftaran, JenisBerkas, PeriodePendaftaran } = require("../../models");
+const { BerkasPeriodePendaftaran, JenisBerkas, PeriodePendaftaran } = require("../../../models");
 
 const getAllBerkasPeriodePendaftaran = async (req, res, next) => {
   try {

@@ -112,6 +112,11 @@ const contactPersonPMBRoutes = require("../src/modules/contact-person-pmb");
 const sumberRoutes = require("../src/modules/sumber");
 const periodePendaftaranRoutes = require("../src/modules/periode-pendaftaran");
 const periodePendaftaranGuestRoutes = require("../src/modules/periode-pendaftaran-guest");
+const sumberPeriodePendaftaranRoutes = require("../src/modules/sumber-periode-pendaftaran");
+const sumberPeriodePendaftaranGuestRoutes = require("../src/modules/sumber-periode-pendaftaran-guest");
+const prodiPeriodePendaftaranRoutes = require("../src/modules/prodi-periode-pendaftaran");
+const prodiPeriodePendaftaranGuestRoutes = require("../src/modules/prodi-periode-pendaftaran-guest");
+const berkasPeriodePendaftaranRoutes = require("../src/modules/berkas-periode-pendaftaran");
 // some new routes will be here ...
 
 // import middleware
@@ -229,6 +234,11 @@ router.use("/contact-person-pmb", checkToken, checkModuleStatus("contact-person-
 router.use("/sumber", checkToken, checkModuleStatus("sumber"), sumberRoutes);
 router.use("/periode-pendaftaran", checkToken, checkModuleStatus("periode-pendaftaran"), periodePendaftaranRoutes);
 router.use("/periode-pendaftaran-guest", checkModuleStatus("periode-pendaftaran-guest"), periodePendaftaranGuestRoutes);
+router.use("/sumber-periode-pendaftaran", checkToken, checkModuleStatus("sumber-periode-pendaftaran"), sumberPeriodePendaftaranRoutes);
+router.use("/sumber-periode-pendaftaran-guest", checkModuleStatus("sumber-periode-pendaftaran-guest"), sumberPeriodePendaftaranGuestRoutes);
+router.use("/prodi-periode-pendaftaran", checkToken, checkModuleStatus("prodi-periode-pendaftaran"), prodiPeriodePendaftaranRoutes);
+router.use("/prodi-periode-pendaftaran-guest", checkModuleStatus("prodi-periode-pendaftaran-guest"), prodiPeriodePendaftaranGuestRoutes);
+router.use("/berkas-periode-pendaftaran", checkToken, checkModuleStatus("berkas-periode-pendaftaran"), berkasPeriodePendaftaranRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

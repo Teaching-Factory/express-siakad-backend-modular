@@ -1,4 +1,4 @@
-const { ProdiPeriodePendaftaran, Prodi, JenjangPendidikan } = require("../../models");
+const { ProdiPeriodePendaftaran, Prodi, JenjangPendidikan } = require("../../../models");
 
 const getProdiPeriodePendaftaranByPeriodePendaftaranIdGuest = async (req, res, next) => {
   try {
