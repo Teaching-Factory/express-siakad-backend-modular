@@ -1,4 +1,4 @@
-const { TahapTesPeriodePendaftaran, JenisTes, PeriodePendaftaran, Camaba } = require("../../models");
+const { TahapTesPeriodePendaftaran, JenisTes, PeriodePendaftaran, Camaba } = require("../../../models");
 
 const getAllTahapTesPeriodePendaftaran = async (req, res, next) => {
   try {

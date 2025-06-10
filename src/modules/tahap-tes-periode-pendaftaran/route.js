@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const TahapTesPeriodePendaftaranController = require("../controllers/tahap-tes-periode-pendaftaran");
-const checkRole = require("../middlewares/check-role");
+const TahapTesPeriodePendaftaranController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "admin-pmb"]), TahapTesPeriodePendaftaranController.getAllTahapTesPeriodePendaftaran);

@@ -117,6 +117,9 @@ const sumberPeriodePendaftaranGuestRoutes = require("../src/modules/sumber-perio
 const prodiPeriodePendaftaranRoutes = require("../src/modules/prodi-periode-pendaftaran");
 const prodiPeriodePendaftaranGuestRoutes = require("../src/modules/prodi-periode-pendaftaran-guest");
 const berkasPeriodePendaftaranRoutes = require("../src/modules/berkas-periode-pendaftaran");
+const tahapTesPeriodePendaftaranRoutes = require("../src/modules/tahap-tes-periode-pendaftaran");
+const userGuidePMBRoutes = require("../src/modules/user-guide-pmb");
+const userGuidePMBGuestRoutes = require("../src/modules/user-guide-pmb-guest");
 // some new routes will be here ...
 
 // import middleware
@@ -239,6 +242,9 @@ router.use("/sumber-periode-pendaftaran-guest", checkModuleStatus("sumber-period
 router.use("/prodi-periode-pendaftaran", checkToken, checkModuleStatus("prodi-periode-pendaftaran"), prodiPeriodePendaftaranRoutes);
 router.use("/prodi-periode-pendaftaran-guest", checkModuleStatus("prodi-periode-pendaftaran-guest"), prodiPeriodePendaftaranGuestRoutes);
 router.use("/berkas-periode-pendaftaran", checkToken, checkModuleStatus("berkas-periode-pendaftaran"), berkasPeriodePendaftaranRoutes);
+router.use("/tahap-tes-periode-pendaftaran", checkToken, checkModuleStatus("tahap-tes-periode-pendaftaran"), tahapTesPeriodePendaftaranRoutes);
+router.use("/user-guide-pmb", checkToken, checkModuleStatus("user-guide-pmb"), userGuidePMBRoutes);
+router.use("/user-guide-pmb-guest", checkModuleStatus("user-guide-pmb-guest"), userGuidePMBGuestRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

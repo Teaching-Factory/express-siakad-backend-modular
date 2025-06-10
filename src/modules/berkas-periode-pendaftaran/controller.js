@@ -4,7 +4,7 @@ const getAllBerkasPeriodePendaftaran = async (req, res, next) => {
   try {
     // Ambil semua data berkas_periode_pendaftarans dari database
     const berkas_periode_pendaftarans = await BerkasPeriodePendaftaran.findAll({
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }]
     });
 
     // Kirim respons JSON jika berhasil
@@ -31,7 +31,7 @@ const getBerkasPeriodePendaftaranById = async (req, res, next) => {
 
     // Cari data berkas_periode_pendaftaran berdasarkan ID di database
     const berkas_periode_pendaftaran = await BerkasPeriodePendaftaran.findByPk(berkasPeriodePendaftaranId, {
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }]
     });
 
     // Jika data tidak ditemukan, kirim respons 404
@@ -67,7 +67,7 @@ const getBerkasPeriodePendaftaranByPeriodePendaftaranId = async (req, res, next)
       where: {
         id_periode_pendaftaran: periodePendaftaranId
       },
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }]
     });
 
     // Jika data tidak ditemukan, kirim respons 404

@@ -21,7 +21,7 @@ describe("getBerkasPeriodePendaftaranById", () => {
 
     expect(res.statusCode).toBe(400);
     expect(res._getJSONData()).toEqual({
-      message: "Berkas Periode Pendaftaran ID is required"
+      message: "Berkas Periode Pendaftaran ID is required",
     });
   });
 
@@ -29,7 +29,7 @@ describe("getBerkasPeriodePendaftaranById", () => {
     const mockBerkasPeriodePendaftaran = {
       id: 1,
       JenisBerkas: { id: 1, nama_berkas: "Berkas 1" },
-      PeriodePendaftaran: { id: 1, nama_periode: "Periode 1" }
+      PeriodePendaftaran: { id: 1, nama_periode: "Periode 1" },
     };
     req.params.id = 1;
 
@@ -38,12 +38,12 @@ describe("getBerkasPeriodePendaftaranById", () => {
     await getBerkasPeriodePendaftaranById(req, res, next);
 
     expect(BerkasPeriodePendaftaran.findByPk).toHaveBeenCalledWith(1, {
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
       message: `<===== GET Berkas Periode Pendaftaran By ID 1 Success:`,
-      data: mockBerkasPeriodePendaftaran
+      data: mockBerkasPeriodePendaftaran,
     });
   });
 
@@ -55,11 +55,11 @@ describe("getBerkasPeriodePendaftaranById", () => {
     await getBerkasPeriodePendaftaranById(req, res, next);
 
     expect(BerkasPeriodePendaftaran.findByPk).toHaveBeenCalledWith(999, {
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }],
     });
     expect(res.statusCode).toBe(404);
     expect(res._getJSONData()).toEqual({
-      message: `<===== Berkas Periode Pendaftaran With ID 999 Not Found:`
+      message: `<===== Berkas Periode Pendaftaran With ID 999 Not Found:`,
     });
   });
 
@@ -73,7 +73,7 @@ describe("getBerkasPeriodePendaftaranById", () => {
     await getBerkasPeriodePendaftaranById(req, res, next);
 
     expect(BerkasPeriodePendaftaran.findByPk).toHaveBeenCalledWith(1, {
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }],
     });
     expect(next).toHaveBeenCalledWith(error);
   });

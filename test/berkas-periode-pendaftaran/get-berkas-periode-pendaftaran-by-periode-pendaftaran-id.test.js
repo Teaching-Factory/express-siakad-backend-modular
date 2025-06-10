@@ -21,7 +21,7 @@ describe("getBerkasPeriodePendaftaranByPeriodePendaftaranId", () => {
 
     expect(res.statusCode).toBe(400);
     expect(res._getJSONData()).toEqual({
-      message: "Periode Pendaftaran ID is required"
+      message: "Periode Pendaftaran ID is required",
     });
   });
 
@@ -30,13 +30,13 @@ describe("getBerkasPeriodePendaftaranByPeriodePendaftaranId", () => {
       {
         id: 1,
         JenisBerkas: { id: 1, nama_berkas: "Berkas 1" },
-        PeriodePendaftaran: { id: 1, nama_periode: "Periode 1" }
+        PeriodePendaftaran: { id: 1, nama_periode: "Periode 1" },
       },
       {
         id: 2,
         JenisBerkas: { id: 2, nama_berkas: "Berkas 2" },
-        PeriodePendaftaran: { id: 2, nama_periode: "Periode 2" }
-      }
+        PeriodePendaftaran: { id: 2, nama_periode: "Periode 2" },
+      },
     ];
     req.params.id_periode_pendaftaran = 1;
 
@@ -46,12 +46,12 @@ describe("getBerkasPeriodePendaftaranByPeriodePendaftaranId", () => {
 
     expect(BerkasPeriodePendaftaran.findAll).toHaveBeenCalledWith({
       where: { id_periode_pendaftaran: 1 },
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
       message: `<===== GET Berkas Periode Pendaftaran By ID Periode Pendaftaran 1 Success:`,
-      data: mockBerkasPeriodePendaftarans
+      data: mockBerkasPeriodePendaftarans,
     });
   });
 
@@ -64,11 +64,11 @@ describe("getBerkasPeriodePendaftaranByPeriodePendaftaranId", () => {
 
     expect(BerkasPeriodePendaftaran.findAll).toHaveBeenCalledWith({
       where: { id_periode_pendaftaran: 999 },
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }],
     });
     expect(res.statusCode).toBe(404);
     expect(res._getJSONData()).toEqual({
-      message: `<===== Berkas Periode Pendaftaran With ID Periode Pendaftaran 999 Not Found:`
+      message: `<===== Berkas Periode Pendaftaran With ID Periode Pendaftaran 999 Not Found:`,
     });
   });
 
@@ -83,7 +83,7 @@ describe("getBerkasPeriodePendaftaranByPeriodePendaftaranId", () => {
 
     expect(BerkasPeriodePendaftaran.findAll).toHaveBeenCalledWith({
       where: { id_periode_pendaftaran: 1 },
-      include: [{ model: JenisBerkas }, { model: PeriodePendaftaran }]
+      include: [{ model: JenisBerkas, as: "JenisBerkas" }, { model: PeriodePendaftaran }],
     });
     expect(next).toHaveBeenCalledWith(error);
   });

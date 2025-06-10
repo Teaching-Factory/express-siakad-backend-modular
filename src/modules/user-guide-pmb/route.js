@@ -5,8 +5,8 @@ const path = require("path");
 const router = express.Router();
 
 // import controller dan middleware
-const UserGuidePMBController = require("../controllers/user-guide-pmb");
-const checkRole = require("../middlewares/check-role");
+const UserGuidePMBController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // fungsi untuk menyimpan upload file ke dalam penyimpanan lokal project
 const storage = multer.diskStorage({
@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
-  }
+  },
 });
 
 // filter untuk memastikan hanya file pdf yang bisa diupload
@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  fileFilter: fileFilter
+  fileFilter: fileFilter,
 });
 
 // all routes
