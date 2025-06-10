@@ -120,6 +120,21 @@ const berkasPeriodePendaftaranRoutes = require("../src/modules/berkas-periode-pe
 const tahapTesPeriodePendaftaranRoutes = require("../src/modules/tahap-tes-periode-pendaftaran");
 const userGuidePMBRoutes = require("../src/modules/user-guide-pmb");
 const userGuidePMBGuestRoutes = require("../src/modules/user-guide-pmb-guest");
+const camabaRoutes = require("../src/modules/camaba");
+const camabaGuestRoutes = require("../src/modules/camaba-guest");
+const sekolahRoutes = require("../src/modules/sekolah");
+const biodataCamabaRoutes = require("../src/modules/biodata-camaba");
+const pemberkasanCamabaRoutes = require("../src/modules/pemberkasan-camaba");
+const prodiCamabaRoutes = require("../src/modules/prodi-camaba");
+const periodeYudisiumRoutes = require("../src/modules/periode-yudisium");
+const aspekPenilaianDosenRoutes = require("../src/modules/aspek-penilaian-dosen");
+const skalaPenilaianDosenRoutes = require("../src/modules/skala-penilaian-dosen");
+const pengaturanPMBRoutes = require("../src/modules/pengaturan-pmb");
+const tagihanCamabaRoutes = require("../src/modules/tagihan-camaba");
+const rekapLaporanPMBRoutes = require("../src/modules/rekap-laporan-pmb");
+const kuesionerRoutes = require("../src/modules/kuesioner");
+const hasilKuesionerDosenRoutes = require("../src/modules/hasil-kuesioner-dosen");
+const hasilKuesionerPerKelasRoutes = require("../src/modules/hasil-kuesioner-per-kelas");
 // some new routes will be here ...
 
 // import middleware
@@ -245,6 +260,21 @@ router.use("/berkas-periode-pendaftaran", checkToken, checkModuleStatus("berkas-
 router.use("/tahap-tes-periode-pendaftaran", checkToken, checkModuleStatus("tahap-tes-periode-pendaftaran"), tahapTesPeriodePendaftaranRoutes);
 router.use("/user-guide-pmb", checkToken, checkModuleStatus("user-guide-pmb"), userGuidePMBRoutes);
 router.use("/user-guide-pmb-guest", checkModuleStatus("user-guide-pmb-guest"), userGuidePMBGuestRoutes);
+router.use("/camaba", checkToken, checkModuleStatus("camaba"), camabaRoutes);
+router.use("/camaba-guest", checkModuleStatus("camaba-guest"), camabaGuestRoutes);
+router.use("/sekolah", checkToken, checkModuleStatus("sekolah"), sekolahRoutes);
+router.use("/biodata-camaba", checkToken, checkModuleStatus("biodata-camaba"), biodataCamabaRoutes);
+router.use("/pemberkasan-camaba", checkToken, checkModuleStatus("pemberkasan-camaba"), pemberkasanCamabaRoutes);
+router.use("/prodi-camaba", checkToken, checkModuleStatus("prodi-camaba"), prodiCamabaRoutes);
+router.use("/periode-yudisium", checkToken, checkModuleStatus("periode-yudisium"), periodeYudisiumRoutes);
+router.use("/aspek-penilaian-dosen", checkToken, checkModuleStatus("aspek-penilaian-dosen"), aspekPenilaianDosenRoutes);
+router.use("/skala-penilaian-dosen", checkToken, checkModuleStatus("skala-penilaian-dosen"), skalaPenilaianDosenRoutes);
+router.use("/pengaturan-pmb", checkToken, checkModuleStatus("pengaturan-pmb"), pengaturanPMBRoutes);
+router.use("/tagihan-camaba", checkToken, checkModuleStatus("tagihan-camaba"), tagihanCamabaRoutes);
+router.use("/rekap-laporan-pmb", checkToken, checkModuleStatus("rekap-laporan-pmb"), rekapLaporanPMBRoutes);
+router.use("/kuesioner", checkToken, checkModuleStatus("kuesioner"), kuesionerRoutes);
+router.use("/hasil-kuesioner-dosen", checkToken, checkModuleStatus("hasil-kuesioner-dosen"), hasilKuesionerDosenRoutes);
+router.use("/hasil-kuesioner-per-kelas", checkToken, checkModuleStatus("hasil-kuesioner-per-kelas"), hasilKuesionerPerKelasRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

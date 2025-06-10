@@ -183,12 +183,12 @@ program
     }
 
     console.log("Daftar Module yang Terdaftar:\n");
-    console.log("No. | Nama Modul                     | Status     ");
-    console.log("----|--------------------------------|------------");
+    console.log("No. | Nama Modul                          | Status     ");
+    console.log("----|-------------------------------------|------------");
 
     moduleNames.forEach((mod, index) => {
       const status = modulesData[mod].enabled ? "ENABLED " : "DISABLED";
-      const paddedName = mod.padEnd(30);
+      const paddedName = mod.padEnd(35);
       console.log(`${(index + 1).toString().padEnd(3)} | ${paddedName} | ${status}`);
     });
 

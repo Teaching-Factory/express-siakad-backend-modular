@@ -588,5 +588,80 @@
     "enabled": true,
     "createdAt": "2025-06-10T06:20:01.166Z",
     "updatedAt": "2025-06-10T06:20:01.167Z"
+  },
+  "camaba": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:26:24.466Z",
+    "updatedAt": "2025-06-10T06:26:24.467Z"
+  },
+  "camaba-guest": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:28:20.963Z",
+    "updatedAt": "2025-06-10T06:28:20.965Z"
+  },
+  "sekolah": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:34:42.972Z",
+    "updatedAt": "2025-06-10T06:34:42.974Z"
+  },
+  "biodata-camaba": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:37:44.175Z",
+    "updatedAt": "2025-06-10T06:37:44.178Z"
+  },
+  "pemberkasan-camaba": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:41:31.542Z",
+    "updatedAt": "2025-06-10T06:41:31.545Z"
+  },
+  "prodi-camaba": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:44:04.308Z",
+    "updatedAt": "2025-06-10T06:44:04.309Z"
+  },
+  "periode-yudisium": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:45:52.293Z",
+    "updatedAt": "2025-06-10T06:45:52.294Z"
+  },
+  "aspek-penilaian-dosen": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:49:33.209Z",
+    "updatedAt": "2025-06-10T06:49:33.210Z"
+  },
+  "skala-penilaian-dosen": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:51:28.144Z",
+    "updatedAt": "2025-06-10T06:51:28.145Z"
+  },
+  "pengaturan-pmb": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:54:51.067Z",
+    "updatedAt": "2025-06-10T06:54:51.068Z"
+  },
+  "tagihan-camaba": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:56:25.480Z",
+    "updatedAt": "2025-06-10T06:56:25.481Z"
+  },
+  "rekap-laporan-pmb": {
+    "enabled": true,
+    "createdAt": "2025-06-10T06:58:27.930Z",
+    "updatedAt": "2025-06-10T06:58:27.932Z"
+  },
+  "kuesioner": {
+    "enabled": true,
+    "createdAt": "2025-06-10T07:00:55.528Z",
+    "updatedAt": "2025-06-10T07:00:55.529Z"
+  },
+  "hasil-kuesioner-dosen": {
+    "enabled": true,
+    "createdAt": "2025-06-10T07:02:54.100Z",
+    "updatedAt": "2025-06-10T07:02:54.101Z"
+  },
+  "hasil-kuesioner-per-kelas": {
+    "enabled": true,
+    "createdAt": "2025-06-10T07:05:01.785Z",
+    "updatedAt": "2025-06-10T07:05:01.786Z"
   }
 }
