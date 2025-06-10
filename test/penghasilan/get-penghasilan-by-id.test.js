@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getPenghasilanById } = require("../../src/controllers/penghasilan");
+const { getPenghasilanById } = require("../../src/modules/penghasilan/controller");
 const { Penghasilan } = require("../../models");
 
 jest.mock("../../models");

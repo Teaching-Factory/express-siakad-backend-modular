@@ -1,4 +1,4 @@
-const { PresensiMahasiswa, PertemuanPerkuliahan, UserRole, Role, User, Mahasiswa } = require("../../models");
+const { PresensiMahasiswa, PertemuanPerkuliahan, UserRole, Role, User, Mahasiswa } = require("../../../models");
 const moment = require("moment-timezone");
 
 const getAllPresensiPerkuliahanByPertemuanPerkuliahanId = async (req, res, next) => {

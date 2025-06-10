@@ -1,4 +1,4 @@
-const { getProdiById } = require("../../src/controllers/prodi");
+const { getProdiById } = require("../../src/modules/prodi/controller");
 const { Prodi } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

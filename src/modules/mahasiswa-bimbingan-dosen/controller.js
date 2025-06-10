@@ -1,4 +1,4 @@
-const { MahasiswaBimbinganDosen, KategoriKegiatan, Dosen, AktivitasMahasiswa } = require("../../models");
+const { MahasiswaBimbinganDosen, KategoriKegiatan, Dosen, AktivitasMahasiswa } = require("../../../models");
 
 const getMahasiswaBimbinganDosenByAktivitasId = async (req, res, next) => {
   try {

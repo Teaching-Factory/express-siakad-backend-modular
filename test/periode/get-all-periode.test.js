@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllPeriode } = require("../../src/controllers/periode");
+const { getAllPeriode } = require("../../src/modules/periode/controller");
 const { Periode, Prodi } = require("../../models");
 
 jest.mock("../../models");

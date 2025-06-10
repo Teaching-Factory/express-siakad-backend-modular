@@ -1,4 +1,4 @@
-const { PelimpahanMataKuliah, Dosen, MataKuliah, KelasKuliah } = require("../../models");
+const { PelimpahanMataKuliah, Dosen, MataKuliah, KelasKuliah } = require("../../../models");
 
 const getAllPelimpahanMataKuliah = async (req, res, next) => {
   try {

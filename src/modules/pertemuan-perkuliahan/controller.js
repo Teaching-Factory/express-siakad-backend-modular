@@ -1,4 +1,4 @@
-const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Semester, Sequelize, Prodi, MataKuliah, PresensiMahasiswa } = require("../../models");
+const { PertemuanPerkuliahan, RuangPerkuliahan, KelasKuliah, Dosen, Mahasiswa, TahunAjaran, KRSMahasiswa, Semester, Sequelize, Prodi, MataKuliah, PresensiMahasiswa } = require("../../../models");
 
 const getAllPertemuanPerkuliahanByKelasKuliahId = async (req, res, next) => {
   try {

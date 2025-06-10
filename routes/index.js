@@ -90,6 +90,13 @@ const tagihanMahasiswaRoutes = require("../src/modules/tagihan-mahasiswa");
 const pembayaranMahasiswaRoutes = require("../src/modules/pembayaran-mahasiswa");
 const beritaRoutes = require("../src/modules/berita");
 const dosenWaliRoutes = require("../src/modules/dosen-wali");
+const dosenPengajarKelasKuliahRoutes = require("../src/modules/dosen-pengajar-kelas-kuliah");
+const pelimpahanMataKuliahRoutes = require("../src/modules/pelimpahan-mata-kuliah");
+const mahasiswaBimbinganDosenRoutes = require("../src/modules/mahasiswa-bimbingan-dosen");
+const ujiMahasiswaRoutes = require("../src/modules/uji-mahasiswa");
+const pertemuanPerkuliahanRoutes = require("../src/modules/pertemuan-perkuliahan");
+const presensiPerkuliahanRoutes = require("../src/modules/presensi-perkuliahan");
+const nilaiPerkuliahanRoutes = require("../src/modules/nilai-perkuliahan");
 // some new routes will be here ...
 
 // import middleware
@@ -185,6 +192,13 @@ router.use("/tagihan-mahasiswa", checkToken, checkModuleStatus("tagihan-mahasisw
 router.use("/pembayaran-mahasiswa", checkToken, checkModuleStatus("pembayaran-mahasiswa"), pembayaranMahasiswaRoutes);
 router.use("/berita", checkToken, checkModuleStatus("berita"), beritaRoutes);
 router.use("/dosen-wali", checkToken, checkModuleStatus("dosen-wali"), dosenWaliRoutes);
+router.use("/dosen-pengajar-kelas-kuliah", checkToken, checkModuleStatus("dosen-pengajar-kelas-kuliah"), dosenPengajarKelasKuliahRoutes);
+router.use("/pelimpahan-mata-kuliah", checkToken, checkModuleStatus("pelimpahan-mata-kuliah"), pelimpahanMataKuliahRoutes);
+router.use("/mahasiswa-bimbingan-dosen", checkToken, checkModuleStatus("mahasiswa-bimbingan-dosen"), mahasiswaBimbinganDosenRoutes);
+router.use("/uji-mahasiswa", checkToken, checkModuleStatus("uji-mahasiswa"), ujiMahasiswaRoutes);
+router.use("/pertemuan-perkuliahan", checkToken, checkModuleStatus("pertemuan-perkuliahan"), pertemuanPerkuliahanRoutes);
+router.use("/presensi-perkuliahan", checkToken, checkModuleStatus("presensi-perkuliahan"), presensiPerkuliahanRoutes);
+router.use("/nilai-perkuliahan", checkToken, checkModuleStatus("nilai-perkuliahan"), nilaiPerkuliahanRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

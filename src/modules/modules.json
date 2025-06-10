@@ -438,5 +438,40 @@
     "enabled": true,
     "createdAt": "2025-06-05T04:08:53.487Z",
     "updatedAt": "2025-06-05T04:08:53.488Z"
+  },
+  "dosen-pengajar-kelas-kuliah": {
+    "enabled": true,
+    "createdAt": "2025-06-10T01:46:01.750Z",
+    "updatedAt": "2025-06-10T01:46:01.751Z"
+  },
+  "pelimpahan-mata-kuliah": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:05:58.503Z",
+    "updatedAt": "2025-06-10T02:05:58.504Z"
+  },
+  "mahasiswa-bimbingan-dosen": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:07:54.095Z",
+    "updatedAt": "2025-06-10T02:07:54.096Z"
+  },
+  "uji-mahasiswa": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:11:33.818Z",
+    "updatedAt": "2025-06-10T02:11:33.819Z"
+  },
+  "pertemuan-perkuliahan": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:15:13.259Z",
+    "updatedAt": "2025-06-10T02:15:13.260Z"
+  },
+  "presensi-perkuliahan": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:17:29.808Z",
+    "updatedAt": "2025-06-10T02:17:29.809Z"
+  },
+  "nilai-perkuliahan": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:21:55.876Z",
+    "updatedAt": "2025-06-10T02:21:55.878Z"
   }
 }

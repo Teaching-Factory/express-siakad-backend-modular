@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const MahasiswaBimbinganDosenController = require("../controllers/mahasiswa-bimbingan-dosen");
-const checkRole = require("../middlewares/check-role");
+const MahasiswaBimbinganDosenController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/:id_aktivitas/get", checkRole(["admin", "admin-prodi"]), MahasiswaBimbinganDosenController.getMahasiswaBimbinganDosenByAktivitasId);

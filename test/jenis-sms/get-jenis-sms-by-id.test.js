@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getJenisSMSById } = require("../../src/controllers/jenis-sms");
+const { getJenisSMSById } = require("../../src/modules/jenis-sms/controller");
 const { JenisSMS } = require("../../models");
 
 jest.mock("../../models");

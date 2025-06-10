@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllBiodataDosen } = require("../../src/controllers/biodata-dosen");
+const { getAllBiodataDosen } = require("../../src/modules/biodata-dosen/controller");
 const { BiodataDosen } = require("../../models");
 
 jest.mock("../../models");
