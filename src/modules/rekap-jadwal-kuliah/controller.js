@@ -1,4 +1,4 @@
-const { DetailKelasKuliah, KelasKuliah, MataKuliah, MatkulKurikulum, RuangPerkuliahan, Dosen, Semester, KRSMahasiswa, Mahasiswa } = require("../../models");
+const { DetailKelasKuliah, KelasKuliah, MataKuliah, MatkulKurikulum, RuangPerkuliahan, Dosen, Semester, KRSMahasiswa, Mahasiswa } = require("../../../models");
 
 const getRekapJadwalKuliahByFilter = async (req, res, next) => {
   const { id_prodi, id_kurikulum, id_semester, semester, tanggal_penandatanganan } = req.query;

@@ -1,6 +1,6 @@
 const axios = require("axios");
-const { Mahasiswa, Prodi, UnitJabatan, Jabatan, Dosen } = require("../../models");
-const { getToken } = require("././api-feeder/get-token");
+const { Mahasiswa, Prodi, UnitJabatan, Jabatan, Dosen } = require("../../../models");
+const { getToken } = require("../api-feeder/data-feeder/get-token");
 
 const getRekapTranskripNilaiByFilterReqBody = async (req, res, next) => {
   const { nim, tanggal_penandatanganan, format } = req.query;

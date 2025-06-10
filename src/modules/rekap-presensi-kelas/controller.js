@@ -1,4 +1,4 @@
-const { KelasKuliah, Prodi, JenjangPendidikan, Dosen, MataKuliah, PertemuanPerkuliahan, PesertaKelasKuliah, Mahasiswa, PresensiMahasiswa, Semester } = require("../../models");
+const { KelasKuliah, Prodi, JenjangPendidikan, Dosen, MataKuliah, PertemuanPerkuliahan, PesertaKelasKuliah, Mahasiswa, PresensiMahasiswa, Semester } = require("../../../models");
 
 const getRekapPresensiKelasByFilter = async (req, res, next) => {
   const { id_semester, id_prodi, nama_kelas_kuliah, format, tanggal_penandatanganan } = req.query;

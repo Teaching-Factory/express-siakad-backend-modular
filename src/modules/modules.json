@@ -473,5 +473,35 @@
     "enabled": true,
     "createdAt": "2025-06-10T02:21:55.876Z",
     "updatedAt": "2025-06-10T02:21:55.878Z"
+  },
+  "setting-global": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:30:19.765Z",
+    "updatedAt": "2025-06-10T02:30:19.766Z"
+  },
+  "perguruan-tinggi-guest": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:32:04.553Z",
+    "updatedAt": "2025-06-10T02:32:04.554Z"
+  },
+  "rekap-transkrip-nilai": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:33:56.941Z",
+    "updatedAt": "2025-06-10T02:33:56.942Z"
+  },
+  "rekap-mahasiswa-belum-krs": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:36:27.862Z",
+    "updatedAt": "2025-06-10T02:36:27.863Z"
+  },
+  "rekap-jadwal-kuliah": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:38:44.794Z",
+    "updatedAt": "2025-06-10T02:38:44.798Z"
+  },
+  "rekap-presensi-kelas": {
+    "enabled": true,
+    "createdAt": "2025-06-10T02:41:11.205Z",
+    "updatedAt": "2025-06-10T02:41:11.206Z"
   }
 }

@@ -1,4 +1,4 @@
-const { Mahasiswa, Prodi, SettingGlobalSemester, KRSMahasiswa, Angkatan, DosenWali, Dosen } = require("../../models");
+const { Mahasiswa, Prodi, SettingGlobalSemester, KRSMahasiswa, Angkatan, DosenWali, Dosen } = require("../../../models");
 const { Op } = require("sequelize");
 
 // Fungsi untuk mengkonversi tahun ke format periode masuk

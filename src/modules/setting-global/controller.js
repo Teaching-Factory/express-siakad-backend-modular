@@ -1,4 +1,4 @@
-const { SettingGlobal, Prodi, JenjangPendidikan } = require("../../models");
+const { SettingGlobal, Prodi, JenjangPendidikan } = require("../../../models");
 
 const getAllSettingGlobals = async (req, res, next) => {
   try {

@@ -97,6 +97,12 @@ const ujiMahasiswaRoutes = require("../src/modules/uji-mahasiswa");
 const pertemuanPerkuliahanRoutes = require("../src/modules/pertemuan-perkuliahan");
 const presensiPerkuliahanRoutes = require("../src/modules/presensi-perkuliahan");
 const nilaiPerkuliahanRoutes = require("../src/modules/nilai-perkuliahan");
+const settingGlobalRoutes = require("../src/modules/setting-global");
+const perguruanTinggiGuestRoutes = require("../src/modules/perguruan-tinggi-guest");
+const rekapTranskripNilaiRoutes = require("../src/modules/rekap-transkrip-nilai");
+const rekapMahasiswaBelumKRSRoutes = require("../src/modules/rekap-mahasiswa-belum-krs");
+const rekapJadwalKuliahRoutes = require("../src/modules/rekap-jadwal-kuliah");
+const rekapPresensiKelasRoutes = require("../src/modules/rekap-presensi-kelas");
 // some new routes will be here ...
 
 // import middleware
@@ -199,6 +205,12 @@ router.use("/uji-mahasiswa", checkToken, checkModuleStatus("uji-mahasiswa"), uji
 router.use("/pertemuan-perkuliahan", checkToken, checkModuleStatus("pertemuan-perkuliahan"), pertemuanPerkuliahanRoutes);
 router.use("/presensi-perkuliahan", checkToken, checkModuleStatus("presensi-perkuliahan"), presensiPerkuliahanRoutes);
 router.use("/nilai-perkuliahan", checkToken, checkModuleStatus("nilai-perkuliahan"), nilaiPerkuliahanRoutes);
+router.use("/setting-global", checkToken, checkModuleStatus("setting-global"), settingGlobalRoutes);
+router.use("/perguruan-tinggi-guest", checkModuleStatus("perguruan-tinggi-guest"), perguruanTinggiGuestRoutes);
+router.use("/rekap-transkrip-nilai", checkToken, checkModuleStatus("rekap-transkrip-nilai"), rekapTranskripNilaiRoutes);
+router.use("/rekap-mahasiswa-belum-krs", checkToken, checkModuleStatus("rekap-mahasiswa-belum-krs"), rekapMahasiswaBelumKRSRoutes);
+router.use("/rekap-jadwal-kuliah", checkToken, checkModuleStatus("rekap-jadwal-kuliah"), rekapJadwalKuliahRoutes);
+router.use("/rekap-presensi-kelas", checkToken, checkModuleStatus("rekap-presensi-kelas"), rekapPresensiKelasRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

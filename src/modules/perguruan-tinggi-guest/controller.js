@@ -1,4 +1,4 @@
-const { ProfilPT, PerguruanTinggi } = require("../../models");
+const { ProfilPT, PerguruanTinggi } = require("../../../models");
 
 const getProfilPTActive = async (req, res, next) => {
   try {
