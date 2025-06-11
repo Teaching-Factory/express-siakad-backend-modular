@@ -135,6 +135,14 @@ const rekapLaporanPMBRoutes = require("../src/modules/rekap-laporan-pmb");
 const kuesionerRoutes = require("../src/modules/kuesioner");
 const hasilKuesionerDosenRoutes = require("../src/modules/hasil-kuesioner-dosen");
 const hasilKuesionerPerKelasRoutes = require("../src/modules/hasil-kuesioner-per-kelas");
+const kelasKuliahSyncRoutes = require("../src/modules/kelas-kuliah-sync");
+const dosenPengajarKelasKuliahSyncRoutes = require("../src/modules/dosen-pengajar-kelas-kuliah-sync");
+const biodataMahasiswaSyncRoutes = require("../src/modules/biodata-mahasiswa-sync");
+const riwayatPendidikanMahasiswaSyncRoutes = require("../src/modules/riwayat-pendidikan-mahasiswa-sync");
+const pesertaKelasKuliahSyncRoutes = require("../src/modules/peserta-kelas-kuliah-sync");
+const detailNilaiPerkuliahanKelasSyncRoutes = require("../src/modules/detail-nilai-perkuliahan-kelas-sync");
+const rencanaEvaluasiSyncRoutes = require("../src/modules/rencana-evaluasi-sync");
+const komponenEvaluasiKelasSyncRoutes = require("../src/modules/komponen-evaluasi-kelas-sync");
 // some new routes will be here ...
 
 // import middleware
@@ -275,6 +283,14 @@ router.use("/rekap-laporan-pmb", checkToken, checkModuleStatus("rekap-laporan-pm
 router.use("/kuesioner", checkToken, checkModuleStatus("kuesioner"), kuesionerRoutes);
 router.use("/hasil-kuesioner-dosen", checkToken, checkModuleStatus("hasil-kuesioner-dosen"), hasilKuesionerDosenRoutes);
 router.use("/hasil-kuesioner-per-kelas", checkToken, checkModuleStatus("hasil-kuesioner-per-kelas"), hasilKuesionerPerKelasRoutes);
+router.use("/kelas-kuliah-sync", checkToken, checkModuleStatus("kelas-kuliah-sync"), kelasKuliahSyncRoutes);
+router.use("/dosen-pengajar-kelas-kuliah-sync", checkToken, checkModuleStatus("dosen-pengajar-kelas-kuliah-sync"), dosenPengajarKelasKuliahSyncRoutes);
+router.use("/biodata-mahasiswa-sync", checkToken, checkModuleStatus("biodata-mahasiswa-sync"), biodataMahasiswaSyncRoutes);
+router.use("/riwayat-pendidikan-mahasiswa-sync", checkToken, checkModuleStatus("riwayat-pendidikan-mahasiswa-sync"), riwayatPendidikanMahasiswaSyncRoutes);
+router.use("/peserta-kelas-kuliah-sync", checkToken, checkModuleStatus("peserta-kelas-kuliah-sync"), pesertaKelasKuliahSyncRoutes);
+router.use("/detail-nilai-perkuliahan-kelas-sync", checkToken, checkModuleStatus("detail-nilai-perkuliahan-kelas-sync"), detailNilaiPerkuliahanKelasSyncRoutes);
+router.use("/rencana-evaluasi-sync", checkToken, checkModuleStatus("rencana-evaluasi-sync"), rencanaEvaluasiSyncRoutes);
+router.use("/komponen-evaluasi-kelas-sync", checkToken, checkModuleStatus("komponen-evaluasi-kelas-sync"), komponenEvaluasiKelasSyncRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

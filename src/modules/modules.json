@@ -663,5 +663,45 @@
     "enabled": true,
     "createdAt": "2025-06-10T07:05:01.785Z",
     "updatedAt": "2025-06-10T07:05:01.786Z"
+  },
+  "kelas-kuliah-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T01:33:57.997Z",
+    "updatedAt": "2025-06-11T01:33:57.998Z"
+  },
+  "dosen-pengajar-kelas-kuliah-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T01:38:41.383Z",
+    "updatedAt": "2025-06-11T01:38:41.384Z"
+  },
+  "biodata-mahasiswa-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T01:48:47.042Z",
+    "updatedAt": "2025-06-11T01:48:47.043Z"
+  },
+  "riwayat-pendidikan-mahasiswa-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T01:51:41.994Z",
+    "updatedAt": "2025-06-11T01:51:41.996Z"
+  },
+  "peserta-kelas-kuliah-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T01:54:31.709Z",
+    "updatedAt": "2025-06-11T01:54:31.711Z"
+  },
+  "detail-nilai-perkuliahan-kelas-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T01:56:54.676Z",
+    "updatedAt": "2025-06-11T01:56:54.677Z"
+  },
+  "rencana-evaluasi-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T01:59:58.858Z",
+    "updatedAt": "2025-06-11T01:59:58.859Z"
+  },
+  "komponen-evaluasi-kelas-sync": {
+    "enabled": true,
+    "createdAt": "2025-06-11T02:02:14.162Z",
+    "updatedAt": "2025-06-11T02:02:14.163Z"
   }
 }

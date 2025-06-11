@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const PesertaKelasKuliahSyncController = require("../controllers/peserta-kelas-kuliah-sync");
-const checkRole = require("../middlewares/check-role");
+const PesertaKelasKuliahSyncController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/belum-singkron", checkRole(["admin"]), PesertaKelasKuliahSyncController.getAllPesertaKelasKuliahSyncBelumSingkron);

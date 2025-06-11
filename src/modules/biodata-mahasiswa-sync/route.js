@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const BiodataMahasiswaSyncController = require("../controllers/biodata-mahasiswa-sync");
-const checkRole = require("../middlewares/check-role");
+const BiodataMahasiswaSyncController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/belum-singkron", checkRole(["admin"]), BiodataMahasiswaSyncController.getAllBiodataMahasiswaSyncBelumSingkron);

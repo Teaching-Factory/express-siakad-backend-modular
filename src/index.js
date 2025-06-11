@@ -6,9 +6,7 @@ const PORT = process.env.PORT || 5000;
 const cors = require("cors");
 const express = require("express");
 const path = require("path");
-const helmet = require("helmet");
-
-// const apiSyncFeederRoutes = require("./routes/api-sync-feeder");
+const helmet = require("helmet")
 
 // import routes
 // kumpulan route api v1 (local)
@@ -31,7 +29,7 @@ app.use(
   })
 );
 
-// Tambahan header manual untuk memastikan file bisa diakses lintas origin
+// Header manual untuk memastikan file bisa diakses lintas origin
 app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
   next();
@@ -180,9 +178,6 @@ middlewareDatabaseConnection
 
 // middleware request json from client
 app.use(express.json());
-
-// route api feeder dikti
-// app.use("/sync-feeder", checkToken, apiSyncFeederRoutes);
 
 // modular routes call (local)
 app.use("/", routeRegister);

@@ -1,14 +1,14 @@
-const { DetailNilaiPerkuliahanKelasSync, DetailNilaiPerkuliahanKelas, Mahasiswa, Agama, Prodi, JenjangPendidikan, KelasKuliah, MataKuliah, Dosen } = require("../../models");
-const { getToken } = require("./api-feeder/get-token");
+const { PesertaKelasKuliahSync, PesertaKelasKuliah, Mahasiswa, Agama, Prodi, JenjangPendidikan, KelasKuliah, MataKuliah, Dosen } = require("../../../models");
+const { getToken } = require("../api-feeder/data-feeder/get-token");
 const axios = require("axios");
 const { Op } = require("sequelize");
 
-async function getDetailNilaiPerkuliahanKelasFromFeederByFilter(id_kelas_kuliah, id_registrasi_mahasiswa, req, res, next) {
+async function getPesertaKelasKuliahFromFeederByFilter(id_kelas_kuliah, id_registrasi_mahasiswa, req, res, next) {
   try {
     const { token, url_feeder } = await getToken();
 
     const requestBody = {
-      act: "GetDetailNilaiPerkuliahanKelas",
+      act: "GetPesertaKelasKuliah",
       token: token,
       filter: `id_kelas_kuliah='${id_kelas_kuliah}' and id_registrasi_mahasiswa='${id_registrasi_mahasiswa}'`,
     };
@@ -23,10 +23,10 @@ async function getDetailNilaiPerkuliahanKelasFromFeederByFilter(id_kelas_kuliah,
 }
 
 // khusus create dan update yang belum singkron
-const getAllDetailNilaiPerkuliahanKelasSyncBelumSingkron = async (req, res, next) => {
+const getAllPesertaKelasKuliahSyncBelumSingkron = async (req, res, next) => {
   try {
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs dari database
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs dari database
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: {
         status: false,
         jenis_singkron: {
@@ -35,8 +35,8 @@ const getAllDetailNilaiPerkuliahanKelasSyncBelumSingkron = async (req, res, next
       },
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -61,20 +61,20 @@ const getAllDetailNilaiPerkuliahanKelasSyncBelumSingkron = async (req, res, next
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Belum Singkron Success",
-      jumlahData: detail_nilai_perkuliahan_kelas_syncs.length,
-      data: detail_nilai_perkuliahan_kelas_syncs,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Belum Singkron Success",
+      jumlahData: peserta_kelas_kuliahs.length,
+      data: peserta_kelas_kuliahs,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// khsus create dan update yang sudah singkron
-const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkron = async (req, res, next) => {
+// khusus create dan update yang sudah singkron
+const getAllPesertaKelasKuliahSyncSudahSingkron = async (req, res, next) => {
   try {
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs dari database
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs dari database
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: {
         status: true,
         jenis_singkron: {
@@ -83,8 +83,8 @@ const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkron = async (req, res, next
       },
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -109,9 +109,9 @@ const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkron = async (req, res, next
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Sudah Singkron Success",
-      jumlahData: detail_nilai_perkuliahan_kelas_syncs.length,
-      data: detail_nilai_perkuliahan_kelas_syncs,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Sudah Singkron Success",
+      jumlahData: peserta_kelas_kuliahs.length,
+      data: peserta_kelas_kuliahs,
     });
   } catch (error) {
     next(error);
@@ -119,18 +119,18 @@ const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkron = async (req, res, next
 };
 
 // khusus get yang belum singkron
-const getAllDetailNilaiPerkuliahanKelasSyncGetBelumSingkron = async (req, res, next) => {
+const getAllPesertaKelasKuliahSyncGetBelumSingkron = async (req, res, next) => {
   try {
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs dari database
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs dari database
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: {
         status: false,
         jenis_singkron: "get",
       },
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -154,50 +154,50 @@ const getAllDetailNilaiPerkuliahanKelasSyncGetBelumSingkron = async (req, res, n
     });
 
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
-    const updatedDetailNilaiPerkuliahanKelas = await Promise.all(
-      detail_nilai_perkuliahan_kelas_syncs.map(async (detail_nilai) => {
-        if (detail_nilai.jenis_singkron === "get") {
-          // Mendapatkan data detail nilai perkuliahan kelas dari feeder berdasarkan ID
-          const detailNilaiPerkuliahanKelasFeeder = await getDetailNilaiPerkuliahanKelasFromFeederByFilter(detail_nilai.id_kelas_kuliah_feeder, detail_nilai.id_registrasi_mahasiswa_feeder);
+    const updatedPesertaKelasKuliah = await Promise.all(
+      peserta_kelas_kuliahs.map(async (peserta_kelas_kuliah) => {
+        if (peserta_kelas_kuliah.jenis_singkron === "get") {
+          // Mendapatkan data peserta kelas kuliah dari feeder berdasarkan ID
+          const pesertaKelasKuliahFeeder = await getPesertaKelasKuliahFromFeederByFilter(peserta_kelas_kuliah.id_kelas_kuliah_feeder, peserta_kelas_kuliah.id_registrasi_mahasiswa_feeder);
 
-          if (!detailNilaiPerkuliahanKelasFeeder) {
-            throw new Error(`Data Detail nilai perkuliahan kelas Feeder With ID ${detail_nilai.id_feeder} Not Found`);
+          if (!pesertaKelasKuliahFeeder) {
+            throw new Error(`Data Peserta Kelas Kuliah Feeder With ID ${peserta_kelas_kuliah.id_feeder} Not Found`);
           }
 
-          // Menambahkan properti DetailNilaiPerkuliahanKelasFeeder ke dalam objek detail_nilai
-          detail_nilai = {
-            ...detail_nilai.dataValues, // Membawa semua properti asli
-            DetailNilaiPerkuliahanKelasFeeder: detailNilaiPerkuliahanKelasFeeder, // Properti tambahan
+          // Menambahkan properti PesertaKelasKuliahaFeeder ke dalam objek peserta_kelas_kuliah
+          peserta_kelas_kuliah = {
+            ...peserta_kelas_kuliah.dataValues, // Membawa semua properti asli
+            PesertaKelasKuliahaFeeder: pesertaKelasKuliahFeeder, // Properti tambahan
           };
         }
-        return detail_nilai;
+        return peserta_kelas_kuliah;
       })
     );
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Get Belum Singkron Success",
-      jumlahData: updatedDetailNilaiPerkuliahanKelas.length,
-      data: updatedDetailNilaiPerkuliahanKelas,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Get Belum Singkron Success",
+      jumlahData: updatedPesertaKelasKuliah.length,
+      data: updatedPesertaKelasKuliah,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// khsus get yang sudah singkron
-const getAllDetailNilaiPerkuliahanKelasSyncGetSudahSingkron = async (req, res, next) => {
+// khusus get yang sudah singkron
+const getAllPesertaKelasKuliahSyncGetSudahSingkron = async (req, res, next) => {
   try {
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs dari database
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs dari database
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: {
         status: true,
         jenis_singkron: "get",
       },
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -221,31 +221,31 @@ const getAllDetailNilaiPerkuliahanKelasSyncGetSudahSingkron = async (req, res, n
     });
 
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
-    const updatedDetailNilaiPerkuliahanKelas = await Promise.all(
-      detail_nilai_perkuliahan_kelas_syncs.map(async (detail_nilai) => {
-        if (detail_nilai.jenis_singkron === "get") {
-          // Mendapatkan data detail nilai perkuliahan kelas dari feeder berdasarkan ID
-          const detailNilaiPerkuliahanKelasFeeder = await getDetailNilaiPerkuliahanKelasFromFeederByFilter(detail_nilai.id_kelas_kuliah_feeder, detail_nilai.id_registrasi_mahasiswa_feeder);
+    const updatedPesertaKelasKuliah = await Promise.all(
+      peserta_kelas_kuliahs.map(async (peserta_kelas_kuliah) => {
+        if (peserta_kelas_kuliah.jenis_singkron === "get") {
+          // Mendapatkan data peserta kelas kuliah dari feeder berdasarkan ID
+          const pesertaKelasKuliahFeeder = await getPesertaKelasKuliahFromFeederByFilter(peserta_kelas_kuliah.id_kelas_kuliah_feeder, peserta_kelas_kuliah.id_registrasi_mahasiswa_feeder);
 
-          if (!detailNilaiPerkuliahanKelasFeeder) {
-            throw new Error(`Data Detail nilai perkuliahan kelas Feeder With ID ${detail_nilai.id_feeder} Not Found`);
+          if (!pesertaKelasKuliahFeeder) {
+            throw new Error(`Data Peserta Kelas Kuliah Feeder With ID ${peserta_kelas_kuliah.id_feeder} Not Found`);
           }
 
-          // Menambahkan properti DetailNilaiPerkuliahanKelasFeeder ke dalam objek detail_nilai
-          detail_nilai = {
-            ...detail_nilai.dataValues, // Membawa semua properti asli
-            DetailNilaiPerkuliahanKelasFeeder: detailNilaiPerkuliahanKelasFeeder, // Properti tambahan
+          // Menambahkan properti PesertaKelasKuliahaFeeder ke dalam objek peserta_kelas_kuliah
+          peserta_kelas_kuliah = {
+            ...peserta_kelas_kuliah.dataValues, // Membawa semua properti asli
+            PesertaKelasKuliahaFeeder: pesertaKelasKuliahFeeder, // Properti tambahan
           };
         }
-        return detail_nilai;
+        return peserta_kelas_kuliah;
       })
     );
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Get Sudah Singkron Success",
-      jumlahData: updatedDetailNilaiPerkuliahanKelas.length,
-      data: updatedDetailNilaiPerkuliahanKelas,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Get Sudah Singkron Success",
+      jumlahData: updatedPesertaKelasKuliah.length,
+      data: updatedPesertaKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -253,18 +253,18 @@ const getAllDetailNilaiPerkuliahanKelasSyncGetSudahSingkron = async (req, res, n
 };
 
 // khusus delete yang belum singkron
-const getAllDetailNilaiPerkuliahanKelasSyncDeleteBelumSingkron = async (req, res, next) => {
+const getAllPesertaKelasKuliahSyncDeleteBelumSingkron = async (req, res, next) => {
   try {
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs dari database
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs dari database
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: {
         status: false,
         jenis_singkron: "delete",
       },
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -289,28 +289,28 @@ const getAllDetailNilaiPerkuliahanKelasSyncDeleteBelumSingkron = async (req, res
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Delete Belum Singkron Success",
-      jumlahData: detail_nilai_perkuliahan_kelas_syncs.length,
-      data: detail_nilai_perkuliahan_kelas_syncs,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Delete Belum Singkron Success",
+      jumlahData: peserta_kelas_kuliahs.length,
+      data: peserta_kelas_kuliahs,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// khsus delete yang sudah singkron
-const getAllDetailNilaiPerkuliahanKelasSyncDeleteSudahSingkron = async (req, res, next) => {
+// khusus delete yang sudah singkron
+const getAllPesertaKelasKuliahSyncDeleteSudahSingkron = async (req, res, next) => {
   try {
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs dari database
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs dari database
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: {
         status: true,
         jenis_singkron: "delete",
       },
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -335,16 +335,16 @@ const getAllDetailNilaiPerkuliahanKelasSyncDeleteSudahSingkron = async (req, res
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Delete Sudah Singkron Success",
-      jumlahData: detail_nilai_perkuliahan_kelas_syncs.length,
-      data: detail_nilai_perkuliahan_kelas_syncs,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Delete Sudah Singkron Success",
+      jumlahData: peserta_kelas_kuliahs.length,
+      data: peserta_kelas_kuliahs,
     });
   } catch (error) {
     next(error);
   }
 };
 
-const getAllDetailNilaiPerkuliahanKelasSyncBelumSingkronByFilter = async (req, res, next) => {
+const getAllPesertaKelasKuliahSyncBelumSingkronByFilter = async (req, res, next) => {
   try {
     // Ambil query parameter jenis_singkron
     const { jenis_singkron } = req.query;
@@ -356,13 +356,13 @@ const getAllDetailNilaiPerkuliahanKelasSyncBelumSingkronByFilter = async (req, r
       whereCondition.jenis_singkron = jenis_singkron; // Tambahkan filter jenis_singkron jika tersedia
     }
 
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs berdasarkan kondisi
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs berdasarkan kondisi
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: whereCondition,
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -386,38 +386,38 @@ const getAllDetailNilaiPerkuliahanKelasSyncBelumSingkronByFilter = async (req, r
     });
 
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
-    const updatedDetailNilaiPerkuliahanKelas = await Promise.all(
-      detail_nilai_perkuliahan_kelas_syncs.map(async (detail_nilai) => {
-        if (detail_nilai.jenis_singkron === "get") {
-          // Mendapatkan data detail nilai perkuliahan kelas dari feeder berdasarkan ID
-          const detailNilaiPerkuliahanKelasFeeder = await getDetailNilaiPerkuliahanKelasFromFeederByFilter(detail_nilai.id_kelas_kuliah_feeder, detail_nilai.id_registrasi_mahasiswa_feeder);
+    const updatedPesertaKelasKuliah = await Promise.all(
+      peserta_kelas_kuliahs.map(async (peserta_kelas_kuliah) => {
+        if (peserta_kelas_kuliah.jenis_singkron === "get") {
+          // Mendapatkan data peserta kelas kuliah dari feeder berdasarkan ID
+          const pesertaKelasKuliahFeeder = await getPesertaKelasKuliahFromFeederByFilter(peserta_kelas_kuliah.id_kelas_kuliah_feeder, peserta_kelas_kuliah.id_registrasi_mahasiswa_feeder);
 
-          if (!detailNilaiPerkuliahanKelasFeeder) {
-            throw new Error(`Data Detail nilai perkuliahan kelas Feeder With ID ${detail_nilai.id_feeder} Not Found`);
+          if (!pesertaKelasKuliahFeeder) {
+            throw new Error(`Data Peserta Kelas Kuliah Feeder With ID ${peserta_kelas_kuliah.id_feeder} Not Found`);
           }
 
-          // Menambahkan properti DetailNilaiPerkuliahanKelasFeeder ke dalam objek detail_nilai
-          detail_nilai = {
-            ...detail_nilai.dataValues, // Membawa semua properti asli
-            DetailNilaiPerkuliahanKelasFeeder: detailNilaiPerkuliahanKelasFeeder, // Properti tambahan
+          // Menambahkan properti PesertaKelasKuliahaFeeder ke dalam objek peserta_kelas_kuliah
+          peserta_kelas_kuliah = {
+            ...peserta_kelas_kuliah.dataValues, // Membawa semua properti asli
+            PesertaKelasKuliahaFeeder: pesertaKelasKuliahFeeder, // Properti tambahan
           };
         }
-        return detail_nilai;
+        return peserta_kelas_kuliah;
       })
     );
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Belum Singkron By Filter Success",
-      jumlahData: updatedDetailNilaiPerkuliahanKelas.length,
-      data: updatedDetailNilaiPerkuliahanKelas,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Belum Singkron By Filter Success",
+      jumlahData: updatedPesertaKelasKuliah.length,
+      data: updatedPesertaKelasKuliah,
     });
   } catch (error) {
     next(error);
   }
 };
 
-const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkronByFilter = async (req, res, next) => {
+const getAllPesertaKelasKuliahSyncSudahSingkronByFilter = async (req, res, next) => {
   try {
     // Ambil query parameter jenis_singkron
     const { jenis_singkron } = req.query;
@@ -429,13 +429,13 @@ const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkronByFilter = async (req, r
       whereCondition.jenis_singkron = jenis_singkron; // Tambahkan filter jenis_singkron jika tersedia
     }
 
-    // Ambil semua data detail_nilai_perkuliahan_kelas_syncs berdasarkan kondisi
-    const detail_nilai_perkuliahan_kelas_syncs = await DetailNilaiPerkuliahanKelasSync.findAll({
+    // Ambil semua data peserta_kelas_kuliahs berdasarkan kondisi
+    const peserta_kelas_kuliahs = await PesertaKelasKuliahSync.findAll({
       where: whereCondition,
       include: [
         {
-          model: DetailNilaiPerkuliahanKelas,
-          attributes: ["angkatan", "nilai_angka", "nilai_indeks", "nilai_huruf"],
+          model: PesertaKelasKuliah,
+          attributes: ["angkatan", "id_kelas_kuliah", "id_registrasi_mahasiswa"],
           include: [
             {
               model: Mahasiswa,
@@ -459,31 +459,31 @@ const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkronByFilter = async (req, r
     });
 
     // Menggunakan Promise.all untuk memastikan semua data diolah secara paralel
-    const updatedDetailNilaiPerkuliahanKelas = await Promise.all(
-      detail_nilai_perkuliahan_kelas_syncs.map(async (detail_nilai) => {
-        if (detail_nilai.jenis_singkron === "get") {
-          // Mendapatkan data detail nilai perkuliahan kelas dari feeder berdasarkan ID
-          const detailNilaiPerkuliahanKelasFeeder = await getDetailNilaiPerkuliahanKelasFromFeederByFilter(detail_nilai.id_kelas_kuliah_feeder, detail_nilai.id_registrasi_mahasiswa_feeder);
+    const updatedPesertaKelasKuliah = await Promise.all(
+      peserta_kelas_kuliahs.map(async (peserta_kelas_kuliah) => {
+        if (peserta_kelas_kuliah.jenis_singkron === "get") {
+          // Mendapatkan data peserta kelas kuliah dari feeder berdasarkan ID
+          const pesertaKelasKuliahFeeder = await getPesertaKelasKuliahFromFeederByFilter(peserta_kelas_kuliah.id_kelas_kuliah_feeder, peserta_kelas_kuliah.id_registrasi_mahasiswa_feeder);
 
-          if (!detailNilaiPerkuliahanKelasFeeder) {
-            throw new Error(`Data Detail nilai perkuliahan kelas Feeder With ID ${detail_nilai.id_feeder} Not Found`);
+          if (!pesertaKelasKuliahFeeder) {
+            throw new Error(`Data Peserta Kelas Kuliah Feeder With ID ${peserta_kelas_kuliah.id_feeder} Not Found`);
           }
 
-          // Menambahkan properti DetailNilaiPerkuliahanKelasFeeder ke dalam objek detail_nilai
-          detail_nilai = {
-            ...detail_nilai.dataValues, // Membawa semua properti asli
-            DetailNilaiPerkuliahanKelasFeeder: detailNilaiPerkuliahanKelasFeeder, // Properti tambahan
+          // Menambahkan properti PesertaKelasKuliahaFeeder ke dalam objek peserta_kelas_kuliah
+          peserta_kelas_kuliah = {
+            ...peserta_kelas_kuliah.dataValues, // Membawa semua properti asli
+            PesertaKelasKuliahaFeeder: pesertaKelasKuliahFeeder, // Properti tambahan
           };
         }
-        return detail_nilai;
+        return peserta_kelas_kuliah;
       })
     );
 
     // Kirim respons JSON jika berhasil
     res.status(200).json({
-      message: "<===== GET All Detail Nilai Perkuliahan Kelas Sync Sudah Singkron By Filter Success",
-      jumlahData: updatedDetailNilaiPerkuliahanKelas.length,
-      data: updatedDetailNilaiPerkuliahanKelas,
+      message: "<===== GET All Peserta Kelas Kuliah Sync Sudah Singkron By Filter Success",
+      jumlahData: updatedPesertaKelasKuliah.length,
+      data: updatedPesertaKelasKuliah,
     });
   } catch (error) {
     next(error);
@@ -491,12 +491,12 @@ const getAllDetailNilaiPerkuliahanKelasSyncSudahSingkronByFilter = async (req, r
 };
 
 module.exports = {
-  getAllDetailNilaiPerkuliahanKelasSyncBelumSingkron,
-  getAllDetailNilaiPerkuliahanKelasSyncSudahSingkron,
-  getAllDetailNilaiPerkuliahanKelasSyncGetBelumSingkron,
-  getAllDetailNilaiPerkuliahanKelasSyncGetSudahSingkron,
-  getAllDetailNilaiPerkuliahanKelasSyncDeleteBelumSingkron,
-  getAllDetailNilaiPerkuliahanKelasSyncDeleteSudahSingkron,
-  getAllDetailNilaiPerkuliahanKelasSyncBelumSingkronByFilter,
-  getAllDetailNilaiPerkuliahanKelasSyncSudahSingkronByFilter,
+  getAllPesertaKelasKuliahSyncBelumSingkron,
+  getAllPesertaKelasKuliahSyncSudahSingkron,
+  getAllPesertaKelasKuliahSyncGetBelumSingkron,
+  getAllPesertaKelasKuliahSyncGetSudahSingkron,
+  getAllPesertaKelasKuliahSyncDeleteBelumSingkron,
+  getAllPesertaKelasKuliahSyncDeleteSudahSingkron,
+  getAllPesertaKelasKuliahSyncBelumSingkronByFilter,
+  getAllPesertaKelasKuliahSyncSudahSingkronByFilter,
 };

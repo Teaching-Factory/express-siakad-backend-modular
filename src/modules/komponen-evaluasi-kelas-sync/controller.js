@@ -1,5 +1,5 @@
-const { KomponenEvaluasiKelasSync, KelasKuliah, Semester, MataKuliah, Prodi, JenisEvaluasi, KomponenEvaluasiKelas } = require("../../models");
-const { getToken } = require("./api-feeder/get-token");
+const { KomponenEvaluasiKelasSync, KelasKuliah, Semester, MataKuliah, Prodi, JenisEvaluasi, KomponenEvaluasiKelas } = require("../../../models");
+const { getToken } = require("../api-feeder/data-feeder/get-token");
 const axios = require("axios");
 const { Op } = require("sequelize");
 
