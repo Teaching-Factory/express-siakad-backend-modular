@@ -1,5 +1,5 @@
 const express = require("express");
-const multer = require("multer"); // library utnuk upload file
+const multer = require("multer"); // library untuk upload file
 const path = require("path");
 
 const router = express.Router();
@@ -11,7 +11,7 @@ const checkRole = require("../../middlewares/check-role");
 // fungsi untuk menyimpan upload file ke dalam penyimpanan lokal project
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../storage/userguide-pmb"));
+    cb(null, path.join(__dirname, "../../storage/userguide-pmb"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);

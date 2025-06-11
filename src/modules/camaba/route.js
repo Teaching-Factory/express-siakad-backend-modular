@@ -11,7 +11,7 @@ const checkRole = require("../../middlewares/check-role");
 // fungsi untuk menyimpan upload file ke dalam penyimpanan lokal project
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../storage/camaba/profile"));
+    cb(null, path.join(__dirname, "../../storage/camaba/profile"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);

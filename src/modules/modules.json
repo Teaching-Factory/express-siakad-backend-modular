@@ -10,9 +10,9 @@
     "updatedAt": "2025-06-04T03:56:53.435Z"
   },
   "api-external": {
-    "enabled": true,
+    "enabled": false,
     "createdAt": "2025-06-05T06:35:44.030Z",
-    "updatedAt": "2025-06-05T06:35:44.032Z"
+    "updatedAt": "2025-06-11T02:38:18.008Z"
   },
   "performance-testing": {
     "enabled": true,
@@ -20,14 +20,14 @@
     "updatedAt": "2025-06-05T06:43:34.635Z"
   },
   "setup-guest": {
-    "enabled": true,
+    "enabled": false,
     "createdAt": "2025-06-05T06:54:53.716Z",
-    "updatedAt": "2025-06-05T06:54:53.717Z"
+    "updatedAt": "2025-06-11T02:38:56.939Z"
   },
   "setup-seed": {
-    "enabled": true,
+    "enabled": false,
     "createdAt": "2025-06-05T07:00:09.845Z",
-    "updatedAt": "2025-06-05T07:00:09.850Z"
+    "updatedAt": "2025-06-11T02:39:00.198Z"
   },
   "sync-feeder": {
     "enabled": true,

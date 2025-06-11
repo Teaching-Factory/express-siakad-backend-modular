@@ -5,13 +5,10 @@ const {
   SistemKuliah,
   ProdiPeriodePendaftaran,
   BerkasPeriodePendaftaran,
-  TahapTesPeriodePendaftaran,
   SumberPeriodePendaftaran,
   Prodi,
-  JenisTes,
   JenisBerkas,
   Sumber,
-  TagihanCamaba,
   JenjangPendidikan,
 } = require("../../../models");
 
