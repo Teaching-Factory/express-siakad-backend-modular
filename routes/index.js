@@ -143,6 +143,13 @@ const pesertaKelasKuliahSyncRoutes = require("../src/modules/peserta-kelas-kulia
 const detailNilaiPerkuliahanKelasSyncRoutes = require("../src/modules/detail-nilai-perkuliahan-kelas-sync");
 const rencanaEvaluasiSyncRoutes = require("../src/modules/rencana-evaluasi-sync");
 const komponenEvaluasiKelasSyncRoutes = require("../src/modules/komponen-evaluasi-kelas-sync");
+const perkuliahanMahasiswaSyncRoutes = require("../src/modules/perkuliahan-mahasiswa-sync");
+const tahapTesCamabaRoutes = require("../src/modules/tahap-tes-camaba");
+const adminProdiRoutes = require("../src/modules/admin-prodi");
+const jenisEvaluasiRoutes = require("../src/modules/jenis-evaluasi");
+const rencanaEvaluasiRoutes = require("../src/modules/rencana-evaluasi");
+const komponenEvaluasiKelasRoutes = require("../src/modules/komponen-evaluasi-kelas");
+const profilPenilaianRoutes = require("../src/modules/profil-penilaian");
 // some new routes will be here ...
 
 // import middleware
@@ -291,6 +298,13 @@ router.use("/peserta-kelas-kuliah-sync", checkToken, checkModuleStatus("peserta-
 router.use("/detail-nilai-perkuliahan-kelas-sync", checkToken, checkModuleStatus("detail-nilai-perkuliahan-kelas-sync"), detailNilaiPerkuliahanKelasSyncRoutes);
 router.use("/rencana-evaluasi-sync", checkToken, checkModuleStatus("rencana-evaluasi-sync"), rencanaEvaluasiSyncRoutes);
 router.use("/komponen-evaluasi-kelas-sync", checkToken, checkModuleStatus("komponen-evaluasi-kelas-sync"), komponenEvaluasiKelasSyncRoutes);
+router.use("/perkuliahan-mahasiswa-sync", checkToken, checkModuleStatus("perkuliahan-mahasiswa-sync"), perkuliahanMahasiswaSyncRoutes);
+router.use("/tahap-tes-camaba", checkToken, checkModuleStatus("tahap-tes-camaba"), tahapTesCamabaRoutes);
+router.use("/admin-prodi", checkToken, checkModuleStatus("admin-prodi"), adminProdiRoutes);
+router.use("/jenis-evaluasi", checkToken, checkModuleStatus("jenis-evaluasi"), jenisEvaluasiRoutes);
+router.use("/rencana-evaluasi", checkToken, checkModuleStatus("rencana-evaluasi"), rencanaEvaluasiRoutes);
+router.use("/komponen-evaluasi-kelas", checkToken, checkModuleStatus("komponen-evaluasi-kelas"), komponenEvaluasiKelasRoutes);
+router.use("/profil-penilaian", checkToken, checkModuleStatus("profil-penilaian"), profilPenilaianRoutes);
 // some new endpoint will be here ...
 
 module.exports = router;

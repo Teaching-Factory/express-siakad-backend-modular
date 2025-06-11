@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 // import controller dan middleware
-const ProfilPenilaianController = require("../controllers/profil-penilaian");
-const checkRole = require("../middlewares/check-role");
+const ProfilPenilaianController = require("./controller");
+const checkRole = require("../../middlewares/check-role");
 
 // all routes
 router.get("/", checkRole(["admin", "admin-prodi"]), ProfilPenilaianController.getAllProfilPenilaian);

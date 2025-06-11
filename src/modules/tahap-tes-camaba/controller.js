@@ -1,4 +1,4 @@
-const { TahapTesCamaba, TahapTesPeriodePendaftaran, JenisTes, Role, UserRole, Camaba } = require("../../models");
+const { TahapTesCamaba, TahapTesPeriodePendaftaran, JenisTes, Role, UserRole, Camaba } = require("../../../models");
 
 const getTahapTesCamabaByCamabaId = async (req, res, next) => {
   try {

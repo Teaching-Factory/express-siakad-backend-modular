@@ -1,4 +1,4 @@
-const { ProfilPenilaian } = require("../../models");
+const { ProfilPenilaian } = require("../../../models");
 
 const getAllProfilPenilaian = async (req, res, next) => {
   try {

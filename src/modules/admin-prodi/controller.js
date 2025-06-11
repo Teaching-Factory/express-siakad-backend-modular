@@ -1,4 +1,4 @@
-const { AdminProdi, User, Prodi, UserRole, Role } = require("../../models");
+const { AdminProdi, User, Prodi, UserRole, Role } = require("../../../models");
 
 const getAllAdminProdi = async (req, res, next) => {
   try {
