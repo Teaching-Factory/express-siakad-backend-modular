@@ -1,4 +1,4 @@
-const { syncTahunAjaran } = require("../../controllers/sync-feeder/tahun-ajaran");
+const { syncTahunAjaran } = require("../../modules/sync-feeder/data-feeder/tahun-ajaran");
 
 async function singkronTahunAjaran() {
   console.log("Cronjob singkron tahun ajaran started");

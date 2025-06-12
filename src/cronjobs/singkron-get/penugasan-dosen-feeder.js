@@ -1,4 +1,4 @@
-const { syncPenugasanDosen } = require("../../controllers/sync-feeder/penugasan-dosen");
+const { syncPenugasanDosen } = require("../../modules/sync-feeder/data-feeder/penugasan-dosen");
 
 async function singkronPenugasanDosen() {
   console.log("Cronjob singkron penugasan dosen started");

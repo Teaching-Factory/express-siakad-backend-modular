@@ -1,4 +1,4 @@
-const { syncListPeriodePerkuliahan } = require("../../controllers/sync-feeder/list-periode-perkuliahan");
+const { syncListPeriodePerkuliahan } = require("../../modules/sync-feeder/data-feeder/list-periode-perkuliahan");
 
 async function singkronPeriodePerkuliahan() {
   console.log("Cronjob singkron periode perkuliahan started");

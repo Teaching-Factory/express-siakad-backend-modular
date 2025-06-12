@@ -1,4 +1,4 @@
-const { syncAktivitasKuliahMahasiswa } = require("../../controllers/sync-feeder/aktivitas-kuliah-mahasiswa");
+const { syncAktivitasKuliahMahasiswa } = require("../../modules/sync-feeder/data-feeder/aktivitas-kuliah-mahasiswa");
 
 async function singkronAktivitasKuliahMahasiswa() {
   console.log("Cronjob singkron aktivitas kuliah mahasiswa started");

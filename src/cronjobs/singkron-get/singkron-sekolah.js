@@ -1,4 +1,4 @@
-const { syncSekolah } = require("../../controllers/sync-feeder/sekolah");
+const { syncSekolah } = require("../../modules/sync-feeder/data-feeder/sekolah");
 
 async function singkronSekolah() {
   console.log("Cronjob singkron sekolah started");

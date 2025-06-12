@@ -44,20 +44,20 @@ const schedule = require("node-schedule");
 // const cleanExpiredTokens = require("./cronjobs/cronjobScheduler"); // not used
 
 // cronjob (GET)
-// const singkronDosen = require("./cronjobs/singkron-get/singkron-dosen-feeder");
-// const singkronProdi = require("./cronjobs/singkron-get/singkron-prodi-feeder");
-// const singkronSubstansi = require("./cronjobs/singkron-get/singkron-substansi-feeder");
-// const singkronMataKuliah = require("./cronjobs/singkron-get/singkron-mata-kuliah-feeder");
-// const singkronTahunAjaran = require("./cronjobs/singkron-get/singkron-tahun-ajaran-feeder");
-// const singkronSemester = require("./cronjobs/singkron-get/singkron-semester-feeder");
-// const singkronKurikulum = require("./cronjobs/singkron-get/singkron-kurikulum-feeder");
-// const singkronDetailKurikulum = require("./cronjobs/singkron-get/detail-kurikulum-feeder");
-// const singkronPenugasanDosen = require("./cronjobs/singkron-get/penugasan-dosen-feeder");
-// const singkronMatkulKurikulum = require("./cronjobs/singkron-get/matkul-kurikulum-feeder");
-// const singkronAktivitasKuliahMahasiswa = require("./cronjobs/singkron-get/aktivitas-kuliah-mahasiswa-feeder");
-// const singkronPeriodePerkuliahan = require("./cronjobs/singkron-get/periode-perkuliahan-feeder");
-// const singkronMahasiswaLulusDO = require("./cronjobs/singkron-get/mahasiswa-lulus-do-feeder");
-// const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
+const singkronDosen = require("./cronjobs/singkron-get/singkron-dosen-feeder");
+const singkronProdi = require("./cronjobs/singkron-get/singkron-prodi-feeder");
+const singkronSubstansi = require("./cronjobs/singkron-get/singkron-substansi-feeder");
+const singkronMataKuliah = require("./cronjobs/singkron-get/singkron-mata-kuliah-feeder");
+const singkronTahunAjaran = require("./cronjobs/singkron-get/singkron-tahun-ajaran-feeder");
+const singkronSemester = require("./cronjobs/singkron-get/singkron-semester-feeder");
+const singkronKurikulum = require("./cronjobs/singkron-get/singkron-kurikulum-feeder");
+const singkronDetailKurikulum = require("./cronjobs/singkron-get/detail-kurikulum-feeder");
+const singkronPenugasanDosen = require("./cronjobs/singkron-get/penugasan-dosen-feeder");
+const singkronMatkulKurikulum = require("./cronjobs/singkron-get/matkul-kurikulum-feeder");
+const singkronAktivitasKuliahMahasiswa = require("./cronjobs/singkron-get/aktivitas-kuliah-mahasiswa-feeder");
+const singkronPeriodePerkuliahan = require("./cronjobs/singkron-get/periode-perkuliahan-feeder");
+const singkronMahasiswaLulusDO = require("./cronjobs/singkron-get/mahasiswa-lulus-do-feeder");
+const singkronSekolah = require("./cronjobs/singkron-get/singkron-sekolah");
 
 // cronjob (CRUD)
 const singkronRencanaEvaluasi = require("./cronjobs/singkron-get/singkron-rencana-evaluasi-feeder");
@@ -71,15 +71,15 @@ const singkronDetailNilaiPerkuliahanKelas = require("./cronjobs/singkron-get/det
 const singkronPerkuliahanMahasiswa = require("./cronjobs/singkron-get/perkuliahan-mahasiswa-feeder");
 
 // cronjob (Delete)
-// const deleteBiodataMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-biodata-mahasiswa-syncs");
-// const deleteDetailNilaiPerkuliahanKelasSyncs = require("./cronjobs/delete-syncs/delete-detail-nilai-perkuliahan-kelas-syncs");
-// const deleteDosenPengajarKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-dosen-pengajar-kelas-kuliah-syncs");
-// const deleteKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-kelas-kuliah-syncs");
-// const deleteKomponenEvaluasiKelasSyncs = require("./cronjobs/delete-syncs/delete-komponen-evaluasi-kelas-syncs");
-// const deletePerkuliahanMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-perkuliahan-mahasiswa-syncs");
-// const deletePesertaKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-peserta-kelas-kuliah-syncs");
-// const deleteRencanaEvaluasiSyncs = require("./cronjobs/delete-syncs/delete-rencana-evaluasi-syncs");
-// const deleteRiwayatPendidikanMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-riwayat-pendidikan-mahasiswa-syncs");
+const deleteBiodataMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-biodata-mahasiswa-syncs");
+const deleteDetailNilaiPerkuliahanKelasSyncs = require("./cronjobs/delete-syncs/delete-detail-nilai-perkuliahan-kelas-syncs");
+const deleteDosenPengajarKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-dosen-pengajar-kelas-kuliah-syncs");
+const deleteKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-kelas-kuliah-syncs");
+const deleteKomponenEvaluasiKelasSyncs = require("./cronjobs/delete-syncs/delete-komponen-evaluasi-kelas-syncs");
+const deletePerkuliahanMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-perkuliahan-mahasiswa-syncs");
+const deletePesertaKelasKuliahSyncs = require("./cronjobs/delete-syncs/delete-peserta-kelas-kuliah-syncs");
+const deleteRencanaEvaluasiSyncs = require("./cronjobs/delete-syncs/delete-rencana-evaluasi-syncs");
+const deleteRiwayatPendidikanMahasiswaSyncs = require("./cronjobs/delete-syncs/delete-riwayat-pendidikan-mahasiswa-syncs");
 
 const rule = new schedule.RecurrenceRule();
 // cronjob dijalankan ketika jam 0.00
@@ -97,20 +97,20 @@ schedule.scheduleJob(rule, async function () {
     // await cleanExpiredTokens();
 
     // Singkron Feeder Get
-    // await singkronDosen();
-    // await singkronProdi();
-    // await singkronSubstansi();
-    // await singkronMataKuliah();
-    // await singkronTahunAjaran();
-    // await singkronSemester();
-    // await singkronKurikulum();
-    // await singkronDetailKurikulum();
-    // await singkronPenugasanDosen();
-    // await singkronMatkulKurikulum();
-    // await singkronAktivitasKuliahMahasiswa();
-    // await singkronSekolah();
-    // await singkronPeriodePerkuliahan();
-    // await singkronMahasiswaLulusDO(); // (id_semester_aktif)
+    await singkronDosen();
+    await singkronProdi();
+    await singkronSubstansi();
+    await singkronMataKuliah();
+    await singkronTahunAjaran();
+    await singkronSemester();
+    await singkronKurikulum();
+    await singkronDetailKurikulum();
+    await singkronPenugasanDosen();
+    await singkronMatkulKurikulum();
+    await singkronAktivitasKuliahMahasiswa();
+    await singkronSekolah();
+    await singkronPeriodePerkuliahan();
+    await singkronMahasiswaLulusDO(); // (id_semester_aktif)
 
     // Singkron Feeder (Create ke feeder)
     // await singkronRencanaEvaluasi(); // (seluruh prodi)

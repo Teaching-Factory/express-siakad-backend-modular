@@ -1,4 +1,4 @@
-const { syncProdi } = require("../../controllers/sync-feeder/prodi");
+const { syncProdi } = require("../../modules/sync-feeder/data-feeder/prodi");
 
 async function singkronProdi() {
   console.log("Cronjob singkron prodi started");

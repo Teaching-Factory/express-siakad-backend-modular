@@ -1,4 +1,4 @@
-const { syncMahasiswaLulusDO } = require("../../controllers/sync-feeder/mahasiswa-lulus-do");
+const { syncMahasiswaLulusDO } = require("../../modules/sync-feeder/data-feeder/mahasiswa-lulus-do");
 
 async function singkronMahasiswaLulusDO() {
   console.log("Cronjob singkron mahasiswa lulus do started");

@@ -1,4 +1,4 @@
-const { syncSemester } = require("../../controllers/sync-feeder/semester");
+const { syncSemester } = require("../../modules/sync-feeder/data-feeder/semester");
 
 async function singkronSemester() {
   console.log("Cronjob singkron semester started");

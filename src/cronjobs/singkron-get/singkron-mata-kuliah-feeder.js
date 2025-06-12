@@ -1,4 +1,4 @@
-const { syncListMataKuliah } = require("../../controllers/sync-feeder/list-mata-kuliah");
+const { syncListMataKuliah } = require("../../modules/sync-feeder/data-feeder/list-mata-kuliah");
 
 async function singkronMataKuliah() {
   console.log("Cronjob singkron mata kuliah started");

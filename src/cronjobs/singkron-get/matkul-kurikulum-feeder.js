@@ -1,4 +1,4 @@
-const { syncMatkulKurikulum } = require("../../controllers/sync-feeder/matkul-kurikulum");
+const { syncMatkulKurikulum } = require("../../modules/sync-feeder/data-feeder/matkul-kurikulum");
 
 async function singkronMatkulKurikulum() {
   console.log("Cronjob singkron matkul kurikulum started");
