@@ -1,4 +1,4 @@
-const { doPresensiPertemuanByMahasiswaAndPertemuanId } = require("../../src/controllers/presensi-perkuliahan");
+const { doPresensiPertemuanByMahasiswaAndPertemuanId } = require("../../src/modules/presensi-perkuliahan/controller");
 const { UserRole, User, Mahasiswa, PresensiMahasiswa, PertemuanPerkuliahan } = require("../../models");
 const moment = require("moment-timezone");
 

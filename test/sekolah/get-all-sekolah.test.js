@@ -1,5 +1,5 @@
-const { getAllSekolah } = require("../../src/controllers/sekolah"); // Sesuaikan path controller
-const { Sekolah } = require("../../models"); // Sesuaikan path model
+const { getAllSekolah } = require("../../src/modules/sekolah/controller"); 
+const { Sekolah } = require("../../models"); 
 const httpMocks = require("node-mocks-http");
 
 describe("getAllSekolah", () => {

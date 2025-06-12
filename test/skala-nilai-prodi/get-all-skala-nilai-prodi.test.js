@@ -1,4 +1,4 @@
-const { getAllSkalaNilaiProdi } = require("../../src/controllers/skala-nilai-prodi");
+const { getAllSkalaNilaiProdi } = require("../../src/modules/skala-nilai-prodi/controller");
 const { SkalaNilaiProdi } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

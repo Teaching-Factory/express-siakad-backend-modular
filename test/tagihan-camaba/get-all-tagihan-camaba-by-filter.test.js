@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllTagihanCamabaByFilter } = require("../../src/controllers/tagihan-camaba");
+const { getAllTagihanCamabaByFilter } = require("../../src/modules/tagihan-camaba/controller");
 const { TagihanCamaba, Semester, JenisTagihan } = require("../../models");
 
 jest.mock("../../models");

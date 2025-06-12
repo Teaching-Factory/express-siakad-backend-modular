@@ -1,4 +1,4 @@
-const { getAllPerhitunganSKS } = require("../../src/controllers/perhitungan-sks");
+const { getAllPerhitunganSKS } = require("../../src/modules/perhitungan-sks/controller");
 const { PerhitunganSKS } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

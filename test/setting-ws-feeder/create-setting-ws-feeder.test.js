@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { createSettingWSFeeder } = require("../../src/controllers/setting-ws-feeder");
+const { createSettingWSFeeder } = require("../../src/modules/setting-ws-feeder/controller");
 const { SettingWSFeeder } = require("../../models");
 
 jest.mock("../../models");

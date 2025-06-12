@@ -1,4 +1,4 @@
-const { getDetailKelasKuliahByProdiAndSemesterId } = require("../../src/controllers/detail-kelas-kuliah");
+const { getDetailKelasKuliahByProdiAndSemesterId } = require("../../src/modules/detail-kelas-kuliah/controller");
 const { DetailKelasKuliah, KelasKuliah, Semester, MataKuliah, Dosen, RuangPerkuliahan, PesertaKelasKuliah } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

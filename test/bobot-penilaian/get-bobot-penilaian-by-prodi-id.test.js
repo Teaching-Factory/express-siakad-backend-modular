@@ -1,4 +1,4 @@
-const { getBobotPenilaianByProdiId } = require("../../src/controllers/bobot-penilaian");
+const { getBobotPenilaianByProdiId } = require("../../src/modules/bobot-penilaian/controller");
 const { BobotPenilaian } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

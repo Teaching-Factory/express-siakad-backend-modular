@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { exportCamabaForMahasiswaByPeriodePendaftaranId } = require("../../src/controllers/camaba");
+const { exportCamabaForMahasiswaByPeriodePendaftaranId } = require("../../src/modules/camaba/controller");
 const { PeriodePendaftaran, SettingGlobalSemester, JenisPendaftaran, Camaba } = require("../../models");
 const ExcelJS = require("exceljs");
 

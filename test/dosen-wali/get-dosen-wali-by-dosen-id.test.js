@@ -1,4 +1,4 @@
-const { getDosenWaliByDosenId } = require("../../src/controllers/dosen-wali");
+const { getDosenWaliByDosenId } = require("../../src/modules/dosen-wali/controller");
 const { DosenWali, Dosen, Mahasiswa, TahunAjaran } = require("../../models");
 
 jest.mock("../../models");

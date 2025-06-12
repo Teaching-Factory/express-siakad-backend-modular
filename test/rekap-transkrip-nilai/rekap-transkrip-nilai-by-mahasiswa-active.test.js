@@ -1,4 +1,4 @@
-const { getRekapTranskripNilaiByMahasiswaActive } = require("../../src/controllers/rekap-transkrip-nilai");
+const { getRekapTranskripNilaiByMahasiswaActive } = require("../../src/modules/rekap-transkrip-nilai/controller");
 const { Mahasiswa } = require("../../models");
 const axios = require("axios");
 jest.mock("../../models");

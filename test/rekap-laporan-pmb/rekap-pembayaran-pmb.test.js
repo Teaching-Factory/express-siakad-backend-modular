@@ -1,4 +1,4 @@
-const { rekapPembayaranPMB } = require("../../src/controllers/rekap-laporan-pmb");
+const { rekapPembayaranPMB } = require("../../src/modules/rekap-laporan-pmb/controller");
 const { Prodi, UnitJabatan, Jabatan, Dosen, TagihanCamaba, Camaba } = require("../../models");
 const { Op } = require("sequelize");
 

@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { finalisasiByCamabaActive } = require("../../src/controllers/camaba");
+const { finalisasiByCamabaActive } = require("../../src/modules/camaba/controller");
 const { Role, UserRole, Camaba } = require("../../models");
 
 jest.mock("../../models");

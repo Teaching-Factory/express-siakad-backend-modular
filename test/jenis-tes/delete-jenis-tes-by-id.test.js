@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { deleteJenisTesById } = require("../../src/controllers/jenis-tes");
+const { deleteJenisTesById } = require("../../src/modules/jenis-tes/controller");
 const { JenisTes } = require("../../models");
 
 describe("deleteJenisTesById", () => {

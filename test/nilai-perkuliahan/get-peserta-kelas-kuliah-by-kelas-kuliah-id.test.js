@@ -1,4 +1,4 @@
-const { getPesertaKelasKuliahByKelasKuliahId } = require("../../src/controllers/nilai-perkuliahan");
+const { getPesertaKelasKuliahByKelasKuliahId } = require("../../src/modules/nilai-perkuliahan/controller");
 const { DetailKelasKuliah, PesertaKelasKuliah } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

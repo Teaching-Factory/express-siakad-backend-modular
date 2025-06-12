@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { createAngkatan } = require("../../src/controllers/angkatan");
+const { createAngkatan } = require("../../src/modules/angkatan/controller");
 const { Angkatan } = require("../../models");
 
 jest.mock("../../models");

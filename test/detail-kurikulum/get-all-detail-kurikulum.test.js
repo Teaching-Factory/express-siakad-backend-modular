@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllDetailKurikulum } = require("../../src/controllers/detail-kurikulum");
+const { getAllDetailKurikulum } = require("../../src/modules/detail-kurikulum/controller");
 const { DetailKurikulum } = require("../../models");
 
 jest.mock("../../models");

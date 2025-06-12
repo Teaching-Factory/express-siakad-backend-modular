@@ -1,4 +1,4 @@
-const { getRekapJadwalKuliahBySemester } = require("../../src/controllers/rekap-jadwal-kuliah");
+const { getRekapJadwalKuliahBySemester } = require("../../src/modules/rekap-jadwal-kuliah/controller");
 const { Mahasiswa, Semester, KRSMahasiswa, KelasKuliah, MataKuliah, DetailKelasKuliah, RuangPerkuliahan } = require("../../models");
 
 // Mock dependencies

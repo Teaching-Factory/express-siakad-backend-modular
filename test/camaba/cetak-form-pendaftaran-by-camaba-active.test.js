@@ -1,4 +1,4 @@
-const { cetakFormPendaftaranByCamabaActive } = require("../../src/controllers/camaba"); // Pastikan path ke controller sudah benar
+const { cetakFormPendaftaranByCamabaActive } = require("../../src/modules/camaba/controller"); 
 const { Role, UserRole, Camaba, User, ProdiCamaba, Prodi, JenjangPendidikan } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const mockResponse = () => httpMocks.createResponse();

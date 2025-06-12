@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getRekapMahasiswaBelumKRS } = require("../../src/controllers/rekap-mahasiswa-belum-krs");
+const { getRekapMahasiswaBelumKRS } = require("../../src/modules/rekap-mahasiswa-belum-krs/controller");
 const { Mahasiswa, KRSMahasiswa, Angkatan, SemesterAktif, DosenWali, Prodi } = require("../../models");
 const { Op } = require("sequelize");
 

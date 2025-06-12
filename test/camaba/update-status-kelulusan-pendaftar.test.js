@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { updateStatusKelulusanPendaftar } = require("../../src/controllers/camaba");
+const { updateStatusKelulusanPendaftar } = require("../../src/modules/camaba/controller");
 const { Camaba } = require("../../models");
 
 jest.mock("../../models");
@@ -30,7 +30,7 @@ describe("updateStatusKelulusanPendaftar", () => {
       id_prodi_diterima: 1,
       id_pembiayaan: 1,
       finalisasi: true,
-      status_akun_pendaftar: "Active"
+      status_akun_pendaftar: "Active",
     };
 
     req.params = {}; // No camaba ID
@@ -48,7 +48,7 @@ describe("updateStatusKelulusanPendaftar", () => {
       id_prodi_diterima: 1,
       id_pembiayaan: 1,
       finalisasi: true,
-      status_akun_pendaftar: "Active"
+      status_akun_pendaftar: "Active",
     };
     req.params = { id: 1 };
 
@@ -60,7 +60,7 @@ describe("updateStatusKelulusanPendaftar", () => {
       id_pembiayaan: null,
       finalisasi: false,
       status_akun_pendaftar: "Inactive",
-      save: jest.fn().mockResolvedValue(true)
+      save: jest.fn().mockResolvedValue(true),
     };
 
     Camaba.findByPk.mockResolvedValue(mockCamaba);
@@ -81,7 +81,7 @@ describe("updateStatusKelulusanPendaftar", () => {
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual({
       message: `<===== UPDATE Status Kelulusan Pendaftar By Camaba ID 1 Success:`,
-      data: expectedCamabaData // Compare without 'save'
+      data: expectedCamabaData, // Compare without 'save'
     });
   });
 
@@ -92,7 +92,7 @@ describe("updateStatusKelulusanPendaftar", () => {
       id_prodi_diterima: 1,
       id_pembiayaan: 1,
       finalisasi: true,
-      status_akun_pendaftar: "Active"
+      status_akun_pendaftar: "Active",
     };
     req.params = { id: 1 };
 

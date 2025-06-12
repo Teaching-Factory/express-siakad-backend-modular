@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { updatePemberkasanCamabaActiveById } = require("../../src/controllers/pemberkasan-camaba");
+const { updatePemberkasanCamabaActiveById } = require("../../src/modules/pemberkasan-camaba/controller");
 const { Role, Camaba, PemberkasanCamaba } = require("../../models");
 const path = require("path");
 const fs = require("fs");

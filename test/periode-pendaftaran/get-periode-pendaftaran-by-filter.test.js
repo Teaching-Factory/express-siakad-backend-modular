@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getPeriodePendaftaranByFilter } = require("../../src/controllers/periode-pendaftaran");
+const { getPeriodePendaftaranByFilter } = require("../../src/modules/periode-pendaftaran/controller");
 const { PeriodePendaftaran, Semester, SistemKuliah, JalurMasuk } = require("../../models");
 
 jest.mock("../../models");

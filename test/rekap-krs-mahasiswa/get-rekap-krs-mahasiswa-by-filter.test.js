@@ -1,11 +1,11 @@
 const httpMocks = require("node-mocks-http");
 const axios = require("axios");
-const { getRekapKRSMahasiswaByFilter } = require("../../src/controllers/rekap-krs-mahasiswa");
-const { getToken } = require("../../src/controllers/api-feeder/get-token");
+const { getRekapKRSMahasiswaByFilter } = require("../../src/modules/rekap-krs-mahasiswa/controller");
+const { getToken } = require("../../src/modules/api-feeder/data-feeder/get-token");
 
 jest.mock("axios");
 jest.mock("../../models");
-jest.mock("../../src/controllers/api-feeder/get-token");
+jest.mock("../../src/modules/api-feeder/data-feeder/get-token");
 
 describe("getRekapKRSMahasiswaByFilter", () => {
   beforeEach(() => {

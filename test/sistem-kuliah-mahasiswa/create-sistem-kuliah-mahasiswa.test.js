@@ -1,4 +1,4 @@
-const { createSistemKuliahMahasiswa } = require("../../src/controllers/sistem-kuliah-mahasiswa");
+const { createSistemKuliahMahasiswa } = require("../../src/modules/sistem-kuliah-mahasiswa/controller");
 const { SistemKuliah, SistemKuliahMahasiswa } = require("../../models");
 
 // Mock response objects

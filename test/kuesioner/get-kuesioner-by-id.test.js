@@ -1,6 +1,6 @@
 const { Kuesioner, AspekPenilaianDosen, SkalaPenilaianDosen, KelasKuliah, Mahasiswa } = require("../../models");
 const httpMocks = require("node-mocks-http");
-const { getKuesionerById } = require("../../src/controllers/kuesioner");
+const { getKuesionerById } = require("../../src/modules/kuesioner/controller");
 
 describe("getKuesionerById", () => {
   let req, res, next;

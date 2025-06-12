@@ -1,6 +1,6 @@
 const { Mahasiswa, Prodi, JenjangPendidikan, Agama, SettingGlobalSemester, Semester, DosenWali, Dosen, KRSMahasiswa } = require("../../models");
 const httpMocks = require("node-mocks-http");
-const { getKRSMahasiswaBySemesterAktif } = require("../../src/controllers/mahasiswa");
+const { getKRSMahasiswaBySemesterAktif } = require("../../src/modules/mahasiswa/controller");
 
 describe("getKRSMahasiswaBySemesterAktif", () => {
   let req, res, next;

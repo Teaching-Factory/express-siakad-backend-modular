@@ -1,4 +1,4 @@
-const { getAllRiwayatNilaiMahasiswa } = require("../../src/controllers/riwayat-nilai-mahasiswa");
+const { getAllRiwayatNilaiMahasiswa } = require("../../src/modules/riwayat-nilai-mahasiswa/controller");
 const { RiwayatNilaiMahasiswa } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

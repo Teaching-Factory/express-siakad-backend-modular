@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { deletePeriodeYudisiumById } = require("../../src/controllers/periode-yudisium");
+const { deletePeriodeYudisiumById } = require("../../src/modules/periode-yudisium/controller");
 const { PeriodeYudisium } = require("../../models");
 
 jest.mock("../../models");

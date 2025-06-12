@@ -1,4 +1,4 @@
-const { createMahasiswaBimbinganDosen } = require("../../src/controllers/mahasiswa-bimbingan-dosen");
+const { createMahasiswaBimbinganDosen } = require("../../src/modules/mahasiswa-bimbingan-dosen/controller");
 const { MahasiswaBimbinganDosen } = require("../../models");
 
 jest.mock("../../models"); // Mock models module

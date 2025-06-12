@@ -1,4 +1,4 @@
-const { rekapPendaftarPMB } = require("../../src/controllers/rekap-laporan-pmb");
+const { rekapPendaftarPMB } = require("../../src/modules/rekap-laporan-pmb/controller");
 const { PeriodePendaftaran, Camaba, UnitJabatan, ProdiCamaba, Mahasiswa } = require("../../models");
 
 jest.mock("../../models");

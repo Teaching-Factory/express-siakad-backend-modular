@@ -1,6 +1,6 @@
 const { KelasKuliah, MataKuliah, Dosen, Prodi, JenjangPendidikan, DetailKelasKuliah, RuangPerkuliahan, AspekPenilaianDosen, SkalaPenilaianDosen, Kuesioner, Mahasiswa } = require("../../models");
 const httpMocks = require("node-mocks-http");
-const { getHasilPenilaianDosenPerKelasByKelasKuliahId } = require("../../src/controllers/hasil-kuesioner-per-kelas");
+const { getHasilPenilaianDosenPerKelasByKelasKuliahId } = require("../../src/modules/hasil-kuesioner-per-kelas/controller");
 
 describe("getHasilPenilaianDosenPerKelasByKelasKuliahId", () => {
   let req, res, next;

@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { updateSumberById } = require("../../src/controllers/sumber");
+const { updateSumberById } = require("../../src/modules/sumber/controller");
 const { Sumber } = require("../../models");
 
 jest.mock("../../models");

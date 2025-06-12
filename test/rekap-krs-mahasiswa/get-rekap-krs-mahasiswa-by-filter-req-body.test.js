@@ -1,4 +1,4 @@
-const { getRekapKRSMahasiswaByFilterReqBody } = require("../../src/controllers/rekap-krs-mahasiswa");
+const { getRekapKRSMahasiswaByFilterReqBody } = require("../../src/modules/rekap-krs-mahasiswa/controller");
 const { Mahasiswa, UnitJabatan, KRSMahasiswa, Angkatan, Semester, Prodi, Jabatan, Dosen, KelasKuliah, DetailKelasKuliah, RuangPerkuliahan, MataKuliah, DosenWali, SemesterAktif, TahunAjaran } = require("../../models");
 
 jest.mock("../../models");

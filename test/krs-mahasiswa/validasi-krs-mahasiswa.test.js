@@ -1,4 +1,4 @@
-const { validasiKRSMahasiswa } = require("../../src/controllers/krs-mahasiswa");
+const { validasiKRSMahasiswa } = require("../../src/modules/krs-mahasiswa/controller");
 const { KRSMahasiswa, KelasKuliah, Mahasiswa, PesertaKelasKuliah } = require("../../models");
 
 // Mock dependencies

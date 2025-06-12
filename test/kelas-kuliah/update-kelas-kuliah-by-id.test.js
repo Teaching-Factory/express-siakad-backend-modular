@@ -1,4 +1,4 @@
-const { updateKelasKuliahById } = require("../../src/controllers/kelas-kuliah");
+const { updateKelasKuliahById } = require("../../src/modules/kelas-kuliah/controller");
 const { KelasKuliah, DetailKelasKuliah } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

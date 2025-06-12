@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getSettingGlobalSemesterAktif } = require("../../src/controllers/setting-global-semester");
+const { getSettingGlobalSemesterAktif } = require("../../src/modules/setting-global-semester/controller");
 const { SettingGlobalSemester, Semester } = require("../../models");
 
 jest.mock("../../models");

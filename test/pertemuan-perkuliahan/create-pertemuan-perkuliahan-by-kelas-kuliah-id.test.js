@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { createPertemuanPerkuliahanByKelasKuliahId } = require("../../src/controllers/pertemuan-perkuliahan"); // Adjust the path as needed
+const { createPertemuanPerkuliahanByKelasKuliahId } = require("../../src/modules/pertemuan-perkuliahan/controller"); 
 const { PertemuanPerkuliahan } = require("../../models");
 
 jest.mock("../../models");

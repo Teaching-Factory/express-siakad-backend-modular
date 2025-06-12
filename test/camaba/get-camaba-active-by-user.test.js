@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getCamabaActiveByUser } = require("../../src/controllers/camaba");
+const { getCamabaActiveByUser } = require("../../src/modules/camaba/controller");
 const { Role, UserRole, Camaba, ProdiCamaba, Prodi, PeriodePendaftaran, Semester, JenjangPendidikan } = require("../../models");
 
 jest.mock("../../models");

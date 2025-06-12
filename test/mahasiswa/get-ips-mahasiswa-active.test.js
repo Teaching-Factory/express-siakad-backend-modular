@@ -1,12 +1,12 @@
 const httpMocks = require("node-mocks-http");
-const { getIpsMahasiswaActive } = require("../../src/controllers/mahasiswa");
+const { getIpsMahasiswaActive } = require("../../src/modules/mahasiswa/controller");
 const { Mahasiswa, Prodi, JenjangPendidikan, Agama } = require("../../models");
 const axios = require("axios");
-const getToken = require("../../src/controllers/api-feeder/get-token");
+const getToken = require("../../src/modules/api-feeder/data-feeder/get-token");
 
 jest.mock("axios");
 jest.mock("../../models");
-jest.mock("../../src/controllers/api-feeder/get-token");
+jest.mock("../../src/modules/api-feeder/data-feeder/get-token");
 
 describe("getIpsMahasiswaActive", () => {
   let req, res, next;

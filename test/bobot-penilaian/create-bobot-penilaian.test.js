@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { createBobotPenilaian } = require("../../src/controllers/bobot-penilaian");
+const { createBobotPenilaian } = require("../../src/modules/bobot-penilaian/controller");
 const { BobotPenilaian } = require("../../models");
 
 jest.mock("../../models");

@@ -1,4 +1,4 @@
-const { getMahasiswaById } = require("../../src/controllers/mahasiswa");
+const { getMahasiswaById } = require("../../src/modules/mahasiswa/controller");
 const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode, Prodi, Semester } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

@@ -1,4 +1,4 @@
-const { getAllRiwayatPendidikanMahasiswa } = require("../../src/controllers/riwayat-pendidikan-mahasiswa");
+const { getAllRiwayatPendidikanMahasiswa } = require("../../src/modules/riwayat-pendidikan-mahasiswa/controller");
 const { RiwayatPendidikanMahasiswa } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

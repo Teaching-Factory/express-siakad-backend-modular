@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getRekapKHSMahasiswaByFilterReqBody } = require("../../src/controllers/rekap-khs-mahasiswa");
+const { getRekapKHSMahasiswaByFilterReqBody } = require("../../src/modules/rekap-khs-mahasiswa/controller");
 const { Mahasiswa, Angkatan, UnitJabatan, RekapKHSMahasiswa, PerkuliahanMahasiswa, Prodi, Semester, MataKuliah, Jabatan, Dosen } = require("../../models");
 
 jest.mock("../../models");

@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getContactPersonAktif } = require("../../src/controllers/contact-person-pmb");
+const { getContactPersonAktif } = require("../../src/modules/contact-person-pmb/controller");
 const { ContactPersonPMB } = require("../../models");
 
 jest.mock("../../models");

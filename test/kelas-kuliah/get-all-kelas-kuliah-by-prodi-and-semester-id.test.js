@@ -1,4 +1,4 @@
-const { GetAllKelasKuliahByProdiAndSemesterId } = require("../../src/controllers/kelas-kuliah");
+const { GetAllKelasKuliahByProdiAndSemesterId } = require("../../src/modules/kelas-kuliah/controller");
 const { KelasKuliah, MataKuliah } = require("../../models");
 
 describe("GetAllKelasKuliahByProdiAndSemesterId", () => {

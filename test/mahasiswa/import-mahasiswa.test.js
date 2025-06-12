@@ -1,4 +1,4 @@
-const { importMahasiswas } = require("../../src/controllers/mahasiswa");
+const { importMahasiswas } = require("../../src/modules/mahasiswa/controller");
 const { PerguruanTinggi, Mahasiswa, RiwayatPendidikanMahasiswa, Agama, Wilayah, Prodi, JenisPendaftaran, JalurMasuk, Pembiayaan, Semester, Periode } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const fs = require("fs");

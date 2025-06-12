@@ -1,4 +1,4 @@
-const { getRekapJadwalKuliahByFilter } = require("../../src/controllers/rekap-jadwal-kuliah");
+const { getRekapJadwalKuliahByFilter } = require("../../src/modules/rekap-jadwal-kuliah/controller");
 const { MatkulKurikulum, DetailKelasKuliah, KelasKuliah, Dosen, MataKuliah, RuangPerkuliahan } = require("../../models");
 
 jest.mock("../../models", () => ({

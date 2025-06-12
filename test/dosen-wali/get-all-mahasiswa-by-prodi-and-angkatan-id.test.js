@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 const httpMocks = require("node-mocks-http");
-const { getAllMahasiswaByProdiAndAngkatanId } = require("../../src/controllers/dosen-wali");
+const { getAllMahasiswaByProdiAndAngkatanId } = require("../../src/modules/dosen-wali/controller");
 const { Angkatan, Periode, Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama } = require("../../models");
 
 jest.mock("../../models");

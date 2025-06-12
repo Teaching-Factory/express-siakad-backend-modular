@@ -1,4 +1,4 @@
-const { getPembiayaanById } = require("../../src/controllers/pembiayaan");
+const { getPembiayaanById } = require("../../src/modules/pembiayaan/controller");
 const { Pembiayaan } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

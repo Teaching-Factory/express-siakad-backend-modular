@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllSumberAktif } = require("../../src/controllers/sumber");
+const { getAllSumberAktif } = require("../../src/modules/sumber/controller");
 const { Sumber } = require("../../models");
 
 jest.mock("../../models");

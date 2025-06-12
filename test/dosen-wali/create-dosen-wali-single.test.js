@@ -1,4 +1,4 @@
-const { createDosenWaliSingle } = require("../../src/controllers/dosen-wali");
+const { createDosenWaliSingle } = require("../../src/modules/dosen-wali/controller");
 const { DosenWali, Mahasiswa } = require("../../models");
 
 jest.mock("../../models");

@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getSettingGlobalById } = require("../../src/controllers/setting-global");
+const { getSettingGlobalById } = require("../../src/modules/setting-global/controller");
 const { SettingGlobal, Prodi, JenjangPendidikan } = require("../../models");
 
 jest.mock("../../models");

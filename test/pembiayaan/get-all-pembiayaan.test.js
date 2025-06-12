@@ -1,4 +1,4 @@
-const { getAllPembiayaan } = require("../../src/controllers/pembiayaan");
+const { getAllPembiayaan } = require("../../src/modules/pembiayaan/controller");
 const { Pembiayaan } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

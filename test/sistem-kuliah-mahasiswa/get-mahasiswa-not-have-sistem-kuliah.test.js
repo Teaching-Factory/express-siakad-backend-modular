@@ -1,5 +1,5 @@
 const { Mahasiswa, SistemKuliahMahasiswa } = require("../../models");
-const { getMahasiswaNotHaveSistemKuliah } = require("../../src/controllers/sistem-kuliah-mahasiswa");
+const { getMahasiswaNotHaveSistemKuliah } = require("../../src/modules/sistem-kuliah-mahasiswa/controller");
 
 // Mock response objects
 const mockReq = {};

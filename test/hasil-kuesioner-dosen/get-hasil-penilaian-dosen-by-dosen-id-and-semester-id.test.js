@@ -1,6 +1,6 @@
 const { AspekPenilaianDosen, SkalaPenilaianDosen, Kuesioner, KelasKuliah, Mahasiswa, Dosen, Semester, TahunAjaran } = require("../../models");
 const httpMocks = require("node-mocks-http");
-const { getHasilPenilaianDosenByDosenIdAndSemesterId } = require("../../src/controllers/hasil-kuesioner-dosen");
+const { getHasilPenilaianDosenByDosenIdAndSemesterId } = require("../../src/modules/hasil-kuesioner-dosen/controller");
 
 describe("getHasilPenilaianDosenByDosenIdAndSemesterId", () => {
   let req, res, next;

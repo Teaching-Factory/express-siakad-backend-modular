@@ -1,4 +1,4 @@
-const { getAllDetailNilaiPerkuliahanKelas } = require("../../src/controllers/detail-nilai-perkuliahan-kelas");
+const { getAllDetailNilaiPerkuliahanKelas } = require("../../src/modules/detail-nilai-perkuliahan-kelas/controller");
 const { DetailNilaiPerkuliahanKelas } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

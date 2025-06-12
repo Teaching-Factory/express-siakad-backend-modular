@@ -1,4 +1,4 @@
-const { getBiodataCamabaByActiveUser } = require("../../src/controllers/biodata-camaba");
+const { getBiodataCamabaByActiveUser } = require("../../src/modules/biodata-camaba/controller");
 const { BiodataCamaba, Camaba, Sekolah, Agama, Wilayah, JenisTinggal, Penghasilan, Pekerjaan, JenjangPendidikan, Role, UserRole } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

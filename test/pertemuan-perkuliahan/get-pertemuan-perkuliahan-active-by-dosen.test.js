@@ -1,4 +1,4 @@
-const { getAllPertemuanPerkuliahanActiveByDosen } = require("../../src/controllers/pertemuan-perkuliahan");
+const { getAllPertemuanPerkuliahanActiveByDosen } = require("../../src/modules/pertemuan-perkuliahan/controller");
 const { Dosen, KelasKuliah, PertemuanPerkuliahan, RuangPerkuliahan, MataKuliah, Prodi, Semester } = require("../../models");
 
 // Mock dependencies

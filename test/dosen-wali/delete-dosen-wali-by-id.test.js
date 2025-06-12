@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { deleteDosenWaliById } = require("../../src/controllers/dosen-wali");
+const { deleteDosenWaliById } = require("../../src/modules/dosen-wali/controller");
 const { DosenWali } = require("../../models");
 
 jest.mock("../../models");

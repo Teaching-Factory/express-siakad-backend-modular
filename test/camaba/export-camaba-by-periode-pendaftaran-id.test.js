@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { exportCamabaByPeriodePendaftaranId } = require("../../src/controllers/camaba");
+const { exportCamabaByPeriodePendaftaranId } = require("../../src/modules/camaba/controller");
 const { Camaba } = require("../../models");
 const ExcelJS = require("exceljs");
 

@@ -1,6 +1,6 @@
 const httpMocks = require("node-mocks-http");
-const { getTagihanCamabaByCamabaActive } = require("../../src/controllers/tagihan-camaba");
-const { Role, UserRole, Camaba, TagihanCamaba, Semester, JenisTagihan } = require("../../models"); // Pastikan mengimpor model
+const { getTagihanCamabaByCamabaActive } = require("../../src/modules/tagihan-camaba/controller");
+const { Role, UserRole, Camaba, TagihanCamaba, Semester, JenisTagihan } = require("../../models"); 
 
 jest.mock("../../models");
 

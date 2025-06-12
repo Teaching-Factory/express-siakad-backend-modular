@@ -1,4 +1,4 @@
-const { getAllPertemuanPerkuliahanActiveByMahasiswa } = require("../../src/controllers/pertemuan-perkuliahan");
+const { getAllPertemuanPerkuliahanActiveByMahasiswa } = require("../../src/modules/pertemuan-perkuliahan/controller");
 const { Mahasiswa, TahunAjaran, Semester, KRSMahasiswa, KelasKuliah, PertemuanPerkuliahan, PresensiMahasiswa, Prodi, MataKuliah, Dosen } = require("../../models");
 const Sequelize = require("sequelize");
 

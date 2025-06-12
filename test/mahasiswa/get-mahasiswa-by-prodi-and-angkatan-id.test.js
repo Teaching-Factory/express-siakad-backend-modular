@@ -1,4 +1,4 @@
-const { getMahasiswaByProdiAndAngkatanId } = require("../../src/controllers/mahasiswa");
+const { getMahasiswaByProdiAndAngkatanId } = require("../../src/modules/mahasiswa/controller");
 const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Prodi, Angkatan, Semester } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const { Op } = require("sequelize");
@@ -18,11 +18,11 @@ jest.mock("../../models", () => ({
 }));
 
 // Mock function helper yang digunakan di controller
-jest.mock("../../src/controllers/mahasiswa-lulus-do.js", () => ({
+jest.mock("../../src/modules/mahasiswa-lulus-do/controller", () => ({
   fetchAllMahasiswaLulusDOIds: jest.fn(),
 }));
 
-const { fetchAllMahasiswaLulusDOIds } = require("../../src/controllers/mahasiswa-lulus-do.js");
+const { fetchAllMahasiswaLulusDOIds } = require("../../src/modules/mahasiswa-lulus-do/controller");
 
 describe("getMahasiswaByProdiAndAngkatanId", () => {
   let req, res, next;

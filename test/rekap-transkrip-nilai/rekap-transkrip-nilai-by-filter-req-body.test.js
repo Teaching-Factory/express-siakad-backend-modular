@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getRekapTranskripNilaiByFilterReqBody } = require("../../src/controllers/rekap-transkrip-nilai");
+const { getRekapTranskripNilaiByFilterReqBody } = require("../../src/modules/rekap-transkrip-nilai/controller");
 const { Mahasiswa } = require("../../models");
 
 jest.mock("../../models");

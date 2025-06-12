@@ -1,4 +1,4 @@
-const { getPerhitunganSKSById } = require("../../src/controllers/perhitungan-sks");
+const { getPerhitunganSKSById } = require("../../src/modules/perhitungan-sks/controller");
 const { PerhitunganSKS, KelasKuliah, PenugasanDosen, Substansi } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

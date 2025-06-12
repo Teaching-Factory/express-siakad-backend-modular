@@ -1,4 +1,4 @@
-const { cetakBiodataByCamabaActive } = require("../../src/controllers/biodata-camaba");
+const { cetakBiodataByCamabaActive } = require("../../src/modules/biodata-camaba/controller");
 const { Role, UserRole, Camaba, BiodataCamaba, ProdiCamaba, Prodi, JenjangPendidikan } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const mockResponse = () => httpMocks.createResponse();

@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllProdiCamabaActive } = require("../../src/controllers/prodi-camaba");
+const { getAllProdiCamabaActive } = require("../../src/modules/prodi-camaba/controller");
 const { Role, UserRole, Camaba, ProdiCamaba, Prodi, JenjangPendidikan } = require("../../models");
 
 jest.mock("../../models");

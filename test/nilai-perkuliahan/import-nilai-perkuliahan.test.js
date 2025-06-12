@@ -2,7 +2,7 @@ const httpMocks = require("node-mocks-http");
 const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
-const { importNilaiPerkuliahan } = require("../../src/controllers/nilai-perkuliahan");
+const { importNilaiPerkuliahan } = require("../../src/modules/nilai-perkuliahan/controller");
 const { Mahasiswa, KelasKuliah, Prodi, JenjangPendidikan, DetailNilaiPerkuliahanKelas } = require("../../models");
 
 jest.mock("../../models");

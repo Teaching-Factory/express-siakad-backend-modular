@@ -1,4 +1,4 @@
-const { getAllDetailPeriodePerkuliahan } = require("../../src/controllers/detail-periode-perkuliahan");
+const { getAllDetailPeriodePerkuliahan } = require("../../src/modules/detail-periode-perkuliahan/controller");
 const { DetailPeriodePerkuliahan } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

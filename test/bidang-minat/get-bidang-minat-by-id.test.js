@@ -1,4 +1,4 @@
-const { getBidangMinatById } = require("../../src/controllers/bidang-minat");
+const { getBidangMinatById } = require("../../src/modules/bidang-minat/controller");
 const { BidangMinat } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

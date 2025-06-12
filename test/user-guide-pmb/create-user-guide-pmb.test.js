@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { createUserGuidePMB } = require("../../src/controllers/user-guide-pmb");
+const { createUserGuidePMB } = require("../../src/modules/user-guide-pmb/controller");
 const { UserGuidePMB } = require("../../models");
 
 jest.mock("../../models");

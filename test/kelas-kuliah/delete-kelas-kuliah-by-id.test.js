@@ -1,5 +1,5 @@
-const { deleteKelasKuliahById } = require("../../src/controllers/kelas-kuliah"); // Sesuaikan dengan path controller Anda
-const { KelasKuliah, DetailKelasKuliah } = require("../../models"); // Sesuaikan dengan path model Anda
+const { deleteKelasKuliahById } = require("../../src/modules/kelas-kuliah/controller");
+const { KelasKuliah, DetailKelasKuliah } = require("../../models");
 const httpMocks = require("node-mocks-http");
 
 jest.mock("../../models", () => ({

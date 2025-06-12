@@ -1,12 +1,12 @@
 const httpMocks = require("node-mocks-http");
-const { getKRSMahasiswaBySemesterId } = require("../../src/controllers/rekap-krs-mahasiswa");
+const { getKRSMahasiswaBySemesterId } = require("../../src/modules/rekap-krs-mahasiswa/controller");
 const { Mahasiswa, Semester, Prodi, JenjangPendidikan } = require("../../models");
 const axios = require("axios");
-const { getToken } = require("../../src/controllers/api-feeder/get-token");
+const { getToken } = require("../../src/modules/api-feeder/data-feeder/get-token.js");
 
 jest.mock("axios");
 jest.mock("../../models");
-jest.mock("../../src/controllers/api-feeder/get-token");
+jest.mock("../../src/modules/api-feeder/data-feeder/get-token.js");
 
 describe("getKRSMahasiswaBySemesterId", () => {
   let req, res, next;

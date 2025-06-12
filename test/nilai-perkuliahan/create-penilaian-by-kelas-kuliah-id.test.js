@@ -1,4 +1,4 @@
-const { createOrUpdatePenilaianByKelasKuliahId } = require("../../src/controllers/nilai-perkuliahan");
+const { createOrUpdatePenilaianByKelasKuliahId } = require("../../src/modules/nilai-perkuliahan/controller");
 const { KelasKuliah, Prodi, JenjangPendidikan, NilaiKomponenEvaluasiKelas, KomponenEvaluasiKelas, ProfilPenilaian, Mahasiswa, DetailNilaiPerkuliahanKelas, PerkuliahanMahasiswa, SettingGlobalSemester } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

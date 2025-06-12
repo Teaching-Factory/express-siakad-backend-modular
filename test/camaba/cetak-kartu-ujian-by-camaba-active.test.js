@@ -1,4 +1,4 @@
-const { cetakKartuUjianByCamabaActive } = require("../../src/controllers/camaba");
+const { cetakKartuUjianByCamabaActive } = require("../../src/modules/camaba/controller");
 const { Role, UserRole, Camaba, BiodataCamaba, PeriodePendaftaran, TahapTesPeriodePendaftaran, ProdiCamaba, Prodi, JenjangPendidikan, JenisTes } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const mockResponse = () => httpMocks.createResponse();

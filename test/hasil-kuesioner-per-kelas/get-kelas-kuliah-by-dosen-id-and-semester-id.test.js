@@ -1,6 +1,6 @@
 const { KelasKuliah, MataKuliah, DetailKelasKuliah, RuangPerkuliahan } = require("../../models");
 const httpMocks = require("node-mocks-http");
-const { getKelasKuliahByDosenIdAndSemesterId } = require("../../src/controllers/hasil-kuesioner-per-kelas");
+const { getKelasKuliahByDosenIdAndSemesterId } = require("../../src/modules/hasil-kuesioner-per-kelas/controller");
 
 describe("getKelasKuliahByDosenIdAndSemesterId", () => {
   let req, res, next;
@@ -22,8 +22,8 @@ describe("getKelasKuliahByDosenIdAndSemesterId", () => {
         id_dosen: 2,
         id_semester: 1,
         MataKuliah: { id: 101, nama: "Matematika" },
-        DetailKelasKuliah: [{ id: 201, RuangPerkuliahan: { nama_ruang: "Ruang 101" } }]
-      }
+        DetailKelasKuliah: [{ id: 201, RuangPerkuliahan: { nama_ruang: "Ruang 101" } }],
+      },
     ];
 
     jest.spyOn(KelasKuliah, "findAll").mockResolvedValue(mockKelasKuliah);
@@ -32,13 +32,13 @@ describe("getKelasKuliahByDosenIdAndSemesterId", () => {
 
     expect(KelasKuliah.findAll).toHaveBeenCalledWith({
       where: { id_dosen: 2, id_semester: 1 },
-      include: [{ model: MataKuliah }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }]
+      include: [{ model: MataKuliah }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }],
     });
     expect(res.statusCode).toEqual(200);
     expect(res._getJSONData()).toEqual({
       message: "<===== GET Kelas Kuliah By Dosen ID 2 And Semester ID 1 Success:",
       jumlahData: mockKelasKuliah.length,
-      dataKelasKuliah: mockKelasKuliah
+      dataKelasKuliah: mockKelasKuliah,
     });
   });
 
@@ -51,7 +51,7 @@ describe("getKelasKuliahByDosenIdAndSemesterId", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res._getJSONData()).toEqual({
-      message: "id_semester is required"
+      message: "id_semester is required",
     });
   });
 
@@ -64,7 +64,7 @@ describe("getKelasKuliahByDosenIdAndSemesterId", () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res._getJSONData()).toEqual({
-      message: "id_dosen is required"
+      message: "id_dosen is required",
     });
   });
 
@@ -79,11 +79,11 @@ describe("getKelasKuliahByDosenIdAndSemesterId", () => {
 
     expect(KelasKuliah.findAll).toHaveBeenCalledWith({
       where: { id_dosen: 2, id_semester: 1 },
-      include: [{ model: MataKuliah }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }]
+      include: [{ model: MataKuliah }, { model: DetailKelasKuliah, include: [{ model: RuangPerkuliahan }] }],
     });
     expect(res.statusCode).toEqual(404);
     expect(res._getJSONData()).toEqual({
-      message: "<===== Kelas Kuliah With Dosen ID 2 And Semester ID 1 Not Found:"
+      message: "<===== Kelas Kuliah With Dosen ID 2 And Semester ID 1 Not Found:",
     });
   });
 

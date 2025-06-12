@@ -1,4 +1,4 @@
-const { getMahasiswaByStatusMahasiswaId } = require("../../src/controllers/mahasiswa");
+const { getMahasiswaByStatusMahasiswaId } = require("../../src/modules/mahasiswa/controller");
 const { Mahasiswa, BiodataMahasiswa, PerguruanTinggi, Agama, Periode, Prodi, StatusMahasiswa, Semester } = require("../../models");
 const httpMocks = require("node-mocks-http");
 const { Op } = require("sequelize");

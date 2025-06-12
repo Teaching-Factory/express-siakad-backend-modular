@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { createKRSMahasiswaByMahasiswaActive } = require("../../src/controllers/krs-mahasiswa");
+const { createKRSMahasiswaByMahasiswaActive } = require("../../src/modules/krs-mahasiswa/controller");
 const { Mahasiswa } = require("../../models");
 
 jest.mock("../../models");

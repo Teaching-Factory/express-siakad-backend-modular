@@ -1,5 +1,5 @@
-const { updateProfileCamabaActive } = require("../../src/controllers/camaba"); // Sesuaikan path controller
-const { Role, UserRole, Camaba, PeriodePendaftaran, Semester, Prodi, JenjangPendidikan } = require("../../models"); // Sesuaikan path model
+const { updateProfileCamabaActive } = require("../../src/modules/camaba/controller"); 
+const { Role, UserRole, Camaba, PeriodePendaftaran, Semester, Prodi, JenjangPendidikan } = require("../../models"); 
 const httpMocks = require("node-mocks-http");
 const fs = require("fs");
 const path = require("path");

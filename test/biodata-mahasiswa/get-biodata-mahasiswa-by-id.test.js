@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getBiodataMahasiswaById } = require("../../src/controllers/biodata-mahasiswa");
+const { getBiodataMahasiswaById } = require("../../src/modules/biodata-mahasiswa/controller");
 const { BiodataMahasiswa, Wilayah, JenisTinggal, AlatTransportasi, JenjangPendidikan, Pekerjaan, Penghasilan, KebutuhanKhusus } = require("../../models");
 
 jest.mock("../../models");

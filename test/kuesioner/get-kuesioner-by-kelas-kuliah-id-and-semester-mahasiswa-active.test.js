@@ -1,6 +1,6 @@
 const { KelasKuliah, SettingGlobalSemester, Semester, Dosen, MataKuliah, Mahasiswa, Prodi, JenjangPendidikan, SettingGlobal, AspekPenilaianDosen, SkalaPenilaianDosen } = require("../../models");
 const httpMocks = require("node-mocks-http");
-const { getKuesionerByKelasKuliahIdAndSemesterMahasiswaActive } = require("../../src/controllers/kuesioner");
+const { getKuesionerByKelasKuliahIdAndSemesterMahasiswaActive } = require("../../src/modules/kuesioner/controller");
 
 describe("getKuesionerByKelasKuliahIdAndSemesterMahasiswaActive", () => {
   let req, res, next;

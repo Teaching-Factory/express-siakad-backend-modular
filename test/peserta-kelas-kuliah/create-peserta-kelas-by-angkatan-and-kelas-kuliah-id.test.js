@@ -1,4 +1,4 @@
-const { createPesertaKelasByAngkatanAndKelasKuliahId } = require("../../src/controllers/peserta-kelas-kuliah");
+const { createPesertaKelasByAngkatanAndKelasKuliahId } = require("../../src/modules/peserta-kelas-kuliah/controller");
 const { Angkatan, Mahasiswa, PesertaKelasKuliah } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

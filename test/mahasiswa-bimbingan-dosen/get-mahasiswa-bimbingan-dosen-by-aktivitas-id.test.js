@@ -1,5 +1,5 @@
 const { MahasiswaBimbinganDosen } = require("../../models");
-const { getMahasiswaBimbinganDosenByAktivitasId } = require("../../src/controllers/mahasiswa-bimbingan-dosen");
+const { getMahasiswaBimbinganDosenByAktivitasId } = require("../../src/modules/mahasiswa-bimbingan-dosen/controller");
 
 jest.mock("../../models"); // Mock models module
 

@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { importCamabaForUpdateNimKolektif } = require("../../src/controllers/camaba");
+const { importCamabaForUpdateNimKolektif } = require("../../src/modules/camaba/controller");
 const { Camaba } = require("../../models");
 const ExcelJS = require("exceljs");
 const fs = require("fs/promises");

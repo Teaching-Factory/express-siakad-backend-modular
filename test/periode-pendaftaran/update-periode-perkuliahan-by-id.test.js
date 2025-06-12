@@ -1,4 +1,4 @@
-const { updatePeriodePerkuliahanById } = require("../../src/controllers/periode-pendaftaran");
+const { updatePeriodePerkuliahanById } = require("../../src/modules/periode-pendaftaran/controller");
 const httpMocks = require("node-mocks-http");
 const { PeriodePendaftaran, Prodi, JenisBerkas, JenisTes, Sumber, ProdiPeriodePendaftaran, BerkasPeriodePendaftaran, TahapTesPeriodePendaftaran, SumberPeriodePendaftaran } = require("../../models");
 

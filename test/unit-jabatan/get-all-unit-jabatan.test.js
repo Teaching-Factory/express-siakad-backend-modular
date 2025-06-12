@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { getAllUnitJabatan } = require("../../src/controllers/unit-jabatan");
+const { getAllUnitJabatan } = require("../../src/modules/unit-jabatan/controller");
 const { UnitJabatan } = require("../../models");
 
 jest.mock("../../models");

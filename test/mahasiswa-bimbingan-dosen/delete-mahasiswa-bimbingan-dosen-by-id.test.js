@@ -1,4 +1,4 @@
-const { deleteMahasiswaBimbinganDosenById } = require("../../src/controllers/mahasiswa-bimbingan-dosen");
+const { deleteMahasiswaBimbinganDosenById } = require("../../src/modules/mahasiswa-bimbingan-dosen/controller");
 const { MahasiswaBimbinganDosen } = require("../../models");
 
 jest.mock("../../models"); // Mock models module

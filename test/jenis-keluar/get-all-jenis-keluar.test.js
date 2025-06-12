@@ -1,4 +1,4 @@
-const { getAllJenisKeluar } = require("../../src/controllers/jenis-keluar");
+const { getAllJenisKeluar } = require("../../src/modules/jenis-keluar/controller");
 const { JenisKeluar } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

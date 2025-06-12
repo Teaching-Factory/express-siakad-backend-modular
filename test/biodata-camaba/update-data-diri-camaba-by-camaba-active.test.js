@@ -1,4 +1,4 @@
-const { updateDataDiriCamabaByCamabaActive } = require("../../src/controllers/biodata-camaba");
+const { updateDataDiriCamabaByCamabaActive } = require("../../src/modules/biodata-camaba/controller");
 const { BiodataCamaba, Camaba, Role, UserRole } = require("../../models");
 const httpMocks = require("node-mocks-http");
 

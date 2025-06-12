@@ -1,6 +1,6 @@
 const { Mahasiswa, Prodi, JenjangPendidikan, SettingGlobal, Kuesioner } = require("../../models");
 const httpMocks = require("node-mocks-http");
-const { createKuesionerByMahasiswaActive } = require("../../src/controllers/kuesioner");
+const { createKuesionerByMahasiswaActive } = require("../../src/modules/kuesioner/controller");
 
 jest.mock("../../models");
 

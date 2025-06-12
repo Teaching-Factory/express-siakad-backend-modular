@@ -1,5 +1,5 @@
 const httpMocks = require("node-mocks-http");
-const { createUjiMahasiswa } = require("../../src/controllers/uji-mahasiswa");
+const { createUjiMahasiswa } = require("../../src/modules/uji-mahasiswa/controller");
 const { UjiMahasiswa } = require("../../models");
 
 jest.mock("../../models");
