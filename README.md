@@ -311,7 +311,7 @@ Perintah Pengujian Unit Testing :
 
 ```
 
-## All Comman Modules
+## All Command Modules
 
 - Add new module: sample (alat-transportasi)
 
