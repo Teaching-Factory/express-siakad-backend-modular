@@ -1,7 +1,7 @@
 const { PerkuliahanMahasiswa, PerkuliahanMahasiswaSync, Semester, Mahasiswa, RiwayatPendidikanMahasiswa, MahasiswaLulusDO } = require("../../../../models");
 const { getToken } = require("../../api-feeder/data-feeder/get-token");
 const axios = require("axios");
-// const { fetchAllMahasiswaLulusDOIds } = require("../mahasiswa-lulus-do");
+const { fetchAllMahasiswaLulusDOIds } = require("../../mahasiswa-lulus-do/controller");
 
 async function getPerkuliahanMahasiswaFromFeeder(semesterId, req, res, next) {
   try {

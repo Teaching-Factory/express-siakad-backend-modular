@@ -311,6 +311,43 @@ Perintah Pengujian Unit Testing :
 
 ```
 
+## All Comman Modules
+
+- Add new module: sample (alat-transportasi)
+
+```bash
+  npm run cli make:module alat-transportasi
+
+```
+
+- Disable any module: sample (alat-transportasi)
+
+```bash
+  npm run cli disable:module alat-transportasi
+
+```
+
+- Enable any module: sample (alat-transportasi)
+
+```bash
+  npm run cli enable:module alat-transportasi
+
+```
+
+- Show all modules by list
+
+```bash
+  npm run cli list:modules
+
+```
+
+- Show all command for help
+
+```bash
+  npm run cli help:commands
+
+```
+
 ## Support and Thanks ✨
 
 For support credit, please email owner of this project : magangti2023@gmail.com. Thanks to our developper by TEFA Team 🎉🎉🎉
