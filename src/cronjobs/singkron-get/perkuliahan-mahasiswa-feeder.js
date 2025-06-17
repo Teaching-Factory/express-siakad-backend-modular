@@ -21,7 +21,7 @@ async function singkronPerkuliahanMahasiswa() {
     // Buat objek request palsu untuk pemanggilan internal tanpa API
     const fakeReq = {
       params: {
-        id_semester: setting_global_semester_aktif.id_semester_nilai,
+        id_semester: setting_global_semester_aktif.id_semester_krs,
       },
     };
 
