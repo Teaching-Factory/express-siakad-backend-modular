@@ -533,7 +533,7 @@ const validasiKRSMahasiswa = async (req, res, next) => {
               // jika mahasiswa lama, update sks semester, sks total, dan status mahasiswa
               await PerkuliahanMahasiswa.create({
                 angkatan: angkatan,
-                ips: lastPerkuliahanMahasiswa.ips,
+                ips: 0,
                 ipk: lastPerkuliahanMahasiswa.ipk,
                 sks_semester: sksSemester,
                 sks_total: Number(lastPerkuliahanMahasiswa.sks_total) + Number(sksSemester),
@@ -651,20 +651,22 @@ const BatalkanValidasiKRSMahasiswa = async (req, res, next) => {
       },
     });
 
-    // mengambil data sks semester sekarang
-    let sksSemester = 0;
+    if (perkuliahanMahasiswa) {
+      // mengambil data sks semester sekarang
+      let sksSemester = 0;
 
-    // menghitung total krs semester sekarang
-    for (const krs of krs_mahasiswas) {
-      let sks = Number(krs.MataKuliah.sks_mata_kuliah);
-      sksSemester += sks;
+      // menghitung total krs semester sekarang
+      for (const krs of krs_mahasiswas) {
+        let sks = Number(krs.MataKuliah.sks_mata_kuliah);
+        sksSemester += sks;
+      }
+
+      perkuliahanMahasiswa.sks_semester = 0;
+      perkuliahanMahasiswa.sks_total = Number(perkuliahanMahasiswa.sks_total) - Number(sksSemester);
+      perkuliahanMahasiswa.id_status_mahasiswa = statusMahasiswaNonAktif.id_status_mahasiswa;
+
+      await perkuliahanMahasiswa.save();
     }
-
-    perkuliahanMahasiswa.sks_semester = 0;
-    perkuliahanMahasiswa.sks_total = Number(perkuliahanMahasiswa.sks_total) - Number(sksSemester);
-    perkuliahanMahasiswa.id_status_mahasiswa = statusMahasiswaNonAktif.id_status_mahasiswa;
-
-    await perkuliahanMahasiswa.save();
 
     // Ambil data peserta kelas kuliah yang sesuai dengan setiap KRS mahasiswa
     for (const krs_mahasiswa of krs_mahasiswas) {
